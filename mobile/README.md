@@ -1,0 +1,36 @@
+## Required Software
+
+Install the followin prescribed versions. You can _possibly_ have a more-recent version of these, however, these are the versions we know are currently working.
+
+app             | version | install notes |
+----------------| -------:| ------------- |
+node            | 8.12.0  | Install using _one of_: <br />1. **NVM**: [Node Version Manager (nvm)](https://github.com/creationix/nvm) and explicitly install node8 the same way we do it in production: `nvm install 8` - **_check which version we are running_** with `cat ~/mobile/.nvmrc`. You can set node8 as the default with `nvm use 8.12`<br />2. **BREW**:  `brew install node@8.12.0` or `brew install node` (this will install the latest version, which might not work) * |
+yarn             | 1.17.3   | Use Homebrew via `brew install yarn`, or `brew upgrade yarn` if you already have it installed |
+watchman        | 4.9.0   | `brew install watchman`|
+react-native-cli| 2.0.1   | `yarn global add react-native-cli` |
+Xcode           | 11.1    | [Apple App Store](https://itunes.apple.com/us/app/xcode/id497799835) |
+Android Studio  | 3.5     | [React Native Android Studio Walkthrough](https://facebook.github.io/react-native/docs/getting-started.html#2-install-the-android-sdk) |
+Java JDK     | 8+    | [JDK - 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) |
+
+## Running the project
+
+Install the needed dependencies:
+```bash
+yarn install
+```
+
+Run instructions for iOS:
+```bash
+cd SlacGismo/TESS/mobile/tess && npx react-native run-ios
+```    
+
+or:
+
+- Open `tess/ios/tess.xcworkspace` in Xcode or run `xed -b ios`
+- Hit the Run button
+
+Run instructions for Android:
+```bash
+# Have an Android emulator running (quickest way to get started), or a device connected.
+cd SlacGismo/TESS/mobile/tess && npx react-native run-android
+```
