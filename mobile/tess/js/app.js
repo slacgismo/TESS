@@ -10,15 +10,12 @@
 import React from 'react'
 import cryptojs from 'crypto-js'
 import { Provider } from 'react-redux'
-import { hideModal } from './common/actions'
 import * as Keychain from 'react-native-keychain'
-import { environments } from './config/env-params'
-import { default_environment } from './config/env'
 import configureStore from './config/configure-store'
-import TessModal from './common/components/TessModal'
-import { StatusBar, Platform, Text, TextInput } from 'react-native'
-import { PersistGate } from 'redux-persist/es/integration/react'
-import RootNavigatorWrapper from './config/navigation/configure-main-navigation'
+import { View } from 'react-native'
+import { PersistGate } from 'redux-persist/integration/react'
+//import RootNavigatorWrapper from './config/navigation/configure-main-navigation'
+import LandingPage from './landing-page/LandingPage'
 
 export let globalStore = null
 export let globalPersistor = null
@@ -29,17 +26,9 @@ export let navRef = null
  * is actually the Navigation component which establishes a Navigator for
  * the app.
  */
-export class App extends React.Component {
+export class Root extends React.Component {
     constructor(props) {
         super(props)
-        // currently it's a bit difficult the prevent horrible scability due to large
-        // font sizes bc of OS accessibility settings
-        Text.defaultProps = Text.defaultProps || {}
-        Text.defaultProps.allowFontScaling = false
-        TextInput.defaultProps = TextInput.defaultProps || {}
-        TextInput.defaultProps.allowFontScaling = false
-
-        this.onLanguagesChange = this.onLanguagesChange.bind(this)
         this.getCurrentRouteName = this.getCurrentRouteName.bind(this)
         this.state = {
             encryptionKey: null
@@ -48,8 +37,8 @@ export class App extends React.Component {
 
     /** Log each nav state change so we can more easily re-create a user's steps through the app */
     onNavigationStateChange(prevState, currentState) {
-        const currentScreen = this.getCurrentRouteName(currentState);
-        const prevScreen = this.getCurrentRouteName(prevState);
+        const currentScreen = this.getCurrentRouteName(currentState)
+        const prevScreen = this.getCurrentRouteName(prevState)
         if(prevScreen !== currentScreen) {
             global.INFO(`Changing screens from: ${prevScreen} - to: ${currentScreen}`)
         }
@@ -65,9 +54,9 @@ export class App extends React.Component {
 
         // dive into nested navigators
         if (route.routes) {
-            return this.getCurrentRouteName(route);
+            return this.getCurrentRouteName(route)
         }
-        return route.routeName;
+        return route.routeName
     }    
 
     /**
@@ -83,11 +72,11 @@ export class App extends React.Component {
      * and then save it to the keychain/keystore.
      */
     async verifyEncryptionSetup() {
-        const user = 'TESS_APPLICATION_USER';
-        let encryptionKey;
+        const user = 'TESS_APPLICATION_USER'
+        let encryptionKey
 
         try {
-            encryptionKey = await Keychain.getGenericPassword();
+            encryptionKey = await Keychain.getGenericPassword()
             if(!encryptionKey) {
                 encryptionKey = cryptojs.enc.Hex.stringify(cryptojs.lib.WordArray.random(64))
                 this.setState({encryptionKey: encryptionKey})
@@ -113,14 +102,13 @@ export class App extends React.Component {
 
         return (
             <Provider store={store}>
-                <PersistGate persistor={globalPersistor} onBeforeLift={() => store.dispatch(hideModal())}>
+                <PersistGate persistor={globalPersistor}>
                     <View style={{ flex: 1, flexDirection: 'column' }}>
-                        <RootNavigatorWrapper
+                        <LandingPage />
+                        {/* <RootNavigatorWrapper
                             ref={nav => {navRef = nav}}
                             onNavigationStateChange={(prevState, currentState) =>
-                                this.onNavigationStateChange(prevState, currentState)} />
-                        <OfflineNotice />
-                        <TessModal />
+                                this.onNavigationStateChange(prevState, currentState)} /> */}
                     </View>
                 </PersistGate>
             </Provider>

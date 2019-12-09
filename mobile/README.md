@@ -17,6 +17,8 @@ Java JDK     | 8+    | [JDK - 8](http://www.oracle.com/technetwork/java/javase/d
 Install the needed dependencies:
 ```bash
 yarn install
+cd ios
+pod install
 ```
 
 Run instructions for iOS:

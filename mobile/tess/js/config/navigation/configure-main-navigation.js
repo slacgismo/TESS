@@ -8,10 +8,15 @@
 
 import React from 'react'
 import { connect } from 'react-redux'
-import { Image, Text } from 'react-native'
-import { createAppContainer, createBottomTabNavigator, createSwitchNavigator, createStackNavigator } from 'react-navigation'
+import { createAppContainer } from 'react-navigation'
+import { LandingPage } from '../../landing-page/LandingPage'
+import { createStackNavigator } from 'react-navigation-stack'
 
+const appNavigator = createStackNavigator({
+    Home: {
+        screen: LandingPage,
+    },
+})
 
-
-const RootNavigatorWrapper = createAppContainer(switchNavigator);
+const RootNavigatorWrapper = createAppContainer(appNavigator)
 export default RootNavigatorWrapper
