@@ -6,11 +6,9 @@
  * Setup the whole application navigation. 
  */
 
-import React from 'react'
-import { connect } from 'react-redux'
 import { createAppContainer } from 'react-navigation'
-import { LandingPage } from '../../landing-page/LandingPage'
 import { createStackNavigator } from 'react-navigation-stack'
+import LandingPage from '../../landing-page/LandingPage'
 
 const appNavigator = createStackNavigator({
     Home: {

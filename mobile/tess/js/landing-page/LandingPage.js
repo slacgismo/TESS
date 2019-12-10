@@ -17,7 +17,7 @@ class LandingPage extends React.Component {
     render() {
         return (
             <View>
-                <Text>lakhfd alkjsdf lakfakjhf </Text>
+                <Text>Just a random landing page for TESS</Text>
             </View>
         )
     }

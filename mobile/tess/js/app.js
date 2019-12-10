@@ -14,7 +14,7 @@ import * as Keychain from 'react-native-keychain'
 import configureStore from './config/configure-store'
 import { View } from 'react-native'
 import { PersistGate } from 'redux-persist/integration/react'
-//import RootNavigatorWrapper from './config/navigation/configure-main-navigation'
+import RootNavigatorWrapper from './config/navigation/configure-main-navigation'
 import LandingPage from './landing-page/LandingPage'
 
 export let globalStore = null
@@ -103,12 +103,11 @@ export class Root extends React.Component {
         return (
             <Provider store={store}>
                 <PersistGate persistor={globalPersistor}>
-                    <View style={{ flex: 1, flexDirection: 'column' }}>
-                        <LandingPage />
-                        {/* <RootNavigatorWrapper
+                    <View style={{ flex: 1, flexDirection: 'column' }}>                        
+                        <RootNavigatorWrapper
                             ref={nav => {navRef = nav}}
                             onNavigationStateChange={(prevState, currentState) =>
-                                this.onNavigationStateChange(prevState, currentState)} /> */}
+                                this.onNavigationStateChange(prevState, currentState)} />
                     </View>
                 </PersistGate>
             </Provider>
