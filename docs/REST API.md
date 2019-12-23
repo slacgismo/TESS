@@ -552,16 +552,110 @@ The `price` endpoint is used to obtain the current price. These may be requested
 
 ### Response
 
+If the `quantity` field is not included, the result will be for the current clearing `price` and `quantity`.
 ~~~
 {
 	"datetime" : "{datetime}",
-	"order" : "{int}",
-	"resource" : "{str}",
-	"price" : "{float}",
-	"margin" : "{float}"
+	"order" : "{order}",
+	"resource" : "{resource}",
+	"quantity" : "{quantity}",
+	"price" : "{price}",
+	"margin" : "{margin}"
 	}
 }
 ~~~
+
+If the `quantity` field is included, the results will be for the current orders at the quantity:
+
+~~~
+{
+	"datetime" : "{datetime}",
+	"order" : "{order}",
+	"resource" : "{resource}",
+	"quantity" : 
+	{
+		"ask" : "{quantity}",
+		"offer" : "{quantity}",
+	}
+	"price" : "{price}",
+	"margin" : "{margin}"
+	}
+}
+~~~
+
+If a single time is give in the `Range` attribute of the header, the values will be returned for the `{datetime}` specified.
+
+If the `{order}` attributed is included in the query string, the result will be for the order specified.
+
+If a time range is given in the header, the response will be a list:
+
+~~~
+[
+	"{datetime}" : {
+		"price" : "{price}",
+		"quantity" : "{quantity}",
+		"margin" : "{margin}"
+	},
+	"{datetime}" : {
+		"price" : "{price}",
+		"quantity" : "{quantity}",
+		"margin" : "{margin}"
+	},
+	...
+	"{datetime}" : 
+	{
+		"price" : "{price}",
+		"quantity" : "{quantity}",
+		"margin" : "{margin}"
+	}
+]
+~~~
+
+## Endpoint `quantity`
+
+~~~
+GET /quantity/{system}/{resource}
+GET /quantity/{system}/{resource}?price={price}
+GET /quantity/{system}/{resource}?order={order}
+~~~
+
+The `quantity` endpoint is used to obtain the current quantity. These may be requested for a given price or an outstanding order.
+
+### Response
+
+If `price` is not included, the clearing `quantity` and `price` are returned:
+~~~
+{
+	"datetime" : "{datetime}",
+	"order" : "{order}",
+	"resource" : "{resource}",
+	"quantity" : "{quantity}",
+	"price" : "{price}",
+	"margin" : "{margin}"
+	}
+}
+~~~
+
+If the `price` is included, the `quantity` includes the `ask` and `offer` quantities at that price:
+
+~~~
+{
+	"datetime" : "{datetime}",
+	"order" : "{order}",
+	"resource" : "{resource}",
+	"quantity" : "{quantity}",
+	"price" : {
+		"ask" : "{price}",
+		"offer" : "{price}",
+	},
+	"margin" : "{margin}"
+	}
+}
+~~~
+
+If a single time is give in the `Range` attribute of the header, the values will be returned for the `{datetime}` specified.
+
+If the `{order}` attributed is included in the query string, the result will be for the order specified.
 
 If a time range is given in the header, the response will be a list:
 
@@ -586,14 +680,103 @@ If a time range is given in the header, the response will be a list:
 ]
 ~~~
 
-## Endpoint `quantity`
-
-TODO
-
 ## Endpoint `user`
 
-TODO
+~~~
+GET /user/{user}
+GET /user/{user}/{parameter}
+PUT /user/{user}
+~~~
+
+The `user` endpoint allows access to user settings.
+
+### Response
+
+For both `GET` and `PUT`, if the `{user}` or `{parameter}` is invalid the response is `404 Not Found`.
+
+If the value given for the `PUT` parameter is not valid, the response is `406 Not Acceptable`. The response for a successful `PUT` is `201 Created` with no content.
+
+The response for a `GET /user/{user}` is `200 OK` and contains the current values of all the user parameters
+
+~~~
+{
+	"{parameter}" : "{value}",
+	"{parameter}" : "{value}",
+	...
+	"{parameter}" : "{value}"
+}
+~~~
+
+The `GET /user/{user}/{parameter}` returns the information about the user parameter:
+
+~~~
+{
+	"name" : "{parameter}",
+	"type" : "{type}",
+	"validation" : "{validation}",
+	"datetime" : "{datetime}",
+	"value" : "{value}"
+}
+~~~
+
+If the header attribute `Range` includes `timestamp` values, the values are returned as a time-series
+
+~~~
+[
+	"{datetime}" : "{value}",
+	"{datetime}" : "{value}",
+	...
+	"{datetime}" : "{value}"
+]
+~~~
 
 ## Endpoint `device`
 
-TODO
+~~~
+GET /device/{device}
+GET /device/{device}/{parameter}
+PUT /device/{device}
+~~~
+
+The `device` endpoint allows access to device settings.
+
+### Response
+
+For both `GET` and `PUT`, if the `{device}` or `{parameter}` is invalid the response is `404 Not Found`.
+
+If the value given for the `PUT` parameter is not valid, the response is `406 Not Acceptable`. The response for a successful `PUT` is `201 Created` with no content.
+
+The response for a `GET /device/{device}` is `200 OK` and contains the current values of all the device parameters
+
+~~~
+{
+	"{parameter}" : "{value}",
+	"{parameter}" : "{value}",
+	...
+	"{parameter}" : "{value}"
+}
+~~~
+
+The `GET /device/{device}/{parameter}` returns the information about the device parameter:
+
+~~~
+{
+	"name" : "{parameter}",
+	"type" : "{type}",
+	"validation" : "{validation}",
+	"datetime" : "{datetime}",
+	"value" : "{value}"
+}
+~~~
+
+If the header attribute `Range` includes `timestamp` values, the values are returned as a time-series
+
+~~~
+[
+	"{datetime}" : "{value}",
+	"{datetime}" : "{value}",
+	...
+	"{datetime}" : "{value}"
+]
+~~~
+
