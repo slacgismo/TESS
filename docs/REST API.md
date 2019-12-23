@@ -271,6 +271,15 @@ To request a page, use the query header attribute `Range: page={start}` in addit
 
 The TESS API interface supports the following endpoints.
 
+| Endpoint   | Purpose                                                            |
+| ---------- | ------------------------------------------------------------------ |
+| Root       | General information                                                |
+| `order`    | Access order information, place new orders, delete existing orders |
+| `price`    | Access price information                                           |
+| `quantity` | Access quantity information                                        |
+| `device`   | Access device information                                          |
+| `user`     | Access user information                                            |
+
 ## Root `/`
 
 ~~~
@@ -350,7 +359,7 @@ A `GET` request to the the `/config/{system}/{resource}` endpoint returns the cu
 }
 ~~~
 
-## `/order` endpoint
+## Endpoint `/order`
 
 ~~~
 PUT /order/{system}/{resource}
@@ -531,7 +540,7 @@ The response to a `GET` query for a list of orders is
 
 The `DELETE` query always gives the response `204 No Content` when successful.
 
-## `/price` endpoint
+## Endpoint `/price`
 
 ~~~
 GET /price/{system}/{resource}
@@ -577,3 +586,14 @@ If a time range is given in the header, the response will be a list:
 ]
 ~~~
 
+## Endpoint `quantity`
+
+TODO
+
+## Endpoint `user`
+
+TODO
+
+## Endpoint `device`
+
+TODO
