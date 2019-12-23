@@ -109,17 +109,7 @@ HTTP/1.1 401 Unauthorized
 Most API methods take optional parameters. For `GET` and `DELETE` requests, parameters are specified in HTTP query string:
 
 ~~~
-HTTP/1.1 GET /price/{system}/{resource}/{order}
-
-{
-	"system" : "{system}",
-	"device" : "{device}",
-	"order" : "{order}",
-	"quantity" : "{quantity}",
-	"price" : "{price}",
-	"margin" : "{margin}",
-	"current" : "{current}"
-}
+HTTP/1.1 GET /price/{system}/{resource}?order={order}
 ~~~
 
 For `PUT` requests, parameters are specified using a body encoded in JSON with `Content-Type: application/json`:
