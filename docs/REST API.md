@@ -345,7 +345,6 @@ A `GET` request to the root endpoint gets all the endpoint support by the REST A
 			"/{user}/{parameter}"
 		],
 		"PUT" : [
-			"/{user}",
 			"/{user}/{parameter}"
 		]
 	},
@@ -356,7 +355,6 @@ A `GET` request to the root endpoint gets all the endpoint support by the REST A
 			"/{device}/{parameter}"
 		],
 		"PUT" : [
-			"/{device}",
 			"/{device}/{parameter}"
 		]
 	}
@@ -726,7 +724,7 @@ If a time range is given in the header, the response will be a list:
 ~~~
 GET /user/{user}
 GET /user/{user}/{parameter}
-PUT /user/{user}
+PUT /user/{user}/{parameter}
 ~~~
 
 The `user` endpoint allows access to user settings.
@@ -776,7 +774,7 @@ If the header attribute `Range` includes `timestamp` values, the values are retu
 ~~~
 GET /device/{device}
 GET /device/{device}/{parameter}
-PUT /device/{device}
+PUT /device/{device}/{parameter}
 ~~~
 
 The `device` endpoint allows access to device settings.
