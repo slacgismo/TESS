@@ -292,32 +292,76 @@ A `GET` request to the root endpoint gets all the endpoint support by the REST A
 
 ~~~
 {
-	"config" : 
-	{
-		"hostname" : "https://tess.slacgismo.io/",
-		"systems" : 
-		[
-			"{system}",
-			"{system}",
-			...
-			"{system}
-		],
-		"limit" : "{limit}"
-	}
-	"order" : 
-	{
-		"URI" : "https://tess.slacgismo.io/",
-		"PUT" : ["/{system}/{resource}"],
-		"GET" : ["/{systems}/{resource}/{order}"],
-		"DELETE" : ["/{systems}/{resource}/{order}"]
+	"hostname" : "https://tess.slacgismo.io/",
+	"systems" : 
+	[
+		"{system}",
+		"{system}",
+		...
+		"{system}
+	],
+	"limit": {
+		"anonymous": 60,
+		"authenticated": 3600
 	},
-	"price" :
-	{
-		"URI" : "https://tess.slacgismo.io/",
-		"GET" : [
-			"/{system}/{resource}?quantity={quantity}",
-			"/{system}/{resource}?order={order}"
-		]
+	"endpoints": {
+		"config" : 
+		{
+			"GET" : [
+				"/{system}",
+				"/{system}/{resource}"
+			]
+		}
+		"order" : 
+		{
+			"PUT" : [
+				"/{system}/{resource}",
+				"/{system}/{resource}/{order}"
+			],
+			"GET" : [
+				"/{systems}/{resource}"
+				"/{systems}/{resource}/{order}"
+			],
+			"DELETE" : [
+				"/{systems}/{resource}/{order}"
+			]
+		},
+		"price" :
+		{
+			"GET" : [
+				"/{system}/{resource}",
+				"/{system}/{resource}?quantity={quantity}",
+				"/{system}/{resource}?order={order}"
+			]
+		},
+		"quantity" :
+		{
+			"GET" : [
+				"/{system}/{resource}",
+				"/{system}/{resource}?price={price}",
+				"/{system}/{resource}?order={order}"
+			]
+		},
+		"user" :
+		{
+			"GET" : [
+				"/{user}",
+				"/{user}/{parameter}"
+			],
+			"PUT" : [
+				"/{user}/{parameter}"
+			]
+		},
+		"device" :
+		{
+			"GET" : [
+				"/{device}",
+				"/{device}/{parameter}"
+			],
+			"PUT" : [
+				"/{device}/{parameter}"
+			]
+		}
 	}
 }
 ~~~
@@ -685,7 +729,7 @@ If a time range is given in the header, the response will be a list:
 ~~~
 GET /user/{user}
 GET /user/{user}/{parameter}
-PUT /user/{user}
+PUT /user/{user}/{parameter}
 ~~~
 
 The `user` endpoint allows access to user settings.
@@ -735,7 +779,7 @@ If the header attribute `Range` includes `timestamp` values, the values are retu
 ~~~
 GET /device/{device}
 GET /device/{device}/{parameter}
-PUT /device/{device}
+PUT /device/{device}/{parameter}
 ~~~
 
 The `device` endpoint allows access to device settings.
