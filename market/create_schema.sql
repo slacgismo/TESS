@@ -1,7 +1,6 @@
 #
 # Database
 #
-DROP DATABASE IF EXISTS `tess`;
 CREATE DATABASE 
 	IF NOT EXISTS `tess` 
 	DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -17,20 +16,23 @@ CREATE FUNCTION `tess`.RANDOM_ID ()
 #
 # Systems
 #
+# Names of all the system supported by  this TESS instance
+#
 CREATE TABLE
 	IF NOT EXISTS `tess`.`system` (
 		`system_id` INT NOT NULL AUTO_INCREMENT,
 		`name` VARCHAR(32) NOT NULL,
+		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		UNIQUE KEY `u_system_name` (`name` ASC),
 		PRIMARY KEY (`system_id` ASC)
 	)
     ENGINE=InnoDB 
     DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-INSERT INTO `tess`.`system` (`name`) VALUES
-	("HCE");
 
 #
 # Config
+#
+# All the configuration parameters of the current TESS instance.
 #
 CREATE TABLE
 	IF NOT EXISTS `tess`.`config` (
@@ -47,19 +49,14 @@ CREATE TABLE
     )
     ENGINE=InnoDB 
     DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-INSERT INTO `tess`.`config` (`system_id`,`name`,`value`) VALUES
-	(1,"api-version","1"),
-    (1,"mechanism","auction"),
-    (1,"interval","300"),
-    (1,"time-unit","h"),
-    (1,"currency_unit","$"),
-    (1,"admin_email","dchassin@slac.stanford.edu");
 
 #
 # Resources
 #
+# All resources for the current TESS instance.
+#
 CREATE TABLE
-	IF NOT EXISTS `tess`.`resources` (
+	IF NOT EXISTS `tess`.`resource` (
 		`resource_id` INT NOT NULL AUTO_INCREMENT,
         `system_id` INT NOT NULL,
         `name` VARCHAR(32) NOT NULL,
@@ -74,11 +71,11 @@ CREATE TABLE
     )
     ENGINE=InnoDB 
     DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-INSERT INTO `tess`.`resources` (`system_id`,`name`,`quantity_unit`,`price_unit`) VALUES
-	(1,"capacity","MW","$/MWh");
     
 #
 # Users
+#
+# Users of the current TESS instance.
 #
 CREATE TABLE
 	IF NOT EXISTS `tess`.`user` (
@@ -86,7 +83,7 @@ CREATE TABLE
         `system_id` INT NOT NULL,
         `name` VARCHAR(32) NOT NULL,
         `email` TEXT NOT NULL,
-        `sha1pwd` TEXT NOT NULL,
+        `sha1pwd` TEXT DEFAULT NULL,
 		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CONSTRAINT `fk_user_systemid` FOREIGN KEY (`system_id`) REFERENCES `system` (`system_id`) 
             ON DELETE RESTRICT 
@@ -95,11 +92,11 @@ CREATE TABLE
     )
     ENGINE=InnoDB 
     DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-INSERT INTO `tess`.`user` (`system_id`,`name`,`email`,`sha1pwd`) VALUES
-	(1,"admin","dchassin@slac.stanford.edu",SHA1("slacgismo"));
 
 #
 # Preferences
+#
+# 
 #
 CREATE TABLE
 	IF NOT EXISTS `tess`.`preference` (
@@ -124,6 +121,7 @@ CREATE TABLE
 	IF NOT EXISTS `tess`.`device` (
 		`device_id` INT NOT NULL AUTO_INCREMENT,
         `user_id` INT NOT NULL,
+        `name` VARCHAR(32) NOT NULL,
         `unique_id` VARCHAR(32) NOT NULL,
 		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         UNIQUE INDEX `u_device_uniqueid` (`unique_id` ASC),
@@ -140,8 +138,6 @@ CREATE
 	BEFORE INSERT 
 	ON `tess`.`device` FOR EACH ROW
 		SET NEW.`unique_id` = RANDOM_ID();
-INSERT INTO `tess`.`device` (`user_id`) VALUE
-	(1);
 
 #
 # Settings
@@ -171,6 +167,7 @@ CREATE TABLE
         `order_id` INT NOT NULL AUTO_INCREMENT,
         `device_id` INT NOT NULL,
         `unique_id` VARCHAR(32) NOT NULL,
+        `resource_id` INT NOT NULL,
         `quantity` DECIMAL(8,3) NOT NULL COMMENT "ask/sell<0, offer/buy>0, =0 is invalid",
         `price` DECIMAL(8,3) COMMENT "<0 is invalid",
         `current` DECIMAL(8,3) COMMENT "NULL if current=quantity",
@@ -178,6 +175,9 @@ CREATE TABLE
 		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         UNIQUE INDEX `u_order_uniqueid` (`unique_id` ASC),
 		CONSTRAINT `fk_order_deviceid` FOREIGN KEY (`device_id`) REFERENCES `device` (`device_id`) 
+            ON DELETE RESTRICT 
+            ON UPDATE RESTRICT,
+		CONSTRAINT `fk_order_resourceid` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`resource_id`) 
             ON DELETE RESTRICT 
             ON UPDATE RESTRICT,
          PRIMARY KEY (`order_id` ASC)
@@ -198,20 +198,45 @@ CREATE TABLE
 	IF NOT EXISTS `tess`.`price` (
 		`price_id` INT NOT NULL AUTO_INCREMENT,
         `system_id` INT NOT NULL,
-        `unique_id` VARCHAR(32) NOT NULL,
+        `resource_id` INT NOT NULL,
         `price` DECIMAL(8,3) NOT NULL,
         `quantity` DECIMAL(8,3) NOT NULL,
         `margin` DECIMAL(8,3),
 		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE INDEX `u_price_uniqueid` (`unique_id` ASC),
 		UNIQUE KEY `u_price_priceid_systemid_created` (`price_id` ASC,`system_id` ASC,`created` DESC),
 		CONSTRAINT `fk_price_systemid` FOREIGN KEY (`system_id`) REFERENCES `system` (`system_id`) 
+            ON DELETE RESTRICT 
+            ON UPDATE RESTRICT,
+		CONSTRAINT `fk_price_resourceid` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`resource_id`) 
             ON DELETE RESTRICT 
             ON UPDATE RESTRICT,
         PRIMARY KEY (`price_id` ASC)
     )
     ENGINE=InnoDB 
     DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+#
+# Meters
+#
+CREATE TABLE
+	IF NOT EXISTS `tess`.`meter` (
+		`meter_id` INT NOT NULL AUTO_INCREMENT,
+        `user_id` INT NOT NULL,
+        `resource_id` INT NOT NULL,
+        `price_id` INT NOT NULL,
+        `quantity` DECIMAL(8,3) NOT NULL COMMENT "ask/sell<0, offer/buy>0, =0 is invalid",
+		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		CONSTRAINT `fk_meter_userid` FOREIGN KEY (`user_id`) REFERENCES `device` (`user_id`) 
+            ON DELETE RESTRICT 
+            ON UPDATE RESTRICT,
+		CONSTRAINT `fk_meter_resourceid` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`resource_id`) 
+            ON DELETE RESTRICT 
+            ON UPDATE RESTRICT,
+         PRIMARY KEY (`meter_id` ASC)
+    )
+    ENGINE=InnoDB 
+    DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    
 
 #
 # Accounts
@@ -228,6 +253,4 @@ CREATE TABLE
     )
     ENGINE=InnoDB 
     DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-INSERT INTO `tess`.`transaction` (`user_id`,`amount`,`balance`) VALUES
-	(1,0,0);
     
