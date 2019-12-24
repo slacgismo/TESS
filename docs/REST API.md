@@ -302,21 +302,62 @@ A `GET` request to the root endpoint gets all the endpoint support by the REST A
 			...
 			"{system}
 		],
-		"limit" : "{limit}"
+		"limit" : "{limit}",
+		"GET" : [
+			"/{system}",
+			"/{system}/{resource}"
+		]
 	}
 	"order" : 
 	{
-		"URI" : "https://tess.slacgismo.io/",
-		"PUT" : ["/{system}/{resource}"],
-		"GET" : ["/{systems}/{resource}/{order}"],
-		"DELETE" : ["/{systems}/{resource}/{order}"]
+		"PUT" : [
+			"/{system}/{resource}",
+			"/{system}/{resource}/{order}"
+		],
+		"GET" : [
+			"/{systems}/{resource}"
+			"/{systems}/{resource}/{order}"
+		],
+		"DELETE" : [
+			"/{systems}/{resource}/{order}"
+		]
 	},
 	"price" :
 	{
-		"URI" : "https://tess.slacgismo.io/",
 		"GET" : [
+			"/{system}/{resource}",
 			"/{system}/{resource}?quantity={quantity}",
 			"/{system}/{resource}?order={order}"
+		]
+	},
+	"quantity" :
+	{
+		"GET" : [
+			"/{system}/{resource}",
+			"/{system}/{resource}?price={price}",
+			"/{system}/{resource}?order={order}"
+		]
+	},
+	"user" :
+	{
+		"GET" : [
+			"/{user}",
+			"/{user}/{parameter}"
+		],
+		"PUT" : [
+			"/{user}",
+			"/{user}/{parameter}"
+		]
+	},
+	"device" :
+	{
+		"GET" : [
+			"/{device}",
+			"/{device}/{parameter}"
+		],
+		"PUT" : [
+			"/{device}",
+			"/{device}/{parameter}"
 		]
 	}
 }
