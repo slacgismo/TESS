@@ -96,7 +96,7 @@ CREATE TABLE
 #
 # Preferences
 #
-# 
+# User preferences
 #
 CREATE TABLE
 	IF NOT EXISTS `tess`.`preference` (
@@ -116,6 +116,8 @@ CREATE TABLE
 
 #
 # Devices
+#
+# User devices
 #
 CREATE TABLE
 	IF NOT EXISTS `tess`.`device` (
@@ -142,6 +144,8 @@ CREATE
 #
 # Settings
 #
+# Device settings
+#
 CREATE TABLE
 	IF NOT EXISTS `tess`.`setting` (
 		`setting_id` INT NOT NULL AUTO_INCREMENT,
@@ -161,6 +165,8 @@ CREATE TABLE
 
 #
 # Orders
+#
+# Device resource orders
 #
 CREATE TABLE
 	IF NOT EXISTS `tess`.`order` (
@@ -194,6 +200,8 @@ CREATE
 #
 # Prices
 #
+# Clearing prices
+#
 CREATE TABLE
 	IF NOT EXISTS `tess`.`price` (
 		`price_id` INT NOT NULL AUTO_INCREMENT,
@@ -218,21 +226,24 @@ CREATE TABLE
 #
 # Meters
 #
+# Device resource metering
+#
 CREATE TABLE
 	IF NOT EXISTS `tess`.`meter` (
 		`meter_id` INT NOT NULL AUTO_INCREMENT,
-        `user_id` INT NOT NULL,
+        `device_id` INT NOT NULL,
         `resource_id` INT NOT NULL,
         `price_id` INT NOT NULL,
         `quantity` DECIMAL(8,3) NOT NULL COMMENT "ask/sell<0, offer/buy>0, =0 is invalid",
 		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		CONSTRAINT `fk_meter_userid` FOREIGN KEY (`user_id`) REFERENCES `device` (`user_id`) 
+		CONSTRAINT `fk_meter_deviceid` FOREIGN KEY (`device_id`) REFERENCES `device` (`device_id`) 
             ON DELETE RESTRICT 
             ON UPDATE RESTRICT,
 		CONSTRAINT `fk_meter_resourceid` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`resource_id`) 
             ON DELETE RESTRICT 
             ON UPDATE RESTRICT,
-         PRIMARY KEY (`meter_id` ASC)
+		UNIQUE INDEX `u_meter_deviceid_resourceid` (`device_id` ASC, `resource_id` ASC),
+		PRIMARY KEY (`meter_id` ASC)
     )
     ENGINE=InnoDB 
     DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -240,6 +251,8 @@ CREATE TABLE
 
 #
 # Accounts
+#
+# User accounts
 #
 CREATE TABLE
 	IF NOT EXISTS `tess`.`transaction` (
@@ -253,4 +266,30 @@ CREATE TABLE
     )
     ENGINE=InnoDB 
     DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-    
+
+#
+# Tokens
+#
+# User access tokens
+#
+CREATE TABLE
+	IF NOT EXISTS `tess`.`token` (
+		`transaction_id` INT NOT NULL AUTO_INCREMENT,
+        `user_id` INT,
+        `unique_id` VARCHAR(32) NOT NULL,
+		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		CONSTRAINT `fk_token_userid` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) 
+            ON DELETE RESTRICT 
+            ON UPDATE RESTRICT,
+        UNIQUE INDEX `u_token_uniqueid` (`unique_id` ASC),
+        INDEX `i_token_userid_created` (`user_id` ASC, `created` DESC),
+        PRIMARY KEY (`transaction_id` ASC)
+    )
+    ENGINE=InnoDB
+    DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE 
+	DEFINER = CURRENT_USER 
+	TRIGGER `tess`.`token_BEFORE_INSERT_1` 
+	BEFORE INSERT 
+	ON `tess`.`token` FOR EACH ROW
+		SET NEW.`unique_id` = RANDOM_ID();
