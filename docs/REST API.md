@@ -309,18 +309,22 @@ A `GET` request to the root endpoint gets all the endpoint support by the REST A
 		{
 			"GET" : [
 				"/{system}",
+				"/{system}?setting={parameter}",
 				"/{system}/{resource}"
+			],
+			"PUT" : [
+				"/{system}?setting={parameter}"
 			]
 		}
 		"order" : 
 		{
-			"PUT" : [
-				"/{system}/{resource}",
-				"/{system}/{resource}/{order}"
-			],
 			"GET" : [
 				"/{systems}/{resource}"
 				"/{systems}/{resource}/{order}"
+			],
+			"PUT" : [
+				"/{system}/{resource}",
+				"/{system}/{resource}/{order}"
 			],
 			"DELETE" : [
 				"/{systems}/{resource}/{order}"
