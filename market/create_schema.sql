@@ -1,6 +1,7 @@
 #
 # Database
 #
+DROP DATABASE IF EXISTS `tess`;
 CREATE DATABASE 
 	IF NOT EXISTS `tess` 
 	DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -164,40 +165,6 @@ CREATE TABLE
 
 
 #
-# Orders
-#
-# Device resource orders
-#
-CREATE TABLE
-	IF NOT EXISTS `tess`.`order` (
-        `order_id` INT NOT NULL AUTO_INCREMENT,
-        `device_id` INT NOT NULL,
-        `unique_id` VARCHAR(32) NOT NULL,
-        `resource_id` INT NOT NULL,
-        `quantity` DECIMAL(8,3) NOT NULL COMMENT "ask/sell<0, offer/buy>0, =0 is invalid",
-        `price` DECIMAL(8,3) COMMENT "<0 is invalid",
-        `current` DECIMAL(8,3) COMMENT "NULL if current=quantity",
-        `duration` DECIMAL(8,3) COMMENT "only used for orderbook mechanism",
-		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE INDEX `u_order_uniqueid` (`unique_id` ASC),
-		CONSTRAINT `fk_order_deviceid` FOREIGN KEY (`device_id`) REFERENCES `device` (`device_id`) 
-            ON DELETE RESTRICT 
-            ON UPDATE RESTRICT,
-		CONSTRAINT `fk_order_resourceid` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`resource_id`) 
-            ON DELETE RESTRICT 
-            ON UPDATE RESTRICT,
-         PRIMARY KEY (`order_id` ASC)
-   )
-    ENGINE=InnoDB 
-    DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-CREATE 
-	DEFINER = CURRENT_USER 
-	TRIGGER `tess`.`order_BEFORE_INSERT_1` 
-	BEFORE INSERT 
-	ON `tess`.`order` FOR EACH ROW
-		SET NEW.`unique_id` = RANDOM_ID();
-
-#
 # Prices
 #
 # Clearing prices
@@ -224,6 +191,115 @@ CREATE TABLE
     DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 #
+# Orders
+#
+# Device resource orders
+#
+CREATE TABLE
+	IF NOT EXISTS `tess`.`order` (
+        `order_id` INT NOT NULL AUTO_INCREMENT,
+        `device_id` INT NOT NULL,
+        `unique_id` VARCHAR(32) NOT NULL,
+        `resource_id` INT NOT NULL,
+        `quantity` DECIMAL(8,3) NOT NULL COMMENT "ask/sell<0, offer/buy>0, =0 is invalid",
+        `bid` DECIMAL(8,3) COMMENT "<0 is invalid",
+        `current` DECIMAL(8,3) COMMENT "NULL if current=quantity",
+        `duration` DECIMAL(8,3) COMMENT "only used for orderbook mechanism",
+		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        `price_id` INT,
+        `closed` TIMESTAMP,
+        UNIQUE INDEX `u_order_uniqueid` (`unique_id` ASC),
+		CONSTRAINT `fk_order_deviceid` FOREIGN KEY (`device_id`) REFERENCES `device` (`device_id`) 
+            ON DELETE RESTRICT 
+            ON UPDATE RESTRICT,
+		CONSTRAINT `fl_order_priceid` FOREIGN KEY (`price_id`) REFERENCES `price` (`price_id`)
+			ON DELETE RESTRICT
+            ON UPDATE RESTRICT,
+		CONSTRAINT `fk_order_resourceid` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`resource_id`) 
+            ON DELETE RESTRICT 
+            ON UPDATE RESTRICT,
+         PRIMARY KEY (`order_id` ASC)
+   )
+    ENGINE=InnoDB 
+    DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE 
+	DEFINER = CURRENT_USER 
+	TRIGGER `tess`.`order_BEFORE_INSERT_1` 
+	BEFORE INSERT 
+	ON `tess`.`order` FOR EACH ROW
+		SET NEW.`unique_id` = RANDOM_ID();
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = CURRENT_USER 
+    SQL SECURITY DEFINER
+VIEW `tess`.`order_state` AS
+    SELECT 
+        `tess`.`order`.`order_id` AS `order_id`,
+        `tess`.`order`.`device_id` AS `device_id`,
+        `tess`.`order`.`unique_id` AS `unique_id`,
+        `tess`.`order`.`resource_id` AS `resource_id`,
+        `tess`.`order`.`quantity` AS `quantity`,
+        `tess`.`order`.`bid` AS `bid`,
+        `tess`.`order`.`current` AS `current`,
+        `tess`.`order`.`duration` AS `duration`,
+        `tess`.`order`.`created` AS `created`,
+        `tess`.`order`.`price_id` AS `price_id`,
+        `tess`.`order`.`closed` AS `closed`,
+        (CASE
+            WHEN
+                (ISNULL(`tess`.`order`.`price_id`)
+                    AND (ISNULL(`tess`.`order`.`closed`)
+                    OR (`tess`.`order`.`closed` > NOW())))
+            THEN
+                'NEW'
+            WHEN
+                (NOT ISNULL(`tess`.`order`.`price_id`)
+                    AND (ISNULL(`tess`.`order`.`closed`)
+                    OR (`tess`.`order`.`closed` > NOW())))
+            THEN
+                'OPEN'
+            WHEN
+                (NOT ISNULL(`tess`.`order`.`price_id`)
+                    AND (`tess`.`order`.`closed` <= NOW()))
+            THEN
+                'CLOSED'
+            WHEN
+                (ISNULL(`tess`.`order`.`price_id`)
+                    AND (`tess`.`order`.`closed` <= NOW()))
+            THEN
+                'DELETED'
+            ELSE 'INVALID'
+        END) AS `state`
+    FROM
+        `tess`.`order`;
+CREATE 
+    ALGORITHM = UNDEFINED 
+    DEFINER = CURRENT_USER 
+    SQL SECURITY DEFINER
+VIEW `tess`.`order_status` AS
+    SELECT 
+        `tess`.`order_state`.`order_id` AS `order_id`,
+        `tess`.`order_state`.`device_id` AS `device_id`,
+        `tess`.`order_state`.`unique_id` AS `unique_id`,
+        `tess`.`order_state`.`resource_id` AS `resource_id`,
+        `tess`.`order_state`.`quantity` AS `quantity`,
+        `tess`.`order_state`.`bid` AS `bid`,
+        `tess`.`order_state`.`current` AS `current`,
+        `tess`.`order_state`.`duration` AS `duration`,
+        `tess`.`order_state`.`created` AS `created`,
+        `tess`.`order_state`.`price_id` AS `price_id`,
+        `tess`.`order_state`.`closed` AS `closed`,
+        `tess`.`order_state`.`state` AS `state`,
+        IF((`tess`.`order_state`.`quantity` < 0),
+            (`tess`.`price`.`price` >= `tess`.`order_state`.`bid`),
+            (`tess`.`price`.`price` <= `tess`.`order_state`.`bid`)) AS `status`,
+        `tess`.`price`.`margin` AS `margin`
+    FROM
+        (`tess`.`order_state`
+        JOIN `tess`.`price` ON ((`tess`.`order_state`.`price_id` = `tess`.`price`.`price_id`)))
+    WHERE
+        (`tess`.`order_state`.`state` = 'OPEN');
+#
 # Meters
 #
 # Device resource metering
@@ -234,7 +310,7 @@ CREATE TABLE
         `device_id` INT NOT NULL,
         `resource_id` INT NOT NULL,
         `price_id` INT NOT NULL,
-        `quantity` DECIMAL(8,3) NOT NULL COMMENT "ask/sell<0, offer/buy>0, =0 is invalid",
+        `quantity` DECIMAL(8,3) NOT NULL COMMENT "produce<0, consume>0, =0 is invalid",
 		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		CONSTRAINT `fk_meter_deviceid` FOREIGN KEY (`device_id`) REFERENCES `device` (`device_id`) 
             ON DELETE RESTRICT 
