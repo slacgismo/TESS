@@ -1,4 +1,4 @@
-There are two types of connections `ALL`owed to the TESS database in MySQL, `admin` and `user`. Admin users have all access rights. Regular users have `SELECT` access to all tables, and `INSERT` rights to tables involving user data.
+There are two types of connections `ALL`owed to the TESS database in MySQL, `admin` and `user`. Admin users have all access rights, except `DROP`, `DELETE`, and `UPDATE`. Regular users have `SELECT` access to all tables, and `INSERT` rights only to tables involving user data.
 
 Table 1: Database Access Rights
 
