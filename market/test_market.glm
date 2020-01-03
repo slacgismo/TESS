@@ -1,0 +1,9 @@
+#begin python
+def precommit(t):
+	print(t);
+#end
+
+class test_house 
+{
+	on_precommit "python:precommit";
+}
