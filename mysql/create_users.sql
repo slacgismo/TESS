@@ -3,12 +3,11 @@
 #
 
 # needed to allow functions to be created by admin
-SET GLOBAL log_bin_trust_function_creators = 1;
-
 # admin user
 CREATE USER 'tess_a'@'localhost' IDENTIFIED BY 'slacgismo';
 
 # admin user access to TESS database
+UPDATE mysql.user SET `Super_Priv` = 'Y' WHERE `user` = 'tess_a';
 GRANT ALL ON `tess`.* TO 'tess_a'@'localhost';
 REVOKE DROP,DELETE ON `tess`.* FROM 'tess_a'@'localhost';
 

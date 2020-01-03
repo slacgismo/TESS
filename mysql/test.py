@@ -3,7 +3,10 @@ Run a test of basic TESS functionality
 
 The purpose of this test script is to exercise *all* the TESS table functions.
 """
-from tess import *;
+try:
+	from mysql.tess import *;
+except:
+	from tess import *;
 import datetime;
 
 #

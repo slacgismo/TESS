@@ -53,11 +53,15 @@ import sys, os;
 assert(sys.version_info.major>2);
 
 import pymysql as mysql;
-import config;
+try:
+	import config;
+except:
+	import mysql.config as config;	
 import json;
 import datetime;
 
 module = sys.modules[__name__];
+module_path = "/".join(__file__.split(os.path.sep)[0:-2]);
 module_name = __file__.split(os.path.sep)[-1][:-3];
 
 ################################################################################
@@ -110,6 +114,7 @@ def debug(level,*args):
 ################################################################################
 user = None;
 admin = None;
+
 def get_connection():
 	debug(0,f"get_connection()");
 	global user;
@@ -160,7 +165,7 @@ def add_database(schema=config.schema_name):
 	debug(1,f"add_database(schema='{schema}')");
 	run_query(f"CREATE DATABASE `{schema}` DEFAULT CHARACTER SET utf8mb4 "
 		+ "COLLATE utf8mb4_0900_ai_ci",connection=admin);
-	run_script("create_schema.sql",connection=admin,schema=schema);
+	run_script(f"{module_path}/mysql/create_schema.sql",connection=admin,schema=schema);
 	debug(1,f"add_database(...)",None);
 
 def set_database(schema=config.schema_name):

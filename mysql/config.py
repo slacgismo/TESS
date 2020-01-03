@@ -9,6 +9,12 @@ system_name = "HCE";
 #
 # database configurations
 #
+root = {
+	'user' : "root",
+	'password' : "slacgismo",
+	'host' : "localhost",
+	'port' : 3306,
+}
 local = {
 	'user' : "tess",
 	'password' : "slacgismo",
