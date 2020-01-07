@@ -32,7 +32,7 @@ def line_intersection(line1, line2):
     else:
         return None
 
-def polyline_intersection(poly1, poly2):
+def intersection(poly1, poly2):
 
     result = [];
     for i, A in enumerate(poly1[:-1]):
@@ -48,7 +48,7 @@ def polyline_intersection(poly1, poly2):
 
 if __name__ == '__main__':
     # unit test
-    assert(polyline_intersection([(-1,-1),(1,1)],[(-1,1),(1,-1)]) == [(0,0)])
-    assert(polyline_intersection([(-2,-2),(1,1)],[(-1,-1),(2,2)]) == [])
-    assert(polyline_intersection([(-1,-1),(-1,1)],[(0,0),(1,1)]) == [])
-    assert(polyline_intersection([(-1,-1),(1,-1),(1,2)],[(0,1),(2,1),(3,2)]) == [(1.0,1.0)])
+    assert(intersection([(-1,-1),(1,1)],[(-1,1),(1,-1)]) == [(0,0)])
+    assert(intersection([(-2,-2),(1,1)],[(-1,-1),(2,2)]) == [])
+    assert(intersection([(-1,-1),(-1,1)],[(0,0),(1,1)]) == [])
+    assert(intersection([(-1,-1),(1,-1),(1,2)],[(0,1),(2,1),(3,2)]) == [(1.0,1.0)])
