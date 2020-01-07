@@ -42,7 +42,7 @@ def intersection(poly1, poly2):
             D = poly2[j + 1]
 
             E = line_intersection((A, B), (C, D))
-            if E:
+            if E and E not in result:
                 result.append(E)
     return result
 
