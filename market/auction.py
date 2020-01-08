@@ -30,6 +30,7 @@ behavior of the auction.  They are
     price_floor   The minimum price accepted in an order (default is 0)
     price_unit    The unit for prices (default is '$/MWh')
     quantity_unit The unit for quantities (default is 'MW')
+    margin        Enables computation of the fraction of the marginal unit
     verbose       Enables verbose output during processing (default is False)
 
 You may change the defaults by setting the value 'default_config', e.g.,
@@ -51,6 +52,7 @@ class auction:
         "price_floor" : 0.0,
         "price_unit" : "$/MWh",
         "quantity_unit" : "MW",
+        "margin" : False,
         "verbose" : False,
     }
 
@@ -135,6 +137,8 @@ class auction:
                 result.append((q0,p0))
             if fill == 'sell' and result[-1][1] != self.get_config("price_cap"):
                 result.append((q0,self.get_config("price_cap")))
+            elif fill == 'buy' and result[-1][1] != self.get_config("price_floor"):
+                result.append((q0,self.get_config("price_floor")))
             return result
         self.buy = cumulative(buy_order,fill='buy')
         self.sell = cumulative(sell_order,fill='sell')
@@ -154,7 +158,9 @@ class auction:
                 self.price = result[0][1]
 
             # compute the clearing margin
-            self.margin = None # TODO
+            if self.config["margin"]:
+                raise Exception("marginal unit dispatch is not supported yet")
+
         self.verbose(f"clear() -> {result}")
         return {"quantity":self.quantity,"price":self.price,"margin":self.margin};
 
