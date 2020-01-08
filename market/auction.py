@@ -1,10 +1,10 @@
 """Auction mechanism implementation
 
-The auction solves buy/sell orders in a double auction.
+The auction solves buy/sell orders in a double auction market.
 
-Order may be added using add_order(quantity,price).
-Buy orders have positive quantities and positive ids.
-Sell orders have negative quantities and negative ids. 
+Orders may be added using add_order(quantity,price).
+Buy orders have positive quantities and return positive ids.
+Sell orders have negative quantities and return negative ids. 
 
 To delete an order, use the order id returned by add_order(quantity,price).
 
@@ -70,21 +70,14 @@ class auction:
         self.verbose(self.config)
 
     def verbose(self,msg):
-        if self.get_config("verbose"):
+        if self.config["verbose"]:
             print(f"auction: {msg}")
-
-    def get_config(self,name):
-        """Get a configuration value"""
-        if name in self.config.keys():
-            return self.config[name]
-        else:
-            return None
 
     def add_order(self,quantity,price):
         """Add an order to the auction"""
-        if price > self.get_config("price_cap"):
+        if price > self.config["price_cap"]:
             raise Exception(f"order price={price} exceeds price_cap")
-        if price < self.get_config("price_floor"):
+        if price < self.config["price_floor"]:
             raise Exception(f"order price={price} below price_floor")
         if quantity < 0:
             self.supply.append((-float(quantity),float(price)))
@@ -97,7 +90,7 @@ class auction:
             self.verbose(f"buy(quantity={quantity},price={price}) -> id = {id}")
             return id
         else:
-            raise Exception("quantity must be non-zero");
+            raise Exception("quantity must be non-zero")
 
     def del_order(id):
         """Delete an order from the auction"""
@@ -121,9 +114,9 @@ class auction:
         def cumulative(curve,fill=None):
             q0 = 0.0
             if fill == 'buy':
-                p0 = self.get_config("price_cap")
+                p0 = self.config["price_cap"]
             elif fill == 'sell':
-                p0 = self.get_config("price_floor")
+                p0 = self.config["price_floor"]
             else:
                 raise Exception("fill={'buy','sell'} not specified")
             result = [(q0,p0)]
@@ -135,10 +128,10 @@ class auction:
                 q0 += order[0]
             if result[-1] != (q0,p0):
                 result.append((q0,p0))
-            if fill == 'sell' and result[-1][1] != self.get_config("price_cap"):
-                result.append((q0,self.get_config("price_cap")))
-            elif fill == 'buy' and result[-1][1] != self.get_config("price_floor"):
-                result.append((q0,self.get_config("price_floor")))
+            if fill == 'sell' and result[-1][1] != self.config["price_cap"]:
+                result.append((q0,self.config["price_cap"]))
+            elif fill == 'buy' and result[-1][1] != self.config["price_floor"]:
+                result.append((q0,self.config["price_floor"]))
             return result
         self.buy = cumulative(buy_order,fill='buy')
         self.sell = cumulative(sell_order,fill='sell')
@@ -154,20 +147,48 @@ class auction:
                 self.quantity = max([x[0] for x in result])
                 self.price = sum([x[1] for x in result])/len(result)
             else: # single clearing point found
-                self.quantity = result[0][0];
+                self.quantity = result[0][0]
                 self.price = result[0][1]
 
             # compute the clearing margin
             if self.config["margin"]:
                 raise Exception("marginal unit dispatch is not supported yet")
+            else:
+                self.margin = None
 
+        result = {"quantity":self.quantity,"price":self.price,"margin":self.margin}
         self.verbose(f"clear() -> {result}")
-        return {"quantity":self.quantity,"price":self.price,"margin":self.margin};
+        return result
+
+    def get_cost(self,order):
+        """Get the cost of an order at the clearing price"""
+        if order < 0 and -order <= len(self.supply):
+            quantity = self.supply[-order+1][0]
+            price = self.supply[-order+1][1]
+            if self.price >= price:
+                result = price * quantity
+            else:
+                result = 0.0
+        elif order > 0 and order <= len(self.demand):
+            quantity = self.demand[order-1][0]
+            price = self.demand[order-1][1]
+            if self.price <= price:
+                result = -(price * quantity)
+            else:
+                result = -0.0
+        else:
+            raise "invalid order id"
+        if self.price == price: # marginal unit
+            if self.margin == None:
+                raise Exception("unable to compute cost of marginal unit unless 'margin'=True")
+            result *= self.margin
+        self.verbose(f"get_cost(order={order}) -> {result}")
+        return result
 
     def plot(self,filename="auction.png",num=None,figsize=(7,5),dpi=160,title='auto'):
         """Plot the market"""
         import matplotlib.pyplot as plt 
-        plt.figure(num=num,figsize=figsize,dpi=dpi);
+        plt.figure(num=num,figsize=figsize,dpi=dpi)
         if self.buy:
             qb = [x[0] for x in self.buy]
             pb = [x[1] for x in self.buy]
@@ -221,6 +242,10 @@ def selftest():
     result = test.clear()
     assert(result["quantity"] == q and result["price"] == p)
     test.plot(title='selftest')
+    for buy in range(len(test.demand)):
+        print(f"Buy {buy+1} = {test.get_cost(buy+1)}")
+    for sell in range(len(test.supply)):
+        print(f"Sell {sell+1} = {test.get_cost(-sell-1)}")
 
 if __name__ == '__main__':
     selftest()
