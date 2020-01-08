@@ -209,17 +209,17 @@ class auction:
         """
         import matplotlib.pyplot as plt 
         plt.figure(num=num,figsize=figsize,dpi=dpi)
-        if self.buy:
+        if type(self.buy) is list:
             qb = [x[0] for x in self.buy]
             pb = [x[1] for x in self.buy]
             self.verbose(f"plot(q={qb},p={pb},'b')")
             plt.plot(qb,pb,'b')
-        if self.sell:
+        if type(self.sell) is list:
             qs = [x[0] for x in self.sell]
             ps = [x[1] for x in self.sell]
             self.verbose(f"plot(q={qs},p={ps},'r')")
             plt.plot(qs,ps,'r')
-        if self.quantity and self.price:
+        if type(self.quantity) is float and type(self.price) is float:
             plt.plot(self.quantity,self.price,'.k')
         plt.xlabel(f"Quantity ({self.config['quantity_unit']})")
         plt.ylabel(f"Price ({self.config['price_unit']})")
