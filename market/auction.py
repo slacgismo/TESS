@@ -112,7 +112,15 @@ class auction:
         else:
             raise Exception(f"fill='{fill}' is invalid")
 
-    def del_order(id):
+    def get_order(self,id):
+        if id < 0 and -id+1 < len(self.supply):
+            return self.supply[-id+1]
+        elif id > 0 and id-1 < len(self.demand):
+            return self.demand[id-1]
+        else:
+            raise Exception("order id is invalid")
+
+    def del_order(self,id):
         """Delete an order from the auction"""
         if id < 0 and -id+1 < len(self.supply):
             del self.supply[-id+1]
