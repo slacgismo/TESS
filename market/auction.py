@@ -153,24 +153,18 @@ class auction:
             # compute the clearing margin
             if self.config["margin"]:
                 def find_margin(curve):
-                    # print(f"self.price = {self.price}, self.quantity = {self.quantity}")
                     for n in range(1,len(curve),2):
-                        # print(f"n={n}: curve[{n}] = {curve[n]}")
                         if curve[n][1] == self.price:
                             num = self.quantity
                             den = curve[n][0]
-                            # print(f"n={n}: num={num}, den={den}")
                             if n > 1:
                                 num -= curve[n-2][0]
                                 den -= curve[n-2][0]
-                                # print(f"n>0 -> num={num}, den={den}")
                             return num/den
                     return None
                 self.margin = find_margin(self.buy)
-                # print(f"buy margin {self.margin}")
                 if self.margin == None:
                     self.margin= find_margin(self.sell)
-                    # print(f"sell margin {self.margin}")
             else:
                 self.margin = None
 
