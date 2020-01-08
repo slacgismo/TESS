@@ -152,7 +152,25 @@ class auction:
 
             # compute the clearing margin
             if self.config["margin"]:
-                raise Exception("marginal unit dispatch is not supported yet")
+                def find_margin(curve):
+                    # print(f"self.price = {self.price}, self.quantity = {self.quantity}")
+                    for n in range(1,len(curve),2):
+                        # print(f"n={n}: curve[{n}] = {curve[n]}")
+                        if curve[n][1] == self.price:
+                            num = self.quantity
+                            den = curve[n][0]
+                            # print(f"n={n}: num={num}, den={den}")
+                            if n > 1:
+                                num -= curve[n-2][0]
+                                den -= curve[n-2][0]
+                                # print(f"n>0 -> num={num}, den={den}")
+                            return num/den
+                    return None
+                self.margin = find_margin(self.buy)
+                # print(f"buy margin {self.margin}")
+                if self.margin == None:
+                    self.margin= find_margin(self.sell)
+                    # print(f"sell margin {self.margin}")
             else:
                 self.margin = None
 
@@ -163,8 +181,8 @@ class auction:
     def get_cost(self,order):
         """Get the cost of an order at the clearing price"""
         if order < 0 and -order <= len(self.supply):
-            quantity = self.supply[-order+1][0]
-            price = self.supply[-order+1][1]
+            quantity = self.supply[-order-1][0]
+            price = self.supply[-order-1][1]
             if self.price >= price:
                 result = price * quantity
             else:
@@ -213,7 +231,7 @@ class auction:
 def selftest():
 
     # create simple auction
-    test = auction(price_cap=100.0)
+    test = auction(price_cap=100.0,margin=True,verbose=False)
 
     import random
     q = random.randrange(7,10)
@@ -242,10 +260,21 @@ def selftest():
     result = test.clear()
     assert(result["quantity"] == q and result["price"] == p)
     test.plot(title='selftest')
-    for buy in range(len(test.demand)):
-        print(f"Buy {buy+1} = {test.get_cost(buy+1)}")
-    for sell in range(len(test.supply)):
-        print(f"Sell {sell+1} = {test.get_cost(-sell-1)}")
+
+    # cost output
+    print("Order   Cost")
+    print("----- --------")
+    total = 0.0
+    for buy in range(1,len(test.demand)+1):
+        cost = test.get_cost(buy)
+        total += cost
+        print("%5d %8.2f" % (buy,cost))
+    for sell in range(-1,-len(test.supply)-1,-1):
+        cost = test.get_cost(sell)
+        total += cost
+        print("%5d %8.2f" % (sell,cost))
+    print("----- --------")
+    print("Total %8.2f" %(total))
 
 if __name__ == '__main__':
     selftest()
