@@ -52,7 +52,7 @@ class auction:
         "price_floor" : 0.0,
         "price_unit" : "$/MWh",
         "quantity_unit" : "MW",
-        "margin" : False,
+        "margin" : True,
         "verbose" : False,
     }
 
@@ -231,7 +231,7 @@ class auction:
 def selftest():
 
     # create simple auction
-    test = auction(price_cap=100.0,margin=True,verbose=False)
+    test = auction(price_cap=100.0)
 
     import random
     q = random.randrange(7,10)
