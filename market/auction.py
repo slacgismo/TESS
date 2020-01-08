@@ -255,20 +255,15 @@ def selftest():
     assert(result["quantity"] == q and result["price"] == p)
     test.plot(title='selftest')
 
-    # cost output
-    print("Order   Cost")
-    print("----- --------")
+    # cost check
     total = 0.0
     for buy in range(1,len(test.demand)+1):
         cost = test.get_cost(buy)
         total += cost
-        print("%5d %8.2f" % (buy,cost))
     for sell in range(-1,-len(test.supply)-1,-1):
         cost = test.get_cost(sell)
         total += cost
-        print("%5d %8.2f" % (sell,cost))
-    print("----- --------")
-    print("Total %8.2f" %(total))
+    assert(total == -(q-6)*100 -6*30 + (test.quantity-6)*test.price)
 
 if __name__ == '__main__':
     selftest()
