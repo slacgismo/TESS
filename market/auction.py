@@ -197,8 +197,16 @@ class auction:
         self.verbose(f"get_cost(order={order}) -> {result}")
         return result
 
-    def plot(self,filename="auction.png",num=None,figsize=(7,5),dpi=160,title='auto'):
-        """Plot the market"""
+    def plot(self,filename=None,num=None,figsize=(7,5),dpi=160,title='auto'):
+        """Plot the market
+
+        Parameters:
+            filename    specifies the file to save, default is use `show()`
+            num         specifies the figure number to use, default is `None`
+            figsize     specifies the figure size, default is `(7,5)`
+            dpi         specifies the figure resolution, default is `160`
+            title       specifies the image title, default is `auto`
+        """
         import matplotlib.pyplot as plt 
         plt.figure(num=num,figsize=figsize,dpi=dpi)
         if self.buy:
@@ -218,9 +226,12 @@ class auction:
         plt.grid()
         if title:
             if title == 'auto':
-                title = f"Auction {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\nClears {self.quantity} {self.config['quantity_unit']} at {self.price} {self.config['price_unit']}"
+                title = f"Auction {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\nClears {self.quantity} {self.config['quantity_unit']} at {self.price} {self.config['price_unit']} with a {self.margin} margin"
             plt.title(title)
-        plt.savefig(filename)
+        if filename:
+            plt.savefig(filename)
+        else:
+            plt.show()
 
 def selftest():
 
