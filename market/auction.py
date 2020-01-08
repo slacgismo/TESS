@@ -92,6 +92,26 @@ class auction:
         else:
             raise Exception("quantity must be non-zero")
 
+    def orders(self,fill='both'):
+        """Obtain list of buy and sell orders
+
+        Parameters:
+            fill    Specifies which order list to return (default is 'both')
+        Returns
+            range   When fill='buy' or fill='sell'
+            dict    When fill=`both`
+        """
+        buys = range(1,len(self.demand)+1,1)
+        sells = range(-1,-len(self.supply)-1,-1)
+        if fill == 'buy':
+            return buys
+        elif fill == 'sell':
+            return sells
+        elif fill == 'both':
+            return {"buy":buys,"sell":sells}
+        else:
+            raise Exception(f"fill='{fill}' is invalid")
+
     def del_order(id):
         """Delete an order from the auction"""
         if id < 0 and -id+1 < len(self.supply):
@@ -178,14 +198,14 @@ class auction:
             quantity = self.supply[-order-1][0]
             price = self.supply[-order-1][1]
             if self.price >= price:
-                result = price * quantity
+                result = self.price * quantity
             else:
                 result = 0.0
         elif order > 0 and order <= len(self.demand):
             quantity = self.demand[order-1][0]
             price = self.demand[order-1][1]
             if self.price <= price:
-                result = -(price * quantity)
+                result = -(self.price * quantity)
             else:
                 result = -0.0
         else:
@@ -236,7 +256,7 @@ class auction:
 def selftest():
 
     # create simple auction
-    test = auction(price_cap=100.0)
+    test = auction(price_cap=100.0,verbose=False)
 
     import random
     q = random.randrange(7,10)
@@ -264,17 +284,19 @@ def selftest():
     test.verbose(f"(q,p) = {(q,p)}")
     result = test.clear()
     assert(result["quantity"] == q and result["price"] == p)
-    test.plot(title='selftest')
+    test.plot(title='selftest',filename='auction.png')
 
     # cost check
     total = 0.0
-    for buy in range(1,len(test.demand)+1):
+    for buy in test.orders(fill='buy'):
         cost = test.get_cost(buy)
         total += cost
-    for sell in range(-1,-len(test.supply)-1,-1):
+        test.verbose(f"buy {buy}: {cost} -> {total}")
+    for sell in test.orders(fill='sell'):
         cost = test.get_cost(sell)
         total += cost
-    assert(total == -(q-6)*100 -6*30 + (test.quantity-6)*test.price)
+        test.verbose(f"sell {sell}: {cost} -> {total}")
+    assert(total == 0)
 
 if __name__ == '__main__':
     selftest()
