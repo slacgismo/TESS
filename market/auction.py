@@ -47,6 +47,8 @@ except:
 
 class auction:
 
+    version = 1.0
+
     default_config = {
         "price_cap" : 10000.0,
         "price_floor" : 0.0,
@@ -261,7 +263,7 @@ class auction:
         else:
             plt.show()
 
-def selftest():
+def selftest(save_plot=None):
 
     # create simple auction
     test = auction(price_cap=100.0,verbose=False)
@@ -292,7 +294,8 @@ def selftest():
     test.verbose(f"(q,p) = {(q,p)}")
     result = test.clear()
     assert(result["quantity"] == q and result["price"] == p)
-    test.plot(title='selftest',filename='auction.png')
+    if save_plot:
+        test.plot(title='selftest',filename=save_plot)
 
     # cost check
     total = 0.0
@@ -308,3 +311,5 @@ def selftest():
 
 if __name__ == '__main__':
     selftest()
+    
+print(f"TESS Auction {auction().version}\nCopyright (C) 2020 Regents of the Leland Stanford Junior University")
