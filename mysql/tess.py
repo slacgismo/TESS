@@ -53,12 +53,11 @@ import sys, os
 assert(sys.version_info.major>2)
 
 import pymysql as mysql
-try:
-	import config
-except:
-	import mysql.config as config
 import json
 import datetime
+import mysql.default_config as default_config
+
+config = default_config
 
 module = sys.modules[__name__]
 module_path = "/".join(__file__.split(os.path.sep)[0:-2])
@@ -109,6 +108,28 @@ def debug(level,*args):
 
 ################################################################################
 #
+# CONFIG
+#
+################################################################################
+def use_config(new_config=None):
+	global config
+	if new_config == None:
+		config = default_config
+	else:
+		config = new_config
+	# setup the configured database automatically, if not already done
+	set_connection()
+	if not get_database():
+		debug(0,f"running first time setup of {config.schema_name} database")
+		add_database()
+	set_database()
+	debug(0,f"selected database '{database}'")
+	if not find_system():
+		run_script(f"{module_path}/mysql/initialize_database.sql",connection=admin)
+		debug(0,f"first time setup of {config.schema_name} database finished ok")
+
+################################################################################
+#
 # CONNECTION
 #
 ################################################################################
@@ -123,31 +144,21 @@ def get_connection():
 	debug(0,f"get_connection(...)",result)
 	return result
 
-def set_connection(local=True):
+def set_connection():
 	"""Connect to the database
 
 	Parameters:
 	  local <bool> - specify the local instance (default is True)
 	"""
-	debug(0,f"set_connection(local={local})")
+	debug(0,f"set_connection()")
 	global user
 	global admin
 	old = get_connection()
-	if local:
-		debug(0,f"connecting to local mysql server")
-		user = mysql.connect(**config.local)
-		admin = mysql.connect(**config.local_a)
-	else:
-		debug(0,f"connecting to remote mysql server")
-		user = mysql.connect(**config.remote)
-		admin = mysql.connect(**config.remote_a)
+	debug(0,f"connecting to mysql server")
+	user = mysql.connect(**config.user)
+	admin = mysql.connect(**config.admin)
 	debug(0,f"set_connection(...)",old)
 	return old
-
-if __name__ == '__main__':
-	set_connection(local=True)
-else:
-	set_connection(local=False)
 
 ################################################################################
 #
@@ -156,19 +167,20 @@ else:
 ################################################################################
 database = None
 
-def add_database(schema=config.schema_name):
+def add_database(schema=None):
 	""" Create the database
 
 	This can only be run if the database does not exist already to protect an 
 	existing database from accidental damage.
 	"""
+	if schema == None: schema = config.schema_name
 	debug(1,f"add_database(schema='{schema}')")
-	run_query(f"CREATE DATABASE `{schema}` DEFAULT CHARACTER SET utf8mb4 "
-		+ "COLLATE utf8mb4_0900_ai_ci",connection=admin)
+	run_query(f"CREATE DATABASE `{schema}` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci",connection=admin)
 	run_script(f"{module_path}/mysql/create_schema.sql",connection=admin,schema=schema)
 	debug(1,f"add_database(...)",None)
 
-def set_database(schema=config.schema_name):
+def set_database(schema=None):
+	if schema == None: schema = config.schema_name
 	global database
 	debug(1,f"set_database(schema='{schema}')")
 	result = database
@@ -189,7 +201,8 @@ def get_database(schema=None):
 	debug(1,f"get_database(...) -> {result}")
 	return result
 
-def del_database(schema=config.schema_name):
+def del_database(schema=None):
+	if schema == None: schema = config.schema_name
 	debug(1,f"del_database(schema='{schema}')")
 	result = run_query(f"DROP SCHEMA IF EXISTS `{schema}`;",connection=admin)
 	debug(1,f"del_database(...)",result)
@@ -622,8 +635,9 @@ def get_system(system_id,use_throw=False):
 	debug(1,f"get_system(...)",result)
 	return result
 
-def find_system(name=config.system_name,use_throw=False):
+def find_system(name=None,use_throw=False):
 	debug(1,f"find_system(name='{name}')")
+	if name == None: name = config.system_name
 	try:
 		result = run_query(f"SELECT * FROM `{database}`.`system` WHERE `name` = '{name}' ORDER BY `created` DESC LIMIT 1")
 	except:
@@ -805,7 +819,7 @@ def get_billing(user_id,starting,ending):
 # MYSQL CALLS
 #
 ################################################################################
-def run_query(query,connection=user):
+def run_query(query,connection=None):
 	"""Run a MySQL query on a connection
 
 	Parameters:
@@ -831,6 +845,7 @@ def run_query(query,connection=user):
 			"rows_affected" : <int>,
 		}
 	"""
+	if connection == None: connection = user
 	debug(2,f"run_query(query='{query}',connection={connection})")
 	connection.begin()
 	try:
@@ -870,7 +885,7 @@ def run_query(query,connection=user):
 		connection.rollback()
 		raise
 
-def run_script(filename,connection=user,schema=None):
+def run_script(filename,connection=None,schema=None):
 	"""Run a MySQL script
 
 	Parameters:
@@ -881,9 +896,9 @@ def run_script(filename,connection=user,schema=None):
 	Returns:
 		<int> - the total number of rows affected
 	"""
+	if connection == None: connection = user
+	if schema == None: schema = database
 	debug(2,f"run_script(filename='{filename}',connection={connection},schema='{schema}')")
-	if schema == None:
-		schema = database
 	if not schema == None:
 		connection.select_db(schema)
 	rows_affected = 0
@@ -910,11 +925,11 @@ def run_script(filename,connection=user,schema=None):
 	debug(2,f"run_script(...)",rows_affected)
 	return rows_affected
 
-def make_insert(table,data,connection=user,schema=None):
+def make_insert(table,data,connection=None,schema=None):
 	"""Build a MySQL INSERT query"""
+	if connection == None: connection = user
+	if schema == None: schema = database
 	debug(2,f"make_insert(table='{table}',data={data},schema='{schema}')")
-	if schema == None:
-		schema = database
 	if not schema == None:
 		connection.select_db(schema)
 	columns = []
@@ -931,8 +946,10 @@ def make_insert(table,data,connection=user,schema=None):
 	debug(2,f"make_insert(...) -> {query}")
 	return query
 
-def make_select(table,key,value,connection=user,schema=None):
+def make_select(table,key,value,connection=None,schema=None):
 	"""Build a MySQL SELECT query"""
+	if connection == None: connection = user
+	if schema == None: schema = database
 	debug(2,f"make_select(table={table},key={key},value={value})")
 	if schema == None:
 		schema = database
@@ -951,13 +968,3 @@ def make_select(table,key,value,connection=user,schema=None):
 		result = f"SELECT * FROM `{table}` WHERE {' AND '.join(where)} ORDER BY `{table}_id` DESC LIMIT 1"
 	debug(2,f"make_select(...)",result)
 	return result
-
-# setup the configured database automatically, if not already done
-if not get_database():
-	debug(0,f"running first time setup of {config.schema_name} database")
-	add_database()
-set_database()
-debug(0,f"selected database '{database}'")
-if not find_system():
-	run_script("initialize_database.sql",connection=admin)
-	debug(0,f"first time setup of {schema_name} database finished ok")

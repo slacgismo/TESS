@@ -70,8 +70,8 @@ INSERT INTO `tess`.`meter` (`device_id`,`price_id`,`quantity`) VALUES
 	(@hce_feeder_id,@hce_initial_price_id,0.0);
 SET @hce_initial_meter_id = LAST_INSERT_ID();
 
-INSERT INTO `tess`.`transaction` (`user_id`,`amount`,`balance`) VALUES
-	(@hce_operator_id,0,0);
+INSERT INTO `tess`.`transaction` (`meter_id`,`amount`,`balance`) VALUES
+	(@hce_initial_meter_id,0,0);
     
 INSERT INTO `tess`.`token` (`user_id`) VALUES
 	(@hce_admin_id),
