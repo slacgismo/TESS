@@ -13,7 +13,7 @@ import pymysql as my;
 import config;
 import json;
 
-debug_level = [0,9];
+debug_level = [-1,-1] #[0,9];
 
 module = sys.modules[__name__];
 module_name = __file__.split(os.path.sep)[-1][:-3];
