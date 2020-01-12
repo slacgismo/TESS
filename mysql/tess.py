@@ -133,14 +133,16 @@ def use_config(new_config=None):
 # CONNECTION
 #
 ################################################################################
+root = None
 user = None
 admin = None
 
 def get_connection():
 	debug(0,f"get_connection()")
+	global root
 	global user
 	global admin
-	result = {"user":user,"admin":admin}
+	result = {"root":root, "user":user,"admin":admin}
 	debug(0,f"get_connection(...)",result)
 	return result
 
@@ -155,8 +157,15 @@ def set_connection():
 	global admin
 	old = get_connection()
 	debug(0,f"connecting to mysql server")
+	try :
+		admin = mysql.connect(**config.admin)
+	except:
+		global root
+		debug(1,f"'{config.root['user']}'@'{config.root['host']}' connecting...")
+		root = mysql.connect(**config.root)
+		run_script(f"{module_path}/mysql/create_users.sql",connection=root)
+		admin = mysql.connect(**config.admin)			
 	user = mysql.connect(**config.user)
-	admin = mysql.connect(**config.admin)
 	debug(0,f"set_connection(...)",old)
 	return old
 
