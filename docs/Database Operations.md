@@ -1,4 +1,6 @@
-Requires database operations are implemented in the `database` module.  Note that most table are immutable. This means that changing the current value is actually a `INSERT` operation in the database.  
+Requires database operations are implemented in the `database` module.  
+
+Note that most tables are immutable. This means that changing the current value is actually a `INSERT` operation in the database.  Operations that guarantee table immutability are referred to as *conformant*. Operations that do not guarantee table immutability are referred to as *non-conformant*. Non-conformant operation must be logged to preserve a record of table integrity.
 
 # Conformant table operations
 
@@ -6,19 +8,21 @@ In general there are four operations allowed on tables:
 
 ## `add`
 
-The `add` operation is required to define a new entry in a table. Because all data is immutable and it must be possible to obtain the complete state of the system for any given time in the past, all `set` operations are implemented as `add` operations with table-specific semantics considered, e.g., `add` may require non-existence of a field value, and `set` may require existence of a field value.
+The `add` operation defines a new entry in a table. Because all data is immutable and it must be possible to obtain the complete state of the system for any given time in the past, all `set` operations are implemented as `add` operations with table-specific semantics considered, e.g., `add` may require non-existence of a field value, and `set` may require existence of a field value.
 
 ## `get`
 
-The `get` operation is required to get the data for an existing entry in a table. 
+The `get` operation obtains the data for an existing entry in a table. 
 
 ## `find`
 
-The `find` operation is required to obtained the record id for an entry in a table.  By default, `find` operations obtain the most recently added entry that matches. If the date and time have been changed using the `set_clock` operation, `get` operations obtain the value that was in effect at the time.
+The `find` operation obtains the record id for an entry in a table.  By default, `find` operations obtain the most recently added entry that matches the search criteria. The result must be unique. If the result is empty, the return value is None. If the result is non-unique, the search fails with the error "result is not unique".
+
+If the date and time have been changed using the `set_clock` operation, `find` operations obtain the record id that was in effect at the time.
 
 ## `set`
 
-The `set` operation implements changes to existing entries in a table but submitting a new entry with a more recent `created` date/time.  A `set` operation does not change an existing record.
+The `set` operation implements changes to existing entries in a table. A set oeration inserts a new entry with a more recent `created` date/time.  A `set` operation cannot change an existing record.
 
 
 # Non-conformant table operations
