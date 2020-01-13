@@ -39,11 +39,12 @@ You may change the defaults by setting the value 'default_config', e.g.,
 
 """
 
+import sys
+import os
 import datetime
-try:
-    import market.polyline as polyline
-except:
-    import polyline
+
+import market.polyline
+from mysql.tess import database
 
 class auction:
 
@@ -56,6 +57,7 @@ class auction:
         "quantity_unit" : "MW",
         "margin" : True,
         "verbose" : False,
+        "database" : None,
     }
 
     def __init__(self,**kwargs):
@@ -69,6 +71,8 @@ class auction:
         self.price = None
         self.quantity = None
         self.margin = None
+        if self.config["database"]:
+            self.database = database.connect(self.config["database"])
         self.verbose(self.config)
 
     def verbose(self,msg):
@@ -266,7 +270,12 @@ class auction:
 def selftest(save_plot=None):
 
     # create simple auction
-    test = auction(price_cap=100.0,verbose=False)
+    test = auction(database={
+            'user' : "tess",
+            'password' : "slacgismo",
+            'host' : "localhost",
+            'port' : 3306},
+        verbose=True)
 
     import random
     q = random.randrange(7,10)
@@ -311,5 +320,5 @@ def selftest(save_plot=None):
 
 if __name__ == '__main__':
     selftest()
-    
+
 print(f"TESS Auction {auction().version}\nCopyright (C) 2020 Regents of the Leland Stanford Junior University")

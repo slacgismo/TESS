@@ -2,7 +2,7 @@
 
 Configure the TESS database operations
 """
-debug_level = 9 # None, or <int> >= 0
+debug_level = None # None, or <int> >= 0
 schema_name = "tess"
 system_name = "HCE"
 
@@ -11,7 +11,7 @@ system_name = "HCE"
 #
 root = {
 	'user' : "root",
-	'password' : "slacgismo",
+	'password' : "lmnj4ever",
 	'host' : "localhost",
 	'port' : 3306,
 }
