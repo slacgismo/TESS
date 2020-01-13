@@ -32,14 +32,14 @@ SET @hce_storage_resource = LAST_INSERT_ID();
 #
 # Define HCE users `admin` and `operator`
 #
-INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`) VALUES
-	(@hce_system_id,"dchassin","ADMINISTRATOR","dchassin@slac.stanford.edu");
+INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`,`sha1pwd`) VALUES
+	(@hce_system_id,"dchassin","ADMINISTRATOR","dchassin@slac.stanford.edu",sha1("slacgismo"));
 SET @hce_admin_id = LAST_INSERT_ID();
-INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`) VALUES
-	(@hce_system_id,"cbilby","OPERATOR","cbilby@holycross.com");
+INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`,`sha1pwd`) VALUES
+	(@hce_system_id,"cbilby","OPERATOR","cbilby@holycross.com",sha1("slacgismo"));
 SET @hce_operator_id = LAST_INSERT_ID();
-INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`) VALUES
-	(@hce_system_id,"cbilby","ACCOUNTING","cbilby@holycross.com");
+INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`,`sha1pwd`) VALUES
+	(@hce_system_id,"cbilby","ACCOUNTING","cbilby@holycross.com",sha1("slacgismo"));
 SET @hce_operator_id = LAST_INSERT_ID();
 
 #

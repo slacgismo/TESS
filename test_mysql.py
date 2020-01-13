@@ -40,7 +40,7 @@ system_name = "test"
 system_id = mysql.add_system(name=system_name)
 
 # get system id
-assert(mysql.find_system(name=system_name)["data"][0]["system_id"] == system_id)
+assert(mysql.find_system(name=system_name) == system_id)
 assert(mysql.get_system(system_id=system_id)["name"] == system_name)
 mysql.debug(-1,"system test ok",system_id)
 

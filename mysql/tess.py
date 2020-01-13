@@ -649,12 +649,13 @@ def find_system(name=None,use_throw=False):
 	if name == None: name = config.system_name
 	try:
 		result = run_query(f"SELECT * FROM `{database}`.`system` WHERE `name` = '{name}' ORDER BY `created` DESC LIMIT 1")
+		system_id = result["data"][0]["system_id"]
 	except:
 		if use_throw: 
 			raise Exception("system not found")
-		result = None
-	debug(1,f"find_system(...)",result)
-	return result
+		system_id = None
+	debug(1,f"find_system(...)",system_id)
+	return system_id
 
 def set_system(**kwargs):
 	raise Exception("set_system() not allowed")
@@ -758,7 +759,7 @@ def set_transaction(**kwargs):
 ################################################################################
 def add_user(system_id,name,email,password,role="CUSTOMER"):
 	debug(1,f"create_user(name='{name}',email='{email}',pwd='{password}')")
-	result = run_query(f"INSERT `user` (`system_id`,`name`,`role`,`email`,`sha1pwd`) VALUES ({system_id},'{name}','CUSTOMER','{email}',SHA1('{password}'));",connection=admin)
+	result = run_query(f"INSERT `{database}`.`user` (`system_id`,`name`,`role`,`email`,`sha1pwd`) VALUES ({system_id},'{name}','{role}','{email}',SHA1('{password}'));",connection=admin)
 	user_id = result["last_insert_id"]
 	debug(1,f"create_user(...)",user_id)
 	return user_id
@@ -766,27 +767,29 @@ def add_user(system_id,name,email,password,role="CUSTOMER"):
 def get_user(user_id,password=None,use_throw=False):
 	debug(1,f"get_user(user_id={user_id},password='{password}')")
 	if password is None:
-		result = run_query(f"SELECT * FROM `user` WHERE `user_id` = '{user_id}' ORDER BY CREATED DESC LIMIT 1")
+		result = run_query(f"SELECT * FROM `{database}`.`user` WHERE `user_id` = '{user_id}' ORDER BY CREATED DESC LIMIT 1")
 	else:
-		result = run_query(f"SELECT * FROM `user` WHERE `user_id` = '{user_id}' AND SHA1('{password}') = `sha1pwd` ORDER BY CREATED DESC LIMIT 1")
+		result = run_query(f"SELECT * FROM `{database}`.`user` WHERE `user_id` = '{user_id}' AND SHA1('{password}') = `sha1pwd` ORDER BY CREATED DESC LIMIT 1")
 	try:
+		if not result["data"]:
+			data = None
 		data = result["data"][0]
 	except:
-		if use_throw:
-			raise Exception("user not found")
 		data = None
+	if data == None and use_throw:
+		raise Exception("user not found")
 	debug(1,f"get_user(...)",data)
 	return data
 
 def find_user(name,use_throw=False):
 	debug(1,f"find_user(name='{name}')")
-	result = run_query(f"SELECT * FROM `user` WHERE `name` = '{name}' ORDER BY `created` DESC LIMIT 1")
+	result = run_query(f"SELECT * FROM `{database}`.`user` WHERE `name` = '{name}' ORDER BY `created` DESC LIMIT 1")
 	try:
 		user_id = result["data"][0]["user_id"]
-	except:
-		if use_throw:
-			raise Exception("user not found")
+	except:		
 		user_id = None
+	if not user_id and use_throw:
+		raise Exception("user not found")
 	debug(1,f"find_user(...)",user_id)
 	return user_id
 
@@ -814,7 +817,7 @@ def get_timeseries(resource_id,
 		data <dict> - indexed by time as a tuple in order of <item>
 	"""
 	debug(1,f"get_timeseries(resource_id={resource_id},items={items},starting={starting},ending={ending},use_throw={use_throw})")
-	result = run_query(f"SELECT `created`,`quantity`,`price`,`margin` FROM `price` WHERE `resource_id` = {resource_id} AND `created` BETWEEN '{starting}' AND '{ending}' ORDER BY `price_id` ASC,`created` ASC")
+	result = run_query(f"SELECT `created`,`quantity`,`price`,`margin` FROM `{database}`.`price` WHERE `resource_id` = {resource_id} AND `created` BETWEEN '{starting}' AND '{ending}' ORDER BY `price_id` ASC,`created` ASC")
 	data = result["data"]
 	debug(1,f"get_timeseries(...)",data)
 	return data
@@ -965,7 +968,7 @@ def make_select(table,key,value,connection=None,schema=None):
 	if not schema == None:
 		connection.select_db(schema)
 	if type(key) is str:
-		result = f"SELECT * FROM `{table}` WHERE `{key}` = '{value}' ORDER BY `{table}_id` DESC LIMIT 1"
+		result = f"SELECT * FROM `{database}`.`{table}` WHERE `{key}` = '{value}' ORDER BY `{table}_id` DESC LIMIT 1"
 	else:
 		where = []
 		for n,v in dict(zip(key,value)).items():
@@ -974,6 +977,6 @@ def make_select(table,key,value,connection=None,schema=None):
 			else:
 				v = f"'{v}'"
 			where.append(f"`{n}`={v}")
-		result = f"SELECT * FROM `{table}` WHERE {' AND '.join(where)} ORDER BY `{table}_id` DESC LIMIT 1"
+		result = f"SELECT * FROM `{database}`.`{table}` WHERE {' AND '.join(where)} ORDER BY `{table}_id` DESC LIMIT 1"
 	debug(2,f"make_select(...)",result)
 	return result
