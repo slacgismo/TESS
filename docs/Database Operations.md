@@ -1,6 +1,6 @@
 Requires database operations are implemented in the `database` module.  
 
-Note that most tables are immutable. This means that changing the current value is actually a `INSERT` operation in the database.  Operations that guarantee table immutability are referred to as *conformant*. Operations that do not guarantee table immutability are referred to as *non-conformant*. Non-conformant operation must be logged to preserve a record of table integrity.
+Note that most table data entries are immutable. This means that changing the current value is actually an `INSERT` operation in the database.  Operations that guarantee table immutability are referred to as *conformant*. Operations that do not guarantee table immutability are referred to as *non-conformant*. Non-conformant operation must be logged to preserve a record of table integrity.
 
 # Conformant table operations
 
