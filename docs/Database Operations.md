@@ -6,11 +6,11 @@ In general there are four operations allowed on tables:
 
 ## `add`
 
-The `add` operation is required to define a new entry in a table. Because all data is immutable and it must be possible to obtain the complete state of the system for any given time in the past, all `set` operations are implemented as `add` operations.
+The `add` operation is required to define a new entry in a table. Because all data is immutable and it must be possible to obtain the complete state of the system for any given time in the past, all `set` operations are implemented as `add` operations with table-specific semantics considered, e.g., `add` may require non-existence of a field value, and `set` may require existence of a field value.
 
 ## `get`
 
-The `get` operation is required to get an existing entry in a table. By default, `get` operations obtain the most recently added entry. If the date and time have been changed using the `set_clock` operation, `get` operations obtain the value that was in effect at the time.
+The `get` operation is required to get the data for an existing entry in a table. 
 
 ## `find`
 
@@ -18,7 +18,7 @@ The `find` operation is required to obtained the record id for an entry in a tab
 
 ## `set`
 
-The `set` operation implements changes to existing entries in a table but submitting a new entry with a more recent `created` date/time.  Under no circumstances is a `set` operation allowed to change an existing record.
+The `set` operation implements changes to existing entries in a table but submitting a new entry with a more recent `created` date/time.  A `set` operation does not change an existing record.
 
 
 # Non-conformant table operations
@@ -61,10 +61,10 @@ The `config` table stores data related to the general system configuration.
 
 ## `add_config`
 ~~~
-add_config(name,initial_value)
+add_config(name,value)
 ~~~
 
-The `add_config` operation creates a new configuration variable.
+The `add_config` operation creates a new configuration variable. If the variable exists, the `add_config` operation fails with the error "{name} exists"
 
 The initial variables defined for TESS operations are the following:
 
@@ -79,17 +79,24 @@ The initial variables defined for TESS operations are the following:
 
 ## `get_config`
 ~~~
-get_config(name)
+get_config(config_id)
 ~~~
 
-The `get_config` operation gets the current value of a configuration variable.  If the `set_clock` operation has been used, the value obtained will be for the datetime specified.
+The `get_config` operation gets the value for the specified `config_id`.  
+
+## `find_config`
+~~~
+find_config(name)
+~~~
+
+The `find_config` operation obtains the current value of the config variable `name`. If the `set_clock` operation has been used, the value obtained will be for the datetime specified.
 
 ## `set_config`
 ~~~
-set_config(name,new_value)
+set_config(name,value)
 ~~~
 
-The `set_config` operation sets the current value of a configuration variable.
+The `set_config` operation sets the current value of a configuration variable. If the config entry `name` does not exist the operation fails with the error "{name} not found"
 
 
 # Device
