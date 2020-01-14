@@ -98,12 +98,9 @@ CREATE TABLE
         `unique_id` VARCHAR(32) NOT NULL,
         `is_valid` ENUM ('False','True') DEFAULT 'True',
 		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		CONSTRAINT `fk_token_userid` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) 
-            ON DELETE CASCADE 
-            ON UPDATE RESTRICT,
         UNIQUE INDEX `u_token_uniqueid` (`unique_id` ASC),
         INDEX `i_token_userid_created` (`user_id` ASC, `created` DESC),
-        CONSTRAINT `fk_token_userid` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) 
+		CONSTRAINT `fk_token_userid` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) 
             ON DELETE CASCADE 
             ON UPDATE RESTRICT,
         PRIMARY KEY (`token_id` ASC)
