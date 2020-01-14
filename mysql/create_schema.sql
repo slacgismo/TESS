@@ -81,7 +81,7 @@ CREATE TABLE
 		CONSTRAINT `fk_device_userid` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) 
             ON DELETE CASCADE 
             ON UPDATE RESTRICT,
-         PRIMARY KEY (`device_id` ASC)
+        PRIMARY KEY (`device_id` ASC)
    )
     ENGINE=InnoDB 
     DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -103,6 +103,9 @@ CREATE TABLE
             ON UPDATE RESTRICT,
         UNIQUE INDEX `u_token_uniqueid` (`unique_id` ASC),
         INDEX `i_token_userid_created` (`user_id` ASC, `created` DESC),
+        CONSTRAINT `fk_token_userid` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) 
+            ON DELETE CASCADE 
+            ON UPDATE RESTRICT,
         PRIMARY KEY (`token_id` ASC)
     )
     ENGINE=InnoDB
