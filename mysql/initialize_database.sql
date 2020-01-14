@@ -46,8 +46,8 @@ SET @hce_feeder_id = LAST_INSERT_ID();
 #    
 INSERT INTO `tess`.`token` (`user_id`) VALUES
 	(@hce_admin_id),
-    (@hce_operator_id),
-    (@hce_accounting_id),
-    (@hce_testuser1_id),
-    (@hce_testuser2_id),
-    (@hce_testuser3_id);
+	(@hce_operator_id),
+	(@hce_accounting_id),
+	(@hce_testuser1_id),
+	(@hce_testuser2_id),
+	(@hce_testuser3_id);
