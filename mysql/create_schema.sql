@@ -39,7 +39,7 @@ CREATE TABLE
         UNIQUE INDEX `u_resource_systemid_name` (`system_id` ASC, `name` ASC),
 		CONSTRAINT `fk_resource_systemid` FOREIGN KEY (`system_id`) REFERENCES `system` (`system_id`) 
             ON DELETE CASCADE 
-            ON UPDATE RESTRICT,
+            ON UPDATE CASCADE,
         PRIMARY KEY (`resource_id` ASC)
     )
     ENGINE=InnoDB 
@@ -60,7 +60,7 @@ CREATE TABLE
         `sha1pwd` TEXT DEFAULT NULL,
         UNIQUE INDEX `u_user_systemid_name` (`system_id` ASC, `name` ASC),
 		CONSTRAINT `fk_user_systemid` FOREIGN KEY (`system_id`) REFERENCES `system` (`system_id`) 
-            ON DELETE CASCADE 
+            ON DELETE RESTRICT 
             ON UPDATE RESTRICT,
         PRIMARY KEY (`user_id` ASC)
     )
@@ -79,7 +79,7 @@ CREATE TABLE
         `name` VARCHAR(32) NOT NULL,
         UNIQUE INDEX `u_device_deviceid_userid_name` (`device_id` ASC, `user_id` ASC, `name` ASC),
 		CONSTRAINT `fk_device_userid` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) 
-            ON DELETE CASCADE 
+            ON DELETE RESTRICT 
             ON UPDATE RESTRICT,
         PRIMARY KEY (`device_id` ASC)
    )
@@ -94,14 +94,14 @@ CREATE TABLE
 CREATE TABLE
 	IF NOT EXISTS `token` (
 		`token_id` INT NOT NULL AUTO_INCREMENT,
-        `user_id` INT,
+        `user_id` INT NOT NULL,
         `unique_id` VARCHAR(32) NOT NULL,
         `is_valid` ENUM ('False','True') DEFAULT 'True',
 		`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         UNIQUE INDEX `u_token_uniqueid` (`unique_id` ASC),
         INDEX `i_token_userid_created` (`user_id` ASC, `created` DESC),
 		CONSTRAINT `fk_token_userid` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) 
-            ON DELETE CASCADE 
+            ON DELETE RESTRICT 
             ON UPDATE RESTRICT,
         PRIMARY KEY (`token_id` ASC)
     )
@@ -114,4 +114,22 @@ CREATE
 	ON `token` FOR EACH ROW
 		SET NEW.`unique_id` = UNIQUE_ID();
 
-
+#
+# Contracts
+#
+# Hyperledger contracts
+#
+CREATE TABLE
+    IF NOT EXISTS `contract` (
+        `contract_id` INT NOT NULL AUTO_INCREMENT,
+        `device_id` INT NOT NULL,
+        `hyperledger_id` VARCHAR(32) NOT NULL,
+        UNIQUE INDEX `u_contract_hyperledgerid` (`hyperledger_id` ASC),
+        INDEX `i_contract_deviceid` (`device_id` ASC),
+        CONSTRAINT `fk_contract_deviceid` FOREIGN KEY (`device_id`) REFERENCES `device` (`device_id`)
+            ON DELETE RESTRICT
+            ON UPDATE RESTRICT,
+        PRIMARY KEY (`contract_id` ASC)
+        )
+    ENGINE=InnoDB
+    DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

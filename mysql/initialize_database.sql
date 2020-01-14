@@ -23,16 +23,16 @@ INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`,`sha1pwd`) VALUES
 SET @hce_operator_id = LAST_INSERT_ID();
 INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`,`sha1pwd`) VALUES
 	(@hce_system_id,"accounting","ACCOUNTING","accounting@holycross.com",SHA1('Sl@cG1sm0'));
-SET @hce_operator_id = LAST_INSERT_ID();
-INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`,`sha1pwd`) VALUES
-	(@hce_system_id,"testuser1","TEST","testuser1@holycross.com",SHA1('Sl@cG1sm0'));
 SET @hce_accounting_id = LAST_INSERT_ID();
 INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`,`sha1pwd`) VALUES
-	(@hce_system_id,"testuser2","TEST","testuser2@holycross.com",SHA1('Sl@cG1sm0'));
+	(@hce_system_id,"testuser1","TEST","testuser1@holycross.com",SHA1('Sl@cG1sm0'));
 SET @hce_testuser1_id = LAST_INSERT_ID();
 INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`,`sha1pwd`) VALUES
-	(@hce_system_id,"testuser3","TEST","testuser3@holycross.com",SHA1('Sl@cG1sm0'));
+	(@hce_system_id,"testuser2","TEST","testuser2@holycross.com",SHA1('Sl@cG1sm0'));
 SET @hce_testuser2_id = LAST_INSERT_ID();
+INSERT INTO `tess`.`user` (`system_id`,`name`,`role`,`email`,`sha1pwd`) VALUES
+	(@hce_system_id,"testuser3","TEST","testuser3@holycross.com",SHA1('Sl@cG1sm0'));
+SET @hce_testuser3_id = LAST_INSERT_ID();
 
 #
 # Define primary HCE feeder
@@ -48,6 +48,6 @@ INSERT INTO `tess`.`token` (`user_id`) VALUES
 	(@hce_admin_id),
     (@hce_operator_id),
     (@hce_accounting_id),
-    (@hca_testuser1_id),
+    (@hce_testuser1_id),
     (@hce_testuser2_id),
-    (@hca_testuser3_id);
+    (@hce_testuser3_id);
