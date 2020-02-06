@@ -33,7 +33,7 @@ export const api = {
     /** Pseudo-private call to retrieve the Auth Token from our storage */
     getAuthToken: () => { return this.authToken },
 
-    /** Set the rhumbix Auth token by saving it into our storage */
+    /** Set the tess Auth token by saving it into our storage */
     setAuthToken: (token) => { this.authToken = token },
     
     /**
@@ -160,7 +160,7 @@ export const api = {
                 }
                 global.ERRO(`There was an issue processing the request and parsing the response. HTTP status code ${response.status}`)
                 // we could not parse the error response, return a generic error
-                let error = new Error('There was an issue processing your request. Please try again. The Rhumbix team has been notified.')
+                let error = new Error('There was an issue processing your request. Please try again. The TESS team has been notified.')
                 error.response = response
                 throw error
             })
