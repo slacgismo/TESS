@@ -28,6 +28,7 @@
     "redux-persist": "6.0.0",
     "redux-persist-transform-encrypt": "2.0.1",
     "redux-thunk": "2.3.0",
+    "uuid": "^3.4.0",
     "wolfy87-eventemitter": "5.2.8"
   },
   "devDependencies": {
