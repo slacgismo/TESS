@@ -8,19 +8,61 @@
 
 import React from 'react'
 import { connect } from 'react-redux'
-import { View, Text } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
+import Button from '../common/components/TessButton'
 
 /**
  * Landing page component
  */
 class LandingPage extends React.Component {
+    navigateToLogin = () => {
+        this.props.navigation.navigate('LoginPage')
+    }
+
+    navigateToSignup = () => {
+        this.props.navigation.navigate('SignupPage')
+    }
+
     render() {
         return (
             <View>
-                <Text>Just a random landing page for TESS</Text>
-            </View>
+                <View>
+                    <Text>TESS logo placeholder</Text>
+                </View>
+
+                <View>
+                    <Text>
+                        Share your energy data, advance science, and take part in the value created.
+                    </Text>
+                    <Text>
+                        TESS is secure, private, and free.
+                    </Text>
+                </View>
+
+                <View>
+                    <Button 
+                        title='Join the movement'
+                        accessibilityLabel='join the movement'
+                        onPress={this.navigateToSignup} />
+                </View>
+
+                <View>
+                    <Text onPress={this.navigateToLogin}>
+                        Already a member? <Text style={styles.loginLink}>Login</Text>
+                    </Text>
+                </View>
+            </View>            
         )
     }
 }
 
 export default connect()(LandingPage)
+
+const styles = StyleSheet.create({    
+    loginLink: {
+        fontSize: 12,
+        color: 'blue',
+        textDecorationLine: 'underline',
+        textDecorationStyle: 'solid',
+    }
+})

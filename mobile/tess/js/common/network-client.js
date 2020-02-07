@@ -47,7 +47,7 @@ export const api = {
             baseTypeHeaders = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Authority-Provider': 'native',
+                'X-Authority-Provider': 'mobile',
                 'X-Application-Version': applicationVersion
             }
 
