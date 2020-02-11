@@ -26,27 +26,28 @@ class LandingPage extends React.Component {
     render() {
         return (
             <View>
-                <View>
+                <View style={styles.logoContainer}>
                     <Text>TESS logo placeholder</Text>
                 </View>
 
-                <View>
-                    <Text>
+                <View style={styles.tessDescriptionContainer}>
+                    <Text style={styles.tessDescriptionText}>
                         Share your energy data, advance science, and take part in the value created.
                     </Text>
-                    <Text>
+                    <View style={styles.spacer}/>
+                    <Text style={styles.tessDescriptionText}>
                         TESS is secure, private, and free.
                     </Text>
                 </View>
 
-                <View>
+                <View style={styles.button}>
                     <Button 
                         title='Join the movement'
                         accessibilityLabel='join the movement'
                         onPress={this.navigateToDisclaimer} />
                 </View>
 
-                <View>
+                <View style={styles.loginContainer}>
                     <Text onPress={this.navigateToLogin}>
                         Already a member? <Text style={styles.loginLink}>Login</Text>
                     </Text>
@@ -58,11 +59,39 @@ class LandingPage extends React.Component {
 
 export default connect()(LandingPage)
 
-const styles = StyleSheet.create({    
+const styles = StyleSheet.create({
     loginLink: {
         fontSize: 12,
         color: 'blue',
         textDecorationLine: 'underline',
         textDecorationStyle: 'solid',
+    },
+    logoContainer: {
+        alignItems: 'center',
+        marginHorizontal: 15,
+        marginTop: 75,
+        marginBottom: 45
+    },
+    tessDescriptionContainer: {
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 25,
+        marginBottom: 45,
+        borderColor: 'black',
+        borderWidth: 2
+    },
+    tessDescriptionText: {
+        textAlign: 'center',
+        fontSize: 14
+    },
+    spacer: {
+        marginTop: 30
+    },
+    loginContainer: {
+        alignItems: 'center',
+        marginTop: 10
+    }, 
+    button: {
+        marginHorizontal: 20
     }
 })

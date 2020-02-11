@@ -23,28 +23,30 @@ class DisclaimerPage extends React.Component {
     render() {
         return (
             <View>
-                <View>
+                <View style={styles.logoContainer}>
                     <Text>TESS logo placeholder</Text>
                 </View>
 
-                <View>
-                    <Text>
+                <View style={styles.tessDescriptionContainer}>
+                    <Text style={styles.titleText}>
                         Terms and Conditions
                     </Text>
-                    <Text>
+                    <View style={styles.spacer}/>
+                    <Text style={styles.tessDescriptionText}>
                         You agree to let Holy Cross Energy collect data about you, your house, 
                         and when you certain appliances. Holy Cross Energy only shares this data 
                         with organizations that are willing to pay you for it. You may deny any 
                         organization access to your data at any time.
                     </Text>
-                    <Text>
+                    <View style={styles.spacer}/>
+                    <Text style={styles.tessDescriptionText}>
                         You agree to let Holy Cross Energy control your appliances based on your preferences.
                         You agree to be compensated for control actions through bill credits. You may opt out
                         of control temporarily any time.
                     </Text>
                 </View>
 
-                <View>
+                <View style={styles.button}>
                     <Button 
                         title='I Agree'
                         accessibilityLabel='agree to terms and conditions'
@@ -57,11 +59,33 @@ class DisclaimerPage extends React.Component {
 
 export default connect()(DisclaimerPage)
 
-const styles = StyleSheet.create({    
-    loginLink: {
-        fontSize: 12,
-        color: 'blue',
-        textDecorationLine: 'underline',
-        textDecorationStyle: 'solid',
+const styles = StyleSheet.create({ 
+    logoContainer: {
+        alignItems: 'center',
+        marginHorizontal: 15,
+        marginTop: 75,
+        marginBottom: 45
+    },
+    titleText: {
+        fontSize: 16,
+        fontWeight: 'bold'
+    },
+    tessDescriptionContainer: {
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 25,
+        marginBottom: 45,
+        borderColor: 'black',
+        borderWidth: 2
+    },
+    tessDescriptionText: {
+        textAlign: 'center',
+        fontSize: 14
+    },
+    spacer: {
+        marginTop: 30
+    },
+    button: {
+        marginHorizontal: 20
     }
 })
