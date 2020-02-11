@@ -9,5 +9,7 @@
 import { Root } from './js/app'
 import { AppRegistry } from 'react-native'
 import { name as appName } from './app.json'
+import initializeMonitoringSystems from './js/config/configure-logger'
 
+initializeMonitoringSystems()
 AppRegistry.registerComponent(appName, () => Root)

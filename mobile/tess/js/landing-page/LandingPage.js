@@ -3,7 +3,7 @@
  *
  * Created by: Jonathan G.
  *
- * Application splash page - doesn't do much
+ * Application landing page 
  */
 
 import React from 'react'
@@ -19,8 +19,8 @@ class LandingPage extends React.Component {
         this.props.navigation.navigate('LoginPage')
     }
 
-    navigateToSignup = () => {
-        this.props.navigation.navigate('SignupPage')
+    navigateToDisclaimer = () => {
+        this.props.navigation.navigate('DisclaimerPage')
     }
 
     render() {
@@ -43,7 +43,7 @@ class LandingPage extends React.Component {
                     <Button 
                         title='Join the movement'
                         accessibilityLabel='join the movement'
-                        onPress={this.navigateToSignup} />
+                        onPress={this.navigateToDisclaimer} />
                 </View>
 
                 <View>
