@@ -27,6 +27,8 @@ cd ios
 pod install
 ```
 
+(You may need to open a new shell to ensure that the newly installed software is your environment PATH.)
+
 Run instructions for iOS (assuming you are on the root dir of the repo):
 ```bash
 cd SlacGismo/TESS/mobile/tess && npx react-native run-ios
