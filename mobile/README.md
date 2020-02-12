@@ -15,6 +15,11 @@ cocoapods | 1.8.3+ | https://guides.cocoapods.org/using/getting-started.html
 
 ## Running the project
 
+Get into the project
+```bash
+cd tess
+```
+
 Install the needed dependencies:
 ```bash
 yarn install
@@ -22,7 +27,7 @@ cd ios
 pod install
 ```
 
-Run instructions for iOS:
+Run instructions for iOS (assuming you are on the root dir of the repo):
 ```bash
 cd SlacGismo/TESS/mobile/tess && npx react-native run-ios
 ```    
