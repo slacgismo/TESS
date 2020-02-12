@@ -11,6 +11,7 @@ react-native-cli| 2.0.1   | `yarn global add react-native-cli` |
 Xcode           | 11.1    | [Apple App Store](https://itunes.apple.com/us/app/xcode/id497799835) |
 Android Studio  | 3.5     | [React Native Android Studio Walkthrough](https://facebook.github.io/react-native/docs/getting-started.html#2-install-the-android-sdk) |
 Java JDK     | 8+    | [JDK - 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) |
+cocoapods | 1.8.3+ | https://guides.cocoapods.org/using/getting-started.html
 
 ## Running the project
 
