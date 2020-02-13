@@ -17,7 +17,7 @@ import Button from '../common/components/TessButton'
 class DisclaimerPage extends React.Component {    
 
     navigateToSignup = () => {
-        this.props.navigation.navigate('SignupPage')
+        this.props.navigation.navigate('SignInSignUpPage', { isSignUp: true })
     }
 
     render() {

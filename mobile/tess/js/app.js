@@ -9,13 +9,13 @@
 
 import React from 'react'
 import cryptojs from 'crypto-js'
+import { View } from 'react-native'
 import { Provider } from 'react-redux'
 import * as Keychain from 'react-native-keychain'
 import configureStore from './config/configure-store'
-import { View } from 'react-native'
+import TessModal from './common/components/TessModal'
 import { PersistGate } from 'redux-persist/integration/react'
 import RootNavigatorWrapper from './config/navigation/configure-main-navigation'
-import LandingPage from './landing-page/LandingPage'
 
 export let globalStore = null
 export let globalPersistor = null
@@ -108,6 +108,7 @@ export class Root extends React.Component {
                             ref={nav => {navRef = nav}}
                             onNavigationStateChange={(prevState, currentState) =>
                                 this.onNavigationStateChange(prevState, currentState)} />
+                    <TessModal />
                     </View>
                 </PersistGate>
             </Provider>
