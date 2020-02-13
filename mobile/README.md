@@ -42,7 +42,9 @@ or:
 If you get an error regarding `simctl` not being found, check out https://stackoverflow.com/questions/29108172/xcrun-unable-to-find-simctl for some ideas on how to fix it. Most likely `Xcode->Preferences->Locations` needs to have `Command line tools` set.
 
 Run instructions for Android:
+
+Have an Android emulator running (quickest way to get started), or a device connected. If you don't have a device to connect, you can try installing the emulator using CLI, e.g, https://medium.com/@rishii.kumar.chawda/install-android-emulator-for-react-native-app-without-installing-android-studio-727d7734528.
+
 ```bash
-# Have an Android emulator running (quickest way to get started), or a device connected.
 cd SlacGismo/TESS/mobile/tess && npx react-native run-android
 ```
