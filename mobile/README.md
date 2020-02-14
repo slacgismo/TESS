@@ -46,5 +46,8 @@ Run instructions for Android:
 Have an Android emulator running (quickest way to get started), or a device connected. If you don't have a device to connect, you can try installing the emulator using CLI, e.g, https://medium.com/@rishii.kumar.chawda/install-android-emulator-for-react-native-app-without-installing-android-studio-727d7734528.
 
 ```bash
+# Have an Android emulator running * (quickest way to get started), or a device connected.
 cd SlacGismo/TESS/mobile/tess && npx react-native run-android
 ```
+
+*The setup for an android virtual device is a little dense, and manual. Please follow the instructions here before attempting to run this RN project on an android sim: https://developer.android.com/studio/run/managing-avds

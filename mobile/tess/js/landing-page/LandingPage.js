@@ -8,11 +8,13 @@
 
 import React from 'react'
 import { connect } from 'react-redux'
-import { View, Text, StyleSheet } from 'react-native'
 import Button from '../common/components/TessButton'
+import { View, Text, StyleSheet } from 'react-native'
 
 /**
  * Landing page component
+ * When the application launches and after the user signs out, this is
+ * the page that they'll get dumped on.
  */
 class LandingPage extends React.Component {
     navigateToLogin = () => {

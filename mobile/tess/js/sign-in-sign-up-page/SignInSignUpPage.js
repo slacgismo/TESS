@@ -13,7 +13,7 @@ import Button from '../common/components/TessButton'
 import { View, Text, StyleSheet, TextInput, Platform } from 'react-native'
 
 /**
- * Disclaimer page component
+ * Sign In/Sign Up page component
  */
 class SignInSignUpPage extends React.Component {
     constructor() {
@@ -26,7 +26,7 @@ class SignInSignUpPage extends React.Component {
     }
 
     navigateToPhoneVerification = () => {
-        this.props.navigation.navigate('')
+        this.props.navigation.navigate('PhoneVerificationPage')
     }
 
     navigateToMyWallet = () => {
@@ -35,6 +35,23 @@ class SignInSignUpPage extends React.Component {
 
     submit = () => {
         const isUsernamePasswordValid = this.validateUsernamePassword()
+        if (!isUsernamePasswordValid) {
+            this.props.dispatch(showModal('LOGIN', {
+                modalMessage: 'Email and Password are required fields, please do not leave them blank.'
+            }))
+        } else {
+            const { navigation } = this.props
+            const isSignUp = navigation.getParam('isSignUp', false)
+            if(isSignUp) {
+                // TODO: navigate the user to the appropriate phone verification page
+                // after actually creating their account
+                this.navigateToPhoneVerification()
+            } else {
+                // TODO: actually send params to the backend and authenticate the user...
+                // then navigate them to where they need to go
+                this.navigateToMyWallet()
+            }            
+        }
     }
 
     validateUsernamePassword = () => {
@@ -42,20 +59,7 @@ class SignInSignUpPage extends React.Component {
         const email = this.state.email.trim(),
               password = this.state.password.trim()
 
-        if (!email || !password) {
-            this.props.dispatch(showModal('LOGIN', {
-                modalMessage: 'Email and Password are required fields, please do not leave them blank.'
-            }))
-        } else {
-            const isSignUp = navigation.getParam('isSignUp', false)
-            if(isSignUp) {
-                // TODO: navigate the user to the appropriate phone verification page
-                // after actually creating their account
-            } else {
-                // TODO: actually send params to the backend and authenticate the user...
-                // then navigate them to where they need to go
-            }            
-        }
+        return email && password
     }
 
     handleEmailTextChange = (v) => {
@@ -94,7 +98,7 @@ class SignInSignUpPage extends React.Component {
                         accessibilityLabel="Email/Username Input Field"
                         onSubmitEditing={this.submit}
                         blurOnSubmit={false}
-                        placeholderTextColor={Platform.OS === 'android' ? 'white' : 'black'}/>
+                        placeholderTextColor='black'/>
 
                     <TextInput
                         placeholder='Password'
@@ -102,7 +106,7 @@ class SignInSignUpPage extends React.Component {
                         returnKeyType={'done'}
                         accessibilityLabel="Password Input Field"
                         onChangeText={this.handlePasswordTextChange}
-                        placeholderTextColor={Platform.OS === 'android' ? 'white': 'black'}
+                        placeholderTextColor='black'
                         onSubmitEditing={this.submit}/>
                 </View>
 
@@ -110,7 +114,7 @@ class SignInSignUpPage extends React.Component {
                     <Button 
                         title={isSignUp ? 'Sign Up' : 'Login'}
                         accessibilityLabel='sign up/login button'
-                        onPress={this.validateUsernamePassword} />
+                        onPress={this.submit} />
                 </View>
             </View>            
         )
