@@ -3,8 +3,11 @@
 This module implements the bid/response agents for HVAC, waterheater, rooftop
 PV, batteries, and electric vehicles.
 """
+
+import sys
 import numpy as np
-from matplotlib.pyplot import *
+import matplotlib.pyplot as plt
+import pydoc
 
 def get_default(args,key,default):
     if key in args.keys():
@@ -33,20 +36,13 @@ def get_price_history(**kwargs):
     that has the specified expectation and standard deviation. The
     diurnal price curve minimizes around 6am and maximizes around 6pm.
     """
-    if 'source' in kwargs: source = kwargs['source']
-    else: source = 'random'
+    source = get_default(kwargs,'source','random')
     if source == 'random':
         Pexp = get_default(kwargs,'Pexp',50)
         Pdev = get_default(kwargs,'Pdev',5)
         N = get_default(kwargs,'N',288)
-        if 'ts' in kwargs: 
-            ts = kwargs['ts'] 
-        else: 
-            ts = 5
-        if 'noise' in kwargs: 
-            noise = kwargs['noise']
-        else: 
-            noise = 0.0;
+        ts = get_default(kwargs,'ts',5)
+        noise = get_default(kwargs,'noise',0.0)
         data = Pexp - (Pdev-noise) * np.sin(np.arange(0,N)/(24*60/ts)*2*np.pi) * np.sqrt(2) + 2*np.sqrt(2)*np.random.normal(0,noise,N)
     else:
         raise Exception(f"source {source} is not available")
@@ -116,44 +112,91 @@ def get_hvac_response(Pbid,Pclear,Qbid,ts):
     else:
         return 0.0
 
-def run_selftest(savedata='/dev/null',saveplots=False):
+def get_waterheater_history(**kwargs):
+    source = get_default(kwargs,'source','random')
+    Qon = get_default(kwargs,'Qon',6.0)
+    Qoff = get_default(kwargs,'Qoff',0.0)
+    Dexp = get_default(kwargs,'Dexp',0.1)
+    N = get_default(kwargs,'N',288)
+    ts = get_default(kwargs,'ts',5)
+    data = np.random.uniform(0,2*Dexp*(Qon-Qoff)+Qoff,N)
+    return data
 
+def get_waterheater_bid(Pexp,Pdev,Qon,Qoff,Khw,Qwh,ts):
+    t = range(int(-1440/ts),int(-1380/ts))
+    Qavg = ts/60*np.sum(Qwh[t])
+    Dexp = (Qavg-Qoff)/(Qon-Qoff)
+    Pbid = Pexp + 3 * Pdev * ( 1.0 - 2.0 * Khw * (1-Dexp) )
+    return {"offer":Pbid, "quantity":Qon}
+
+def run_selftest(savedata='/dev/null',saveplots=False):
+    """Run self-tests
+
+    Parameters:
+      savedata (filename) - File to write test data to (default '/dev/null')
+      saveplots (boolean) - Flag to enable save of plots (default False)
+    """
     savefile = open(savedata,'w');
 
+    # price history test
     data = get_price_history(source='random',Pexp=50,Pdev=5,N=500,noise=1)
-    if saveplots:
-        figure(); plot(data); xlabel('Market interval (pu.ts)'); ylabel('Price ($/MWh)')
-        title('Price history'); grid(); savefig(f'test-fig{get_fignums()[-1]}.png')
-
     Pexp,Pdev = get_price_expectation(data)
+    Pclear = get_clearing_price(data)
     if savefile:
         print("Pexp   = %+10.4f $/MWh" % Pexp,file=savefile)
         print("Pdev   = %+10.4f $/MWh" % Pdev,file=savefile)
-
-    Pclear = get_clearing_price(data)
-    if savefile:
         print("Pclear = %+10.4f $/MWh" % Pclear,file=savefile)
+    if saveplots:
+        plt.figure() 
+        plt.plot(data)
+        plt.xlabel('Market interval (pu.ts)')
+        plt.ylabel('Price ($/MWh)')
+        plt.title('Price history')
+        plt.grid()
+        plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
 
+    # HVAC test
     Tdes = 72.0
     Tmin = Tdes - 2.0
     Tmax = Tdes + 5.0
     Khvac = 1.0
     Trange = np.arange(start=Tmin-1,stop=Tmax+1,step=0.1)
     Qmode = [10]
+    # heating
     Prange = list(map(lambda x : get_hvac_bid(Pexp,Pdev,1,x,Tdes,Tmin,Tmax,Khvac,Qmode)["offer"],Trange))
     if saveplots:
-        figure(); plot(Trange,Prange); xlabel('Temperature (degF)'); ylabel('Price ($/MWh)')
-        title('HVAC heating bid curve'); grid(); savefig(f'test-fig{get_fignums()[-1]}.png')
-
+        plt.figure()
+        plt.plot(Trange,Prange)
+        plt.xlabel('Temperature (degF)')
+        plt.ylabel('Price ($/MWh)')
+        plt.title('HVAC heating bid curve')
+        plt.grid() 
+        plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
+    # cooling
     Prange = list(map(lambda x : get_hvac_bid(Pexp,Pdev,-1,x,Tdes,Tmin,Tmax,Khvac,Qmode)["offer"],Trange))
     if saveplots:
-        figure(); plot(Trange,Prange); xlabel('Temperature (degF)'); ylabel('Price ($/MWh)')
-        title('HVAC cooling bid curve'); grid(); savefig(f'test-fig{get_fignums()[-1]}.png')
+        plt.figure()
+        plt.plot(Trange,Prange)
+        plt.xlabel('Temperature (degF)')
+        plt.ylabel('Price ($/MWh)')
+        plt.title('HVAC cooling bid curve')
+        plt.grid()
+        plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
+
+    # waterheater test
+    Drange  = np.arange(0.0,1.0,0.01)
+    Prange = list(map(lambda Dexp:get_waterheater_bid(Pexp,Pdev,6,0,1.0,get_waterheater_history(Dexp=Dexp),5)["offer"],Drange))
+    plt.figure()
+    plt.plot(Drange,Prange); 
+    plt.xlabel('Duty cycle (pu.time)'); 
+    plt.ylabel('Price ($/MWh)')
+    plt.title('Waterheater bid curve'); 
+    plt.grid(); 
+    plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
 
 if __name__ == '__main__':
     run_selftest(savedata='test-data.txt',saveplots=True)
     with open('test-help.txt', 'w') as f:
-        import pydoc
         sys.stdout = f
         pydoc.help('agents')
         sys.stdout = sys.__stdout__
