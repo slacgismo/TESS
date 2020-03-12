@@ -127,7 +127,11 @@ def get_waterheater_bid(Pexp,Pdev,Qon,Qoff,Khw,Qwh,ts):
     Qavg = ts/60*np.sum(Qwh[t])
     Dexp = (Qavg-Qoff)/(Qon-Qoff)
     Pbid = Pexp + 3 * Khw * Pdev * ( 2 * Dexp - 1 )
-    return {"offer":Pbid, "quantity":Qon}
+    return {"offer":Pbid, "quantity":Qon-Qoff}
+
+def get_evcharger_bid(Pexp,Pdev,Qon,Qoff,Khw,treq,trem):
+    Pbid = Pexp + 3 * Khw * Pdev * ( 2 * treq/trem - 1 )
+    return {"offer":Pbid, "quantity":Qon-Qoff}
 
 def run_selftest(savedata='/dev/null',saveplots=False):
     """Run self-tests
@@ -199,6 +203,21 @@ def run_selftest(savedata='/dev/null',saveplots=False):
     plt.xlim([0,1])
     plt.ylim([Pexp-3*Pdev*Khw-1,Pexp+3*Pdev*Khw+1])
     plt.title('Waterheater bid curve') 
+    plt.grid(); 
+    plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
+
+    # EV charger test
+    trem = 1.0
+    trange = np.arange(0,trem+trem/20,trem/10)
+    Qev = 6.0
+    Kev = 1.0
+    Prange = list(map(lambda treq:get_evcharger_bid(Pexp,Pdev,Qev,0,Kev,treq,trem)["offer"],trange))
+    plt.figure()
+    plt.plot(trange,Prange)
+    plt.xlabel('Time required to full charge (pu.time remaining)')
+    plt.ylabel('Price ($/MWh)')
+    plt.xlim([0,trem])
+    plt.ylim([Pexp-3*Pdev*Khw-1,Pexp+3*Pdev*Khw+1])
     plt.grid(); 
     plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
 
