@@ -194,7 +194,7 @@ def get_battery_ask(Pexp,Pdev,Eobs,Edes,Emin,Emax,Qmax,Kes,ts,Res,Ces):
     else:
         Eref = Emax
     Poc = Pexp + 3*Kes*Pdev*(Eobs-Edes+Qmax*ts)/abs(Eref-Edes-Qmax*ts)
-    Pask = Poc/Res + Ces/(Edes+0.4)^2
+    Pask = Poc/Res + Ces/pow(Edes/Emax+0.4,2)
     return {"ask":Pask,"quantity":Qmax}
 
 def get_solarpanel_ask(Qmax):
@@ -287,7 +287,35 @@ def run_selftest(savedata='/dev/null',saveplots=False):
     plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
 
     # Battery test
+    Edes = 5.0
+    Emin = 2.0
+    Emax = 8.0
+    Qmax = 1.0
+    Kes = 1.0
+    ts = 1/12
+    Res = 0.8
+    Ces = 1.0
+    Erange = np.arange(Emin,Emax+0.001,(Emax-Emin)/10)
 
+    plt.figure()
+    Pbuy = list(map(lambda Eobs: get_battery_bid(Pexp,Pdev,Eobs,Edes,Emin,Emax,Qmax,Kes)["offer"],Erange))
+    plt.plot(Erange,Pbuy,'b')
+    Psell = list(map(lambda Eobs: get_battery_ask(Pexp,Pdev,Eobs,Edes,Emin,Emax,Qmax,Kes,ts,Res,Ces)["ask"],Erange))
+    plt.plot(Erange,Psell,'r')
+    Pmin = Pexp-3*Pdev*Kes
+    Pmax = Pexp+3*Pdev*Kes
+    plt.plot([Edes,Edes],[np.min(Pbuy),np.max(Psell)],'-.k',
+         [Emin,Emax],[Pexp,Pexp],':k',
+         [Emin,Emax],[Pmin,Pmin],':b',
+         [Emin,Emax],[Pmax,Pmax],':r',)
+    plt.grid()
+    plt.xlabel('Energy stored (kWh)')
+    plt.ylabel('Price ($/MWh)')
+    plt.xlim([Emin,Emax])
+    plt.ylim([np.min(Pbuy),np.max(Psell)])
+    plt.legend(['Buy','Sell','Edes','Pexp','Pmax','Pmin'])
+    plt.title('Battery buy/sell curves')
+    plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
 
     # EV charger test
     trem = 1.0
@@ -305,7 +333,11 @@ def run_selftest(savedata='/dev/null',saveplots=False):
     plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
 
 if __name__ == '__main__':
+
+    # run selftests
     run_selftest(savedata='test-data.txt',saveplots=True)
+
+    # generate help output for review
     with open('test-help.txt', 'w') as f:
         sys.stdout = f
         pydoc.help('agents')
