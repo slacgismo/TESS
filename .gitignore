@@ -2,6 +2,17 @@
 # Created by https://www.gitignore.io/api/node,macos,python,django,pycharm,reactnative,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=node,macos,python,django,pycharm,reactnative,visualstudiocode
 
+### Flask ###
+instance/*
+!instance/.gitignore
+.webassets-cache
+
+### Flask.Python Stack ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
 ### Django ###
 *.log
 *.pot
