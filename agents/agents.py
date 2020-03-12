@@ -210,14 +210,14 @@ def run_selftest(savedata='/dev/null',saveplots=False):
     trem = 1.0
     trange = np.arange(0,trem+trem/20,trem/10)
     Qev = 6.0
-    Kev = 1.0
+    Kev = 2.0
     Prange = list(map(lambda treq:get_evcharger_bid(Pexp,Pdev,Qev,0,Kev,treq,trem)["offer"],trange))
-    plt.figure()
+    plt.figure() 
     plt.plot(trange,Prange)
     plt.xlabel('Time required to full charge (pu.time remaining)')
     plt.ylabel('Price ($/MWh)')
     plt.xlim([0,trem])
-    plt.ylim([Pexp-3*Pdev*Khw-1,Pexp+3*Pdev*Khw+1])
+    plt.ylim([Pexp-3*Pdev*Kev-1,Pexp+3*Pdev*Kev+1])
     plt.grid(); 
     plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
 
