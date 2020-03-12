@@ -126,7 +126,7 @@ def get_waterheater_bid(Pexp,Pdev,Qon,Qoff,Khw,Qwh,ts):
     t = range(int(-1440/ts),int(-1380/ts))
     Qavg = ts/60*np.sum(Qwh[t])
     Dexp = (Qavg-Qoff)/(Qon-Qoff)
-    Pbid = Pexp + 3 * Pdev * ( 1.0 - 2.0 * Khw * (1-Dexp) )
+    Pbid = Pexp + 3 * Khw * Pdev * ( 2 * Dexp - 1 )
     return {"offer":Pbid, "quantity":Qon}
 
 def run_selftest(savedata='/dev/null',saveplots=False):
@@ -184,13 +184,21 @@ def run_selftest(savedata='/dev/null',saveplots=False):
         plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
 
     # waterheater test
-    Drange  = np.arange(0.0,1.0,0.01)
-    Prange = list(map(lambda Dexp:get_waterheater_bid(Pexp,Pdev,6,0,1.0,get_waterheater_history(Dexp=Dexp),5)["offer"],Drange))
+    Drange = [0.05,0.10,0.20,0.75]
+    Lrange = ['Away','Sleep','Work','Home']
+    Trange = ['v','*','o','^']
+    Khw = 1.0
+    Qwh = 6.0
+    Prange = list(map(lambda Dexp:get_waterheater_bid(Pexp,Pdev,Qwh,0,Khw,get_waterheater_history(Dexp=Dexp),5)["offer"],Drange))
     plt.figure()
-    plt.plot(Drange,Prange); 
-    plt.xlabel('Duty cycle (pu.time)'); 
+    for n in range(0,len(Drange)):
+        plt.plot(Drange[n],Prange[n],Trange[n])
+    plt.legend(Lrange,loc=4)
+    plt.xlabel('Duty cycle (pu.time)')
     plt.ylabel('Price ($/MWh)')
-    plt.title('Waterheater bid curve'); 
+    plt.xlim([0,1])
+    plt.ylim([Pexp-3*Pdev*Khw-1,Pexp+3*Pdev*Khw+1])
+    plt.title('Waterheater bid curve') 
     plt.grid(); 
     plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
 
