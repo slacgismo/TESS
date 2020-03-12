@@ -56,10 +56,11 @@ def get_price_expectation(data,N=288):
       N (positive integer) - number of samples to consider (default N=288)
 
     Returns:
-      real - mean price (in $/MWh)
-      real - standard deviation (in $/MWh)
+      dict - price expectation data
+        mean (real) - mean price (in $/MWh)
+        std (real) - standard deviation (in $/MWh)
     """
-    return np.mean(data[-N-1:-2]), np.std(data[-N-1:-2])
+    return {"mean":np.mean(data[-N-1:-2]), "std":np.std(data[-N-1:-2])}
 
 def get_clearing_price(data):
     """Get the last posted price in the price data
@@ -68,12 +69,12 @@ def get_clearing_price(data):
       data (array) - price data (in $/MWh)
 
     Returns:
-      real - the last posted price (in $/MWh)
+      price (real) - the last posted price (in $/MWh)
     """
     return data[-1]
 
 def get_hvac_bid(Pexp,Pdev,mode,Tobs,Tdes,Tmin,Tmax,Khvac,Qmode):
-    """Get the HVAC bid price
+    """Get HVAC bid price
     
     Parameters
       Pexp (real) - expected price (in $/MWh)
@@ -88,8 +89,8 @@ def get_hvac_bid(Pexp,Pdev,mode,Tobs,Tdes,Tmin,Tmax,Khvac,Qmode):
 
     Returns:
       dict - bid data
-        "offer" (real) - bid price (in $/MWh)
-        "quantity" (non-negative real) - bid quantity (in MW)
+        offer (real) - bid price (in $/MWh)
+        quantity (non-negative real) - bid quantity (in MW)
     """
     if Tobs < Tmin : 
         Pbid = np.sign(mode)*np.Infinity
@@ -106,32 +107,108 @@ def get_hvac_bid(Pexp,Pdev,mode,Tobs,Tdes,Tmin,Tmax,Khvac,Qmode):
         Qbid = np.mean(Qmode)
     return {"offer":Pbid,"quantity":Qbid}
 
-def get_hvac_response(Pbid,Pclear,Qbid,ts):
-    if Pclear <= Pbid:
-        return Qbid*ts/60
-    else:
-        return 0.0
+def get_waterheater_bid(Pexp,Pdev,Dexp,Khw,Qwh):
+    """Get waterheater bid price
 
-def get_waterheater_history(**kwargs):
-    source = get_default(kwargs,'source','random')
-    Qon = get_default(kwargs,'Qon',6.0)
-    Qoff = get_default(kwargs,'Qoff',0.0)
-    Dexp = get_default(kwargs,'Dexp',0.1)
-    N = get_default(kwargs,'N',288)
-    ts = get_default(kwargs,'ts',5)
-    data = np.random.uniform(0,2*Dexp*(Qon-Qoff)+Qoff,N)
-    return data
+    Parameters:
+      Pexp (real) - expected price (in $/MWh)
+      Pdev (non-negative real) - price standard deviation (in $/MWh)
+      Dexp (normalized real) - expected duty cycle (pu)
+      Khw (non-negative real) - hotwater savings coefficient
+      Qwh (positive real) - waterheater load when on
 
-def get_waterheater_bid(Pexp,Pdev,Qon,Qoff,Khw,Qwh,ts):
-    t = range(int(-1440/ts),int(-1380/ts))
-    Qavg = ts/60*np.sum(Qwh[t])
-    Dexp = (Qavg-Qoff)/(Qon-Qoff)
+    Returns:
+      dict - bid data
+        offer (real) - bid price (in $/MWh)
+        quantity (non-negative real) - bid quantity (in MW)
+    """
     Pbid = Pexp + 3 * Khw * Pdev * ( 2 * Dexp - 1 )
-    return {"offer":Pbid, "quantity":Qon-Qoff}
+    return {"offer":Pbid, "quantity":Qwh}
 
-def get_evcharger_bid(Pexp,Pdev,Qon,Qoff,Khw,treq,trem):
-    Pbid = Pexp + 3 * Khw * Pdev * ( 2 * treq/trem - 1 )
-    return {"offer":Pbid, "quantity":Qon-Qoff}
+def get_evcharger_bid(Pexp,Pdev,Qev,Kev,treq,trem):
+    """Get EV charger bid
+
+    Parameters:
+      Pexp (real) - expected price (in $/MWh)
+      Pdev (non-negative real) - price standard deviation (in $/MWh)
+      Qev (positive real) - charger power when on (pu)
+      Kev (non-negative real) - charger savings coefficient
+      treq (non-negative real) - time needed to reach full charge
+      trem (positive real) - time available to reach full charge
+
+    Returns:
+      dict - bid data
+        offer (real) - bid price (in $/MWh)
+        quantity (non-negative real) - bid quantity (in MW)
+    """
+    Pbid = Pexp + 3 * Kev * Pdev * ( 2 * treq/trem - 1 )
+    return {"offer":Pbid, "quantity":Qev}
+
+def get_battery_bid(Pexp,Pdev,Eobs,Edes,Emin,Emax,Qmax,Kes):
+    """Get battery bid
+
+    Parameters:
+      Pexp (real) - expected price (in $/MWh)
+      Pdev (non-negative real) - price standard deviation (in $/MWh)
+      Eobs (positive real) - battery state of charge (kWh or pu)
+      Edes (positive real) - desired state of charge (kWh or pu)
+      Emin (positive real) - minimum battery charge allowed (kWh or pu)
+      Emax (positive real) - maximum battery charge allowed (kWh or pu)
+      Kes (non-negative real) - battery savings coefficient
+
+    Returns:
+      dict - bid data
+        offer (real) - bid price (in $/MWh)
+        quantity (non-negative real) - bid quantity (in MW)
+    """
+    if Eobs < Edes:
+        Eref = Emin
+    else:
+        Eref = Emax
+    Pbid = Pexp + 3*Kes*Pdev*(Eobs-Edes)/abs(Eref-Edes)
+    return {"offer":Pbid,"quantity":Qmax}
+
+def get_battery_ask(Pexp,Pdev,Eobs,Edes,Emin,Emax,Qmax,Kes,ts,Res,Ces):
+    """Get battery ask
+
+    Parameters:
+      Pexp (real) - expected price (in $/MWh)
+      Pdev (non-negative real) - price standard deviation (in $/MWh)
+      Eobs (positive real) - battery state of charge (kWh or pu)
+      Edes (positive real) - desired state of charge (kWh or pu)
+      Emin (positive real) - minimum battery charge allowed (kWh or pu)
+      Emax (positive real) - maximum battery charge allowed (kWh or pu)
+      Qmax (positive real) - maximum battery charge power (kW or pu)
+      Kes (non-negative real) - battery savings coefficient
+      ts (positive real) - opportunity cost window (in hours)
+      Res (positive real) - round trip efficiency battery ageing factor
+      Ces (positive real) - capacity cost ($/MW)
+
+    Returns:
+      dict - bid data
+        ask (real) - ask price (in $/MWh)
+        quantity (non-negative real) - ask quantity (in MW)
+    """
+    if Eobs < Edes:
+        Eref = Emin
+    else:
+        Eref = Emax
+    Poc = Pexp + 3*Kes*Pdev*(Eobs-Edes+Qmax*ts)/abs(Eref-Edes-Qmax*ts)
+    Pask = Poc/Res + Ces/(Edes+0.4)^2
+    return {"ask":Pask,"quantity":Qmax}
+
+def get_solarpanel_ask(Qmax):
+    """Get solarpanel ask
+
+    Parameters:
+      Qmax (positive real) - panel power capacity (MW)
+
+    Returns:
+      dict - ask data
+        ask (non-negative real) - asking price (in $/MWh)
+        quantity (positive real) - available quantity (in MW)
+    """
+    return {"ask":0.0,"quantity":Qmax}
 
 def run_selftest(savedata='/dev/null',saveplots=False):
     """Run self-tests
@@ -144,7 +221,9 @@ def run_selftest(savedata='/dev/null',saveplots=False):
 
     # price history test
     data = get_price_history(source='random',Pexp=50,Pdev=5,N=500,noise=1)
-    Pexp,Pdev = get_price_expectation(data)
+    expect = get_price_expectation(data)
+    Pexp = expect["mean"]
+    Pdev = expect["std"]
     Pclear = get_clearing_price(data)
     if savefile:
         print("Pexp   = %+10.4f $/MWh" % Pexp,file=savefile)
@@ -189,12 +268,13 @@ def run_selftest(savedata='/dev/null',saveplots=False):
 
     # waterheater test
     Drange = [0.05,0.10,0.20,0.75]
-    Lrange = ['Away','Sleep','Work','Home']
+    Lrange = ['Curve','Away','Sleep','Work','Home']
     Trange = ['v','*','o','^']
     Khw = 1.0
     Qwh = 6.0
-    Prange = list(map(lambda Dexp:get_waterheater_bid(Pexp,Pdev,Qwh,0,Khw,get_waterheater_history(Dexp=Dexp),5)["offer"],Drange))
+    Prange = list(map(lambda Dexp:get_waterheater_bid(Pexp,Pdev,Dexp,Khw,Qwh)["offer"],Drange))
     plt.figure()
+    plt.plot([0,1],list(map(lambda Dexp:get_waterheater_bid(Pexp,Pdev,Dexp,Khw,Qwh)["offer"],[0,1])))
     for n in range(0,len(Drange)):
         plt.plot(Drange[n],Prange[n],Trange[n])
     plt.legend(Lrange,loc=4)
@@ -206,12 +286,15 @@ def run_selftest(savedata='/dev/null',saveplots=False):
     plt.grid(); 
     plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
 
+    # Battery test
+
+
     # EV charger test
     trem = 1.0
     trange = np.arange(0,trem+trem/20,trem/10)
     Qev = 6.0
     Kev = 2.0
-    Prange = list(map(lambda treq:get_evcharger_bid(Pexp,Pdev,Qev,0,Kev,treq,trem)["offer"],trange))
+    Prange = list(map(lambda treq:get_evcharger_bid(Pexp,Pdev,Qev,Kev,treq,trem)["offer"],trange))
     plt.figure() 
     plt.plot(trange,Prange)
     plt.xlabel('Time required to full charge (pu.time remaining)')
