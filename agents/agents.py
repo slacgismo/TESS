@@ -20,17 +20,17 @@ def get_price_history(**kwargs):
 
     Parameters:
       source (string) - the source of the price data (default 'random')
-      Pexp (real) - expectation price for random source (in $/MWh, default 50)
+      Pexp (real) - expectation price for random source (in tokens/MWh, default 50)
       Pdev (non-negative real) -  standard deviation for random source (in 
-        $/MWh, default 5)
+        tokens/MWh, default 5)
       N (positive integer) - number of samples for random source (default 288)
       ts (positive real) - market timestep for random source (in minutes, 
         default 5)
-      noise (non-negative real) - price noise for random source (in $/MWh, 
+      noise (non-negative real) - price noise for random source (in tokens/MWh, 
         default 0)
 
     Returns:
-      array - price data (in $/MWh)
+      array - price data (in tokens/MWh)
 
     The random source generates a diurnal price array with noise
     that has the specified expectation and standard deviation. The
@@ -52,13 +52,13 @@ def get_price_expectation(data,N=288):
     """Get the price expectation and standard deviation
 
     Parameters:
-      data (array) - price data (in $/MWh)
+      data (array) - price data (in tokens/MWh)
       N (positive integer) - number of samples to consider (default N=288)
 
     Returns:
       dict - price expectation data
-        mean (real) - mean price (in $/MWh)
-        std (real) - standard deviation (in $/MWh)
+        mean (real) - mean price (in tokens/MWh)
+        std (real) - standard deviation (in tokens/MWh)
     """
     return {"mean":np.mean(data[-N-1:-2]), "std":np.std(data[-N-1:-2])}
 
@@ -66,10 +66,10 @@ def get_clearing_price(data):
     """Get the last posted price in the price data
 
     Parameters:
-      data (array) - price data (in $/MWh)
+      data (array) - price data (in tokens/MWh)
 
     Returns:
-      price (real) - the last posted price (in $/MWh)
+      price (real) - the last posted price (in tokens/MWh)
     """
     return data[-1]
 
@@ -77,8 +77,8 @@ def get_hvac_bid(Pexp,Pdev,mode,Tobs,Tdes,Tmin,Tmax,Khvac,Qmode):
     """Get HVAC bid price
     
     Parameters
-      Pexp (real) - expected price (in $/MWh)
-      Pdev (non-negative real) - price standard deviation (in $/MWh)
+      Pexp (real) - expected price (in tokens/MWh)
+      Pdev (non-negative real) - price standard deviation (in tokens/MWh)
       mode {-1,0,1,2} - HVAC mode (-1=cooling, 0=off, 1=heating, 2=auxiliary)
       Tobs (real) - observed air temperature (in degF)
       Tdes )Tmin,Tmax( - desired air temperature (in degF)
@@ -89,7 +89,7 @@ def get_hvac_bid(Pexp,Pdev,mode,Tobs,Tdes,Tmin,Tmax,Khvac,Qmode):
 
     Returns:
       dict - bid data
-        offer (real) - bid price (in $/MWh)
+        offer (real) - bid price (in tokens/MWh)
         quantity (non-negative real) - bid quantity (in MW)
     """
     if Tobs < Tmin : 
@@ -111,15 +111,15 @@ def get_waterheater_bid(Pexp,Pdev,Dexp,Khw,Qwh):
     """Get waterheater bid price
 
     Parameters:
-      Pexp (real) - expected price (in $/MWh)
-      Pdev (non-negative real) - price standard deviation (in $/MWh)
+      Pexp (real) - expected price (in tokens/MWh)
+      Pdev (non-negative real) - price standard deviation (in tokens/MWh)
       Dexp (normalized real) - expected duty cycle (pu)
       Khw (non-negative real) - hotwater savings coefficient
       Qwh (positive real) - waterheater load when on
 
     Returns:
       dict - bid data
-        offer (real) - bid price (in $/MWh)
+        offer (real) - bid price (in tokens/MWh)
         quantity (non-negative real) - bid quantity (in MW)
     """
     Pbid = Pexp + 3 * Khw * Pdev * ( 2 * Dexp - 1 )
@@ -129,8 +129,8 @@ def get_evcharger_bid(Pexp,Pdev,Qev,Kev,treq,trem):
     """Get EV charger bid
 
     Parameters:
-      Pexp (real) - expected price (in $/MWh)
-      Pdev (non-negative real) - price standard deviation (in $/MWh)
+      Pexp (real) - expected price (in tokens/MWh)
+      Pdev (non-negative real) - price standard deviation (in tokens/MWh)
       Qev (positive real) - charger power when on (pu)
       Kev (non-negative real) - charger savings coefficient
       treq (non-negative real) - time needed to reach full charge
@@ -138,7 +138,7 @@ def get_evcharger_bid(Pexp,Pdev,Qev,Kev,treq,trem):
 
     Returns:
       dict - bid data
-        offer (real) - bid price (in $/MWh)
+        offer (real) - bid price (in tokens/MWh)
         quantity (non-negative real) - bid quantity (in MW)
     """
     Pbid = Pexp + 3 * Kev * Pdev * ( 2 * treq/trem - 1 )
@@ -148,8 +148,8 @@ def get_battery_bid(Pexp,Pdev,Eobs,Edes,Emin,Emax,Qmax,Kes):
     """Get battery bid
 
     Parameters:
-      Pexp (real) - expected price (in $/MWh)
-      Pdev (non-negative real) - price standard deviation (in $/MWh)
+      Pexp (real) - expected price (in tokens/MWh)
+      Pdev (non-negative real) - price standard deviation (in tokens/MWh)
       Eobs (positive real) - battery state of charge (kWh or pu)
       Edes (positive real) - desired state of charge (kWh or pu)
       Emin (positive real) - minimum battery charge allowed (kWh or pu)
@@ -158,7 +158,7 @@ def get_battery_bid(Pexp,Pdev,Eobs,Edes,Emin,Emax,Qmax,Kes):
 
     Returns:
       dict - bid data
-        offer (real) - bid price (in $/MWh)
+        offer (real) - bid price (in tokens/MWh)
         quantity (non-negative real) - bid quantity (in MW)
     """
     if Eobs < Edes:
@@ -172,8 +172,8 @@ def get_battery_ask(Pexp,Pdev,Eobs,Edes,Emin,Emax,Qmax,Kes,ts,Res,Ces):
     """Get battery ask
 
     Parameters:
-      Pexp (real) - expected price (in $/MWh)
-      Pdev (non-negative real) - price standard deviation (in $/MWh)
+      Pexp (real) - expected price (in tokens/MWh)
+      Pdev (non-negative real) - price standard deviation (in tokens/MWh)
       Eobs (positive real) - battery state of charge (kWh or pu)
       Edes (positive real) - desired state of charge (kWh or pu)
       Emin (positive real) - minimum battery charge allowed (kWh or pu)
@@ -182,11 +182,11 @@ def get_battery_ask(Pexp,Pdev,Eobs,Edes,Emin,Emax,Qmax,Kes,ts,Res,Ces):
       Kes (non-negative real) - battery savings coefficient
       ts (positive real) - opportunity cost window (in hours)
       Res (positive real) - round trip efficiency battery ageing factor
-      Ces (positive real) - capacity cost ($/MW)
+      Ces (positive real) - capacity cost (tokens/MW)
 
     Returns:
       dict - bid data
-        ask (real) - ask price (in $/MWh)
+        ask (real) - ask price (in tokens/MWh)
         quantity (non-negative real) - ask quantity (in MW)
     """
     if Eobs < Edes:
@@ -205,7 +205,7 @@ def get_solarpanel_ask(Qmax):
 
     Returns:
       dict - ask data
-        ask (non-negative real) - asking price (in $/MWh)
+        ask (non-negative real) - asking price (in tokens/MWh)
         quantity (positive real) - available quantity (in MW)
     """
     return {"ask":0.0,"quantity":Qmax}
@@ -226,14 +226,14 @@ def run_selftest(savedata='/dev/null',saveplots=False):
     Pdev = expect["std"]
     Pclear = get_clearing_price(data)
     if savefile:
-        print("Pexp   = %+10.4f $/MWh" % Pexp,file=savefile)
-        print("Pdev   = %+10.4f $/MWh" % Pdev,file=savefile)
-        print("Pclear = %+10.4f $/MWh" % Pclear,file=savefile)
+        print("Pexp   = %+10.4f tokens/MWh" % Pexp,file=savefile)
+        print("Pdev   = %+10.4f tokens/MWh" % Pdev,file=savefile)
+        print("Pclear = %+10.4f tokens/MWh" % Pclear,file=savefile)
     if saveplots:
         plt.figure() 
         plt.plot(data)
         plt.xlabel('Market interval (pu.ts)')
-        plt.ylabel('Price ($/MWh)')
+        plt.ylabel('Price (tokens/MWh)')
         plt.title('Price history')
         plt.grid()
         plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
@@ -251,7 +251,7 @@ def run_selftest(savedata='/dev/null',saveplots=False):
         plt.figure()
         plt.plot(Trange,Prange)
         plt.xlabel('Temperature (degF)')
-        plt.ylabel('Price ($/MWh)')
+        plt.ylabel('Price (tokens/MWh)')
         plt.title('HVAC heating bid curve')
         plt.grid() 
         plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
@@ -261,7 +261,7 @@ def run_selftest(savedata='/dev/null',saveplots=False):
         plt.figure()
         plt.plot(Trange,Prange)
         plt.xlabel('Temperature (degF)')
-        plt.ylabel('Price ($/MWh)')
+        plt.ylabel('Price (tokens/MWh)')
         plt.title('HVAC cooling bid curve')
         plt.grid()
         plt.savefig(f'test-fig{plt.get_fignums()[-1]}.png')
@@ -279,7 +279,7 @@ def run_selftest(savedata='/dev/null',saveplots=False):
         plt.plot(Drange[n],Prange[n],Trange[n])
     plt.legend(Lrange,loc=4)
     plt.xlabel('Duty cycle (pu.time)')
-    plt.ylabel('Price ($/MWh)')
+    plt.ylabel('Price (tokens/MWh)')
     plt.xlim([0,1])
     plt.ylim([Pexp-3*Pdev*Khw-1,Pexp+3*Pdev*Khw+1])
     plt.title('Waterheater bid curve') 
@@ -310,7 +310,7 @@ def run_selftest(savedata='/dev/null',saveplots=False):
          [Emin,Emax],[Pmax,Pmax],':r',)
     plt.grid()
     plt.xlabel('Energy stored (kWh)')
-    plt.ylabel('Price ($/MWh)')
+    plt.ylabel('Price (tokens/MWh)')
     plt.xlim([Emin,Emax])
     plt.ylim([np.min(Pbuy),np.max(Psell)])
     plt.legend(['Buy','Sell','Edes','Pexp','Pmax','Pmin'])
@@ -326,7 +326,7 @@ def run_selftest(savedata='/dev/null',saveplots=False):
     plt.figure() 
     plt.plot(trange,Prange)
     plt.xlabel('Time required to full charge (pu.time remaining)')
-    plt.ylabel('Price ($/MWh)')
+    plt.ylabel('Price (tokens/MWh)')
     plt.xlim([0,trem])
     plt.ylim([Pexp-3*Pdev*Kev-1,Pexp+3*Pdev*Kev+1])
     plt.grid(); 
