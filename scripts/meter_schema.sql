@@ -17,7 +17,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema meter_schema
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `meter_schema` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+CREATE SCHEMA IF NOT EXISTS `meter_schema` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `meter_schema` ;
 
 -- -----------------------------------------------------
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `meter_schema`.`meter` (
   PRIMARY KEY (`meter_id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+COLLATE = utf8mb4_general_ci;
 
 
 -- -----------------------------------------------------
@@ -50,42 +50,42 @@ CREATE TABLE IF NOT EXISTS `meter_schema`.`reading` (
   `0015` FLOAT NULL,
   `0030` FLOAT NULL,
   `0045` FLOAT NULL,
-  `100` FLOAT NULL,
-  `115` FLOAT NULL,
-  `130` FLOAT NULL,
-  `145` FLOAT NULL,
-  `200` FLOAT NULL,
-  `215` FLOAT NULL,
-  `230` FLOAT NULL,
-  `245` FLOAT NULL,
-  `300` FLOAT NULL,
-  `315` FLOAT NULL,
-  `330` FLOAT NULL,
-  `345` FLOAT NULL,
-  `400` FLOAT NULL,
-  `415` FLOAT NULL,
-  `430` FLOAT NULL,
-  `445` FLOAT NULL,
-  `500` FLOAT NULL,
-  `515` FLOAT NULL,
-  `530` FLOAT NULL,
-  `545` FLOAT NULL,
-  `600` FLOAT NULL,
-  `615` FLOAT NULL,
-  `630` FLOAT NULL,
-  `645` FLOAT NULL,
-  `700` FLOAT NULL,
-  `715` FLOAT NULL,
-  `730` FLOAT NULL,
-  `745` FLOAT NULL,
-  `800` FLOAT NULL,
-  `815` FLOAT NULL,
-  `830` FLOAT NULL,
-  `845` FLOAT NULL,
-  `900` FLOAT NULL,
-  `915` FLOAT NULL,
-  `930` FLOAT NULL,
-  `945` FLOAT NULL,
+  `0100` FLOAT NULL,
+  `0115` FLOAT NULL,
+  `0130` FLOAT NULL,
+  `0145` FLOAT NULL,
+  `0200` FLOAT NULL,
+  `0215` FLOAT NULL,
+  `0230` FLOAT NULL,
+  `0245` FLOAT NULL,
+  `0300` FLOAT NULL,
+  `0315` FLOAT NULL,
+  `0330` FLOAT NULL,
+  `0345` FLOAT NULL,
+  `0400` FLOAT NULL,
+  `0415` FLOAT NULL,
+  `0430` FLOAT NULL,
+  `0445` FLOAT NULL,
+  `0500` FLOAT NULL,
+  `0515` FLOAT NULL,
+  `0530` FLOAT NULL,
+  `0545` FLOAT NULL,
+  `0600` FLOAT NULL,
+  `0615` FLOAT NULL,
+  `0630` FLOAT NULL,
+  `0645` FLOAT NULL,
+  `0700` FLOAT NULL,
+  `0715` FLOAT NULL,
+  `0730` FLOAT NULL,
+  `0745` FLOAT NULL,
+  `0800` FLOAT NULL,
+  `0815` FLOAT NULL,
+  `0830` FLOAT NULL,
+  `0845` FLOAT NULL,
+  `0900` FLOAT NULL,
+  `0915` FLOAT NULL,
+  `0930` FLOAT NULL,
+  `0945` FLOAT NULL,
   `1000` FLOAT NULL,
   `1015` FLOAT NULL,
   `1030` FLOAT NULL,
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS `meter_schema`.`reading` (
   `2315` FLOAT NULL,
   `2330` FLOAT NULL,
   `2345` FLOAT NULL,
-  INDEX `fk_reading_meter1_idx` (`meter_id` ASC) VISIBLE,
+  INDEX `fk_reading_meter1_idx` (`meter_id` ASC),
   PRIMARY KEY (`date`),
   CONSTRAINT `fk_reading_meter1`
     FOREIGN KEY (`meter_id`)
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `meter_schema`.`reading` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
+COLLATE = utf8mb4_general_ci;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
