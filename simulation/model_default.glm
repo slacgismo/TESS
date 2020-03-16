@@ -67,7 +67,7 @@ module residential{
 	implicit_enduse_source EIA2015;
 }
 
-//module gridlabd_functions;
+module gridlabd_functions;
 
 class player {
 	double value;
@@ -111,7 +111,7 @@ object meter {
 	object recorder {
 		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
 		property measured_real_power, measured_reactive_power; 
-	file TESS/TESS_BC/load_node_149.csv;
+		file output/load_node_149.csv;
 		interval 1min;
 	};
 }
@@ -261,7 +261,7 @@ object group_recorder {
 	name rec_total_load;
 	group "class=house";
 	property total_load;
-	file TESS/TESS_BC/total_load_all.csv;
+	file output/total_load_all.csv;
 	interval 60;
 }
 
@@ -269,7 +269,7 @@ object group_recorder {
 	name rec_hvac_load;
 	group "class=house";
 	property hvac_load;
-	file TESS/TESS_BC/hvac_load_all.csv;
+	file output/hvac_load_all.csv;
 	interval 60;
 }
 
@@ -277,7 +277,7 @@ object group_recorder {
 	name rec_T;
 	group "class=house";
 	property air_temperature;
-	file TESS/TESS_BC/T_all.csv;
+	file output/T_all.csv;
 	interval 60;
 }
 
@@ -285,7 +285,7 @@ object group_recorder {
 	name rec_Tm;
 	group "class=house";
 	property mass_temperature;
-	file TESS/TESS_BC/Tm_all.csv;
+	file output/Tm_all.csv;
 	interval 60;
 }
 
@@ -293,7 +293,7 @@ object group_recorder {
 	name rec_pv_infeed;
 	group "class=inverter";
 	property P_Out;
-	file TESS/TESS_BC/total_P_Out.csv;
+	file output/total_P_Out.csv;
 	interval 60;
 }
 
@@ -301,6 +301,6 @@ object group_recorder {
 	name rec_batt_soc;
 	group "class=battery";
 	property state_of_charge;
-	file TESS/TESS_BC/battery_SOC.csv;
+	file output/battery_SOC.csv;
 	interval 60;
 }

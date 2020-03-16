@@ -1,41 +1,41 @@
 import os
 
 #Result file
-results_folder = 'TESS/TESS_0000'
+results_folder = 'output'
 if not os.path.exists(results_folder):
 	os.makedirs(results_folder)
 
 #glm parameters
 city = 'Austin'
-month = 'Jan'
-start_time_str = '2016-07-01 00:00'
-end_time_str = '2016-07-02 00:00'
+month = 'july'
+start_time_str = '2015-07-15 0:00'
+end_time_str = '2015-07-16 23:59'
 player_dir = 'players_SanDiego_2015'
-tmy_file = 'CA-San_Jose_Intl_Ap.tmy3'
+tmy_file = '722900TYA.tmy3'
 slack_node = 'node_149'
 
 #Flexible appliances
-flexible_houses = 0
-PV_share = 0.25
-EV_share = 0.1
+flexible_houses = 1120
+PV_share = 0.0
+EV_share = 0.0
 EV_data = 'None'
-EV_speed = 'slow'
-Batt_share = 0.1
+EV_speed = 'normal'
+Batt_share = 0.0
 assert PV_share >= Batt_share, 'More batteries than PV'
 #Market parameters
-C = 1250.0
+C = 5000.0
 market_data = 'Ercot_HBSouth.csv'
 p_max = 100.0
 load_forecast = 'myopic'
-unresp_factor = 0.0
+unresp_factor = 1.0
 FIXED_TARIFF = False
 interval = 300
 allocation_rule = 'by_award'
 
 #Appliance specifications
 delta = 3.0 #temperature bandwidth - HVAC inactivity
-ref_price = 'historical'
-price_intervals = 288 #p average calculation 
+ref_price = 'forward'
+price_intervals = 36 #p average calculation 
 which_price = 'DA' #battery scheduling
 
 #include System Operator

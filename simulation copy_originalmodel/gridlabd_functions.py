@@ -109,7 +109,7 @@ def on_precommit(t):
 		if step == 0:
 			df_house_state = HHfct.get_settings_houses(houses,interval)
 
-		#Save DB files and shorten dfs every 24 hours
+		#Save DB files and shorten dfs every 12 hours
 		saving_interval = 1
 		if step == 0:
 			global time_daystart 
@@ -117,7 +117,6 @@ def on_precommit(t):
 		if step > 0 and (dt_sim_time.hour == 0) and (dt_sim_time.minute == 0):
 			#i = int(step/(saving_interval*12)) #for 5min interval
 			dt_sim_time_prev = dt_sim_time - pandas.Timedelta(days=1)
-			import pdb; pdb.set_trace()
 			specifier = str(dt_sim_time_prev.year)+format(dt_sim_time_prev.month,'02d')+format(dt_sim_time_prev.day,'02d')
 			df_supply_bids.to_csv(results_folder+'/df_supply_bids_'+specifier+'.csv')
 			#df_supply_bids = pandas.DataFrame(columns = df_supply_bids.columns)
