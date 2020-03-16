@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////
 // BEGIN
 ////////////////////////////////////////////////////////
-// filename... tmp_model.glm
+// filename... model_bc.glm
 // workdir.... /docker_powernet2
 // command.... gridlabd model.glm
-// created.... Mon Mar 16 16:58:38 2020
+// created.... Mon Mar 16 18:52:12 2020
 // user....... (null)
-// host....... 86ed2f27241f
+// host....... 534cdda896fd
 // modules.... 5
 // classes.... 90
 // objects.... 90
@@ -23,6 +23,7 @@ clock {
 
 ////////////////////////////////////////////////////////
 // modules
+module gridlabd_functions;
 module climate {
 	message_flags "DEBUG|VERBOSE";
 }
@@ -126,25 +127,26 @@ class house {
 // objects
 object climate.climate {
 	name "weather";
-	latitude "37N22:0.00";
-	longitude "121W56:0.00";
-	guid "3D21B91ADFEAACDE7EB55A27837A500C";
-	solar_elevation "-0.475398 rad";
-	solar_zenith "+2.04619 rad";
-	tmyfile "data/CA-San_Jose_Intl_Ap.tmy3";
-	temperature "+59.002 degF";
-	humidity "+0.77 pu";
+	latitude "30N17:0.00";
+	longitude "97W44:0.00";
+	guid "2D3F5F48B4E14BB01ED4E902A9C31C9C";
+	solar_elevation "-0.558411 rad";
+	solar_zenith "+2.12921 rad";
+	tmyfile "data/722540TYA.tmy3";
+	temperature "+78.082 degF";
+	humidity "+0.74 pu";
 	extraterrestrial_direct_normal "+0 W/sf";
-	pressure "+1014 mbar";
-	record.low "+32.002 degF";
-	record.high "+96.082 degF";
-	record.solar "+92.7536 W/sf";
-	rainfall "+0.74803 in/h";
+	pressure "+993 mbar";
+	record.low "+24.982 degF";
+	record.high "+102.022 degF";
+	record.solar "+93.9678 W/sf";
+	rainfall "+1.49606 in/h";
 	interpolate "QUADRATIC";
+	opq_sky_cov "+0.6 pu";
 }
 object tape.player {
-	name "player_1";
-	guid "5A99C711AC97EE62AC21B79A507775C";
+	name "player_0";
+	guid "59EF17FB0549933E209D7F4FAEF41C3A";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_3039_2016.player";
 	filetype "txt";
@@ -152,8 +154,8 @@ object tape.player {
 	value "+0.28";
 }
 object tape.player {
-	name "player_2";
-	guid "1309100A8F287DD44FA6A80D5B7393B";
+	name "player_1";
+	guid "1CDD912123F8A63B6AD4D67A82A4C133";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_93_2016.player";
 	filetype "txt";
@@ -161,8 +163,8 @@ object tape.player {
 	value "+0.37";
 }
 object tape.player {
-	name "player_3";
-	guid "634316F7A0ED7F2C22913DB8E6904CC8";
+	name "player_2";
+	guid "6D50C16E1FCD053573631141D27AEED";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_503_2016.player";
 	filetype "txt";
@@ -170,8 +172,8 @@ object tape.player {
 	value "+0.26";
 }
 object tape.player {
-	name "player_4";
-	guid "19FCB0C005B719A834A54BE182749975";
+	name "player_3";
+	guid "48775894EE3B51A360EF5670EB734B41";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_86_2016.player";
 	filetype "txt";
@@ -179,8 +181,8 @@ object tape.player {
 	value "+0.33";
 }
 object tape.player {
-	name "player_5";
-	guid "35F867E341D33B60119AB7DFF76053BE";
+	name "player_4";
+	guid "4329BBA912BC7CA45CE208C41F9B147C";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_187_2016.player";
 	filetype "txt";
@@ -188,8 +190,8 @@ object tape.player {
 	value "+0.01";
 }
 object tape.player {
-	name "player_6";
-	guid "1AF21FB99B72B04DE9C5CE0E2E72872";
+	name "player_5";
+	guid "63F01D829D9A268D174CE5172AEC2F65";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_1718_2016.player";
 	filetype "txt";
@@ -198,25 +200,25 @@ object tape.player {
 }
 object powerflow.meter {
 	name "node_149";
-	guid "5FE81DE8FDDDEE12127251EE8269C4EA";
-	measured_real_energy "+109772 Wh";
-	measured_reactive_energy "+96903.9 VAh";
+	guid "3D1C70022936F1827FC426E6E5866321";
+	measured_real_energy "+176416 Wh";
+	measured_reactive_energy "+153268 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+4667.34+23.7758d VA";
-	measured_power_A "+1551.69+23.7791d VA";
-	measured_power_B "+1557.81+23.7727d VA";
-	measured_power_C "+1557.84+23.7756d VA";
-	measured_demand "+37186.1 W";
-	measured_real_power "+4271.22 W";
-	measured_reactive_power "+1881.68 VAr";
+	measured_power "+7795.5+32.2907d VA";
+	measured_power_A "+1551.77+23.7167d VA";
+	measured_power_B "+5331.8+36.535d VA";
+	measured_power_C "+957.898+22.478d VA";
+	measured_demand "+25894.1 W";
+	measured_real_power "+6589.91 W";
+	measured_reactive_power "+4164.47 VAr";
 	measured_voltage_A "+2401+0d V";
 	measured_voltage_B "+2401-120d V";
 	measured_voltage_C "+2401+120d V";
 	measured_voltage_AB "+4158.65+30d V";
 	measured_voltage_CA "+4158.65+150d V";
-	measured_current_A "+0.591406-0.260583j A";
-	measured_current_B "-0.523387-0.383444j A";
-	measured_current_C "-0.070348+0.645003j A";
+	measured_current_A "+0.59172-0.259952j A";
+	measured_current_B "-2.03702-0.884244j A";
+	measured_current_C "-0.0522263+0.395525j A";
 	bill_day "15";
 	// class.parent = powerflow.node
 	bustype "SWING";
@@ -254,8 +256,8 @@ object powerflow.meter {
 object tape.recorder {
 	parent "node_149";
 	name "recorder:8";
-	guid "1058A6395142631B5DB99A38538A84D8";
-	file "TESS/TESS_BC/load_node_149.csv";
+	guid "BE46FF7D80568BE24A7B98F4747A4B5";
+	file TESS/TESS_0001/load_node_149.csv;
 	filetype "txt";
 	mode "file";
 	flush "-1";
@@ -264,25 +266,25 @@ object tape.recorder {
 }
 object powerflow.meter {
 	name "feeder_node";
-	guid "39226AE9554DD0623FABA55DBD224CE5";
-	measured_real_energy "+109772 Wh";
-	measured_reactive_energy "+96903.9 VAh";
+	guid "4ED5932DF7F852CD16D67174F686EEB6";
+	measured_real_energy "+176416 Wh";
+	measured_reactive_energy "+153268 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+4271.22+1881.68j VA";
-	measured_power_A "+1419.96+625.66j VA";
-	measured_power_B "+1425.63+627.967j VA";
-	measured_power_C "+1425.63+628.05j VA";
-	measured_demand "+37186.1 W";
-	measured_real_power "+4271.22 W";
-	measured_reactive_power "+1881.68 VAr";
+	measured_power "+6589.91+4164.47j VA";
+	measured_power_A "+1420.72+624.146j VA";
+	measured_power_B "+4284.07+3174.09j VA";
+	measured_power_C "+885.123+366.232j VA";
+	measured_demand "+25894.1 W";
+	measured_real_power "+6589.91 W";
+	measured_reactive_power "+4164.47 VAr";
 	measured_voltage_A "+2385.99+0j V";
 	measured_voltage_B "-1200.5-2079.33j V";
 	measured_voltage_C "-1200.5+2079.33j V";
 	measured_voltage_AB "+3586.49+2079.33j V";
 	measured_voltage_CA "-3586.49+2079.33j V";
-	measured_current_A "+0.595125-0.262222j A";
-	measured_current_B "-0.523387-0.383444j A";
-	measured_current_C "-0.070348+0.645003j A";
+	measured_current_A "+0.595442-0.261587j A";
+	measured_current_B "-2.03702-0.884244j A";
+	measured_current_C "-0.0522263+0.395525j A";
 	bill_day "15";
 	// class.parent = powerflow.node
 	busflags "HASSOURCE";
@@ -319,7 +321,7 @@ object powerflow.meter {
 object powerflow.overhead_line {
 	parent "feeder_node";
 	name "main_line";
-	guid "40A2B9ECC94C00DA5198C0E2A59CC6ED";
+	guid "4A29252FE13A553966D936E95004D000";
 	// class.parent = powerflow.line
 	configuration "lc301";
 	length "+15840 ft";
@@ -327,26 +329,26 @@ object powerflow.overhead_line {
 	status "CLOSED";
 	from "feeder_node";
 	to "main_node";
-	power_in "+4271.22+1881.68j VA";
-	power_out "+4270.06+1879.3j VA";
-	power_out_real "+4270.06 W";
-	power_losses "+1.1614+2.37935j VA";
-	power_in_A "+1419.96+625.66j VA";
-	power_in_B "+1425.63+627.967j VA";
-	power_in_C "+1425.63+628.05j VA";
-	power_out_A "+1419.45+624.856j VA";
-	power_out_B "+1425.33+627.23j VA";
-	power_out_C "+1425.28+627.212j VA";
-	power_losses_A "+0.512722+0.80399j VA";
-	power_losses_B "+0.30417+0.736894j VA";
-	power_losses_C "+0.344511+0.838466j VA";
-	current_out_A "+0.595125-0.262222j A";
-	current_out_B "-0.523387-0.383444j A";
-	current_out_C "-0.070348+0.645003j A";
-	current_in_A "+0.595125-0.262222j A";
-	current_in_B "-0.523387-0.383444j A";
-	current_in_C "-0.070348+0.645003j A";
-	flow_direction "CF|BF|AF";
+	power_in "+6589.91+4164.47j VA";
+	power_out "+6583.48+4150.97j VA";
+	power_out_real "+6583.48 W";
+	power_losses "+7.99804+13.4992j VA";
+	power_in_A "+1420.72+624.146j VA";
+	power_in_B "+4284.07+3174.09j VA";
+	power_in_C "+885.123+366.232j VA";
+	power_out_A "+1419.32+624.804j VA";
+	power_out_B "+4278.25+3160.28j VA";
+	power_out_C "+885.907+365.887j VA";
+	power_losses_A "+1.3976-0.658271j VA";
+	power_losses_B "+5.81698+13.8119j VA";
+	power_losses_C "+0.783461+0.34554j VA";
+	current_out_A "+0.595442-0.261587j A";
+	current_out_B "-2.03702-0.884244j A";
+	current_out_C "-0.0522263+0.395525j A";
+	current_in_A "+0.595442-0.261587j A";
+	current_in_B "-2.03702-0.884244j A";
+	current_in_C "-0.0522263+0.395525j A";
+	flow_direction "CR|BF|AF";
 	continuous_rating "+1000 A";
 	emergency_rating "+2000 A";
 	inrush_convergence_value "+0.0001 V";
@@ -357,7 +359,7 @@ object powerflow.overhead_line {
 object powerflow.regulator {
 	parent "node_149";
 	name "main_reg";
-	guid "18A4053F083508333E226A2D26D4AC7A";
+	guid "4EF644D9C47E3D7F446A5CD7EC90008E";
 	configuration "rc502";
 	tap_A "-1";
 	sense_node "main_node";
@@ -366,25 +368,24 @@ object powerflow.regulator {
 	status "CLOSED";
 	from "node_149";
 	to "feeder_node";
-	power_in "+4667.34+23.7758d VA";
-	power_out "+4271.22+1881.68j VA";
-	power_out_real "+4271.22 W";
-	power_losses "+1.15938e-12+11.3099d VA";
-	power_in_A "+1551.69+23.7791d VA";
-	power_in_B "+1557.81+23.7727d VA";
-	power_in_C "+1557.84+23.7756d VA";
-	power_out_A "+1419.96+625.66j VA";
-	power_out_B "+1425.63+627.967j VA";
-	power_out_C "+1425.63+628.05j VA";
-	power_losses_A "+2.54211e-13-26.5651d VA";
-	power_losses_B "+5.08423e-13+26.5651d VA";
-	power_losses_C "+4.68743e-13+14.0362d VA";
-	current_out_A "+0.595125-0.262222j A";
-	current_out_B "-0.523387-0.383444j A";
-	current_out_C "-0.070348+0.645003j A";
-	current_in_A "+0.591406-0.260583j A";
-	current_in_B "-0.523387-0.383444j A";
-	current_in_C "-0.070348+0.645003j A";
+	power_in "+7795.5+32.2907d VA";
+	power_out "+6589.91+4164.47j VA";
+	power_out_real "+6589.91 W";
+	power_losses "+1.01685e-12+63.4349d VA";
+	power_in_A "+1551.77+23.7167d VA";
+	power_in_B "+5331.8+36.535d VA";
+	power_in_C "+957.898+22.478d VA";
+	power_out_A "+1420.72+624.146j VA";
+	power_out_B "+4284.07+3174.09j VA";
+	power_out_C "+885.123+366.232j VA";
+	power_losses_A "+2.27374e-13+0d VA";
+	power_losses_C "+2.27374e-13+0d VA";
+	current_out_A "+0.595442-0.261587j A";
+	current_out_B "-2.03702-0.884244j A";
+	current_out_C "-0.0522263+0.395525j A";
+	current_in_A "+0.59172-0.259952j A";
+	current_in_B "-2.03702-0.884244j A";
+	current_in_C "-0.0522263+0.395525j A";
 	flow_direction "CN|BN|AN";
 	continuous_rating "+1000 A";
 	emergency_rating "+2000 A";
@@ -395,7 +396,7 @@ object powerflow.regulator {
 }
 object powerflow.regulator_configuration {
 	name "rc502";
-	guid "FDCAA873B2AAC184C6A0E2DFC447377";
+	guid "524AA497FCDF878361504D240810C1EC";
 	connect_type "WYE_WYE";
 	band_center "+2400 V";
 	band_width "+40 V";
@@ -416,7 +417,7 @@ object powerflow.regulator_configuration {
 }
 object powerflow.overhead_line_conductor {
 	name "olc301c";
-	guid "276C345DE0C8435B224DB208D3D5E738";
+	guid "59179F6F5914521710AA24E68E0BE6C3";
 	geometric_mean_radius "+0.0244 ft";
 	resistance "+0.306 Ohm/mile";
 	diameter "+0.721 in";
@@ -427,7 +428,7 @@ object powerflow.overhead_line_conductor {
 }
 object powerflow.overhead_line_conductor {
 	name "olc301n";
-	guid "1838355FA431EA1A33C1BDEF55D7D127";
+	guid "760D64CBB06BCAF13391CA36EFB5AA27";
 	geometric_mean_radius "+0.00814 ft";
 	resistance "+0.592 Ohm/mile";
 	diameter "+0.563 in";
@@ -438,7 +439,7 @@ object powerflow.overhead_line_conductor {
 }
 object powerflow.line_configuration {
 	name "lc301";
-	guid "6286D366599ADEE3608E317084BCE0BF";
+	guid "E48AD00F6EDE6565C1A75ED47A1FCC8";
 	conductor_A "olc301c";
 	conductor_B "olc301c";
 	conductor_C "olc301c";
@@ -451,7 +452,7 @@ object powerflow.line_configuration {
 }
 object powerflow.line_spacing {
 	name "ls500301";
-	guid "19A19F1173B6026F14636695010AF24C";
+	guid "51ED989AE54A124F27BD9AFDAEA07DD8";
 	distance_AB "+2.5 ft";
 	distance_BC "+4.5 ft";
 	distance_AC "+7 ft";
@@ -466,36 +467,36 @@ object powerflow.line_spacing {
 object powerflow.meter {
 	parent "main_line";
 	name "main_node";
-	guid "5C1BE9DC5FCF40D01884B6CEC9C25FE5";
-	measured_real_energy "+109674 Wh";
-	measured_reactive_energy "+96698.7 VAh";
+	guid "4D930C56281B10AC2A1485A10675AD7F";
+	measured_real_energy "+176128 Wh";
+	measured_reactive_energy "+152641 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+4270.06+1879.3j VA";
-	measured_power_A "+1419.45+624.856j VA";
-	measured_power_B "+1425.33+627.23j VA";
-	measured_power_C "+1425.28+627.212j VA";
-	measured_demand "+37083.8 W";
-	measured_real_power "+4270.06 W";
-	measured_reactive_power "+1879.3 VAr";
-	measured_voltage_A "+2384.77-0.81343j V";
-	measured_voltage_B "-1200.79-2078.13j V";
-	measured_voltage_C "-1199.16+2078.94j V";
-	measured_voltage_AB "+3585.57+2077.32j V";
-	measured_voltage_BC "-1.63527-4157.07j V";
-	measured_voltage_CA "-3583.93+2079.75j V";
-	measured_current_A "+0.595125-0.262222j A";
-	measured_current_B "-0.523387-0.383444j A";
-	measured_current_C "-0.070348+0.645003j A";
+	measured_power "+6583.48+4150.97j VA";
+	measured_power_A "+1419.32+624.804j VA";
+	measured_power_B "+4278.25+3160.28j VA";
+	measured_power_C "+885.907+365.887j VA";
+	measured_demand "+25820.2 W";
+	measured_real_power "+6583.48 W";
+	measured_reactive_power "+4150.97 VAr";
+	measured_voltage_A "+2384.43+1.791j V";
+	measured_voltage_B "-1200.57-2072.58j V";
+	measured_voltage_C "-1199.9+2081.39j V";
+	measured_voltage_AB "+3585.01+2074.37j V";
+	measured_voltage_BC "-0.675359-4153.97j V";
+	measured_voltage_CA "-3584.33+2079.6j V";
+	measured_current_A "+0.595442-0.261587j A";
+	measured_current_B "-2.03702-0.884244j A";
+	measured_current_C "-0.0522263+0.395525j A";
 	bill_day "15";
 	// class.parent = powerflow.node
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.002401 V";
-	voltage_A "+2384.77-0.81343j V";
-	voltage_B "-1200.79-2078.13j V";
-	voltage_C "-1199.16+2078.94j V";
-	voltage_AB "+3585.57+2077.32j V";
-	voltage_BC "-1.63527-4157.07j V";
-	voltage_CA "-3583.93+2079.75j V";
+	voltage_A "+2384.43+1.791j V";
+	voltage_B "-1200.57-2072.58j V";
+	voltage_C "-1199.9+2081.39j V";
+	voltage_AB "+3585.01+2074.37j V";
+	voltage_BC "-0.675359-4153.97j V";
+	voltage_CA "-3584.33+2079.6j V";
 	frequency_measure_type "NONE";
 	sfm_Tf "+0.01 s";
 	pll_Kp "+10 pu";
@@ -524,32 +525,32 @@ object powerflow.meter {
 object powerflow.meter {
 	parent "main_node";
 	name "main_node_A";
-	guid "5046F323F34E85C06919534D3E4A9194";
-	measured_real_energy "+41593.3 Wh";
-	measured_reactive_energy "+32416.9 VAh";
+	guid "319F0C01EAB90A225908FC46DDDB1646";
+	measured_real_energy "+66526 Wh";
+	measured_reactive_energy "+52084.1 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+1419.45+624.856j VA";
-	measured_power_A "+1419.45+624.856j VA";
-	measured_demand "+10805.6 W";
-	measured_real_power "+1419.45 W";
-	measured_reactive_power "+624.856 VAr";
-	measured_voltage_A "+2384.77-0.81343j V";
-	measured_voltage_B "-1200.79-2078.13j V";
-	measured_voltage_C "-1199.16+2078.94j V";
-	measured_voltage_AB "+3585.57+2077.32j V";
-	measured_voltage_BC "-1.63527-4157.07j V";
-	measured_voltage_CA "-3583.93+2079.75j V";
-	measured_current_A "+0.595125-0.262222j A";
+	measured_power "+1419.32+624.804j VA";
+	measured_power_A "+1419.32+624.804j VA";
+	measured_demand "+10712.9 W";
+	measured_real_power "+1419.32 W";
+	measured_reactive_power "+624.804 VAr";
+	measured_voltage_A "+2384.43+1.791j V";
+	measured_voltage_B "-1200.57-2072.58j V";
+	measured_voltage_C "-1199.9+2081.39j V";
+	measured_voltage_AB "+3585.01+2074.37j V";
+	measured_voltage_BC "-0.675359-4153.97j V";
+	measured_voltage_CA "-3584.33+2079.6j V";
+	measured_current_A "+0.595442-0.261587j A";
 	bill_day "15";
 	// class.parent = powerflow.node
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.002401 V";
-	voltage_A "+2384.77-0.81343j V";
-	voltage_B "-1200.79-2078.13j V";
-	voltage_C "-1199.16+2078.94j V";
-	voltage_AB "+3585.57+2077.32j V";
-	voltage_BC "-1.63527-4157.07j V";
-	voltage_CA "-3583.93+2079.75j V";
+	voltage_A "+2384.43+1.791j V";
+	voltage_B "-1200.57-2072.58j V";
+	voltage_C "-1199.9+2081.39j V";
+	voltage_AB "+3585.01+2074.37j V";
+	voltage_BC "-0.675359-4153.97j V";
+	voltage_CA "-3584.33+2079.6j V";
 	frequency_measure_type "NONE";
 	sfm_Tf "+0.01 s";
 	pll_Kp "+10 pu";
@@ -578,32 +579,32 @@ object powerflow.meter {
 object powerflow.meter {
 	parent "main_node";
 	name "main_node_B";
-	guid "4B887A2D716B6510B56EF9F71D11358";
-	measured_real_energy "+34335 Wh";
-	measured_reactive_energy "+32133.1 VAh";
+	guid "647745E5718D7DFB434B9C2E720337BC";
+	measured_real_energy "+51142.3 Wh";
+	measured_reactive_energy "+48050.1 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+1425.33+627.23j VA";
-	measured_power_B "+1425.33+627.23j VA";
-	measured_demand "+10802.3 W";
-	measured_real_power "+1425.33 W";
-	measured_reactive_power "+627.23 VAr";
-	measured_voltage_A "+2384.77-0.81343j V";
-	measured_voltage_B "-1200.79-2078.13j V";
-	measured_voltage_C "-1199.16+2078.94j V";
-	measured_voltage_AB "+3585.57+2077.32j V";
-	measured_voltage_BC "-1.63527-4157.07j V";
-	measured_voltage_CA "-3583.93+2079.75j V";
-	measured_current_B "-0.523387-0.383444j A";
+	measured_power "+4278.25+3160.28j VA";
+	measured_power_B "+4278.25+3160.28j VA";
+	measured_demand "+9596.36 W";
+	measured_real_power "+4278.25 W";
+	measured_reactive_power "+3160.28 VAr";
+	measured_voltage_A "+2384.43+1.791j V";
+	measured_voltage_B "-1200.57-2072.58j V";
+	measured_voltage_C "-1199.9+2081.39j V";
+	measured_voltage_AB "+3585.01+2074.37j V";
+	measured_voltage_BC "-0.675359-4153.97j V";
+	measured_voltage_CA "-3584.33+2079.6j V";
+	measured_current_B "-2.03702-0.884244j A";
 	bill_day "15";
 	// class.parent = powerflow.node
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.002401 V";
-	voltage_A "+2384.77-0.81343j V";
-	voltage_B "-1200.79-2078.13j V";
-	voltage_C "-1199.16+2078.94j V";
-	voltage_AB "+3585.57+2077.32j V";
-	voltage_BC "-1.63527-4157.07j V";
-	voltage_CA "-3583.93+2079.75j V";
+	voltage_A "+2384.43+1.791j V";
+	voltage_B "-1200.57-2072.58j V";
+	voltage_C "-1199.9+2081.39j V";
+	voltage_AB "+3585.01+2074.37j V";
+	voltage_BC "-0.675359-4153.97j V";
+	voltage_CA "-3584.33+2079.6j V";
 	frequency_measure_type "NONE";
 	sfm_Tf "+0.01 s";
 	pll_Kp "+10 pu";
@@ -632,32 +633,32 @@ object powerflow.meter {
 object powerflow.meter {
 	parent "main_node";
 	name "main_node_C";
-	guid "4230099CAB0273E9547FFC264CEF6652";
-	measured_real_energy "+33745.3 Wh";
-	measured_reactive_energy "+32148.7 VAh";
+	guid "2C91312B57DC21CE72429BD831C4EC4F";
+	measured_real_energy "+58459.8 Wh";
+	measured_reactive_energy "+52506.3 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+1425.28+627.212j VA";
-	measured_power_C "+1425.28+627.212j VA";
-	measured_demand "+15543.9 W";
-	measured_real_power "+1425.28 W";
-	measured_reactive_power "+627.212 VAr";
-	measured_voltage_A "+2384.77-0.81343j V";
-	measured_voltage_B "-1200.79-2078.13j V";
-	measured_voltage_C "-1199.16+2078.94j V";
-	measured_voltage_AB "+3585.57+2077.32j V";
-	measured_voltage_BC "-1.63527-4157.07j V";
-	measured_voltage_CA "-3583.93+2079.75j V";
-	measured_current_C "-0.070348+0.645003j A";
+	measured_power "+885.907+365.887j VA";
+	measured_power_C "+885.907+365.887j VA";
+	measured_demand "+17025.8 W";
+	measured_real_power "+885.907 W";
+	measured_reactive_power "+365.887 VAr";
+	measured_voltage_A "+2384.43+1.791j V";
+	measured_voltage_B "-1200.57-2072.58j V";
+	measured_voltage_C "-1199.9+2081.39j V";
+	measured_voltage_AB "+3585.01+2074.37j V";
+	measured_voltage_BC "-0.675359-4153.97j V";
+	measured_voltage_CA "-3584.33+2079.6j V";
+	measured_current_C "-0.0522263+0.395525j A";
 	bill_day "15";
 	// class.parent = powerflow.node
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.002401 V";
-	voltage_A "+2384.77-0.81343j V";
-	voltage_B "-1200.79-2078.13j V";
-	voltage_C "-1199.16+2078.94j V";
-	voltage_AB "+3585.57+2077.32j V";
-	voltage_BC "-1.63527-4157.07j V";
-	voltage_CA "-3583.93+2079.75j V";
+	voltage_A "+2384.43+1.791j V";
+	voltage_B "-1200.57-2072.58j V";
+	voltage_C "-1199.9+2081.39j V";
+	voltage_AB "+3585.01+2074.37j V";
+	voltage_BC "-0.675359-4153.97j V";
+	voltage_CA "-3584.33+2079.6j V";
 	frequency_measure_type "NONE";
 	sfm_Tf "+0.01 s";
 	pll_Kp "+10 pu";
@@ -685,7 +686,7 @@ object powerflow.meter {
 }
 object powerflow.transformer_configuration {
 	name "xfmr_config_A";
-	guid "7C64266457933C8ED089B8485F67763";
+	guid "376CD0CEE51C277230480D2F861D554F";
 	connect_type "SINGLE_PHASE_CENTER_TAPPED";
 	install_type "POLETOP";
 	primary_voltage "+2401 V";
@@ -699,7 +700,7 @@ object powerflow.transformer_configuration {
 }
 object powerflow.transformer_configuration {
 	name "xfmr_config_B";
-	guid "13CCF2AD01948DA21DD3BC292474E034";
+	guid "7A655D77CDBAF988451A964043410D2";
 	connect_type "SINGLE_PHASE_CENTER_TAPPED";
 	install_type "POLETOP";
 	primary_voltage "+2401 V";
@@ -713,7 +714,7 @@ object powerflow.transformer_configuration {
 }
 object powerflow.transformer_configuration {
 	name "xfmr_config_C";
-	guid "2C984ABEBCC7FD3D40C84D7510774CD3";
+	guid "6265C7EB93742E11BEEA0A98D063D0D";
 	connect_type "SINGLE_PHASE_CENTER_TAPPED";
 	install_type "POLETOP";
 	primary_voltage "+2401 V";
@@ -728,24 +729,24 @@ object powerflow.transformer_configuration {
 object powerflow.transformer {
 	parent "main_node_A";
 	name "xfrm_1A";
-	guid "7381684D58D449DE40C8E57E19CDECC3";
+	guid "7F79366F992B8CA474B3D7863E50140D";
 	configuration "xfmr_config_A";
 	// class.parent = powerflow.link
 	status "CLOSED";
 	from "main_node_A";
 	to "node_1A";
-	power_in "+1419.45+624.856j VA";
-	power_out "+1419.43+624.82j VA";
-	power_out_real "+1419.43 W";
-	power_losses "+0.0179029+0.0362192j VA";
-	power_in_A "+1419.45+624.856j VA";
-	power_out_A "+333.825+96.1673j VA";
-	power_out_B "+1085.61+528.653j VA";
-	power_losses_A "+0.0179029+0.0362192j VA";
-	current_out_A "+2.80055-0.807855j A";
-	current_out_B "-9.1069+4.43876j A";
-	current_out_C "+6.30635-3.63091j A";
-	current_in_A "+0.595125-0.262222j A";
+	power_in "+1419.32+624.804j VA";
+	power_out "+1419.3+624.768j VA";
+	power_out_real "+1419.3 W";
+	power_losses "+0.0179045+0.0362227j VA";
+	power_in_A "+1419.32+624.804j VA";
+	power_out_A "+333.779+96.1557j VA";
+	power_out_B "+1085.53+528.612j VA";
+	power_losses_A "+0.0179045+0.0362227j VA";
+	current_out_A "+2.80145-0.804813j A";
+	current_out_B "-9.11234+4.4291j A";
+	current_out_C "+6.31089-3.62429j A";
+	current_in_A "+0.595442-0.261587j A";
 	flow_direction "CN|BR|AF";
 	continuous_rating "+1000 A";
 	emergency_rating "+1000 A";
@@ -757,14 +758,14 @@ object powerflow.transformer {
 object powerflow.triplex_node {
 	parent "xfrm_1A";
 	name "node_1A";
-	guid "696A2E52DF2146F1703FDAD6F036BAE1";
+	guid "51484EBFDE292EBB2DF86C15795163C6";
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
-	voltage_1 "+119.187-0.0424431j V";
-	voltage_2 "+119.187-0.0426234j V";
-	voltage_12 "+238.374-0.0850665j V";
-	voltage_1N "+119.187-0.0424431j V";
-	voltage_2N "+119.187-0.0426234j V";
+	voltage_1 "+119.17+0.0877224j V";
+	voltage_2 "+119.17+0.0875412j V";
+	voltage_12 "+238.34+0.175264j V";
+	voltage_1N "+119.17+0.0877224j V";
+	voltage_2N "+119.17+0.0875412j V";
 	GFA_freq_low_trip "+59.5 Hz";
 	GFA_freq_high_trip "+60.5 Hz";
 	GFA_volt_low_trip "+0.8 pu";
@@ -793,33 +794,33 @@ object powerflow.triplex_node {
 object powerflow.triplex_meter {
 	parent "node_1A";
 	name "meter_1";
-	guid "2C3AE5D5E5BFC9C36052538AB090CF4A";
-	measured_real_energy "+21179.5 Wh";
-	measured_reactive_energy "+15925.5 VAh";
+	guid "11624ED434F61A8E4004CD4A2A425CE";
+	measured_real_energy "+34802.4 Wh";
+	measured_reactive_energy "+26861.4 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+775.434+23.7586d VA";
-	indiv_measured_power_1 "+173.7+16.0705d VA";
-	indiv_measured_power_2 "+542.805+264.326j VA";
-	measured_demand "+5368.18 W";
-	measured_real_power "+709.717 W";
-	measured_reactive_power "+312.41 VAr";
-	measured_voltage_1 "+119.187-0.0204032d V";
-	measured_voltage_2 "+119.187-0.0204901d V";
-	measured_voltage_12 "+238.374-0.0204466d V";
-	measured_current_1 "+1.40028-0.403928j A";
-	measured_current_2 "-4.55345+2.21938j A";
-	measured_current_N "+3.15317-1.81545j A";
+	measured_power "+775.364+23.7588d VA";
+	indiv_measured_power_1 "+173.677+16.0707d VA";
+	indiv_measured_power_2 "+542.763+264.306j VA";
+	measured_demand "+5355.82 W";
+	measured_real_power "+709.652 W";
+	measured_reactive_power "+312.384 VAr";
+	measured_voltage_1 "+119.17+0.042176d V";
+	measured_voltage_2 "+119.17+0.0420891d V";
+	measured_voltage_12 "+238.34+0.0421325d V";
+	measured_current_1 "+1.40072-0.402407j A";
+	measured_current_2 "-4.55617+2.21455j A";
+	measured_current_N "+3.15544-1.81215j A";
 	bill_day "15";
 	// class.parent = powerflow.triplex_node
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
-	voltage_1 "+119.187-0.0424431j V";
-	voltage_2 "+119.187-0.0426234j V";
-	voltage_12 "+238.374-0.0850665j V";
-	voltage_1N "+119.187-0.0424431j V";
-	voltage_2N "+119.187-0.0426234j V";
-	power_12 "+3.97904e-13+0i VA";
-	power_12_real "+3.97904e-13 W";
+	voltage_1 "+119.17+0.0877224j V";
+	voltage_2 "+119.17+0.0875412j V";
+	voltage_12 "+238.34+0.175264j V";
+	voltage_1N "+119.17+0.0877224j V";
+	voltage_2N "+119.17+0.0875412j V";
+	power_12 "+4.54747e-13+0i VA";
+	power_12_real "+4.54747e-13 W";
 	house_present "TRUE";
 	GFA_freq_low_trip "+59.5 Hz";
 	GFA_freq_high_trip "+60.5 Hz";
@@ -849,7 +850,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_1";
 	name "house_1";
-	guid "7B91E9A99E95F2F04DE29896F7DA5337";
+	guid "5077A67CA9AE92DE2D791B5E9FFB34BF";
 	weather "weather";
 	floor_area "+1308.78 sf";
 	gross_wall_area "+1181.54 sf";
@@ -885,8 +886,8 @@ object residential.house {
 	window_temperature_delta "+5";
 	design_heating_capacity "+36000 Btu/h";
 	design_cooling_capacity "+36000 Btu/h";
-	cooling_design_temperature "+96.082 degF";
-	heating_design_temperature "+32.002 degF";
+	cooling_design_temperature "+102.022 degF";
+	heating_design_temperature "+24.982 degF";
 	design_peak_solar "+195 Btu/h/sf";
 	design_internal_gains "+3986.63 W/sf";
 	mass_solar_gain_fraction "+0.5 pu";
@@ -906,12 +907,12 @@ object residential.house {
 	fan_power_factor "+0.96 pu";
 	heating_COP "+2.5 pu";
 	cooling_COP "+3.5 Btu/kWh";
-	air_temperature "+73.5966 degF";
-	outdoor_temperature "+59.002 degF";
-	outdoor_rh "+77 %";
+	air_temperature "+76.7442 degF";
+	outdoor_temperature "+78.082 degF";
+	outdoor_rh "+74 %";
 	mass_heat_capacity "+2247.87 Btu/degF";
 	mass_heat_coeff "+5850.81 Btu/degF/h";
-	mass_temperature "+74.1833 degF";
+	mass_temperature "+76.6198 degF";
 	air_volume "+10470.3 cf";
 	air_mass "+769.565 lb";
 	air_heat_capacity "+554.549 Btu/degF";
@@ -943,14 +944,14 @@ object residential.house {
 	Rdoors "+5 degF*sf*h/Btu";
 	hvac_breaker_rating "+200 A";
 	hvac_power_factor "+0.75 unit";
-	last_cooling_load "+2.56446 kW";
+	last_cooling_load "+2.8915 kW";
 	total_load "+0.778794 kW";
 	panel "power_factor: 0; "power.real": 0.47537; "power.imag": 0.218753";
-	panel.energy "+30.4515+11.6496i kVAh";
+	panel.energy "+42.9048+11.6496i kVAh";
 	panel.power "+0.712833+0.31367j kVA";
 	panel.peak_demand "+0+0i kVA";
 	panel.heatgain "+1554.75 Btu/h";
-	panel.cumulative_heatgain "-5626.1 Btu";
+	panel.cumulative_heatgain "-110714 Btu";
 	panel.heatgain_fraction "+0 pu";
 	panel.current_fraction "+0 pu";
 	panel.impedance_fraction "+0 pu";
@@ -963,11 +964,11 @@ object residential.house {
 	panel.breaker_amps "+0 A";
 	panel.configuration "IS110";
 	design_internal_gain_density "+0.6 W/sf";
-	compressor_count "32";
-	hvac_last_on "2016-07-01 19:42:12 PDT";
-	hvac_last_off "2016-07-01 19:45:11 PDT";
-	hvac_period_length "+26.1333 s";
-	hvac_duty_cycle "+0.114158";
+	compressor_count "74";
+	hvac_last_on "2016-07-01 23:39:44 PDT";
+	hvac_last_off "2016-07-01 23:43:02 PDT";
+	hvac_period_length "+36.1333 s";
+	hvac_duty_cycle "+0.0913284";
 	gas_enduses "WATERHEATER|RANGE|DRYER";
 	k "+2.17633";
 	T_max "+72";
@@ -975,11 +976,11 @@ object residential.house {
 	// class.parent = residential.residential_enduse
 	shape "type: unknown";
 	load "impedance_fraction: 0.200000; power_fraction: 0.800000; power_factor: 0.75; "power.real": 0";
-	energy "+4.93212+0i kVAh";
+	energy "+17.3855+0i kVAh";
 	power "+0+0j kVA";
 	peak_demand "+0+0i kVA";
 	heatgain "+0 Btu/h";
-	cumulative_heatgain "-52577.2 Btu";
+	cumulative_heatgain "-157665 Btu";
 	heatgain_fraction "+0 pu";
 	current_fraction "+0 pu";
 	impedance_fraction "+0.2 pu";
@@ -988,20 +989,20 @@ object residential.house {
 	constant_power "+0+0j kVA";
 	constant_current "+0+0j kVA";
 	constant_admittance "+0+0j kVA";
-	voltage_factor "+0.993225 pu";
+	voltage_factor "+0.993083 pu";
 	breaker_amps "+200 A";
 	configuration "IS220";
 }
 object residential.ZIPload {
 	parent "house_1";
 	name "zip_GLD_1";
-	guid "6EFC05A784CFF46F6C789B13D840BB32";
+	guid "736BF391ABBE8B2C6C6584CC77175475";
 	base_power "+0.28 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
 	impedance_pf "+0.9";
 	breaker_val "+1000 A";
-	actual_power "+0.278108+0.134694j kVA";
+	actual_power "+0.278069+0.134675j kVA";
 	multiplier "+1";
 	rate_of_cooling "-1 K/h";
 	rate_of_heating "-1 K/h";
@@ -1025,7 +1026,7 @@ object residential.ZIPload {
 	constant_power "+0.14+0.0678051j kVA";
 	constant_current "+0+0j kVA";
 	constant_admittance "+0.14+0.0678051j kVA";
-	voltage_factor "+0.993221 pu";
+	voltage_factor "+0.99308 pu";
 	breaker_amps "+1000 A";
 	configuration "IS110";
 	power_state "UNKNOWN";
@@ -1033,16 +1034,16 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_1";
 	name "EV_inverter_1";
-	guid "7242A3652737274572408658991296C5";
+	guid "1549F30B6F5063843B5BA9DDD25A2E89";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "+238.374-0.0850642j V";
-	phaseB_V_Out "+119.187-0.0426223j V";
-	phaseC_V_Out "+119.187-0.042442j V";
+	phaseA_V_Out "+238.34+0.175273j V";
+	phaseB_V_Out "+119.17+0.0875457j V";
+	phaseC_V_Out "+119.17+0.0877269j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -1114,7 +1115,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_1";
 	name "EV_1";
-	guid "6371C4CCCA3500E94B27F85BD5959AF2";
+	guid "B1928C3DA058272182920E18EED2CBF";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -1141,18 +1142,18 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_1";
 	name "PV_inverter_1";
-	guid "5D41C2D877750B2D645387845BDDD10A";
+	guid "3E90B0012F49BCF554DF8B5AD82DC82F";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	generator_mode "SUPPLY_DRIVEN";
 	inverter_convergence_criterion "+0.001";
-	V_In "+27.1567+0j V";
+	V_In "+27.0966+0j V";
 	Vdc "+480 V";
-	phaseA_V_Out "+238.374-0.0850642j V";
-	phaseB_V_Out "+119.187-0.0426223j V";
-	phaseC_V_Out "+119.187-0.042442j V";
+	phaseA_V_Out "+238.34+0.175273j V";
+	phaseB_V_Out "+119.17+0.0875457j V";
+	phaseC_V_Out "+119.17+0.0877269j V";
 	rated_power "+4000 VA";
 	rated_battery_power "+4210.53 W";
 	inverter_efficiency "+0.95";
@@ -1224,7 +1225,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_1";
 	name "PV_1";
-	guid "F7B4C938E335F8D53FB1B4117A6BBA1";
+	guid "4CA9D6B99028F9F4702BA970B4D99863";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -1234,24 +1235,24 @@ object generators.solar {
 	b_coeff "-0.0455 s/m";
 	T_coeff "-0.5 %/degC";
 	NOCT "+118.4 degF";
-	Tmodule "+59.002 degF";
-	Tambient "+15.0011 degC";
-	ambient_temperature "+59.002 degF";
+	Tmodule "+78.082 degF";
+	Tambient "+25.6011 degC";
+	ambient_temperature "+78.082 degF";
 	Rinternal "+0.05 Ohm";
 	Rated_Insolation "+92.902 W/sf";
 	Pmax_temp_coeff "-0.00012929";
 	Voc_temp_coeff "-0.000116272";
 	V_Max "+27.1+0j V";
 	Voc_Max "+34+0j V";
-	Voc "+34.0712+0j V";
+	Voc "+33.9957+0j V";
 	efficiency "+0.135 unit";
 	area "+153.146 sf";
 	soiling "+0.95 pu";
 	derating "+0.95 pu";
-	Tcell "+15.0011 degC";
+	Tcell "+25.6011 degC";
 	Rated_kVA "+1.92073 kVA";
 	rated_power "+1920.73 W";
-	V_Out "+27.1567+0j V";
+	V_Out "+27.0966+0j V";
 	weather "weather";
 	shading_factor "+1 pu";
 	tilt_angle "+45 deg";
@@ -1263,16 +1264,16 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_1";
 	name "Bat_inverter_1";
-	guid "45F2B8B40259040F7CD1CA7A61CD4A25";
+	guid "4D14D59E42A76FA14E224510498D3EE3";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "+238.374-0.0850642j V";
-	phaseB_V_Out "+119.187-0.0426223j V";
-	phaseC_V_Out "+119.187-0.042442j V";
+	phaseA_V_Out "+238.34+0.175273j V";
+	phaseB_V_Out "+119.17+0.0875457j V";
+	phaseC_V_Out "+119.17+0.0877269j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -1344,7 +1345,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_1";
 	name "Battery_1";
-	guid "25C2E22B352E76C66F15F163393E0B9D";
+	guid "5F8F26EB947034C742613ED174E55788";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -1372,33 +1373,33 @@ object generators.battery {
 object powerflow.triplex_meter {
 	parent "node_1A";
 	name "meter_2";
-	guid "7765FD9BADCB022F74797D9E3537862B";
-	measured_real_energy "+20412.3 Wh";
-	measured_reactive_energy "+16488.4 VAh";
+	guid "1416ADDF0D58E011349576A5C8F72300";
+	measured_real_energy "+31720.5 Wh";
+	measured_reactive_energy "+25216 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+775.434+23.7586d VA";
-	indiv_measured_power_1 "+173.7+16.0705d VA";
-	indiv_measured_power_2 "+542.805+264.326j VA";
-	measured_demand "+7407.95 W";
-	measured_real_power "+709.717 W";
-	measured_reactive_power "+312.41 VAr";
-	measured_voltage_1 "+119.187-0.0204032d V";
-	measured_voltage_2 "+119.187-0.0204901d V";
-	measured_voltage_12 "+238.374-0.0204466d V";
-	measured_current_1 "+1.40028-0.403928j A";
-	measured_current_2 "-4.55345+2.21938j A";
-	measured_current_N "+3.15317-1.81545j A";
+	measured_power "+775.364+23.7588d VA";
+	indiv_measured_power_1 "+173.677+16.0707d VA";
+	indiv_measured_power_2 "+542.763+264.306j VA";
+	measured_demand "+5355.82 W";
+	measured_real_power "+709.652 W";
+	measured_reactive_power "+312.384 VAr";
+	measured_voltage_1 "+119.17+0.042176d V";
+	measured_voltage_2 "+119.17+0.0420891d V";
+	measured_voltage_12 "+238.34+0.0421325d V";
+	measured_current_1 "+1.40072-0.402407j A";
+	measured_current_2 "-4.55617+2.21455j A";
+	measured_current_N "+3.15544-1.81215j A";
 	bill_day "15";
 	// class.parent = powerflow.triplex_node
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
-	voltage_1 "+119.187-0.0424431j V";
-	voltage_2 "+119.187-0.0426234j V";
-	voltage_12 "+238.374-0.0850665j V";
-	voltage_1N "+119.187-0.0424431j V";
-	voltage_2N "+119.187-0.0426234j V";
-	power_12 "-1.73372e-12+0i VA";
-	power_12_real "-1.73372e-12 W";
+	voltage_1 "+119.17+0.0877224j V";
+	voltage_2 "+119.17+0.0875412j V";
+	voltage_12 "+238.34+0.175264j V";
+	voltage_1N "+119.17+0.0877224j V";
+	voltage_2N "+119.17+0.0875412j V";
+	power_12 "+2.72848e-12+0i VA";
+	power_12_real "+2.72848e-12 W";
 	house_present "TRUE";
 	GFA_freq_low_trip "+59.5 Hz";
 	GFA_freq_high_trip "+60.5 Hz";
@@ -1428,7 +1429,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_2";
 	name "house_2";
-	guid "4B459C51F41898BF26EA8E3D6E138FF3";
+	guid "7AF8110B84FDF3B6405A3A3F4676CDEB";
 	weather "weather";
 	floor_area "+1081.23 sf";
 	gross_wall_area "+1073.92 sf";
@@ -1462,10 +1463,10 @@ object residential.house {
 	window_high_temperature_cutoff "+80 degF";
 	window_constant_coefficient "+1";
 	window_temperature_delta "+5";
-	design_heating_capacity "+30000 Btu/h";
-	design_cooling_capacity "+30000 Btu/h";
-	cooling_design_temperature "+96.082 degF";
-	heating_design_temperature "+32.002 degF";
+	design_heating_capacity "+36000 Btu/h";
+	design_cooling_capacity "+36000 Btu/h";
+	cooling_design_temperature "+102.022 degF";
+	heating_design_temperature "+24.982 degF";
 	design_peak_solar "+195 Btu/h/sf";
 	design_internal_gains "+3663.89 W/sf";
 	mass_solar_gain_fraction "+0.5 pu";
@@ -1478,19 +1479,19 @@ object residential.house {
 	heating_supply_air_temp "+150 degF";
 	duct_pressure_drop "+0.5 inH2O";
 	fan_design_power "+211.847 W";
-	fan_design_airflow "+871.418 cfm";
+	fan_design_airflow "+1045.7 cfm";
 	fan_impedance_fraction "+0.2534 pu";
 	fan_power_fraction "+0.0135 pu";
 	fan_current_fraction "+0.7332 pu";
 	fan_power_factor "+0.96 pu";
 	heating_COP "+2.5 pu";
 	cooling_COP "+3.5 Btu/kWh";
-	air_temperature "+73.7264 degF";
-	outdoor_temperature "+59.002 degF";
-	outdoor_rh "+77 %";
+	air_temperature "+76.9031 degF";
+	outdoor_temperature "+78.082 degF";
+	outdoor_rh "+74 %";
 	mass_heat_capacity "+1857.04 Btu/degF";
 	mass_heat_coeff "+5149.35 Btu/degF/h";
-	mass_temperature "+74.2941 degF";
+	mass_temperature "+76.7424 degF";
 	air_volume "+8649.84 cf";
 	air_mass "+635.763 lb";
 	air_heat_capacity "+458.131 Btu/degF";
@@ -1522,15 +1523,14 @@ object residential.house {
 	Rdoors "+5 degF*sf*h/Btu";
 	hvac_breaker_rating "+200 A";
 	hvac_power_factor "+0.75 unit";
-	last_heating_load "+3.99905 kW";
-	last_cooling_load "+2.14941 kW";
+	last_cooling_load "+2.89214 kW";
 	total_load "+0.778794 kW";
 	panel "power_factor: 0; "power.real": 0.47537; "power.imag": 0.218753";
-	panel.energy "+31.0922+11.6496i kVAh";
+	panel.energy "+41.0311+11.6496i kVAh";
 	panel.power "+0.712833+0.31367j kVA";
 	panel.peak_demand "+0+0i kVA";
 	panel.heatgain "+1554.75 Btu/h";
-	panel.cumulative_heatgain "-932.367 Btu";
+	panel.cumulative_heatgain "-93398.7 Btu";
 	panel.heatgain_fraction "+0 pu";
 	panel.current_fraction "+0 pu";
 	panel.impedance_fraction "+0 pu";
@@ -1543,11 +1543,11 @@ object residential.house {
 	panel.breaker_amps "+0 A";
 	panel.configuration "IS110";
 	design_internal_gain_density "+0.6 W/sf";
-	compressor_count "41";
-	hvac_last_on "2016-07-01 20:17:36 PDT";
-	hvac_last_off "2016-07-01 20:20:32 PDT";
-	hvac_period_length "+41.0833 s";
-	hvac_duty_cycle "+0.0713996";
+	compressor_count "86";
+	hvac_last_on "2016-07-01 23:35:36 PDT";
+	hvac_last_off "2016-07-01 23:38:13 PDT";
+	hvac_period_length "+29.2167 s";
+	hvac_duty_cycle "+0.0895608";
 	gas_enduses "WATERHEATER|RANGE|DRYER";
 	k "+2.10229";
 	T_max "+72";
@@ -1555,11 +1555,11 @@ object residential.house {
 	// class.parent = residential.residential_enduse
 	shape "type: unknown";
 	load "impedance_fraction: 0.200000; power_fraction: 0.800000; power_factor: 0.75; "power.real": 0";
-	energy "+5.5729+0i kVAh";
+	energy "+15.5118+0i kVAh";
 	power "+0+0j kVA";
 	peak_demand "+0+0i kVA";
 	heatgain "+0 Btu/h";
-	cumulative_heatgain "-47883.4 Btu";
+	cumulative_heatgain "-140350 Btu";
 	heatgain_fraction "+0 pu";
 	current_fraction "+0 pu";
 	impedance_fraction "+0.2 pu";
@@ -1568,20 +1568,20 @@ object residential.house {
 	constant_power "+0+0j kVA";
 	constant_current "+0+0j kVA";
 	constant_admittance "+0+0j kVA";
-	voltage_factor "+0.993225 pu";
+	voltage_factor "+0.993083 pu";
 	breaker_amps "+200 A";
 	configuration "IS220";
 }
 object residential.ZIPload {
 	parent "house_2";
 	name "zip_GLD_2";
-	guid "256CE6C26CC9D3636D68F28D247A3520";
+	guid "21CE59639034B60698353349D3CE630";
 	base_power "+0.28 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
 	impedance_pf "+0.9";
 	breaker_val "+1000 A";
-	actual_power "+0.278108+0.134694j kVA";
+	actual_power "+0.278069+0.134675j kVA";
 	multiplier "+1";
 	rate_of_cooling "-1 K/h";
 	rate_of_heating "-1 K/h";
@@ -1605,7 +1605,7 @@ object residential.ZIPload {
 	constant_power "+0.14+0.0678051j kVA";
 	constant_current "+0+0j kVA";
 	constant_admittance "+0.14+0.0678051j kVA";
-	voltage_factor "+0.993221 pu";
+	voltage_factor "+0.99308 pu";
 	breaker_amps "+1000 A";
 	configuration "IS110";
 	power_state "UNKNOWN";
@@ -1613,16 +1613,16 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_2";
 	name "EV_inverter_2";
-	guid "63EC7EE5509DD8427D0F514B9C023357";
+	guid "7A4917F499CD5A2815BCBEEC1658EC35";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "+238.374-0.0850642j V";
-	phaseB_V_Out "+119.187-0.0426223j V";
-	phaseC_V_Out "+119.187-0.042442j V";
+	phaseA_V_Out "+238.34+0.175273j V";
+	phaseB_V_Out "+119.17+0.0875457j V";
+	phaseC_V_Out "+119.17+0.0877269j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -1694,7 +1694,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_2";
 	name "EV_2";
-	guid "2A7F09DB5B4FE9D47644F26694953A8";
+	guid "1FEC047FDAEADF07548E8A44AB9EB886";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -1721,18 +1721,18 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_2";
 	name "PV_inverter_2";
-	guid "76139C8A1D5BD79752106A23605E4732";
+	guid "299C36B246C55DC016C53AFA30BAC48A";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	generator_mode "SUPPLY_DRIVEN";
 	inverter_convergence_criterion "+0.001";
-	V_In "+27.1567+0j V";
+	V_In "+27.0966+0j V";
 	Vdc "+480 V";
-	phaseA_V_Out "+238.374-0.0850642j V";
-	phaseB_V_Out "+119.187-0.0426223j V";
-	phaseC_V_Out "+119.187-0.042442j V";
+	phaseA_V_Out "+238.34+0.175273j V";
+	phaseB_V_Out "+119.17+0.0875457j V";
+	phaseC_V_Out "+119.17+0.0877269j V";
 	rated_power "+4000 VA";
 	rated_battery_power "+4210.53 W";
 	inverter_efficiency "+0.95";
@@ -1804,7 +1804,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_2";
 	name "PV_2";
-	guid "55961F6B148A479FF2DECC25BDC7FD4";
+	guid "2C19CC3D5E0D026EE31A0D1D1B50B35";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -1814,24 +1814,24 @@ object generators.solar {
 	b_coeff "-0.0455 s/m";
 	T_coeff "-0.5 %/degC";
 	NOCT "+118.4 degF";
-	Tmodule "+59.002 degF";
-	Tambient "+15.0011 degC";
-	ambient_temperature "+59.002 degF";
+	Tmodule "+78.082 degF";
+	Tambient "+25.6011 degC";
+	ambient_temperature "+78.082 degF";
 	Rinternal "+0.05 Ohm";
 	Rated_Insolation "+92.902 W/sf";
 	Pmax_temp_coeff "-0.00012929";
 	Voc_temp_coeff "-0.000116272";
 	V_Max "+27.1+0j V";
 	Voc_Max "+34+0j V";
-	Voc "+34.0712+0j V";
+	Voc "+33.9957+0j V";
 	efficiency "+0.135 unit";
 	area "+176.752 sf";
 	soiling "+0.95 pu";
 	derating "+0.95 pu";
-	Tcell "+15.0011 degC";
+	Tcell "+25.6011 degC";
 	Rated_kVA "+2.21678 kVA";
 	rated_power "+2216.78 W";
-	V_Out "+27.1567+0j V";
+	V_Out "+27.0966+0j V";
 	weather "weather";
 	shading_factor "+1 pu";
 	tilt_angle "+45 deg";
@@ -1843,16 +1843,16 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_2";
 	name "Bat_inverter_2";
-	guid "3520DE4E323246353038DA9A4123AFC8";
+	guid "4A49FD86BDA945926CCD87B8B1BDF4B";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "+238.374-0.0850642j V";
-	phaseB_V_Out "+119.187-0.0426223j V";
-	phaseC_V_Out "+119.187-0.042442j V";
+	phaseA_V_Out "+238.34+0.175273j V";
+	phaseB_V_Out "+119.17+0.0875457j V";
+	phaseC_V_Out "+119.17+0.0877269j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -1924,7 +1924,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_2";
 	name "Battery_2";
-	guid "1CA615E81918D6A258D0853FF23C0B07";
+	guid "2875534B1D10E2CB623FBA439F796686";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -1952,24 +1952,24 @@ object generators.battery {
 object powerflow.transformer {
 	parent "main_node_B";
 	name "xfrm_1B";
-	guid "430E1140207EE7BC496716E84A2ACDA1";
+	guid "4F59DED95018781476C0DE6E6E6EA30C";
 	configuration "xfmr_config_B";
 	// class.parent = powerflow.link
 	status "CLOSED";
 	from "main_node_B";
 	to "node_1B";
-	power_in "+1425.33+627.23j VA";
-	power_out "+1425.31+627.194j VA";
-	power_out_real "+1425.31 W";
-	power_losses "+0.0178296+0.0360612j VA";
-	power_in_B "+1425.33+627.23j VA";
-	power_out_A "+335.888+96.695j VA";
-	power_out_B "+1089.42+530.499j VA";
-	power_losses_B "+0.0178296+0.0360612j VA";
-	current_out_A "-2.09892-2.02117j A";
-	current_out_B "+8.37316+5.65091j A";
-	current_out_C "-6.27424-3.62974j A";
-	current_in_B "-0.523387-0.383444j A";
+	power_in "+4278.25+3160.28j VA";
+	power_out "+4278.08+3159.89j VA";
+	power_out_real "+4278.08 W";
+	power_losses "+0.173614+0.389476j VA";
+	power_in_B "+4278.25+3160.28j VA";
+	power_out_A "+1782.52+1372.93j VA";
+	power_out_B "+2495.57+1786.96j VA";
+	power_losses_B "+0.173614+0.389476j VA";
+	current_out_A "-17.3891-7.13582j A";
+	current_out_B "+23.3682+10.5564j A";
+	current_out_C "-5.97913-3.42059j A";
+	current_in_B "-2.03702-0.884244j A";
 	flow_direction "CN|BF|AR";
 	continuous_rating "+1000 A";
 	emergency_rating "+1000 A";
@@ -1981,14 +1981,14 @@ object powerflow.transformer {
 object powerflow.triplex_node {
 	parent "xfrm_1B";
 	name "node_1B";
-	guid "514481E8E158BAEE54F54E2BCB8013B8";
+	guid "4190714C0468F674A61D17171458575";
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
-	voltage_1 "-60.0154-103.861j V";
-	voltage_2 "-60.0151-103.86j V";
-	voltage_12 "-120.03-207.721j V";
-	voltage_1N "-60.0154-103.861j V";
-	voltage_2N "-60.0151-103.86j V";
+	voltage_1 "-60.0038-103.577j V";
+	voltage_2 "-60.0035-103.576j V";
+	voltage_12 "-120.007-207.153j V";
+	voltage_1N "-60.0038-103.577j V";
+	voltage_2N "-60.0035-103.576j V";
 	GFA_freq_low_trip "+59.5 Hz";
 	GFA_freq_high_trip "+60.5 Hz";
 	GFA_volt_low_trip "+0.8 pu";
@@ -2017,33 +2017,33 @@ object powerflow.triplex_node {
 object powerflow.triplex_meter {
 	parent "node_1B";
 	name "meter_3";
-	guid "3900DA1D235830B977E163BE568E873D";
-	measured_real_energy "+18812 Wh";
-	measured_reactive_energy "+16198.6 VAh";
+	guid "5214AC48B19466313BA801C780F8A42D";
+	measured_real_energy "+26645.8 Wh";
+	measured_reactive_energy "+23831.3 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+778.601+23.7514d VA";
-	indiv_measured_power_1 "+174.765+16.06d VA";
-	indiv_measured_power_2 "+544.711+265.25j VA";
-	measured_demand "+5400.5 W";
-	measured_real_power "+712.655 W";
-	measured_reactive_power "+313.597 VAr";
-	measured_voltage_1 "+119.954-120.021d V";
-	measured_voltage_2 "+119.953-120.021d V";
-	measured_voltage_12 "+239.907-120.021d V";
-	measured_current_1 "-1.04946-1.01058j A";
-	measured_current_2 "+4.18658+2.82545j A";
-	measured_current_N "-3.13712-1.81487j A";
+	measured_power "+755.406+23.6925d VA";
+	indiv_measured_power_1 "+174.414+16.0634d VA";
+	indiv_measured_power_2 "+524.133+255.283j VA";
+	measured_demand "+4917.89 W";
+	measured_real_power "+691.737 W";
+	measured_reactive_power "+303.544 VAr";
+	measured_voltage_1 "+119.702-120.084d V";
+	measured_voltage_2 "+119.701-120.085d V";
+	measured_voltage_12 "+239.403-120.085d V";
+	measured_current_1 "-1.05074-1.00946j A";
+	measured_current_2 "+4.0403+2.71975j A";
+	measured_current_N "-2.98956-1.71029j A";
 	bill_day "15";
 	// class.parent = powerflow.triplex_node
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
-	voltage_1 "-60.0154-103.861j V";
-	voltage_2 "-60.0151-103.86j V";
-	voltage_12 "-120.03-207.721j V";
-	voltage_1N "-60.0154-103.861j V";
-	voltage_2N "-60.0151-103.86j V";
-	power_12 "-1.7053e-13+0i VA";
-	power_12_real "-1.7053e-13 W";
+	voltage_1 "-60.0038-103.577j V";
+	voltage_2 "-60.0035-103.576j V";
+	voltage_12 "-120.007-207.153j V";
+	voltage_1N "-60.0038-103.577j V";
+	voltage_2N "-60.0035-103.576j V";
+	power_12 "+4.54747e-13+0i VA";
+	power_12_real "+4.54747e-13 W";
 	house_present "TRUE";
 	GFA_freq_low_trip "+59.5 Hz";
 	GFA_freq_high_trip "+60.5 Hz";
@@ -2073,7 +2073,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_3";
 	name "house_3";
-	guid "59ED7EF17F9A2632712E21E40700A230";
+	guid "7B9614AA86D85DD99A61A6E9D6B77B";
 	weather "weather";
 	floor_area "+1140.62 sf";
 	gross_wall_area "+1103.02 sf";
@@ -2109,8 +2109,8 @@ object residential.house {
 	window_temperature_delta "+5";
 	design_heating_capacity "+36000 Btu/h";
 	design_cooling_capacity "+36000 Btu/h";
-	cooling_design_temperature "+96.082 degF";
-	heating_design_temperature "+32.002 degF";
+	cooling_design_temperature "+102.022 degF";
+	heating_design_temperature "+24.982 degF";
 	design_peak_solar "+195 Btu/h/sf";
 	design_internal_gains "+3751.51 W/sf";
 	mass_solar_gain_fraction "+0.5 pu";
@@ -2130,12 +2130,12 @@ object residential.house {
 	fan_power_factor "+0.96 pu";
 	heating_COP "+2.5 pu";
 	cooling_COP "+3.5 Btu/kWh";
-	air_temperature "+73.6811 degF";
-	outdoor_temperature "+59.002 degF";
-	outdoor_rh "+77 %";
+	air_temperature "+76.559 degF";
+	outdoor_temperature "+78.082 degF";
+	outdoor_rh "+74 %";
 	mass_heat_capacity "+1959.04 Btu/degF";
 	mass_heat_coeff "+5335.89 Btu/degF/h";
-	mass_temperature "+74.2537 degF";
+	mass_temperature "+76.5677 degF";
 	air_volume "+9124.94 cf";
 	air_mass "+670.683 lb";
 	air_heat_capacity "+483.294 Btu/degF";
@@ -2167,31 +2167,31 @@ object residential.house {
 	Rdoors "+5 degF*sf*h/Btu";
 	hvac_breaker_rating "+200 A";
 	hvac_power_factor "+0.75 unit";
-	last_cooling_load "+2.55399 kW";
-	total_load "+0.778794 kW";
-	panel "power_factor: 0; "power.real": 0.47537; "power.imag": 0.218753";
-	panel.energy "+30.6884+11.6496i kVAh";
-	panel.power "+0.712833+0.31367j kVA";
+	last_cooling_load "+2.89803 kW";
+	total_load "+0.756587 kW";
+	panel "power_factor: 0; "power.real": 0.46537; "power.imag": 0.213910";
+	panel.energy "+36.9358+9.05142i kVAh";
+	panel.power "+0.692833+0.303983j kVA";
 	panel.peak_demand "+0+0i kVA";
 	panel.heatgain "+1554.75 Btu/h";
-	panel.cumulative_heatgain "-8362.38 Btu";
+	panel.cumulative_heatgain "-106070 Btu";
 	panel.heatgain_fraction "+0 pu";
 	panel.current_fraction "+0 pu";
 	panel.impedance_fraction "+0 pu";
 	panel.power_fraction "+0 pu";
 	panel.power_factor "+0";
-	panel.constant_power "+0.47537+0.218753j kVA";
+	panel.constant_power "+0.46537+0.21391j kVA";
 	panel.constant_current "+0.0135041+0.00338445j kVA";
-	panel.constant_admittance "+0.22396+0.0915318j kVA";
+	panel.constant_admittance "+0.21396+0.0866886j kVA";
 	panel.voltage_factor "+0 pu";
 	panel.breaker_amps "+0 A";
 	panel.configuration "IS110";
 	design_internal_gain_density "+0.6 W/sf";
-	compressor_count "40";
-	hvac_last_on "2016-07-01 20:05:03 PDT";
-	hvac_last_off "2016-07-01 20:07:32 PDT";
-	hvac_period_length "+31.9333 s";
-	hvac_duty_cycle "+0.0777662";
+	compressor_count "89";
+	hvac_last_on "2016-07-01 23:47:21 PDT";
+	hvac_last_off "2016-07-01 23:50:08 PDT";
+	hvac_period_length "+31.1 s";
+	hvac_duty_cycle "+0.0894962";
 	gas_enduses "WATERHEATER|RANGE|DRYER";
 	k "+3.84613";
 	T_max "+72";
@@ -2199,11 +2199,11 @@ object residential.house {
 	// class.parent = residential.residential_enduse
 	shape "type: unknown";
 	load "impedance_fraction: 0.200000; power_fraction: 0.800000; power_factor: 0.75; "power.real": 0";
-	energy "+5.16908+0i kVAh";
+	energy "+16.781+0i kVAh";
 	power "+0+0j kVA";
 	peak_demand "+0+0i kVA";
 	heatgain "+0 Btu/h";
-	cumulative_heatgain "-55313.4 Btu";
+	cumulative_heatgain "-153022 Btu";
 	heatgain_fraction "+0 pu";
 	current_fraction "+0 pu";
 	impedance_fraction "+0.2 pu";
@@ -2212,20 +2212,20 @@ object residential.house {
 	constant_power "+0+0j kVA";
 	constant_current "+0+0j kVA";
 	constant_admittance "+0+0j kVA";
-	voltage_factor "+0.999614 pu";
+	voltage_factor "+0.997513 pu";
 	breaker_amps "+200 A";
 	configuration "IS220";
 }
 object residential.ZIPload {
 	parent "house_3";
 	name "zip_GLD_3";
-	guid "6CE2EDD8BDE14C8121B126D45C85BDA";
-	base_power "+0.28 kW";
+	guid "3E7343A31980A35F7D20A663306870CB";
+	base_power "+0.26 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
 	impedance_pf "+0.9";
 	breaker_val "+1000 A";
-	actual_power "+0.279891+0.135557j kVA";
+	actual_power "+0.259353+0.125611j kVA";
 	multiplier "+1";
 	rate_of_cooling "-1 K/h";
 	rate_of_heating "-1 K/h";
@@ -2235,9 +2235,9 @@ object residential.ZIPload {
 	recovery_duty_cycle "-1 pu";
 	// class.parent = residential.residential_enduse
 	shape "type: unknown";
-	load "impedance_fraction: 0.500000; power_fraction: 0.500000; power_factor: 0.9; "power.real": 0.14; "power.imag": 0.067805";
-	energy "+13.7693+6.66879i kVAh";
-	power "+0.28+0.13561j kVA";
+	load "impedance_fraction: 0.500000; power_fraction: 0.500000; power_factor: 0.9; "power.real": 0.13; "power.imag": 0.062962";
+	energy "+8.40483+4.07065i kVAh";
+	power "+0.26+0.125924j kVA";
 	peak_demand "+0+0i kVA";
 	heatgain "+0 Btu/h";
 	cumulative_heatgain "+0 Btu";
@@ -2246,10 +2246,10 @@ object residential.ZIPload {
 	impedance_fraction "+0.5 pu";
 	power_fraction "+0.5 pu";
 	power_factor "+0.9";
-	constant_power "+0.14+0.0678051j kVA";
+	constant_power "+0.13+0.0629619j kVA";
 	constant_current "+0+0j kVA";
-	constant_admittance "+0.14+0.0678051j kVA";
-	voltage_factor "+0.99961 pu";
+	constant_admittance "+0.13+0.0629619j kVA";
+	voltage_factor "+0.99751 pu";
 	breaker_amps "+1000 A";
 	configuration "IS110";
 	power_state "UNKNOWN";
@@ -2257,16 +2257,16 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_3";
 	name "EV_inverter_3";
-	guid "3B3B8EDA7CC205355348D6B827ADDB4B";
+	guid "51740DD218E5461B49C67F9ACC40DDEC";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "-120.03-207.721j V";
-	phaseB_V_Out "-60.0151-103.86j V";
-	phaseC_V_Out "-60.0154-103.861j V";
+	phaseA_V_Out "-120.007-207.152j V";
+	phaseB_V_Out "-60.0035-103.576j V";
+	phaseC_V_Out "-60.0037-103.577j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -2338,7 +2338,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_3";
 	name "EV_3";
-	guid "399BF665E950937D618EBAFF5D0BFBB8";
+	guid "37AD6BE245225B995BE110167BC98967";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -2365,18 +2365,18 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_3";
 	name "PV_inverter_3";
-	guid "17F9C87CB696AB9B7F9BE3FC433C0538";
+	guid "7EB33E04395B2DD5181562763603064A";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	generator_mode "SUPPLY_DRIVEN";
 	inverter_convergence_criterion "+0.001";
-	V_In "+27.1567+0j V";
+	V_In "+27.0966+0j V";
 	Vdc "+480 V";
-	phaseA_V_Out "-120.03-207.721j V";
-	phaseB_V_Out "-60.0151-103.86j V";
-	phaseC_V_Out "-60.0154-103.861j V";
+	phaseA_V_Out "-120.007-207.152j V";
+	phaseB_V_Out "-60.0035-103.576j V";
+	phaseC_V_Out "-60.0037-103.577j V";
 	rated_power "+4000 VA";
 	rated_battery_power "+4210.53 W";
 	inverter_efficiency "+0.95";
@@ -2448,7 +2448,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_3";
 	name "PV_3";
-	guid "395C6E212D84D65BC859463145D05B8";
+	guid "34AEE2395991A9DD3038839F1D7C1E3E";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -2458,24 +2458,24 @@ object generators.solar {
 	b_coeff "-0.0455 s/m";
 	T_coeff "-0.5 %/degC";
 	NOCT "+118.4 degF";
-	Tmodule "+59.002 degF";
-	Tambient "+15.0011 degC";
-	ambient_temperature "+59.002 degF";
+	Tmodule "+78.082 degF";
+	Tambient "+25.6011 degC";
+	ambient_temperature "+78.082 degF";
 	Rinternal "+0.05 Ohm";
 	Rated_Insolation "+92.902 W/sf";
 	Pmax_temp_coeff "-0.00012929";
 	Voc_temp_coeff "-0.000116272";
 	V_Max "+27.1+0j V";
 	Voc_Max "+34+0j V";
-	Voc "+34.0712+0j V";
+	Voc "+33.9957+0j V";
 	efficiency "+0.135 unit";
 	area "+199.17 sf";
 	soiling "+0.95 pu";
 	derating "+0.95 pu";
-	Tcell "+15.0011 degC";
+	Tcell "+25.6011 degC";
 	Rated_kVA "+2.49794 kVA";
 	rated_power "+2497.94 W";
-	V_Out "+27.1567+0j V";
+	V_Out "+27.0966+0j V";
 	weather "weather";
 	shading_factor "+1 pu";
 	tilt_angle "+45 deg";
@@ -2487,16 +2487,16 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_3";
 	name "Bat_inverter_3";
-	guid "1030DC3ED9FA14507A5B753ABD70BF12";
+	guid "5B4DAF61580440075945CD438F345BF";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "-120.03-207.721j V";
-	phaseB_V_Out "-60.0151-103.86j V";
-	phaseC_V_Out "-60.0154-103.861j V";
+	phaseA_V_Out "-120.007-207.152j V";
+	phaseB_V_Out "-60.0035-103.576j V";
+	phaseC_V_Out "-60.0037-103.577j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -2568,7 +2568,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_3";
 	name "Battery_3";
-	guid "D71F59C0D02270B42F00A829009B252";
+	guid "549A96FEA5DC8286608D57B1155081BE";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -2596,33 +2596,33 @@ object generators.battery {
 object powerflow.triplex_meter {
 	parent "node_1B";
 	name "meter_4";
-	guid "F378EBEB92C451033E60B45CF5FA1A7";
-	measured_real_energy "+15521.6 Wh";
-	measured_reactive_energy "+15931.8 VAh";
+	guid "3EB0DFC1039B6BF326A445BFD55053B6";
+	measured_real_energy "+24494.1 Wh";
+	measured_reactive_energy "+24213.8 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+778.601+23.7514d VA";
-	indiv_measured_power_1 "+174.765+16.06d VA";
-	indiv_measured_power_2 "+544.711+265.25j VA";
-	measured_demand "+5400.5 W";
-	measured_real_power "+712.655 W";
-	measured_reactive_power "+313.597 VAr";
-	measured_voltage_1 "+119.954-120.021d V";
-	measured_voltage_2 "+119.953-120.021d V";
-	measured_voltage_12 "+239.907-120.021d V";
-	measured_current_1 "-1.04946-1.01058j A";
-	measured_current_2 "+4.18658+2.82545j A";
-	measured_current_N "-3.13712-1.81487j A";
+	measured_power "+4584.82+38.5356d VA";
+	indiv_measured_power_1 "+2088.7+39.3611d VA";
+	indiv_measured_power_2 "+1971.43+1531.68j VA";
+	measured_demand "+4677.42 W";
+	measured_real_power "+3586.34 W";
+	measured_reactive_power "+2856.35 VAr";
+	measured_voltage_1 "+119.702-120.084d V";
+	measured_voltage_2 "+119.701-120.085d V";
+	measured_voltage_12 "+239.403-120.085d V";
+	measured_current_1 "-16.3384-6.12637j A";
+	measured_current_2 "+19.3279+7.83666j A";
+	measured_current_N "-2.98956-1.71029j A";
 	bill_day "15";
 	// class.parent = powerflow.triplex_node
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
-	voltage_1 "-60.0154-103.861j V";
-	voltage_2 "-60.0151-103.86j V";
-	voltage_12 "-120.03-207.721j V";
-	voltage_1N "-60.0154-103.861j V";
-	voltage_2N "-60.0151-103.86j V";
-	power_12 "+7.95808e-13+0i VA";
-	power_12_real "+7.95808e-13 W";
+	voltage_1 "-60.0038-103.577j V";
+	voltage_2 "-60.0035-103.576j V";
+	voltage_12 "-120.007-207.153j V";
+	voltage_1N "-60.0038-103.577j V";
+	voltage_2N "-60.0035-103.576j V";
+	power_12 "+4.54747e-13+0i VA";
+	power_12_real "+4.54747e-13 W";
 	house_present "TRUE";
 	GFA_freq_low_trip "+59.5 Hz";
 	GFA_freq_high_trip "+60.5 Hz";
@@ -2652,7 +2652,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_4";
 	name "house_4";
-	guid "3830E031DB48F5657E30B26705BBE106";
+	guid "6B4E1AC544DD82A24FDDF5EB9274A2A6";
 	weather "weather";
 	floor_area "+1297.72 sf";
 	gross_wall_area "+1176.54 sf";
@@ -2670,7 +2670,8 @@ object residential.house {
 	airchange_per_hour "+0.5 unit/h";
 	airchange_UA "+91.6436 Btu/degF/h";
 	UA "+340.963 Btu/degF/h";
-	internal_gain "+1554.75 Btu/h";
+	internal_gain "-25843.6 Btu/h";
+	heat_cool_gain "-27398.3 Btu/h";
 	include_solar_quadrant "W|S|E|N";
 	use_latent_heat "TRUE";
 	include_fan_heatgain "TRUE";
@@ -2688,8 +2689,8 @@ object residential.house {
 	window_temperature_delta "+5";
 	design_heating_capacity "+36000 Btu/h";
 	design_cooling_capacity "+36000 Btu/h";
-	cooling_design_temperature "+96.082 degF";
-	heating_design_temperature "+32.002 degF";
+	cooling_design_temperature "+102.022 degF";
+	heating_design_temperature "+24.982 degF";
 	design_peak_solar "+195 Btu/h/sf";
 	design_internal_gains "+3971.7 W/sf";
 	mass_solar_gain_fraction "+0.5 pu";
@@ -2709,12 +2710,12 @@ object residential.house {
 	fan_power_factor "+0.96 pu";
 	heating_COP "+2.5 pu";
 	cooling_COP "+3.5 Btu/kWh";
-	air_temperature "+73.6663 degF";
-	outdoor_temperature "+59.002 degF";
-	outdoor_rh "+77 %";
+	air_temperature "+75.8677 degF";
+	outdoor_temperature "+78.082 degF";
+	outdoor_rh "+74 %";
 	mass_heat_capacity "+2228.87 Btu/degF";
 	mass_heat_coeff "+5817.49 Btu/degF/h";
-	mass_temperature "+74.2552 degF";
+	mass_temperature "+76.8263 degF";
 	air_volume "+10381.8 cf";
 	air_mass "+763.06 lb";
 	air_heat_capacity "+549.861 Btu/degF";
@@ -2722,10 +2723,11 @@ object residential.house {
 	total_thermal_mass_per_floor_area "+2 Btu/degF/sf";
 	interior_surface_heat_transfer_coeff "+1.46 Btu/h/degF/sf";
 	number_of_stories "+1";
+	is_COOL_on "+1";
 	thermostat_mode "AUTO";
 	auxiliary_strategy "DEADBAND";
-	system_mode "OFF";
-	last_system_mode "OFF";
+	system_mode "COOL";
+	last_system_mode "COOL";
 	heating_system_type "HEAT_PUMP";
 	cooling_system_type "HEAT_PUMP";
 	auxiliary_system_type "ELECTRIC";
@@ -2746,65 +2748,69 @@ object residential.house {
 	Rdoors "+5 degF*sf*h/Btu";
 	hvac_breaker_rating "+200 A";
 	hvac_power_factor "+0.75 unit";
-	last_cooling_load "+2.57682 kW";
-	total_load "+0.778794 kW";
-	panel "power_factor: 0; "power.real": 0.47537; "power.imag": 0.218753";
-	panel.energy "+30.3849+11.6496i kVAh";
-	panel.power "+0.712833+0.31367j kVA";
+	hvac_load "+2.89457 kW";
+	last_cooling_load "+2.89457 kW";
+	hvac_power "+2.89457+2.55277j kVA";
+	total_load "+3.60316 kW";
+	panel "power_factor: 0; "power.real": 2.78336; "power.imag": 2.258184";
+	panel.energy "+37.369+9.05142i kVAh";
+	panel.power "+3.59032+0.303983j kVA";
 	panel.peak_demand "+0+0i kVA";
-	panel.heatgain "+1554.75 Btu/h";
-	panel.cumulative_heatgain "-5047.39 Btu";
+	panel.heatgain "-25843.6 Btu/h";
+	panel.cumulative_heatgain "-109561 Btu";
 	panel.heatgain_fraction "+0 pu";
 	panel.current_fraction "+0 pu";
 	panel.impedance_fraction "+0 pu";
 	panel.power_fraction "+0 pu";
 	panel.power_factor "+0";
-	panel.constant_power "+0.47537+0.218753j kVA";
+	panel.constant_power "+2.78336+2.25818j kVA";
 	panel.constant_current "+0.0135041+0.00338445j kVA";
-	panel.constant_admittance "+0.22396+0.0915318j kVA";
+	panel.constant_admittance "+0.793457+0.597757j kVA";
 	panel.voltage_factor "+0 pu";
 	panel.breaker_amps "+0 A";
 	panel.configuration "IS110";
 	design_internal_gain_density "+0.6 W/sf";
-	compressor_count "32";
-	hvac_last_on "2016-07-01 19:36:24 PDT";
-	hvac_last_off "2016-07-01 19:39:22 PDT";
-	hvac_period_length "+23.8167 s";
-	hvac_duty_cycle "+0.124563";
+	compressor_on "TRUE";
+	compressor_count "75";
+	hvac_last_on "2016-07-01 23:58:24 PDT";
+	hvac_last_off "2016-07-01 23:25:30 PDT";
+	hvac_period_length "+36.15 s";
+	hvac_duty_cycle "+0.0899032";
 	gas_enduses "WATERHEATER|RANGE|DRYER";
 	k "+2.12439";
 	T_max "+72";
 	T_min "+60";
 	// class.parent = residential.residential_enduse
 	shape "type: unknown";
-	load "impedance_fraction: 0.200000; power_fraction: 0.800000; power_factor: 0.75; "power.real": 0";
-	energy "+4.86558+0i kVAh";
-	power "+0+0j kVA";
+	load "impedance_fraction: 0.200000; power_fraction: 0.800000; power_factor: 0.75; "power.real": 2.31799; "power.imag": 2.044274";
+	energy "+17.2142+0i kVAh";
+	power "+2.89749+0j kVA";
 	peak_demand "+0+0i kVA";
-	heatgain "+0 Btu/h";
-	cumulative_heatgain "-51998.5 Btu";
+	heatgain "-27398.3 Btu/h";
+	cumulative_heatgain "-156512 Btu";
 	heatgain_fraction "+0 pu";
 	current_fraction "+0 pu";
 	impedance_fraction "+0.2 pu";
 	power_fraction "+0.8 pu";
 	power_factor "+0.75";
-	constant_power "+0+0j kVA";
+	constant_power "+2.31799+2.04427j kVA";
 	constant_current "+0+0j kVA";
-	constant_admittance "+0+0j kVA";
-	voltage_factor "+0.999614 pu";
+	constant_admittance "+0.579497+0.511068j kVA";
+	voltage_factor "+0.997513 pu";
 	breaker_amps "+200 A";
 	configuration "IS220";
+	power_state "ON";
 }
 object residential.ZIPload {
 	parent "house_4";
 	name "zip_GLD_4";
-	guid "18C64970BE0918AD1016CB621A943B35";
-	base_power "+0.28 kW";
+	guid "184725A43BAD6A40348051AA53B30371";
+	base_power "+0.26 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
 	impedance_pf "+0.9";
 	breaker_val "+1000 A";
-	actual_power "+0.279891+0.135557j kVA";
+	actual_power "+0.259353+0.125611j kVA";
 	multiplier "+1";
 	rate_of_cooling "-1 K/h";
 	rate_of_heating "-1 K/h";
@@ -2814,9 +2820,9 @@ object residential.ZIPload {
 	recovery_duty_cycle "-1 pu";
 	// class.parent = residential.residential_enduse
 	shape "type: unknown";
-	load "impedance_fraction: 0.500000; power_fraction: 0.500000; power_factor: 0.9; "power.real": 0.14; "power.imag": 0.067805";
-	energy "+13.7693+6.66879i kVAh";
-	power "+0.28+0.13561j kVA";
+	load "impedance_fraction: 0.500000; power_fraction: 0.500000; power_factor: 0.9; "power.real": 0.13; "power.imag": 0.062962";
+	energy "+8.40483+4.07065i kVAh";
+	power "+0.26+0.125924j kVA";
 	peak_demand "+0+0i kVA";
 	heatgain "+0 Btu/h";
 	cumulative_heatgain "+0 Btu";
@@ -2825,10 +2831,10 @@ object residential.ZIPload {
 	impedance_fraction "+0.5 pu";
 	power_fraction "+0.5 pu";
 	power_factor "+0.9";
-	constant_power "+0.14+0.0678051j kVA";
+	constant_power "+0.13+0.0629619j kVA";
 	constant_current "+0+0j kVA";
-	constant_admittance "+0.14+0.0678051j kVA";
-	voltage_factor "+0.99961 pu";
+	constant_admittance "+0.13+0.0629619j kVA";
+	voltage_factor "+0.99751 pu";
 	breaker_amps "+1000 A";
 	configuration "IS110";
 	power_state "UNKNOWN";
@@ -2836,16 +2842,16 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_4";
 	name "EV_inverter_4";
-	guid "3974EC992320D13223EBBC534DC9189F";
+	guid "45DE3B429F569DC4643FCBDF3D68ABD5";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "-120.03-207.721j V";
-	phaseB_V_Out "-60.0151-103.86j V";
-	phaseC_V_Out "-60.0154-103.861j V";
+	phaseA_V_Out "-120.007-207.152j V";
+	phaseB_V_Out "-60.0035-103.576j V";
+	phaseC_V_Out "-60.0037-103.577j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -2917,7 +2923,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_4";
 	name "EV_4";
-	guid "2502613FB8485C9F588E9C6188867E9A";
+	guid "7FF1C546A2AF1A8EFBA5B83FF124263";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -2944,18 +2950,18 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_4";
 	name "PV_inverter_4";
-	guid "483202943AC2DD4F5BD703EEE07C134D";
+	guid "2716D06DCDEC383925622C0FE2229329";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	generator_mode "SUPPLY_DRIVEN";
 	inverter_convergence_criterion "+0.001";
-	V_In "+27.1567+0j V";
+	V_In "+27.0966+0j V";
 	Vdc "+480 V";
-	phaseA_V_Out "-120.03-207.721j V";
-	phaseB_V_Out "-60.0151-103.86j V";
-	phaseC_V_Out "-60.0154-103.861j V";
+	phaseA_V_Out "-120.007-207.152j V";
+	phaseB_V_Out "-60.0035-103.576j V";
+	phaseC_V_Out "-60.0037-103.577j V";
 	rated_power "+4000 VA";
 	rated_battery_power "+4210.53 W";
 	inverter_efficiency "+0.95";
@@ -3027,7 +3033,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_4";
 	name "PV_4";
-	guid "1B92B32D47B5C1276A0E31C1B5A166D2";
+	guid "3E88B5888FF322F01ABD9DA13ECA1DBF";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -3037,24 +3043,24 @@ object generators.solar {
 	b_coeff "-0.0455 s/m";
 	T_coeff "-0.5 %/degC";
 	NOCT "+118.4 degF";
-	Tmodule "+59.002 degF";
-	Tambient "+15.0011 degC";
-	ambient_temperature "+59.002 degF";
+	Tmodule "+78.082 degF";
+	Tambient "+25.6011 degC";
+	ambient_temperature "+78.082 degF";
 	Rinternal "+0.05 Ohm";
 	Rated_Insolation "+92.902 W/sf";
 	Pmax_temp_coeff "-0.00012929";
 	Voc_temp_coeff "-0.000116272";
 	V_Max "+27.1+0j V";
 	Voc_Max "+34+0j V";
-	Voc "+34.0712+0j V";
+	Voc "+33.9957+0j V";
 	efficiency "+0.135 unit";
 	area "+249.35 sf";
 	soiling "+0.95 pu";
 	derating "+0.95 pu";
-	Tcell "+15.0011 degC";
+	Tcell "+25.6011 degC";
 	Rated_kVA "+3.12729 kVA";
 	rated_power "+3127.29 W";
-	V_Out "+27.1567+0j V";
+	V_Out "+27.0966+0j V";
 	weather "weather";
 	shading_factor "+1 pu";
 	tilt_angle "+45 deg";
@@ -3066,16 +3072,16 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_4";
 	name "Bat_inverter_4";
-	guid "5304D68E142195036890DE5A7F451F71";
+	guid "7BFCB958DB1C63B7730C1EE979E1F4D0";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "-120.03-207.721j V";
-	phaseB_V_Out "-60.0151-103.86j V";
-	phaseC_V_Out "-60.0154-103.861j V";
+	phaseA_V_Out "-120.007-207.152j V";
+	phaseB_V_Out "-60.0035-103.576j V";
+	phaseC_V_Out "-60.0037-103.577j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -3147,7 +3153,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_4";
 	name "Battery_4";
-	guid "7DA836ED22861BBB6CC024D128A95228";
+	guid "4E5A150001A662246C4BDACC1090EAB6";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -3175,24 +3181,24 @@ object generators.battery {
 object powerflow.transformer {
 	parent "main_node_C";
 	name "xfrm_1C";
-	guid "57BC133189372BA25364C657C9FDAC49";
+	guid "484C0959E5513250539B23D09557A9AA";
 	configuration "xfmr_config_C";
 	// class.parent = powerflow.link
 	status "CLOSED";
 	from "main_node_C";
 	to "node_1C";
-	power_in "+1425.28+627.212j VA";
-	power_out "+1425.26+627.176j VA";
-	power_out_real "+1425.26 W";
-	power_losses "+0.0178302+0.0360624j VA";
-	power_in_C "+1425.28+627.212j VA";
-	power_out_A "+335.872+96.6908j VA";
-	power_out_B "+1089.39+530.485j VA";
-	power_losses_C "+0.0178302+0.0360624j VA";
-	current_out_A "-0.70078+2.82834j A";
-	current_out_B "+0.706769-10.0771j A";
-	current_out_C "-0.00598819+7.24875j A";
-	current_in_C "-0.070348+0.645003j A";
+	power_in "+885.907+365.887j VA";
+	power_out "+885.9+365.873j VA";
+	power_out_real "+885.9 W";
+	power_losses "+0.00673216+0.0136846j VA";
+	power_in_C "+885.907+365.887j VA";
+	power_out_A "+336.209+96.7772j VA";
+	power_out_B "+549.691+269.096j VA";
+	power_losses_C "+0.00673216+0.0136846j VA";
+	current_out_A "-0.700162+2.82836j A";
+	current_out_B "+0.344802-5.08542j A";
+	current_out_C "+0.35536+2.25707j A";
+	current_in_C "-0.0522263+0.395525j A";
 	flow_direction "CF|BR|AR";
 	continuous_rating "+1000 A";
 	emergency_rating "+1000 A";
@@ -3204,14 +3210,14 @@ object powerflow.transformer {
 object powerflow.triplex_node {
 	parent "xfrm_1C";
 	name "node_1C";
-	guid "4F192791777EFB6B678A3BC895E0C4D8";
+	guid "53B24EF26EE0C98459FFF741E28B9E1C";
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
-	voltage_1 "-59.9306+103.903j V";
-	voltage_2 "-59.93+103.903j V";
-	voltage_12 "-119.861+207.806j V";
-	voltage_1N "-59.9306+103.903j V";
-	voltage_2N "-59.93+103.903j V";
+	voltage_1 "-59.9684+104.026j V";
+	voltage_2 "-59.9682+104.025j V";
+	voltage_12 "-119.937+208.051j V";
+	voltage_1N "-59.9684+104.026j V";
+	voltage_2N "-59.9682+104.025j V";
 	GFA_freq_low_trip "+59.5 Hz";
 	GFA_freq_high_trip "+60.5 Hz";
 	GFA_volt_low_trip "+0.8 pu";
@@ -3240,33 +3246,33 @@ object powerflow.triplex_node {
 object powerflow.triplex_meter {
 	parent "node_1C";
 	name "meter_5";
-	guid "21F1A911643308FF3B23066300312E3B";
-	measured_real_energy "+16360.7 Wh";
-	measured_reactive_energy "+15885.4 VAh";
+	guid "4AF964E620C8A9625A87E2162684CC94";
+	measured_real_energy "+28442 Wh";
+	measured_reactive_energy "+25783.5 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+778.576+23.7515d VA";
-	indiv_measured_power_1 "+174.756+16.0601d VA";
-	indiv_measured_power_2 "+544.696+265.242j VA";
-	measured_demand "+10161.7 W";
-	measured_real_power "+712.632 W";
-	measured_reactive_power "+313.588 VAr";
-	measured_voltage_1 "+119.948+119.976d V";
-	measured_voltage_2 "+119.947+119.976d V";
-	measured_voltage_12 "+239.895+119.976d V";
-	measured_current_1 "-0.35039+1.41417j A";
-	measured_current_2 "+0.353384-5.03854j A";
-	measured_current_N "-0.00299409+3.62437j A";
+	measured_power "+479.239+22.4404d VA";
+	indiv_measured_power_1 "+174.93+16.0584d VA";
+	indiv_measured_power_2 "+274.845+134.548j VA";
+	measured_demand "+8721.9 W";
+	measured_real_power "+442.95 W";
+	measured_reactive_power "+182.936 VAr";
+	measured_voltage_1 "+120.073+119.962d V";
+	measured_voltage_2 "+120.073+119.962d V";
+	measured_voltage_12 "+240.146+119.962d V";
+	measured_current_1 "-0.350081+1.41418j A";
+	measured_current_2 "+0.172401-2.54271j A";
+	measured_current_N "+0.17768+1.12853j A";
 	bill_day "15";
 	// class.parent = powerflow.triplex_node
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
-	voltage_1 "-59.9306+103.903j V";
-	voltage_2 "-59.93+103.903j V";
-	voltage_12 "-119.861+207.806j V";
-	voltage_1N "-59.9306+103.903j V";
-	voltage_2N "-59.93+103.903j V";
-	power_12 "+5.68434e-14+0i VA";
-	power_12_real "+5.68434e-14 W";
+	voltage_1 "-59.9684+104.026j V";
+	voltage_2 "-59.9682+104.025j V";
+	voltage_12 "-119.937+208.051j V";
+	voltage_1N "-59.9684+104.026j V";
+	voltage_2N "-59.9682+104.025j V";
+	power_12 "-1.81899e-12+0i VA";
+	power_12_real "-1.81899e-12 W";
 	house_present "TRUE";
 	GFA_freq_low_trip "+59.5 Hz";
 	GFA_freq_high_trip "+60.5 Hz";
@@ -3296,7 +3302,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_5";
 	name "house_5";
-	guid "4E656216AC47AA427E5CFEF56E692370";
+	guid "D4FF0557991F6075ACC01A5CD24320A";
 	weather "weather";
 	floor_area "+1436.07 sf";
 	gross_wall_area "+1237.66 sf";
@@ -3330,10 +3336,10 @@ object residential.house {
 	window_high_temperature_cutoff "+80 degF";
 	window_constant_coefficient "+1";
 	window_temperature_delta "+5";
-	design_heating_capacity "+36000 Btu/h";
-	design_cooling_capacity "+36000 Btu/h";
-	cooling_design_temperature "+96.082 degF";
-	heating_design_temperature "+32.002 degF";
+	design_heating_capacity "+42000 Btu/h";
+	design_cooling_capacity "+42000 Btu/h";
+	cooling_design_temperature "+102.022 degF";
+	heating_design_temperature "+24.982 degF";
 	design_peak_solar "+195 Btu/h/sf";
 	design_internal_gains "+4153.57 W/sf";
 	mass_solar_gain_fraction "+0.5 pu";
@@ -3346,19 +3352,19 @@ object residential.house {
 	heating_supply_air_temp "+150 degF";
 	duct_pressure_drop "+0.5 inH2O";
 	fan_design_power "+211.847 W";
-	fan_design_airflow "+1045.7 cfm";
+	fan_design_airflow "+1219.98 cfm";
 	fan_impedance_fraction "+0.2534 pu";
 	fan_power_fraction "+0.0135 pu";
 	fan_current_fraction "+0.7332 pu";
 	fan_power_factor "+0.96 pu";
 	heating_COP "+2.5 pu";
 	cooling_COP "+3.5 Btu/kWh";
-	air_temperature "+73.4495 degF";
-	outdoor_temperature "+59.002 degF";
-	outdoor_rh "+77 %";
+	air_temperature "+76.5746 degF";
+	outdoor_temperature "+78.082 degF";
+	outdoor_rh "+74 %";
 	mass_heat_capacity "+2466.48 Btu/degF";
 	mass_heat_coeff "+6229.19 Btu/degF/h";
-	mass_temperature "+74.0411 degF";
+	mass_temperature "+76.567 degF";
 	air_volume "+11488.5 cf";
 	air_mass "+844.407 lb";
 	air_heat_capacity "+608.479 Btu/degF";
@@ -3390,32 +3396,31 @@ object residential.house {
 	Rdoors "+5 degF*sf*h/Btu";
 	hvac_breaker_rating "+200 A";
 	hvac_power_factor "+0.75 unit";
-	last_heating_load "+4.78354 kW";
-	last_cooling_load "+2.57073 kW";
-	total_load "+0.778794 kW";
-	panel "power_factor: 0; "power.real": 0.47537; "power.imag": 0.218753";
-	panel.energy "+30.3362+11.6496i kVAh";
-	panel.power "+0.712833+0.31367j kVA";
+	last_cooling_load "+3.34675 kW";
+	total_load "+0.479119 kW";
+	panel "power_factor: 0; "power.real": 0.34037; "power.imag": 0.153370";
+	panel.energy "+40.6113+10.5781i kVAh";
+	panel.power "+0.442833+0.182903j kVA";
 	panel.peak_demand "+0+0i kVA";
 	panel.heatgain "+1554.75 Btu/h";
-	panel.cumulative_heatgain "-1388.98 Btu";
+	panel.cumulative_heatgain "-112065 Btu";
 	panel.heatgain_fraction "+0 pu";
 	panel.current_fraction "+0 pu";
 	panel.impedance_fraction "+0 pu";
 	panel.power_fraction "+0 pu";
 	panel.power_factor "+0";
-	panel.constant_power "+0.47537+0.218753j kVA";
+	panel.constant_power "+0.34037+0.15337j kVA";
 	panel.constant_current "+0.0135041+0.00338445j kVA";
-	panel.constant_admittance "+0.22396+0.0915318j kVA";
+	panel.constant_admittance "+0.0889598+0.0261483j kVA";
 	panel.voltage_factor "+0 pu";
 	panel.breaker_amps "+0 A";
 	panel.configuration "IS110";
 	design_internal_gain_density "+0.6 W/sf";
-	compressor_count "28";
-	hvac_last_on "2016-07-01 19:40:30 PDT";
-	hvac_last_off "2016-07-01 19:43:50 PDT";
-	hvac_period_length "+28.7667 s";
-	hvac_duty_cycle "+0.115875";
+	compressor_count "74";
+	hvac_last_on "2016-07-01 23:45:38 PDT";
+	hvac_last_off "2016-07-01 23:48:36 PDT";
+	hvac_period_length "+37.3167 s";
+	hvac_duty_cycle "+0.0794998";
 	gas_enduses "WATERHEATER|RANGE|DRYER";
 	k "+2.66974";
 	T_max "+72";
@@ -3423,11 +3428,11 @@ object residential.house {
 	// class.parent = residential.residential_enduse
 	shape "type: unknown";
 	load "impedance_fraction: 0.200000; power_fraction: 0.800000; power_factor: 0.75; "power.real": 0";
-	energy "+4.81689+0i kVAh";
+	energy "+17.3043+0i kVAh";
 	power "+0+0j kVA";
 	peak_demand "+0+0i kVA";
 	heatgain "+0 Btu/h";
-	cumulative_heatgain "-48340 Btu";
+	cumulative_heatgain "-159016 Btu";
 	heatgain_fraction "+0 pu";
 	current_fraction "+0 pu";
 	impedance_fraction "+0.2 pu";
@@ -3436,20 +3441,20 @@ object residential.house {
 	constant_power "+0+0j kVA";
 	constant_current "+0+0j kVA";
 	constant_admittance "+0+0j kVA";
-	voltage_factor "+0.999564 pu";
+	voltage_factor "+1.00061 pu";
 	breaker_amps "+200 A";
 	configuration "IS220";
 }
 object residential.ZIPload {
 	parent "house_5";
 	name "zip_GLD_5";
-	guid "95E44963BFAADD15F180D62E56E4FB";
-	base_power "+0.28 kW";
+	guid "5AB28EB2B9A3FE8126DDC9FCAADFF5CE";
+	base_power "+0.01 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
 	impedance_pf "+0.9";
 	breaker_val "+1000 A";
-	actual_power "+0.279877+0.135551j kVA";
+	actual_power "+0.0100061+0.00484616j kVA";
 	multiplier "+1";
 	rate_of_cooling "-1 K/h";
 	rate_of_heating "-1 K/h";
@@ -3459,9 +3464,9 @@ object residential.ZIPload {
 	recovery_duty_cycle "-1 pu";
 	// class.parent = residential.residential_enduse
 	shape "type: unknown";
-	load "impedance_fraction: 0.500000; power_fraction: 0.500000; power_factor: 0.9; "power.real": 0.14; "power.imag": 0.067805";
-	energy "+13.7693+6.66879i kVAh";
-	power "+0.28+0.13561j kVA";
+	load "impedance_fraction: 0.500000; power_fraction: 0.500000; power_factor: 0.9; "power.real": 0.005; "power.imag": 0.002422";
+	energy "+11.557+5.59731i kVAh";
+	power "+0.01+0.00484322j kVA";
 	peak_demand "+0+0i kVA";
 	heatgain "+0 Btu/h";
 	cumulative_heatgain "+0 Btu";
@@ -3470,10 +3475,10 @@ object residential.ZIPload {
 	impedance_fraction "+0.5 pu";
 	power_fraction "+0.5 pu";
 	power_factor "+0.9";
-	constant_power "+0.14+0.0678051j kVA";
+	constant_power "+0.005+0.00242161j kVA";
 	constant_current "+0+0j kVA";
-	constant_admittance "+0.14+0.0678051j kVA";
-	voltage_factor "+0.99956 pu";
+	constant_admittance "+0.005+0.00242161j kVA";
+	voltage_factor "+1.00061 pu";
 	breaker_amps "+1000 A";
 	configuration "IS110";
 	power_state "UNKNOWN";
@@ -3481,16 +3486,16 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_5";
 	name "EV_inverter_5";
-	guid "BCF9A18B7A1ED5D2B81BBCAFB5FC81C";
+	guid "3CEA2CCC808C4A97417BAC132D43581C";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "-119.861+207.806j V";
-	phaseB_V_Out "-59.93+103.903j V";
-	phaseC_V_Out "-59.9306+103.903j V";
+	phaseA_V_Out "-119.937+208.051j V";
+	phaseB_V_Out "-59.9682+104.025j V";
+	phaseC_V_Out "-59.9684+104.026j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -3562,7 +3567,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_5";
 	name "EV_5";
-	guid "27DE8167B4789B63615B613070C1F67";
+	guid "7A5A249795E1BA9B79C4A5B0B5263B3D";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -3589,18 +3594,18 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_5";
 	name "PV_inverter_5";
-	guid "6F66046657AEF63F43F0160F4536D289";
+	guid "7B313AD11802BC44F3035129E188784";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	generator_mode "SUPPLY_DRIVEN";
 	inverter_convergence_criterion "+0.001";
-	V_In "+27.1567+0j V";
+	V_In "+27.0966+0j V";
 	Vdc "+480 V";
-	phaseA_V_Out "-119.861+207.806j V";
-	phaseB_V_Out "-59.93+103.903j V";
-	phaseC_V_Out "-59.9306+103.903j V";
+	phaseA_V_Out "-119.937+208.051j V";
+	phaseB_V_Out "-59.9682+104.025j V";
+	phaseC_V_Out "-59.9684+104.026j V";
 	rated_power "+4000 VA";
 	rated_battery_power "+4210.53 W";
 	inverter_efficiency "+0.95";
@@ -3672,7 +3677,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_5";
 	name "PV_5";
-	guid "49F630828F2D0CEA61CA2888A8622A37";
+	guid "258D8CA1F76B591A64FB1A56D78BCF80";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -3682,24 +3687,24 @@ object generators.solar {
 	b_coeff "-0.0455 s/m";
 	T_coeff "-0.5 %/degC";
 	NOCT "+118.4 degF";
-	Tmodule "+59.002 degF";
-	Tambient "+15.0011 degC";
-	ambient_temperature "+59.002 degF";
+	Tmodule "+78.082 degF";
+	Tambient "+25.6011 degC";
+	ambient_temperature "+78.082 degF";
 	Rinternal "+0.05 Ohm";
 	Rated_Insolation "+92.902 W/sf";
 	Pmax_temp_coeff "-0.00012929";
 	Voc_temp_coeff "-0.000116272";
 	V_Max "+27.1+0j V";
 	Voc_Max "+34+0j V";
-	Voc "+34.0712+0j V";
+	Voc "+33.9957+0j V";
 	efficiency "+0.135 unit";
 	area "+234.338 sf";
 	soiling "+0.95 pu";
 	derating "+0.95 pu";
-	Tcell "+15.0011 degC";
+	Tcell "+25.6011 degC";
 	Rated_kVA "+2.93902 kVA";
 	rated_power "+2939.02 W";
-	V_Out "+27.1567+0j V";
+	V_Out "+27.0966+0j V";
 	weather "weather";
 	shading_factor "+1 pu";
 	tilt_angle "+45 deg";
@@ -3711,16 +3716,16 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_5";
 	name "Bat_inverter_5";
-	guid "3E1917A26423EB5A169A46F506E2E11E";
+	guid "4ED474FA3B02EA371DE5C09F53441114";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "-119.861+207.806j V";
-	phaseB_V_Out "-59.93+103.903j V";
-	phaseC_V_Out "-59.9306+103.903j V";
+	phaseA_V_Out "-119.937+208.051j V";
+	phaseB_V_Out "-59.9682+104.025j V";
+	phaseC_V_Out "-59.9684+104.026j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -3792,7 +3797,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_5";
 	name "Battery_5";
-	guid "756B9F5ED11D7D84E0A3EF28D0DE87F";
+	guid "5521120CFDF92174115818FEED90071D";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -3820,31 +3825,31 @@ object generators.battery {
 object powerflow.triplex_meter {
 	parent "node_1C";
 	name "meter_6";
-	guid "2DC602EB7C9F9AB076BA2A3FED342847";
-	measured_real_energy "+17383.2 Wh";
-	measured_reactive_energy "+16260.5 VAh";
+	guid "7FEC766EBE8042D862EB211ED2BE83EF";
+	measured_real_energy "+30013.1 Wh";
+	measured_reactive_energy "+26713.2 VAh";
 	measured_energy_delta_timestep "-1 s";
-	measured_power "+778.576+23.7515d VA";
-	indiv_measured_power_1 "+174.756+16.0601d VA";
-	indiv_measured_power_2 "+544.696+265.242j VA";
-	measured_demand "+5379.81 W";
-	measured_real_power "+712.632 W";
-	measured_reactive_power "+313.588 VAr";
-	measured_voltage_1 "+119.948+119.976d V";
-	measured_voltage_2 "+119.947+119.976d V";
-	measured_voltage_12 "+239.895+119.976d V";
-	measured_current_1 "-0.35039+1.41417j A";
-	measured_current_2 "+0.353384-5.03854j A";
-	measured_current_N "-0.00299409+3.62437j A";
+	measured_power "+479.239+22.4404d VA";
+	indiv_measured_power_1 "+174.93+16.0584d VA";
+	indiv_measured_power_2 "+274.845+134.548j VA";
+	measured_demand "+8300.77 W";
+	measured_real_power "+442.95 W";
+	measured_reactive_power "+182.936 VAr";
+	measured_voltage_1 "+120.073+119.962d V";
+	measured_voltage_2 "+120.073+119.962d V";
+	measured_voltage_12 "+240.146+119.962d V";
+	measured_current_1 "-0.350081+1.41418j A";
+	measured_current_2 "+0.172401-2.54271j A";
+	measured_current_N "+0.17768+1.12853j A";
 	bill_day "15";
 	// class.parent = powerflow.triplex_node
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
-	voltage_1 "-59.9306+103.903j V";
-	voltage_2 "-59.93+103.903j V";
-	voltage_12 "-119.861+207.806j V";
-	voltage_1N "-59.9306+103.903j V";
-	voltage_2N "-59.93+103.903j V";
+	voltage_1 "-59.9684+104.026j V";
+	voltage_2 "-59.9682+104.025j V";
+	voltage_12 "-119.937+208.051j V";
+	voltage_1N "-59.9684+104.026j V";
+	voltage_2N "-59.9682+104.025j V";
 	house_present "TRUE";
 	GFA_freq_low_trip "+59.5 Hz";
 	GFA_freq_high_trip "+60.5 Hz";
@@ -3874,7 +3879,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_6";
 	name "house_6";
-	guid "2A886EE2C011E0984C68C465E9B98B66";
+	guid "3BA1324A0937DDED1D493FA8C62D8D3C";
 	weather "weather";
 	floor_area "+1314.37 sf";
 	gross_wall_area "+1184.06 sf";
@@ -3910,8 +3915,8 @@ object residential.house {
 	window_temperature_delta "+5";
 	design_heating_capacity "+36000 Btu/h";
 	design_cooling_capacity "+36000 Btu/h";
-	cooling_design_temperature "+96.082 degF";
-	heating_design_temperature "+32.002 degF";
+	cooling_design_temperature "+102.022 degF";
+	heating_design_temperature "+24.982 degF";
 	design_peak_solar "+195 Btu/h/sf";
 	design_internal_gains "+3994.14 W/sf";
 	mass_solar_gain_fraction "+0.5 pu";
@@ -3931,12 +3936,12 @@ object residential.house {
 	fan_power_factor "+0.96 pu";
 	heating_COP "+2.5 pu";
 	cooling_COP "+3.5 Btu/kWh";
-	air_temperature "+73.6022 degF";
-	outdoor_temperature "+59.002 degF";
-	outdoor_rh "+77 %";
+	air_temperature "+76.9749 degF";
+	outdoor_temperature "+78.082 degF";
+	outdoor_rh "+74 %";
 	mass_heat_capacity "+2257.46 Btu/degF";
 	mass_heat_coeff "+5867.6 Btu/degF/h";
-	mass_temperature "+74.1897 degF";
+	mass_temperature "+76.8213 degF";
 	air_volume "+10515 cf";
 	air_mass "+772.849 lb";
 	air_heat_capacity "+556.915 Btu/degF";
@@ -3968,31 +3973,31 @@ object residential.house {
 	Rdoors "+5 degF*sf*h/Btu";
 	hvac_breaker_rating "+200 A";
 	hvac_power_factor "+0.75 unit";
-	last_cooling_load "+2.57073 kW";
-	total_load "+0.778794 kW";
-	panel "power_factor: 0; "power.real": 0.47537; "power.imag": 0.218753";
-	panel.energy "+30.761+11.6496i kVAh";
-	panel.power "+0.712833+0.31367j kVA";
+	last_cooling_load "+2.90049 kW";
+	total_load "+0.479119 kW";
+	panel "power_factor: 0; "power.real": 0.34037; "power.imag": 0.153370";
+	panel.energy "+41.6633+10.5781i kVAh";
+	panel.power "+0.442833+0.182903j kVA";
 	panel.peak_demand "+0+0i kVA";
 	panel.heatgain "+1554.75 Btu/h";
-	panel.cumulative_heatgain "-9048.25 Btu";
+	panel.cumulative_heatgain "-120317 Btu";
 	panel.heatgain_fraction "+0 pu";
 	panel.current_fraction "+0 pu";
 	panel.impedance_fraction "+0 pu";
 	panel.power_fraction "+0 pu";
 	panel.power_factor "+0";
-	panel.constant_power "+0.47537+0.218753j kVA";
+	panel.constant_power "+0.34037+0.15337j kVA";
 	panel.constant_current "+0.0135041+0.00338445j kVA";
-	panel.constant_admittance "+0.22396+0.0915318j kVA";
+	panel.constant_admittance "+0.0889598+0.0261483j kVA";
 	panel.voltage_factor "+0 pu";
 	panel.breaker_amps "+0 A";
 	panel.configuration "IS110";
 	design_internal_gain_density "+0.6 W/sf";
-	compressor_count "34";
-	hvac_last_on "2016-07-01 19:40:41 PDT";
-	hvac_last_off "2016-07-01 19:43:41 PDT";
-	hvac_period_length "+25.6667 s";
-	hvac_duty_cycle "+0.116883";
+	compressor_count "80";
+	hvac_last_on "2016-07-01 23:25:05 PDT";
+	hvac_last_off "2016-07-01 23:28:23 PDT";
+	hvac_period_length "+36.0167 s";
+	hvac_duty_cycle "+0.0916242";
 	gas_enduses "WATERHEATER|RANGE|DRYER";
 	k "+3.02136";
 	T_max "+72";
@@ -4000,11 +4005,11 @@ object residential.house {
 	// class.parent = residential.residential_enduse
 	shape "type: unknown";
 	load "impedance_fraction: 0.200000; power_fraction: 0.800000; power_factor: 0.75; "power.real": 0";
-	energy "+5.24169+0i kVAh";
+	energy "+18.3563+0i kVAh";
 	power "+0+0j kVA";
 	peak_demand "+0+0i kVA";
 	heatgain "+0 Btu/h";
-	cumulative_heatgain "-55999.3 Btu";
+	cumulative_heatgain "-167268 Btu";
 	heatgain_fraction "+0 pu";
 	current_fraction "+0 pu";
 	impedance_fraction "+0.2 pu";
@@ -4013,20 +4018,20 @@ object residential.house {
 	constant_power "+0+0j kVA";
 	constant_current "+0+0j kVA";
 	constant_admittance "+0+0j kVA";
-	voltage_factor "+0.999564 pu";
+	voltage_factor "+1.00061 pu";
 	breaker_amps "+200 A";
 	configuration "IS220";
 }
 object residential.ZIPload {
 	parent "house_6";
 	name "zip_GLD_6";
-	guid "184B7A6C52C8C957129395A61FBAF83";
-	base_power "+0.28 kW";
+	guid "5D94D86A2256F98796F106D0EE30087";
+	base_power "+0.01 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
 	impedance_pf "+0.9";
 	breaker_val "+1000 A";
-	actual_power "+0.279877+0.135551j kVA";
+	actual_power "+0.0100061+0.00484616j kVA";
 	multiplier "+1";
 	rate_of_cooling "-1 K/h";
 	rate_of_heating "-1 K/h";
@@ -4036,9 +4041,9 @@ object residential.ZIPload {
 	recovery_duty_cycle "-1 pu";
 	// class.parent = residential.residential_enduse
 	shape "type: unknown";
-	load "impedance_fraction: 0.500000; power_fraction: 0.500000; power_factor: 0.9; "power.real": 0.14; "power.imag": 0.067805";
-	energy "+13.7693+6.66879i kVAh";
-	power "+0.28+0.13561j kVA";
+	load "impedance_fraction: 0.500000; power_fraction: 0.500000; power_factor: 0.9; "power.real": 0.005; "power.imag": 0.002422";
+	energy "+11.557+5.59731i kVAh";
+	power "+0.01+0.00484322j kVA";
 	peak_demand "+0+0i kVA";
 	heatgain "+0 Btu/h";
 	cumulative_heatgain "+0 Btu";
@@ -4047,10 +4052,10 @@ object residential.ZIPload {
 	impedance_fraction "+0.5 pu";
 	power_fraction "+0.5 pu";
 	power_factor "+0.9";
-	constant_power "+0.14+0.0678051j kVA";
+	constant_power "+0.005+0.00242161j kVA";
 	constant_current "+0+0j kVA";
-	constant_admittance "+0.14+0.0678051j kVA";
-	voltage_factor "+0.99956 pu";
+	constant_admittance "+0.005+0.00242161j kVA";
+	voltage_factor "+1.00061 pu";
 	breaker_amps "+1000 A";
 	configuration "IS110";
 	power_state "UNKNOWN";
@@ -4058,16 +4063,16 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_6";
 	name "EV_inverter_6";
-	guid "5B9E7B60C101DB177BD4266EB634DFEE";
+	guid "39D319F4FAA3A67213562A462D9FF1CA";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "-119.861+207.806j V";
-	phaseB_V_Out "-59.93+103.903j V";
-	phaseC_V_Out "-59.9306+103.903j V";
+	phaseA_V_Out "-119.937+208.051j V";
+	phaseB_V_Out "-59.9682+104.025j V";
+	phaseC_V_Out "-59.9684+104.026j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -4139,7 +4144,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_6";
 	name "EV_6";
-	guid "5D937A10D0B658C06CA9948623526AF3";
+	guid "3FDCEB02A3A9355C24F2D8D0E065918F";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -4166,18 +4171,18 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_6";
 	name "PV_inverter_6";
-	guid "4A6326CF62BEE2914C769143A2B8E0C4";
+	guid "B3251DA57999DFF789CB3BA5794175F";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	generator_mode "SUPPLY_DRIVEN";
 	inverter_convergence_criterion "+0.001";
-	V_In "+27.1567+0j V";
+	V_In "+27.0966+0j V";
 	Vdc "+480 V";
-	phaseA_V_Out "-119.861+207.806j V";
-	phaseB_V_Out "-59.93+103.903j V";
-	phaseC_V_Out "-59.9306+103.903j V";
+	phaseA_V_Out "-119.937+208.051j V";
+	phaseB_V_Out "-59.9682+104.025j V";
+	phaseC_V_Out "-59.9684+104.026j V";
 	rated_power "+4000 VA";
 	rated_battery_power "+4210.53 W";
 	inverter_efficiency "+0.95";
@@ -4249,7 +4254,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_6";
 	name "PV_6";
-	guid "4AA9E105B110DD8353739EEE6EB429C";
+	guid "4CCD32FE089071A23BCF6E02E06867E1";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -4259,24 +4264,24 @@ object generators.solar {
 	b_coeff "-0.0455 s/m";
 	T_coeff "-0.5 %/degC";
 	NOCT "+118.4 degF";
-	Tmodule "+59.002 degF";
-	Tambient "+15.0011 degC";
-	ambient_temperature "+59.002 degF";
+	Tmodule "+78.082 degF";
+	Tambient "+25.6011 degC";
+	ambient_temperature "+78.082 degF";
 	Rinternal "+0.05 Ohm";
 	Rated_Insolation "+92.902 W/sf";
 	Pmax_temp_coeff "-0.00012929";
 	Voc_temp_coeff "-0.000116272";
 	V_Max "+27.1+0j V";
 	Voc_Max "+34+0j V";
-	Voc "+34.0712+0j V";
+	Voc "+33.9957+0j V";
 	efficiency "+0.135 unit";
 	area "+224.307 sf";
 	soiling "+0.95 pu";
 	derating "+0.95 pu";
-	Tcell "+15.0011 degC";
+	Tcell "+25.6011 degC";
 	Rated_kVA "+2.81321 kVA";
 	rated_power "+2813.21 W";
-	V_Out "+27.1567+0j V";
+	V_Out "+27.0966+0j V";
 	weather "weather";
 	shading_factor "+1 pu";
 	tilt_angle "+45 deg";
@@ -4288,16 +4293,16 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_6";
 	name "Bat_inverter_6";
-	guid "64E6D36EBA53AE8A267509CC39348DA7";
+	guid "2A739BF74B684CE1735226D4A9199060";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
 	generator_status "ONLINE";
 	inverter_convergence_criterion "+0.001";
 	Vdc "+480 V";
-	phaseA_V_Out "-119.861+207.806j V";
-	phaseB_V_Out "-59.93+103.903j V";
-	phaseC_V_Out "-59.9306+103.903j V";
+	phaseA_V_Out "-119.937+208.051j V";
+	phaseB_V_Out "-59.9682+104.025j V";
+	phaseC_V_Out "-59.9684+104.026j V";
 	rated_power "+3000 VA";
 	rated_battery_power "+3157.89 W";
 	inverter_efficiency "+0.95";
@@ -4369,7 +4374,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_6";
 	name "Battery_6";
-	guid "2BC9B1A56F5F3A85725C8AC84936BB63";
+	guid "28E8BED352009E6769B8F62EA2619FB0";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -4396,48 +4401,48 @@ object generators.battery {
 }
 object tape.group_recorder {
 	name "rec_total_load";
-	guid "50FC40B6345C9753CEA5DC6A7B3F8A";
-	file "TESS/TESS_BC/total_load_all.csv";
+	guid "6E04007789294AA49475F54E290D5CC";
+	file TESS/TESS_0001/total_load_all.csv;
 	group "class=house";
 	interval "+60 s";
 	property "total_load";
 }
 object tape.group_recorder {
 	name "rec_hvac_load";
-	guid "576A138EDE3F970A287A3E7E48BDCB65";
-	file "TESS/TESS_BC/hvac_load_all.csv";
+	guid "1FA52BA34DCF44D55A38C2EC4E2A0897";
+	file TESS/TESS_0001/hvac_load_all.csv;
 	group "class=house";
 	interval "+60 s";
 	property "hvac_load";
 }
 object tape.group_recorder {
 	name "rec_T";
-	guid "252E47939FE929CA4D200238C789FCD4";
-	file "TESS/TESS_BC/T_all.csv";
+	guid "5C870AB90DDFDA057661DAECA9CC2B21";
+	file TESS/TESS_0001/T_all.csv;
 	group "class=house";
 	interval "+60 s";
 	property "air_temperature";
 }
 object tape.group_recorder {
 	name "rec_Tm";
-	guid "305590D2E1B36F426520E3C38D4CD4D5";
-	file "TESS/TESS_BC/Tm_all.csv";
+	guid "43F45A4408A1B5A41B32BA4499F8EBFF";
+	file TESS/TESS_0001/Tm_all.csv;
 	group "class=house";
 	interval "+60 s";
 	property "mass_temperature";
 }
 object tape.group_recorder {
 	name "rec_pv_infeed";
-	guid "2B86EABDF57C39BC497C16CAA6D1EBBC";
-	file "TESS/TESS_BC/total_P_Out.csv";
+	guid "395A3649C26ED8281B1FBA3E73F6941F";
+	file TESS/TESS_0001/total_P_Out.csv;
 	group "class=inverter";
 	interval "+60 s";
 	property "P_Out";
 }
 object tape.group_recorder {
 	name "rec_batt_soc";
-	guid "40B055424F515C1076580FBCBB40D11D";
-	file "TESS/TESS_BC/battery_SOC.csv";
+	guid "8BED43D201226C4475F2FAF2471184C";
+	file TESS/TESS_0001/battery_SOC.csv;
 	group "class=battery";
 	interval "+60 s";
 	property "state_of_charge";

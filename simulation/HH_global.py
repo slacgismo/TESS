@@ -1,17 +1,14 @@
 import os
 
 #Result file
-results_folder = 'TESS/TESS_0000'
-if not os.path.exists(results_folder):
-	os.makedirs(results_folder)
-
+results_folder = 'TESS/TESS_0001'
 #glm parameters
 city = 'Austin'
 month = 'Jan'
 start_time_str = '2016-07-01 00:00'
 end_time_str = '2016-07-02 00:00'
 player_dir = 'players_SanDiego_2015'
-tmy_file = 'CA-San_Jose_Intl_Ap.tmy3'
+tmy_file = '722540TYA.tmy3'
 slack_node = 'node_149'
 
 #Flexible appliances

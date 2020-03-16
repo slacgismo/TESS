@@ -1,4 +1,5 @@
 def write_global(series_settings,ind,ip_address):
+    import pdb; pdb.set_trace()
     global_file = 'HH_global.py'
     glm = open(global_file,'w') 
     #import pdb; pdb.set_trace()
@@ -7,9 +8,14 @@ def write_global(series_settings,ind,ip_address):
     glm.write('import os\n\n')
 
     glm.write('#Result file\n')
-    glm.write('results_folder = \''+series_settings['run']+'/'+series_settings['run']+'_'+"{:04d}".format(ind)+'\'\n')
-    glm.write('if not os.path.exists(results_folder):\n')
-    glm.write('\tos.makedirs(results_folder)\n\n')
+    if ind == 0:
+        glm.write('results_folder = \''+series_settings['run']+'/'+series_settings['run']+'_BC\'\n')
+        results_folder = series_settings['run']+'/'+series_settings['run']+'_BC'
+    else:
+        glm.write('results_folder = \''+series_settings['run']+'/'+series_settings['run']+'_'+"{:04d}".format(ind)+'\'\n')
+        results_folder = series_settings['run']+'/'+series_settings['run']+'_'+"{:04d}".format(ind)
+    #glm.write('if not os.path.exists(results_folder):\n')
+    #glm.write('\tos.makedirs(results_folder)\n\n')
 
     glm.write('#glm parameters\n')
     glm.write('city = \''+series_settings['city']+'\'\n')
@@ -55,4 +61,9 @@ def write_global(series_settings,ind,ip_address):
     glm.write('ip_address = \''+ip_address+'\'\n')
 
     glm.close()
+
+    import pdb; pdb.set_trace()
+    import os
+    if not os.path.exists(results_folder):
+        os.makedirs(results_folder)
     return

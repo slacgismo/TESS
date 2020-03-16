@@ -51,9 +51,9 @@ object triplex_meter:..${COUNT} {
 			current_pf 0.9;
 			impedance_pf 0.9;
 			heat_fraction 0.0;
-			//base_power `player_{SEQ_CUSTID}.value`;
+			base_power player_${SEQ_CUSTID}.value;
 			//base_power `player_{SEQ_CUSTID}`.value;
-			base_power player_1.value;
+			//base_power player_1.value;
 		};
 	}; 
 	object inverter {

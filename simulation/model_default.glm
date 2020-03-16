@@ -67,39 +67,39 @@ module residential{
 	implicit_enduse_source EIA2015;
 }
 
-module gridlabd_functions;
+//module gridlabd_functions;
 
 class player {
 	double value;
 }
 
 object player {
-	name player_1;
+	name player_0;
 	file glm_generation_Austin/players_Austin/ps_3039_2016.player;
 }
 
 object player {
-	name player_2;
+	name player_1;
 	file glm_generation_Austin/players_Austin/ps_93_2016.player;
 }
 
 object player {
-	name player_3;
+	name player_2;
 	file glm_generation_Austin/players_Austin/ps_503_2016.player;
 }
 
 object player {
-	name player_4;
+	name player_3;
 	file glm_generation_Austin/players_Austin/ps_86_2016.player;
 }
 
 object player {
-	name player_5;
+	name player_4;
 	file glm_generation_Austin/players_Austin/ps_187_2016.player;
 }
 
 object player {
-	name player_6;
+	name player_5;
 	file glm_generation_Austin/players_Austin/ps_1718_2016.player;
 }
 
