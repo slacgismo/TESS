@@ -22,11 +22,7 @@ if ind == 0:
 #Test cases
 else:
 	#This uses the saved model of the first basecase run
-	time.sleep(5)
-	#import pdb; pdb.set_trace()
 	import glm_functions_sparse
 	glm_functions_sparse.modify_glmfile() #creates model_ts from model_bc (include module gridlabd_functions)
-	time.sleep(5)
-	#pdb.set_trace()
 	gridlabd.command('model_ts.glm')
 	gridlabd.start('wait')
