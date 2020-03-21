@@ -19,15 +19,14 @@ jobs:
           name: Selftests
           command: |
             DIRLIST=agents
+            mkdir selftests
             for DIR in ${DIRLIST} ; do
-              cd ${DIR}
-              mkdir selftest
-              (cd selftest ; python3 ../${DIR}.py)
+              (mkdir ${DIR}; cd selftest/${DIR} ; python3 ../../${DIR}/${DIR}.py)
             done
 
       - store_artifacts:
-          path: agents/selftest/
-          destination: agents/
+          path: selftests/
+          destination: selftests/
 
   deploy:
     docker:
