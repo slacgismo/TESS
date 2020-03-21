@@ -20,8 +20,9 @@ jobs:
           command: |
             DIRLIST=agents
             mkdir selftests
+            ROOTDIR=${PWD}
             for DIR in ${DIRLIST} ; do
-              (mkdir ${DIR}; cd selftest/${DIR} ; python3 ../../${DIR}/${DIR}.py)
+              (mkdir ${DIR}; cd ${DIR} ; python3 ${ROOTDIR}/${DIR}/${DIR}.py)
             done
 
       - store_artifacts:
