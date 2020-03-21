@@ -17,7 +17,7 @@ jobs:
     steps:
       - run:
           name: Selftests
-          command:
+          command: |
             mkdir -p agents/selftest
             cd agents/selftest
             python3 ../agents.py
