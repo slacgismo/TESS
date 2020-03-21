@@ -19,7 +19,7 @@ jobs:
             mkdir -p agents/selftest
             cd agents/selftest
             python3 ../agents.py
-            
+
   deploy:
     docker:
       - image: circleci/python:3.7
@@ -33,7 +33,7 @@ workflows:
   build-deploy:
     jobs:
       - build
-      - selftest
+      - selftest:
           requires:
             - build
       - deploy:
