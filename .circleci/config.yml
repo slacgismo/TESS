@@ -13,6 +13,8 @@ jobs:
   selftest:
     docker:
       - image: circle/python:3.7
+
+    steps:
       - run:
           name: Selftests
           command:
