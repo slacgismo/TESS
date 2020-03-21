@@ -18,9 +18,12 @@ jobs:
       - run:
           name: Selftests
           command: |
-            mkdir -p agents/selftest
-            cd agents/selftest
-            python3 ../agents.py
+            DIRLIST=agents
+            for DIR in ${DIRLIST} ; do
+              cd ${DIR}
+              mkdir selftest
+              (cd selftest ; python3 ../${DIR}.py)
+            done
 
       - store_artifacts:
           path: agents/selftest/
