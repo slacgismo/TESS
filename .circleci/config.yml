@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Selftests
           command: |
-            pip3 install numpy # TODO add to requirements
+            pip3 install pandas # TODO add to requirements
             DIRLIST=agents
             ROOTDIR=${PWD}
             mkdir selftests
