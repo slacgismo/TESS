@@ -9,7 +9,17 @@ jobs:
       - run:
           name: Diff Changes
           command: echo "We'll eventually figure out what changes took place and only build/deploy those"
-          
+  
+  selftest:
+    docker:
+      - image: circle/python:3.7
+      - run:
+          name: Selftests
+          command:
+            mkdir -p agents/selftest
+            cd agents/selftest
+            python3 ../agents.py
+            
   deploy:
     docker:
       - image: circleci/python:3.7
@@ -23,6 +33,9 @@ workflows:
   build-deploy:
     jobs:
       - build
+      - selftest
+          requires:
+            - build
       - deploy:
           requires:
             - build
