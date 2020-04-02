@@ -1,10 +1,9 @@
 from flask import (Flask, jsonify)
 from flask_sqlalchemy import SQLAlchemy 
 from meter_api_schema import schema_data
-
+from models.meter_model import Meter, Channel, Interval, meter_channels, Utility, Rate, Address, City, Country, ServiceLocation
 app = Flask(__name__)
 
-#insert connection to RDS database
 
 @app.route('/api/v1/meters', methods=['GET'])
 def get_meter_ids():
@@ -44,8 +43,8 @@ def show_meter_info(meter_id):
                 'feeder': meter.feeder,
                 'substation': meter.substation,
                 'rate': meter.rate.description,
-                'interval_count': '',
-                'interval_coverage': '',
+                'interval_count': '?',
+                'interval_coverage': '?',
                 'exports': ''}]
 
     return jsonify(meter_data)
