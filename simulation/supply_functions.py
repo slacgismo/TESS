@@ -60,7 +60,7 @@ class WSSupplier:
 		#GUSTAVO: this part below should go to the database and not csv
 		try:
 			df_demand_bids = pandas.read_csv(results_folder + '/df_demand_bids.csv', index_col=[0], parse_dates=['t'])
-			df_demand_bids = df_demand_bids.append(pandas.DataFrame(index=[len(df_demand_bids)],columns=['t','name','P_bid','Q_bid']),data=[[dt_sim_time,'unresp_load',P_bid,Q_bid]])
+			df_demand_bids = df_demand_bids.append(pandas.DataFrame(index=[len(df_demand_bids)],columns=['t','name','P_bid','Q_bid'],data=[[dt_sim_time,'unresp_load',P_bid,Q_bid]]))
 			df_demand_bids.to_csv(results_folder + '/df_demand_bids.csv')
 		except: #only for first time
 			df_demand_bids = pandas.DataFrame(index=[0],columns=['t','name','P_bid','Q_bid'],data=[[dt_sim_time,'unresp_load',P_bid,Q_bid]])

@@ -111,7 +111,7 @@ class Market :
         Pd = self.Pd # cleared demand price
         Qd = self.Qd #in kW
         try:
-            df_prices = pandas.read_csv(results_folder + '/df_prices.csv', index_col=[0], parse_dates=['t'])
+            df_prices = pandas.read_csv(results_folder + '/df_prices.csv', index_col=[0], parse_dates=True)
             df_prices = df_prices.append(pandas.DataFrame(index=[dt_sim_time],columns=['p','q'],data=[[Pd,Qd]]))
             df_prices.to_csv(results_folder + '/df_prices.csv')
         except:

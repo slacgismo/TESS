@@ -71,7 +71,7 @@ class HVAC:
 
 	def bid(self,dt_sim_time,market):
 		try:
-			df_prices = pandas.read_csv(results_folder + '/df_prices.csv', index_col=[0],parse_dates=['t'])
+			df_prices = pandas.read_csv(results_folder + '/df_prices.csv', index_col=[0], parse_dates = True)
 			P_exp = df_prices['p'].iloc[-(24*12):].mean() #Is the reference price
 			P_dev = df_prices['p'].iloc[-(24*12):].mean() #Is the price variance
 		except:
@@ -97,7 +97,7 @@ class HVAC:
 		#write P_bid, Q_bid to market DB
 		try:
 			df_demand_bids = pandas.read_csv(results_folder + '/df_demand_bids.csv', index_col=[0], parse_dates=['t'])
-			df_demand_bids = df_demand_bids.append(pandas.DataFrame(index=[len(df_demand_bids)],columns=['t','name','P_bid','Q_bid']),data=[[dt_sim_time,self.name,P_bid,Q_bid]])
+			df_demand_bids = df_demand_bids.append(pandas.DataFrame(index=[len(df_demand_bids)],columns=['t','name','P_bid','Q_bid'],data=[[dt_sim_time,self.name,P_bid,Q_bid]]))
 			df_demand_bids.to_csv(results_folder + '/df_demand_bids.csv')
 		except: #only for first time
 			df_demand_bids = pandas.DataFrame(index=[0],columns=['t','name','P_bid','Q_bid'],data=[[dt_sim_time,self.name,P_bid,Q_bid]])
@@ -130,7 +130,7 @@ def get_houseobjects(house_name):
 		mode = 'COOL'
 	else:
 		mode = 'HEAT'
-	hvac = HVAC(house_name,T_air,k,mode,T_max,cooling_setpoint,cooling_demand,T_min,heating_setpoint,heating_demand)
+	hvac = HVAC(house_name,T_air,mode,k,T_max,cooling_setpoint,cooling_demand,T_min,heating_setpoint,heating_demand)
 	house.HVAC = hvac
 
 	return house
