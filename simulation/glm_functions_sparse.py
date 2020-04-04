@@ -19,8 +19,6 @@ from HH_global import slack_node, start_time_str, end_time_str, interval, flexib
 
 #Only for bc
 def rewrite_glmfile():
-    import pdb; pdb.set_trace()
-
     root = '/docker_powernet'
     print('Some of the parameters in the global/settings files are not accounted for')
     print('E.g. shares of DER')
@@ -58,7 +56,6 @@ def rewrite_glmfile():
     return
 
 def modify_glmfile():
-    import pdb; pdb.set_trace()
     original_model = open('model_bc.glm','r')
     new_model = open('model_ts.glm','w+')
     for line in original_model:

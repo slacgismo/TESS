@@ -1,5 +1,4 @@
 def write_global(series_settings,ind,ip_address):
-    import pdb; pdb.set_trace()
     global_file = 'HH_global.py'
     glm = open(global_file,'w') 
     #import pdb; pdb.set_trace()
@@ -62,7 +61,6 @@ def write_global(series_settings,ind,ip_address):
 
     glm.close()
 
-    import pdb; pdb.set_trace()
     import os
     if not os.path.exists(results_folder):
         os.makedirs(results_folder)
