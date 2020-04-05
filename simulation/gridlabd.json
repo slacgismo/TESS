@@ -14578,12 +14578,12 @@
 		"randomseed" : {
 			"type" : "int32",
 			"access" : "PUBLIC",
-			"value" : "54678309"
+			"value" : "1021707"
 		},
 		"randomstate" : {
 			"type" : "int32",
 			"access" : "PUBLIC",
-			"value" : "54678309"
+			"value" : "1021707"
 		},
 		"include" : {
 			"type" : "char1024",
@@ -17528,7 +17528,7 @@
 			"hvac_last_off": "2016-07-01 23:43:02 PDT",
 			"hvac_period_length": "36.1333 s",
 			"hvac_duty_cycle": "0.0913284",
-			"thermostat_control": "FULL",
+			"thermostat_control": "NONE",
 			"gas_enduses": "WATERHEATER|RANGE|DRYER",
 			"k": "2.17633",
 			"T_max": "72",

@@ -32,6 +32,7 @@ class House:
 		self.EV = None
 
 	def update_state(self,dt_sim_time):
+		self.HVAC.update_state()
 		return
 
 	#GUSTAVO: If the customer changes the settings through the App or at a device, that needs to be pushed here
@@ -69,14 +70,24 @@ class HVAC:
 		self.P_bid = 0.0
 		self.Q_bid = 0.0
 
+	def update_state(self):
+		house_obj = gridlabd.get_object(self.name)
+		self.cooling_demand = float(house_obj['cooling_demand'])
+		self.heating_demand = float(house_obj['heating_demand'])
+		if (self.mode == 'HEAT') and (float(house_obj['air_temperature']) >= self.cooling_setpoint):
+			self.mode = 'COOL'
+		elif (self.mode == 'COOL') and (float(house_obj['air_temperature']) <= self.heating_setpoint):
+			self.mode = 'HEAT'
+		return
+
 	def bid(self,dt_sim_time,market):
 		try:
 			df_prices = pandas.read_csv(results_folder + '/df_prices.csv', index_col=[0], parse_dates = True)
 			P_exp = df_prices['p'].iloc[-(24*12):].mean() #Is the reference price
-			P_dev = df_prices['p'].iloc[-(24*12):].mean() #Is the price variance
+			P_dev = np.var(df_prices['p'].iloc[-(24*12):].tolist()) #Is the price variance
 		except:
 			P_exp = market.Pmax/2.
-			P_dev = 3.
+			P_dev = 1.
 		if self.T_air <= self.T_des:
 			T_ref = self.T_min
 		else:
@@ -106,7 +117,7 @@ class HVAC:
 
 	def dispatch(self,p_lem):
 		if (self.Q_bid > 0.0) and (self.P_bid >= p_lem):
-			gridlabd.set_value(self.name,'system_mode',system_mode)
+			gridlabd.set_value(self.name,'system_mode',self.mode)
 		else:
 			gridlabd.set_value(self.name,'system_mode','OFF')
 
@@ -118,6 +129,8 @@ def get_houseobjects(house_name):
 	house = House(house_name)
 	
 	#Setup HVAC
+	gridlabd.set_value(house_name,'thermostat_control','NONE')
+	gridlabd.set_value(house_name,'system_mode','OFF')
 	T_air = float(house_obj['air_temperature'])
 	k = float(house_obj['k'])
 	T_max = float(house_obj['T_max'])
@@ -126,6 +139,7 @@ def get_houseobjects(house_name):
 	T_min = float(house_obj['T_min'])
 	heating_setpoint = float(house_obj['heating_setpoint'])
 	heating_demand = float(house_obj['heating_demand']) #heating_demand is in kW
+	#Principal mode - mode of GLD object differs if price too high
 	if T_air >= (heating_setpoint + (cooling_setpoint - heating_setpoint)/2):
 		mode = 'COOL'
 	else:
@@ -134,14 +148,6 @@ def get_houseobjects(house_name):
 	house.HVAC = hvac
 
 	return house
-
-
-
-
-
-
-
-
 
 def get_settings_houses(houselist,interval,mysql=False):
 	dt = parser.parse(gridlabd.get_global('clock')) #Better: getstart time!
