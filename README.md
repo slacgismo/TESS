@@ -14,6 +14,7 @@ Some of the research questions the project seeks to address include the followin
 #### Code Organization
 |Path          | Description                                                  |
 ---------------|---------------------------------------------------------------
+|[/agents](../master/agents)         | agent code for participation in bidding|
 |[/analysis](../master/analysis)     | 'add description here'            |
 |[/api](../master/api)               | Service Application directory     |
 |[/cloud](../master/cloud)           | Infrastructure and container orchestration deployments configurations and templates                   |
@@ -31,9 +32,11 @@ Please read [CONTRIBUTING.md](../master/docs/CONTRIBUTING.md) for details on our
 We use [SemVer](https://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/slacgismo/TESS/tags).
 
 ### Authors
+* Anna Peery - [Github](https://github.com/avpeery)
 * David Chassin - [Github](https://github.com/dchassin)
 * Gustavo Cezar - [Github](https://github.com/gcezar)
 * Jonathan Goncalves - [Github](https://github.com/jongoncalves)
+* Marie-Louise Arlt - [Github](https://github.com/mlamlamla)
 * Mayank Malik - [Github](https://github.com/malikmayank)
 * Wan-Lin Hu - [Github](https://github.com/honeymilktea)
 
