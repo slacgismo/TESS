@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy 
-from sqlalchemy import and_
+import enum
+from sqlalchemy import and_, ForeignKeyConstraint
 
 
 #Instatiate a SQLAlchemy object
@@ -14,42 +15,11 @@ class Rate(db.Model):
     rate_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
     description = db.Column(db.Text, nullable=False)
 
-    #many-to-one meters per rate
-    meters = db.relationship('Meter', backref=db.backref('rate'))
+    #many-to-one intervals per rate
+    intervals = db.relationship('Interval', backref=db.backref('rate'))
 
     def __repr__(self):
         return f'<Rate rate_id={self.rate_id} description={self.description}>'
-
-
-class Country(db.Model):
-
-    __tablename__ = 'countries'
-
-    country_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
-    name = db.Column(db.String(64), nullable=False)
-    last_update = db.Column(db.Timestamp, nullable=False)
-
-    #many-to-one cities per country
-    cities = db.relationship('City', backref=db.backref('country'))
-
-    def __repr__(self):
-        return f'<Country country_id={self.country_id} name={self.name}>'
-
-
-class City(db.Model):
-
-    __tablename__ = 'cities'
-
-    city_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
-    name = db.Column(db.String(64), nullable=False)
-    country_id = db.Column(db.Integer, db.ForeignKey('countries.country_id'))
-    last_update = db.Column(db.Timestamp, nullable=False)
-
-    #many-to-one addresses per city
-    addresses = db.relationship('Address', backref=db.backref('city'))
-
-    def __repr__(self):
-        return f'<City city_id={self.city_id} name={self.name}>'
 
 
 class Address(db.Model):
@@ -60,7 +30,8 @@ class Address(db.Model):
     address = db.Column(db.String(100), nullable=False)
     address2 = db.Column(db.String(64))
     district = db.Coumn(db.String(64))
-    city_id = db.Column(db.Integer, db.ForeignKey('cities.city_id'))
+    city = db.Column(db.String(100), nullable=False)
+    country = db.Column(db.String(100), nullable=False)
     postal_code = db.Column(db.String(64), nullable=False)
     phone = db.Column(db.String(64))
     last_update = db.Column(db.Timestamp, nullable=False)
@@ -104,33 +75,32 @@ class Utility(db.Model):
         return f'<Utility utility_id={self.utility_id} name={self.name}>'
 
 
-#association table for meters-channels many-to-many relationship
-meter_channels = db.Table('meter_channels',
-            db.Column('meter_id', db.String(64), db.ForeignKey('meters.meter_id')),
-            db.Column('channel_id', db.Integer, db.ForeignKey('channels.channel_id'))
-)
+class MeterType(enum.Enum):
+
+    #enum table for meter type - what values for meter type?
+    one = "kWh/Demand" #example
 
 
 class Meter(db.Model):
     
     __tablename__ = 'meters'
 
+    #composite key - meter_id, utility_id and service_location_id
     meter_id = db.Column(db.String(64), primary_key=True, nullable=False)
-    utility_id = db.Column(db.Integer, db.ForeignKey('utilities.utility_id'), nullable=False)
-    service_location_id = db.Column(db.String(64), db.ForeignKey('service_locations.service_location_id'), nullable=False)
-    rate_id = db.Column(db.Integer, db.ForeignKey('rates.rate_id'), nullable=False)
-    feeder = db.Column(db.String(45), nullable=False)
-    substation = db.Column(db.String(45), nullable=False)
-    meter_type = db.Column(db.String(65), nullable=False)
+    utility_id = db.Column(db.Integer, db.ForeignKey('utilities.utility_id'), primary_key=True, nullable=False)
+    service_location_id = db.Column(db.String(64), db.ForeignKey('service_locations.service_location_id'), primary_key=True, nullable=False)
+    
+    feeder = db.Column(db.String(45), nullable=False) 
+    substation = db.Column(db.String(45), nullable=False) #?representation of transformer (kWh)
+    meter_type = db.Column(enum.Enum(MeterType), nullable=False) #can meter type change for a particular meter?
     is_active = db.Column(db.Boolean(False))
     is_archived = db.Column(db.Boolean(False))
-
-    #many-to-many meters per channels
-    channels = db.relationship('Channel', secondary=meter_channels, backref=db.backref('meters'))
 
     #many-to-one intervals per meter
     intervals = db.relationship('Interval', backref=db.backref('meter'))
 
+    #many-to-one channels per meter
+    channels = db.relationship('Channel', backref=db.backref('meter'))
 
     def __repr__(self):
 
@@ -141,12 +111,16 @@ class Channel(db.Model):
 
     __tablename__ = 'channels'
 
-    channel_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    channel_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
+    meter_id = db.Column(db.String(64), nullable=False)
+    setting = db.Column(db.Integer, nullable = False) #enum field?
     channel_type = db.Column(db.String(64), nullable=False)
+    __table_args__ = (ForeignKeyConstraint([meter_id], [Meter.meter_id]), {})
+    # need utility id and service location id?
 
     def __repr__(self):
 
-        return f'<Channel channel_id={self.channel_id} channel_type={self.channel_type}>'
+        return f'<Channel channel_id={self.channel_id} meter_id={self.meter_id} channel_type={self.channel_type}>'
 
 
 class Interval(db.Model):
@@ -155,34 +129,14 @@ class Interval(db.Model):
     
     interval_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
     meter_id = db.Column(db.String(64), db.ForeignKey('meters.meter_id'), nullable=False)
+    rate_id = db.Column(db.Integer, db.ForeignKey('rates.rate_id'), nullable=False) 
     status = db.Column(db.String(64), nullable=False)
     start_time = db.Column(db.Timestamp, nullable=False)
     end_time = db.Column(db.Timestamp, nullable=False)
     value = db.Column(db.Float, nullable=False)
 
-    @staticmethod
-    def get_interval_count(start, end):
-        '''Takes in start and end ISO8601 times, returns the interval count (integer) between start / end times, inclusively'''
-        
-        intervals = Interval.query.filter(and_(Interval.start_time == start, Interval.end_time == end)).all()
-
-        return len(intervals)
-    
-    @staticmethod
-    def get_interval_coverage(interval_id_list):
-        '''Takes in list of interval ids, returns list of tuples for start and end times in ISO8601 format'''
-
-        start_end_tuple_list = []
-
-        intervals = Interval.query.filter(Interval.interval_id.in_(interval_id_list)).all()
-
-        for row in intervals:
-            start_end_tuple_list.append((row.start_time, row.end_time))
-
-        return start_end_tuple_list
-
     def __repr__(self):
 
-        return f'<Interval interval_id={self.interval_id} end_time={self.end_time} value={self.value}>'
+        return f'<Interval interval_id={self.interval_id} meter_id={self.meter_id} end_time={self.end_time} value={self.value}>'
 
-#connect to RDS database
+####### CONNECT TO RDS #######

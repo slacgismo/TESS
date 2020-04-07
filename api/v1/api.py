@@ -1,7 +1,9 @@
-from flask import (Flask, jsonify)
+from flask import (Flask, jsonify, request)
 from flask_sqlalchemy import SQLAlchemy 
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import MultipleResultsFound
 from meter_api_schema import schema_data
-from models.meter_model import Meter, Channel, Interval, meter_channels, Utility, Rate, Address, City, Country, ServiceLocation
+from models.meter_model import (Meter, Channel, Interval, meter_channels, Utility, Rate, Address, City, Country, ServiceLocation)
 app = Flask(__name__)
 
 
@@ -19,15 +21,16 @@ def get_meter_ids():
     return jsonify(meter_ids)
 
 
-@app.route('api/v1/meters/<int:meter_id>', methods=['GET'])
+@app.route('api/v1/meters/<string:meter_id>', methods=['GET'])
 def show_meter_info(meter_id):
     '''Returns meter information as json object'''
 
     #retrieve for meter object matching meter_id
-    meter = Meter.query.filter_by(meter_id=meter_id).first()
+    meter = Meter.query.filter_by(meter_id=meter_id).one()
+    #error handling if none is returned
 
     #user_id, authorization_id and exports are not in schema yet
-    meter_data = [{'uid': meter.id,
+    meter_data = {meter.meter_id: {
                 'utility_uid': meter.utility_id,
                 'authorization_uid': '',
                 'user_id': '',
@@ -45,7 +48,8 @@ def show_meter_info(meter_id):
                 'rate': meter.rate.description,
                 'interval_count': '?',
                 'interval_coverage': '?',
-                'exports': ''}]
+                'exports': ''}
+                }
 
     return jsonify(meter_data)
 
@@ -53,10 +57,28 @@ def show_meter_info(meter_id):
 @app.route('/api/v1/meter/meta', methods=['GET'])
 def get_meter_schema():
     '''Returns meter schema as json object'''
-
+    
     return jsonify(schema_data)
 
+# @app.route('api/v1/meters/<string:meter_id>', methods=['PUT'])
+# def modify_meter_info(meter_id):
+
+#     try:
+#         meter = Meter.query.filter_by(meter_id = meter_id).one()
+        #req = request.get_json()
+#     except MultipleResultsFound, e:
+#         print(e)
+
+#     except NoResultFound, e:
+#         print(e)
+
+#     return jsonify(meter_data)
+
+
+# @app.route('api/v1/meters', methods=['POST'])
+# def add_meter_info():
+#     #not autoincremented, supply id 
+#     return ""
 
 if __name__ == '__main__':
-
-    app.run(port=5000, host='0.0.0.0')
+    app.run(debug=True, port=8080)
