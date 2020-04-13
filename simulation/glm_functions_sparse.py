@@ -19,7 +19,6 @@ from HH_global import slack_node, start_time_str, end_time_str, interval, flexib
 
 #Only for bc
 def rewrite_glmfile():
-    root = '/docker_powernet'
     print('Some of the parameters in the global/settings files are not accounted for')
     print('E.g. shares of DER')
 

@@ -3,8 +3,8 @@ import pandas
 import time
 
 ###USER input
-ind = 1
-df_settings = pandas.read_csv('settings_TESS.csv',index_col=[0])
+ind = 0
+df_settings = pandas.read_csv('settings_TESS.csv',index_col=[0],parse_dates=['start_time','end_time'])
 
 #write global file with settings from csv file: HH_global.py
 import global_functions
@@ -23,6 +23,6 @@ if ind == 0:
 else:
 	#This uses the saved model of the first basecase run
 	import glm_functions_sparse
-	glm_functions_sparse.modify_glmfile() #creates model_ts from model_bc (include module gridlabd_functions)
+	glm_functions_sparse.modify_glmfile() #creates model_ts from model_bc (include module gridlabd_functions) - make sure it's identical!
 	gridlabd.command('model_ts.glm')
 	gridlabd.start('wait')

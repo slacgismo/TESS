@@ -1,12 +1,12 @@
 import os
 
 #Result file
-results_folder = 'TESS/TESS_0001'
+results_folder = 'TESS/TESS_BC'
 #glm parameters
 city = 'Austin'
 month = 'Jan'
-start_time_str = '2016-07-01 00:00'
-end_time_str = '2016-07-02 00:00'
+start_time_str = '2016-07-01 00:00:00'
+end_time_str = '2016-07-02 00:00:00'
 player_dir = 'players_SanDiego_2015'
 tmy_file = '722540TYA.tmy3'
 slack_node = 'node_149'

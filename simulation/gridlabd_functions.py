@@ -136,6 +136,10 @@ def on_precommit(t):
 		lem.process_bids(dt_sim_time)
 		lem.clear_lem(dt_sim_time)
 
+		############
+		#Get external information and information through APIs
+		############
+
 		#HHs determine dispatch based on price
 		for house in houses:
 			house.determine_dispatch(dt_sim_time)

@@ -7,8 +7,10 @@ import pandas
 class WSSupplier:
 
 	def __init__(self):
-		self.max_C = C #transformer/grid constraint
 		self.mode = 'normal' #else: emergency
+
+		self.max_C = C #transformer/grid constraint
+		
 		self.load_measured = 0.0
 		self.prev_cleared = 0.0 #responsive demand which has been cleared in previous interval
 		self.p_WS = 0.0
