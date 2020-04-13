@@ -10,9 +10,7 @@ TESS API.
 #### Code Organization
 |API Endpoint       | Description                                        |
 --------------------|----------------------------------------------------|
+|[/users](../master/docs/architecture/API-USER.md)| Meters for an authorized utility customer|
 |[/bills](../master/docs/architecture/API-BILL.md)| Meters for an authorized utility customer|
 |[/intervals](../master/docs/architecture/API-INTERVAL.md)| Meters for an authorized utility customer|
 |[/meter](../master/docs/architecture/API-METER.md)| Meters for an authorized utility customer|
-
-users
-authorizations
