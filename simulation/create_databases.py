@@ -12,14 +12,21 @@ mydb, mycursor = mysql_functions.connect()
 
 mycursor.execute('SET FOREIGN_KEY_CHECKS = 0')
 
-for house_no in range(1,7):
-    table = 'house_'+str(house_no)+'_'+'state_in'
-    sql = "DROP TABLE "+table #not needed
-    try:
-        mycursor.execute(sql) 
-        print(sql)
-    except:
-        print(table+' does not exist')
+# for house_no in range(1,7):
+#     table = 'house_'+str(house_no)+'_'+'state_in'
+#     sql = "DROP TABLE "+table #not needed
+#     try:
+#         mycursor.execute(sql) 
+#         print(sql)
+#     except:
+#         print(table+' does not exist')
+
+sql = "DROP TABLE system_load" #not needed
+try:
+    mycursor.execute(sql) 
+    print(sql)
+except:
+    print(table+' does not exist')
 
 #consumers: one DB per house
 for h in range(1,no_houses+1):
@@ -59,6 +66,11 @@ except Exception as e:
 
 
 #market operator
+try:
+    mycursor.execute('CREATE TABLE system_load (timedate TIMESTAMP PRIMARY KEY, C FLOAT, slack_load FLOAT)')
+except Exception as e:
+    print('13')
+    print('Error: ', e)
 try:
     mycursor.execute('CREATE TABLE supply_bids (id INT AUTO_INCREMENT PRIMARY KEY, p_bid FLOAT, q_bid FLOAT, arrival_time TIMESTAMP, gen_name VARCHAR(255) not null)')
 except Exception as e:

@@ -70,12 +70,20 @@ class House:
 	#According to
 	#https://github.com/slacgismo/TESS/blob/b99df97815465a964c7e5813ce7b7ef726751abd/agents/Bid%20and%20response%20strategy.ipynb
 	def bid(self,dt_sim_time,market):
-		self.HVAC.bid(dt_sim_time,market)
+		time_delta = 12*24
+		df_prices_lem = myfct.get_values_td('clearing_pq', begin=(dt_sim_time - pandas.Timedelta(minutes=time_delta)), end=dt_sim_time)
+		if len(df_prices_lem) > 0:
+			P_exp = df_prices_lem['p_cleared'].mean()
+			P_dev = df_prices_lem['p_cleared'].var()
+		else:
+			P_exp = market.Pmax/2.
+			P_dev = 1.
+		self.HVAC.bid(dt_sim_time,market,P_exp,P_dev)
+		return
 
 	def determine_dispatch(self,dt_sim_time):
 		#HH reads price from market DB
-		p_lem = pandas.read_csv(results_folder + '/df_prices.csv', index_col=[0], parse_dates=True)['p'].loc[dt_sim_time] #GUSTAVO
-		#Determine dispatch
+		p_lem = myfct.get_values_td('clearing_pq', begin=dt_sim_time, end=dt_sim_time)['p_cleared'].iloc[0]
 		self.HVAC.dispatch(p_lem)
 
 class HVAC:
@@ -103,31 +111,25 @@ class HVAC:
 		self.heating_demand = float(df_state_in['q_heat'].iloc[0])
 		return
 
+	#Needs to get updated
 	def update_settings(self):
-		house_obj = gridlabd.get_object(self.name) #GUSTAVO & MAYANK: user input - this comes from the App / hardware settings
-		self.k = k
-		self.T_max = T_max
-		self.cooling_setpoint = float(house_obj['cooling_setpoint'])
-		self.T_min = T_min
-		self.heating_setpoint = float(house_obj['heating_setpoint'])
-		self.T_des = heating_setpoint + (cooling_setpoint - heating_setpoint)/2. #Default
+		# house_obj = gridlabd.get_object(self.name) #GUSTAVO & MAYANK: user input - this comes from the App / hardware settings
+		# self.k = k
+		# self.T_max = T_max
+		# self.cooling_setpoint = float(house_obj['cooling_setpoint'])
+		# self.T_min = T_min
+		# self.heating_setpoint = float(house_obj['heating_setpoint'])
+		# self.T_des = heating_setpoint + (cooling_setpoint - heating_setpoint)/2. #Default
 
-		self.cooling_demand = float(house_obj['cooling_demand'])
-		self.heating_demand = float(house_obj['heating_demand'])
-		if (self.mode == 'HEAT') and (float(house_obj['air_temperature']) >= self.cooling_setpoint):
-			self.mode = 'COOL'
-		elif (self.mode == 'COOL') and (float(house_obj['air_temperature']) <= self.heating_setpoint):
-			self.mode = 'HEAT'
+		# self.cooling_demand = float(house_obj['cooling_demand'])
+		# self.heating_demand = float(house_obj['heating_demand'])
+		# if (self.mode == 'HEAT') and (float(house_obj['air_temperature']) >= self.cooling_setpoint):
+		# 	self.mode = 'COOL'
+		# elif (self.mode == 'COOL') and (float(house_obj['air_temperature']) <= self.heating_setpoint):
+		# 	self.mode = 'HEAT'
 		return
 
-	def bid(self,dt_sim_time,market):
-		try:
-			df_prices = pandas.read_csv(results_folder + '/df_prices.csv', index_col=[0], parse_dates = True)
-			P_exp = df_prices['p'].iloc[-(24*12):].mean() #Is the reference price
-			P_dev = np.var(df_prices['p'].iloc[-(24*12):].tolist()) #Is the price variance
-		except:
-			P_exp = market.Pmax/2.
-			P_dev = 1.
+	def bid(self,dt_sim_time,market,P_exp,P_dev):
 		if self.T_air <= self.T_des:
 			T_ref = self.T_min
 		else:
@@ -142,17 +144,10 @@ class HVAC:
 			m = 0
 			Q_bid = 0.0 
 		P_bid = P_exp - 3*np.sign(m)*P_dev*(self.T_air - self.T_des)/abs(T_ref - self.T_des)
-		self.P_bid = P_bid
-		self.Q_bid = Q_bid
 
 		#write P_bid, Q_bid to market DB
-		try:
-			df_demand_bids = pandas.read_csv(results_folder + '/df_demand_bids.csv', index_col=[0], parse_dates=['t'])
-			df_demand_bids = df_demand_bids.append(pandas.DataFrame(index=[len(df_demand_bids)],columns=['t','name','P_bid','Q_bid'],data=[[dt_sim_time,self.name,P_bid,Q_bid]]))
-			df_demand_bids.to_csv(results_folder + '/df_demand_bids.csv')
-		except: #only for first time
-			df_demand_bids = pandas.DataFrame(index=[0],columns=['t','name','P_bid','Q_bid'],data=[[dt_sim_time,self.name,P_bid,Q_bid]])
-			df_demand_bids.to_csv(results_folder + '/df_demand_bids.csv')
+		if (Q_bid > 0.0) and not (self.mode == 'OFF'):
+			timestamp_arrival = market.send_demand_bid(dt_sim_time, float(P_bid), float(Q_bid), 'HVAC_'+self.name) #Feedback: timestamp of arrival #C determined by market_operator
 		return
 
 	def dispatch(self,p_lem):

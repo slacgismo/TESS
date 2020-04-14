@@ -33,7 +33,7 @@ from HH_global import FIXED_TARIFF, include_SO, EV_data, start_time_str
 table_list = ['house_1_settings','house_1_state_in','house_1_state_out','house_2_settings','house_2_state_in','house_2_state_out']
 table_list += ['house_3_settings','house_3_state_in','house_3_state_out','house_4_settings','house_4_state_in','house_4_state_out']
 table_list += ['house_5_settings','house_5_state_in','house_5_state_out','house_6_settings','house_6_state_in','house_6_state_out']
-table_list += ['WS_supply','supply_bids','buy_bids','clearing_pq']
+table_list += ['system_load','WS_supply','supply_bids','buy_bids','clearing_pq']
 
 ########
 #To Do
@@ -120,8 +120,8 @@ def on_precommit(t):
 			gldimport.update_house_state(house.name,dt_sim_time)
 		
 		global retailer;
-		retailer.get_slackload(dt_sim_time)
-		retailer.get_WSprice(dt_sim_time)
+		gldimport.get_slackload(dt_sim_time)
+		gldimport.get_WSprice(dt_sim_time)
 
 		############
 		#Market side / no phycial APIs involved
@@ -138,7 +138,6 @@ def on_precommit(t):
 
 		#Retailer: unresponsive load and supply function
 		retailer.bid_supply(dt_sim_time,lem)
-		retailer.bid_unresp(dt_sim_time,lem)
 
 		#Houses form bids and submit them to the market IS (central market DB)
 		for house in houses:
@@ -148,12 +147,16 @@ def on_precommit(t):
 		lem.process_bids(dt_sim_time)
 		lem.clear_lem(dt_sim_time)
 
+		#Houses determine if they should bid
+		import pdb; pdb.set_trace()
+
 		############
 		#Get external information and information through APIs
 		############
 
 		#HHs determine dispatch based on price
 		for house in houses:
+			import pdb; pdb.set_trace()
 			house.determine_dispatch(dt_sim_time)
 
 		lem.reset()

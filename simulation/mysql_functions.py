@@ -66,15 +66,18 @@ def update_value(market_table,col,value,dt_sim_time,id):
 
 #Gets values from a database (market_table is type string)
 def get_values_td(market_table, begin=None, end=None):
-      if begin and end:
-            query = 'SELECT * FROM '+market_table+' WHERE timedate >= %(begin)s AND timedate <= %(end)s'
-            df = pandas.read_sql(query, con=mydb, params={'begin': begin, 'end': end}, index_col=['timedate'], parse_dates=True)
-      elif begin:
-            query = 'SELECT * FROM '+market_table+' WHERE timedate >= %(begin)s'
-            df = pandas.read_sql(query, con=mydb, params={'begin': begin, 'end': end}, index_col=['timedate'], parse_dates=True)
-      else:
-            query = 'SELECT * FROM '+market_table
-            df = pandas.read_sql(query, con=mydb, index_col=['timedate'], parse_dates=True)   
+      query = 'SELECT * FROM '+market_table
+      df = pandas.read_sql(query, con=mydb, index_col=['timedate'], parse_dates=True)
+      if begin:
+            df = df.loc[df.index >= begin]
+      elif end:
+            df = df.loc[df.index <= end]
+      return df
+
+def get_values_bids(market_table, dt_sim_time):
+      query = 'SELECT * FROM '+market_table
+      df = pandas.read_sql(query, con=mydb, parse_dates=['arrival_time'],index_col=['id'])
+      df = df.loc[df['arrival_time'] == dt_sim_time]
       return df
 
 def get_values(market_table, begin=None, end=None):

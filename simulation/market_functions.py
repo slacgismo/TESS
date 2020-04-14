@@ -21,16 +21,17 @@ from datetime import timedelta
 import gridlabd
 import pandas
 from HH_global import results_folder, C, p_max, interval, city, prec, ref_price, price_intervals, load_forecast, unresp_factor, month, which_price, EV_data
-#import mysql_functions
+import mysql_functions as myfct
 import time
 
 class MarketOperator:
-    def __init__(self,interval,p_max):
+    def __init__(self,interval,Pmax):
         self.interval = interval
-        self.p_max = p_max
+        self.Pmax = Pmax
+        self.mode = 'normal' #else: emergency
 
     def create_market(self,name=None):
-        market = Market(Pmax = self.p_max)
+        market = Market(Pmax = self.Pmax)
         return market
 
 class Market :
@@ -85,38 +86,55 @@ class Market :
     # q = quantity (must be between Qmin and Qmax if Qmax>Qmin)
     # p = price (must be between Pmin and Pmax if Pmax>Pmin, default is Pmin)
     # r = slope (must be non-negative, default is 0)
+
+    def send_supply_bid(self, dt_sim_time,p_bid,q_bid,name):
+        timestamp_arrival = dt_sim_time #is actually later
+        myfct.set_values('supply_bids', '(p_bid, q_bid, arrival_time, gen_name)', (p_bid, q_bid, str(timestamp_arrival), name))
+        return timestamp_arrival
+
+    def send_demand_bid(self, dt_sim_time, p_bid, q_bid, name):
+        timestamp_arrival = dt_sim_time #is actually later
+        #import pdb; pdb.set_trace()
+        myfct.set_values('buy_bids', '(p_bid, q_bid, arrival_time, appliance_name)', (p_bid, q_bid, str(timestamp_arrival), name))
+        return timestamp_arrival
     
     def process_bids(self,dt_sim_time):
+        #Market characteristics
+        df_system = myfct.get_values_td('system_load', dt_sim_time, dt_sim_time)
+        slack_load = df_system['slack_load'].iloc[0]
+        C = df_system['C'].iloc[0]
+        df_market = myfct.get_values_td('clearing_pq', dt_sim_time, dt_sim_time)
+
+        if len(df_market) > 0:
+            unresp_load = slack_load - df_market['q_cleared'].iloc[0]
+        else:
+            unresp_load = 0.0
+
         #Read bids
-        #GUSTAVO: This should be read from database
-        try:
-            df_supply_bids = pandas.read_csv(results_folder + '/df_supply_bids.csv', index_col=[0], parse_dates=['t'])
-            df_supply_bids = df_supply_bids.loc[df_supply_bids['t'] == dt_sim_time]
-        except:
-            df_supply_bids = None
-        try:
-            df_demand_bids = pandas.read_csv(results_folder + '/df_demand_bids.csv', index_col=[0], parse_dates=['t'])
-            df_demand_bids = df_demand_bids.loc[df_demand_bids['t'] == dt_sim_time]
-        except:
-            df_demand_bids = None
+        df_supply_bids = myfct.get_values_bids('supply_bids', dt_sim_time)
+        df_demand_bids = myfct.get_values_bids('buy_bids', dt_sim_time)
+
         #Submit
         for ind in df_supply_bids.index:
-            self.sell(df_supply_bids['Q_bid'].loc[ind],df_supply_bids['P_bid'].loc[ind],gen_name=df_supply_bids['name'].loc[ind])
+            if not df_supply_bids['gen_name'].loc[ind] == 'WS_supply':
+                self.sell(df_supply_bids['q_bid'].loc[ind],df_supply_bids['p_bid'].loc[ind],gen_name=df_supply_bids['gen_name'].loc[ind])
+            else:
+                self.sell(C,df_supply_bids['p_bid'].loc[ind],gen_name=df_supply_bids['gen_name'].loc[ind])
         for ind in df_demand_bids.index:
-            self.buy(df_demand_bids['Q_bid'].loc[ind],df_demand_bids['P_bid'].loc[ind],appliance_name=df_demand_bids['name'].loc[ind])
+            self.buy(df_demand_bids['q_bid'].loc[ind],df_demand_bids['p_bid'].loc[ind],appliance_name=df_demand_bids['appliance_name'].loc[ind])
+
+        #Unresponsive loads
+        myfct.set_values('buy_bids', '(p_bid, q_bid, arrival_time, appliance_name)', (-1.0, unresp_load, dt_sim_time, 'unresp_load'))
+        self.buy(unresp_load,self.Pmax,appliance_name='unresp_load')
         return
 
     def clear_lem(self,dt_sim_time):
         self.clear()
         Pd = self.Pd # cleared demand price
         Qd = self.Qd #in kW
-        try:
-            df_prices = pandas.read_csv(results_folder + '/df_prices.csv', index_col=[0], parse_dates=True)
-            df_prices = df_prices.append(pandas.DataFrame(index=[dt_sim_time],columns=['p','q'],data=[[Pd,Qd]]))
-            df_prices.to_csv(results_folder + '/df_prices.csv')
-        except:
-            df_prices = pandas.DataFrame(index=[dt_sim_time],columns=['p','q'],data=[[Pd,Qd]])
-            df_prices.to_csv(results_folder + '/df_prices.csv')
+
+        parameters = '(timedate, operating_mode, capacity, unresp_load, p_cleared, q_cleared, tie_break)'
+        myfct.set_values('clearing_pq', parameters, (dt_sim_time, 'normal', float(C), 0.0, float(Pd), float(Qd), 1.0))
         return 
 
     # Returns bid position in S array, 'message' if error

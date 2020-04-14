@@ -1,1 +1,3 @@
 ,id,p_bid,q_bid,arrival_time,gen_name
+0,1,19.5,-1.0,2016-07-01 00:00:00,WS_supply
+1,2,19.5,-1.0,2016-07-01 00:05:00,WS_supply

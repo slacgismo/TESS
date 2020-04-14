@@ -1,5 +1,6 @@
 #import gridlabd_functions
 import os
+import pandas
 #import pycurl
 from io import StringIO
 import json
@@ -7,7 +8,13 @@ import gridlabd
 
 import mysql_functions as myfct
 
+from HH_global import city, market_data, C
+
 #These function descrbe the physical interface: read out of physical environment / API --> provide information / fill into DB
+
+###############
+# GENERAL
+###############
 
 #Initialization: Find relevant objects and appliances
 
@@ -31,6 +38,10 @@ def find_objects(criteria) :
 def get(obj):
 	finder = obj.split("=")
 	return
+
+###############
+# HOUSEHOLDS
+###############
 
 #Get house characteristics and write to DB
 
@@ -77,7 +88,33 @@ def update_house_state(house_name,dt_sim_time):
 	myfct.set_values(house_name+'_state_in', parameter_string, value_tuple)
 	return
 
+###############
+# Market Operator
+###############
+
+#Get supply specifications
+
+def get_slackload(dt_sim_time): #GUSTAVO: this information comes from HCE systems
+	load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'])/1000. #measured_real_power in [W]
+	#C - can also come from HCE setting
+	myfct.set_values('system_load', '(timedate, C, slack_load)', (dt_sim_time, C, load_SLACK,))
+	return
+
+###############
+# WHOLESALE SUPPLIER
+###############
+
+#This should be coming from HCE's system or other real-time portal
+def get_WSprice(dt_sim_time):
+	df_WS = pandas.read_csv('glm_generation_'+city+'/'+market_data,parse_dates=[-1],index_col=[0])
+	df_WS = pandas.DataFrame(index=pandas.to_datetime(df_WS.index.astype(str)),columns=df_WS.columns,data=df_WS.values.astype(float))
+	p_WS = float(df_WS['RT'].loc[dt_sim_time]) 
+	myfct.set_values('WS_supply', '(timedate, WS_price)', (dt_sim_time, p_WS,))
+	return
+
+###############
 # NOT USED
+###############
 
 def sort_list(unsorted_list):
 	sorted_list = []
