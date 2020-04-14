@@ -4,7 +4,7 @@
 // filename... model_bc.glm
 // workdir.... /TESS
 // command.... gridlabd model.glm
-// created.... Mon Apr 13 21:02:04 2020
+// created.... Tue Apr 14 00:25:38 2020
 // user....... (null)
 // host....... 4c414307774a
 // modules.... 5
@@ -128,7 +128,7 @@ object climate.climate {
 	name "weather";
 	latitude "30N17:0.00";
 	longitude "97W44:0.00";
-	guid "33294BC675D15050168243AC8E2429D";
+	guid "305DF432F7DA052326717FE317E9C790";
 	solar_elevation "-0.558411 rad";
 	solar_zenith "+2.12921 rad";
 	tmyfile "data/722540TYA.tmy3";
@@ -145,7 +145,7 @@ object climate.climate {
 }
 object tape.player {
 	name "player_0";
-	guid "D0C636EA8E331117CB9313DD725E568";
+	guid "6A2237EA8A58D28A6097A3C2A4E569BF";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_3039_2016.player";
 	filetype "txt";
@@ -154,7 +154,7 @@ object tape.player {
 }
 object tape.player {
 	name "player_1";
-	guid "A7BA6EB516981B27E4D346A1082BA60";
+	guid "33933BF121DE56B216F176BCE2BE1E61";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_93_2016.player";
 	filetype "txt";
@@ -163,7 +163,7 @@ object tape.player {
 }
 object tape.player {
 	name "player_2";
-	guid "3B6F0BDECB05CD3F4C2B3D7AE3A2D2C0";
+	guid "4DBA709620683A216083BE3614CED2EB";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_503_2016.player";
 	filetype "txt";
@@ -172,7 +172,7 @@ object tape.player {
 }
 object tape.player {
 	name "player_3";
-	guid "4D2949F064A3B685274B42702F26CF0C";
+	guid "57AB76F654A2C51179D5196085DAF40";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_86_2016.player";
 	filetype "txt";
@@ -181,7 +181,7 @@ object tape.player {
 }
 object tape.player {
 	name "player_4";
-	guid "3C9140B02DC9556C4D7D24E8370894DF";
+	guid "49CC85726CD395DB385B5288C4CFA6A6";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_187_2016.player";
 	filetype "txt";
@@ -190,7 +190,7 @@ object tape.player {
 }
 object tape.player {
 	name "player_5";
-	guid "30B9EDB2071DCC48CB2CD98FBE8E83A";
+	guid "350D6902A977B5F0179632F49EEC544D";
 	property "(undefined)";
 	file "glm_generation_Austin/players_Austin/ps_1718_2016.player";
 	filetype "txt";
@@ -199,7 +199,7 @@ object tape.player {
 }
 object powerflow.meter {
 	name "node_149";
-	guid "46A90A29B69B927E13C0A0AE6C1B9AD";
+	guid "2DA996609F6096F13F94A51ABBF4D252";
 	measured_real_energy "+176416 Wh";
 	measured_reactive_energy "+153268 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -255,7 +255,7 @@ object powerflow.meter {
 object tape.recorder {
 	parent "node_149";
 	name "recorder:8";
-	guid "2AA4C52BABE891FB17B1EF06D78DBDAE";
+	guid "185DB91DE34E9CB62DAC1E6B0986B916";
 	file "TESS/TESS_BC/load_node_149.csv";
 	filetype "txt";
 	mode "file";
@@ -265,7 +265,7 @@ object tape.recorder {
 }
 object powerflow.meter {
 	name "feeder_node";
-	guid "75E8BDFD2D75E95511FF27CB616762FA";
+	guid "7C4B84F2F5C87BE66A214181E783AEBF";
 	measured_real_energy "+176416 Wh";
 	measured_reactive_energy "+153268 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -320,7 +320,7 @@ object powerflow.meter {
 object powerflow.overhead_line {
 	parent "feeder_node";
 	name "main_line";
-	guid "2B28DF8DD2BDB6B35E6750595A9EDC3F";
+	guid "6F305C8F0BDA8F4017B4FD838B4D744";
 	// class.parent = powerflow.line
 	configuration "lc301";
 	length "+15840 ft";
@@ -358,7 +358,7 @@ object powerflow.overhead_line {
 object powerflow.regulator {
 	parent "node_149";
 	name "main_reg";
-	guid "16CA8C6A7C2561E345EFBF1FE31BC10C";
+	guid "25EDE0C32E0524084491AFB44777DCDB";
 	configuration "rc502";
 	tap_A "-1";
 	sense_node "main_node";
@@ -395,7 +395,7 @@ object powerflow.regulator {
 }
 object powerflow.regulator_configuration {
 	name "rc502";
-	guid "B14286E653FA0A516F0783C9FD1E3C7";
+	guid "1BA456BFAEB59548628F9EAAE308317A";
 	connect_type "WYE_WYE";
 	band_center "+2400 V";
 	band_width "+40 V";
@@ -416,7 +416,7 @@ object powerflow.regulator_configuration {
 }
 object powerflow.overhead_line_conductor {
 	name "olc301c";
-	guid "2B66FB627974BB29375FEA9D25ACC499";
+	guid "67B48F9ED0F792F86E3355645306E70A";
 	geometric_mean_radius "+0.0244 ft";
 	resistance "+0.306 Ohm/mile";
 	diameter "+0.721 in";
@@ -427,7 +427,7 @@ object powerflow.overhead_line_conductor {
 }
 object powerflow.overhead_line_conductor {
 	name "olc301n";
-	guid "7C9C25E0C0389A0439780D1B6A3A8CE4";
+	guid "10CA57F7909899672D812D16357E519E";
 	geometric_mean_radius "+0.00814 ft";
 	resistance "+0.592 Ohm/mile";
 	diameter "+0.563 in";
@@ -438,7 +438,7 @@ object powerflow.overhead_line_conductor {
 }
 object powerflow.line_configuration {
 	name "lc301";
-	guid "7BBF6FA4808FF88E645AF8218CF8DBB6";
+	guid "714971D1D4CABCED3132C32015194ECE";
 	conductor_A "olc301c";
 	conductor_B "olc301c";
 	conductor_C "olc301c";
@@ -451,7 +451,7 @@ object powerflow.line_configuration {
 }
 object powerflow.line_spacing {
 	name "ls500301";
-	guid "4F259496A8F6C57D614BADB0677C9775";
+	guid "174BB797EDD43B1B1F18A35E7C0909F5";
 	distance_AB "+2.5 ft";
 	distance_BC "+4.5 ft";
 	distance_AC "+7 ft";
@@ -466,7 +466,7 @@ object powerflow.line_spacing {
 object powerflow.meter {
 	parent "main_line";
 	name "main_node";
-	guid "113E3D614128D972530E86F0F088C25";
+	guid "707C4264178DD5ED58B9ADAD80DA48CF";
 	measured_real_energy "+176128 Wh";
 	measured_reactive_energy "+152641 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -524,7 +524,7 @@ object powerflow.meter {
 object powerflow.meter {
 	parent "main_node";
 	name "main_node_A";
-	guid "561701F96E5413E87CE3FFACCE210665";
+	guid "8074A5DD0CD0BE23569371442204254";
 	measured_real_energy "+66526 Wh";
 	measured_reactive_energy "+52084.1 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -578,7 +578,7 @@ object powerflow.meter {
 object powerflow.meter {
 	parent "main_node";
 	name "main_node_B";
-	guid "7C29EDB7CD7D92E41A07B4D0187157C2";
+	guid "22E3F35C31A2D5FC6510D3367E2275E4";
 	measured_real_energy "+51142.3 Wh";
 	measured_reactive_energy "+48050.1 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -632,7 +632,7 @@ object powerflow.meter {
 object powerflow.meter {
 	parent "main_node";
 	name "main_node_C";
-	guid "42B08458762EC1D65CF8945A97CC6D72";
+	guid "1CB154A400803FA53EF7BE546B2D9A2A";
 	measured_real_energy "+58459.8 Wh";
 	measured_reactive_energy "+52506.3 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -685,7 +685,7 @@ object powerflow.meter {
 }
 object powerflow.transformer_configuration {
 	name "xfmr_config_A";
-	guid "6A43128D853C8FF1F70FAB9AC74B08E";
+	guid "D78C5F8204116DB3DBD0C972E04FAF1";
 	connect_type "SINGLE_PHASE_CENTER_TAPPED";
 	install_type "POLETOP";
 	primary_voltage "+2401 V";
@@ -699,7 +699,7 @@ object powerflow.transformer_configuration {
 }
 object powerflow.transformer_configuration {
 	name "xfmr_config_B";
-	guid "40CDB0FE768465273293433897799187";
+	guid "7674D8A307091E7537D30F01C30A92C7";
 	connect_type "SINGLE_PHASE_CENTER_TAPPED";
 	install_type "POLETOP";
 	primary_voltage "+2401 V";
@@ -713,7 +713,7 @@ object powerflow.transformer_configuration {
 }
 object powerflow.transformer_configuration {
 	name "xfmr_config_C";
-	guid "6F536160395F3D9459EEAD590158D7F9";
+	guid "7A3F5EF447FEFDF21A4CA90E7505687";
 	connect_type "SINGLE_PHASE_CENTER_TAPPED";
 	install_type "POLETOP";
 	primary_voltage "+2401 V";
@@ -728,7 +728,7 @@ object powerflow.transformer_configuration {
 object powerflow.transformer {
 	parent "main_node_A";
 	name "xfrm_1A";
-	guid "26C0F0509AC391DBC1A9A9AABC37AF5";
+	guid "7A9280ADD00DDFE214BDEA108695ABE0";
 	configuration "xfmr_config_A";
 	// class.parent = powerflow.link
 	status "CLOSED";
@@ -757,7 +757,7 @@ object powerflow.transformer {
 object powerflow.triplex_node {
 	parent "xfrm_1A";
 	name "node_1A";
-	guid "3180F00721FD377668906D4CD89D1BD4";
+	guid "5BDE16CD4F458E3615273F186B091BD0";
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
 	voltage_1 "+119.17+0.0877224j V";
@@ -793,7 +793,7 @@ object powerflow.triplex_node {
 object powerflow.triplex_meter {
 	parent "node_1A";
 	name "meter_1";
-	guid "81E4FF8D5064CD56164064C4D2135A6";
+	guid "24FF656D5F5FF2F71C41B2C2641A1141";
 	measured_real_energy "+34802.4 Wh";
 	measured_reactive_energy "+26861.4 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -849,7 +849,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_1";
 	name "house_1";
-	guid "573F8A498F5CA01E4E782638D3430A35";
+	guid "3743C5F150D6ED94E47728BD0EE1178";
 	weather "weather";
 	floor_area "+1308.78 sf";
 	gross_wall_area "+1181.54 sf";
@@ -995,7 +995,7 @@ object residential.house {
 object residential.ZIPload {
 	parent "house_1";
 	name "zip_GLD_1";
-	guid "7B90F2F69B4E66153EC74C2FB8239192";
+	guid "710AF02E1F51156F6DDB31E373E52751";
 	base_power "+0.28 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
@@ -1033,7 +1033,7 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_1";
 	name "EV_inverter_1";
-	guid "16BE840475A56D722371926501F487F9";
+	guid "33414D12E64FD1041EC184EEABF19274";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -1114,7 +1114,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_1";
 	name "EV_1";
-	guid "639F3FD150CF59341F25FED7F3B81457";
+	guid "77F4191B4763A4135714A504A8BA1D19";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -1141,7 +1141,7 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_1";
 	name "PV_inverter_1";
-	guid "7A9950EAB76349B61B7D445BF176C8A4";
+	guid "6E33195E8AA176171C325B3CE6BC8B2F";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
@@ -1224,7 +1224,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_1";
 	name "PV_1";
-	guid "A89ECA59B259CFF5028633F36EB13C";
+	guid "65974170DA9B908116A259CE3846859E";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -1263,7 +1263,7 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_1";
 	name "Bat_inverter_1";
-	guid "65252B922893929C7564D69172B1B3EC";
+	guid "3998E4BCD492693A4633F894D83A3EF0";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -1344,7 +1344,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_1";
 	name "Battery_1";
-	guid "61100950E399DE7662905E2515AB1056";
+	guid "6301E9CEBE26C5E72D8C15307BC7E79A";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -1372,7 +1372,7 @@ object generators.battery {
 object powerflow.triplex_meter {
 	parent "node_1A";
 	name "meter_2";
-	guid "3EC10AA9DE169BE46046E1005F102D01";
+	guid "5BB5F210094C21496A7DC381100301D5";
 	measured_real_energy "+31720.5 Wh";
 	measured_reactive_energy "+25216 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -1428,7 +1428,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_2";
 	name "house_2";
-	guid "304727904467654C60C12B233DEA2AA1";
+	guid "1716847167C0E97E5E4486A5C858B7BF";
 	weather "weather";
 	floor_area "+1081.23 sf";
 	gross_wall_area "+1073.92 sf";
@@ -1574,7 +1574,7 @@ object residential.house {
 object residential.ZIPload {
 	parent "house_2";
 	name "zip_GLD_2";
-	guid "1F29040308CAEC20682854C998C3A306";
+	guid "7737057D86C5D514707F73E5AE693D3";
 	base_power "+0.28 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
@@ -1612,7 +1612,7 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_2";
 	name "EV_inverter_2";
-	guid "E66C12021E63B47155344DECB0CCE68";
+	guid "5D31A36AA4421EA879CB0771BFA59B84";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -1693,7 +1693,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_2";
 	name "EV_2";
-	guid "41C53DC79CE05D56798ADDD086E04A53";
+	guid "38CE589B864D9B0DA2380F27F7E2BC4";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -1720,7 +1720,7 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_2";
 	name "PV_inverter_2";
-	guid "6695FBD7AFEBB61F37E756DCA993941C";
+	guid "51C4C2F2F616687A1AD1E5EA9842EE0F";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
@@ -1803,7 +1803,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_2";
 	name "PV_2";
-	guid "14F48D840518EBFEBEFEA614DD7C7C8";
+	guid "6AD3CAC3B7177F5050A588EC3281F990";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -1842,7 +1842,7 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_2";
 	name "Bat_inverter_2";
-	guid "63C1EBCBA2E5AA98660AB716C1C8F4C8";
+	guid "54F4EF920BC47C1A6ED27CB0DE3DA009";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -1923,7 +1923,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_2";
 	name "Battery_2";
-	guid "3463E56121F5C1F2373F8CD0376105B";
+	guid "EE28D4D309EF7691FCE7EAC374A6F4";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -1951,7 +1951,7 @@ object generators.battery {
 object powerflow.transformer {
 	parent "main_node_B";
 	name "xfrm_1B";
-	guid "E6C736F4D4AFD5964A129F0228712C";
+	guid "233D8876CE7318132D3A55EC2BA0BD0C";
 	configuration "xfmr_config_B";
 	// class.parent = powerflow.link
 	status "CLOSED";
@@ -1980,7 +1980,7 @@ object powerflow.transformer {
 object powerflow.triplex_node {
 	parent "xfrm_1B";
 	name "node_1B";
-	guid "1E59AF2BD50906635959CB0E1F6141DA";
+	guid "1D808BC43D3FA8226A56C856010AED16";
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
 	voltage_1 "-60.0038-103.577j V";
@@ -2016,7 +2016,7 @@ object powerflow.triplex_node {
 object powerflow.triplex_meter {
 	parent "node_1B";
 	name "meter_3";
-	guid "6D76E1B76898F6345A41103945818645";
+	guid "24145DA7884E583C5C819A9758F10FA8";
 	measured_real_energy "+26645.8 Wh";
 	measured_reactive_energy "+23831.3 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -2072,7 +2072,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_3";
 	name "house_3";
-	guid "740A357D5835FE781B9A205F672763B1";
+	guid "BB7D03A7CAEA2FB72C0B384D5AF5DC7";
 	weather "weather";
 	floor_area "+1140.62 sf";
 	gross_wall_area "+1103.02 sf";
@@ -2218,7 +2218,7 @@ object residential.house {
 object residential.ZIPload {
 	parent "house_3";
 	name "zip_GLD_3";
-	guid "79F66E33CADF89664FAD890255390D63";
+	guid "E806A40A32432AD5500DB2A5A1DCE2";
 	base_power "+0.26 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
@@ -2256,7 +2256,7 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_3";
 	name "EV_inverter_3";
-	guid "14E13AE3A0E5D39F537694E59695CB3C";
+	guid "36B52373DE7153E857444AF51C06BBF8";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -2337,7 +2337,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_3";
 	name "EV_3";
-	guid "3606B32F47BA120E2076F7104794094A";
+	guid "3C06AC87EE0F681739BD38E58A65B6C";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -2364,7 +2364,7 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_3";
 	name "PV_inverter_3";
-	guid "64D8DEF90F53055E6306474803FEFD9E";
+	guid "55712934F46E7F9F3B0AED972B6D8AC6";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
@@ -2447,7 +2447,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_3";
 	name "PV_3";
-	guid "369045D8FDC5D88751C5BA0879FAAB57";
+	guid "3FE88F52E006C63525C5450858E05678";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -2486,7 +2486,7 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_3";
 	name "Bat_inverter_3";
-	guid "DC2F182A9BBA76869C7E45A806BF5F0";
+	guid "1047387F1D5F993F3A7889059C781C45";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -2567,7 +2567,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_3";
 	name "Battery_3";
-	guid "70238C5A4FC3D6482214D1CD67284434";
+	guid "8489DA7620D6309BF0EC53DBD75F5";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -2595,7 +2595,7 @@ object generators.battery {
 object powerflow.triplex_meter {
 	parent "node_1B";
 	name "meter_4";
-	guid "B9CD39423AF85824030B8B0B3D6043B";
+	guid "5E962FCD075594091B51D6C1C5779FD8";
 	measured_real_energy "+24494.1 Wh";
 	measured_reactive_energy "+24213.8 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -2651,7 +2651,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_4";
 	name "house_4";
-	guid "16C2F1FCC9DA13B87638AF0C9975D033";
+	guid "4134386EFA66F7002828DC77578B5D80";
 	weather "weather";
 	floor_area "+1297.72 sf";
 	gross_wall_area "+1176.54 sf";
@@ -2803,7 +2803,7 @@ object residential.house {
 object residential.ZIPload {
 	parent "house_4";
 	name "zip_GLD_4";
-	guid "53E106B6F14A7E841A3C6845358ADDA5";
+	guid "4A69855A0A3EEF6B3AD9457D6EE7F0C7";
 	base_power "+0.26 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
@@ -2841,7 +2841,7 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_4";
 	name "EV_inverter_4";
-	guid "60B1994532E51FCC5577B9F6F918EED7";
+	guid "6E4D2B7E661538545D6ED020301FCE54";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -2922,7 +2922,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_4";
 	name "EV_4";
-	guid "67D589F7A671BC726100EC1AA03E27B7";
+	guid "3A0BD358DA5B531059F0CE5640081EC8";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -2949,7 +2949,7 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_4";
 	name "PV_inverter_4";
-	guid "7C48AC1709ACE4134982ECBB669D7C6";
+	guid "2D7F4815C11A764C40EC0549033E0653";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
@@ -3032,7 +3032,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_4";
 	name "PV_4";
-	guid "21D72512E2217E9A533675D8E26AEC05";
+	guid "5FB1203612C6D0EA6733F619635114C0";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -3071,7 +3071,7 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_4";
 	name "Bat_inverter_4";
-	guid "8C269D5AE277B1D4FEEF08010103F97";
+	guid "5C69C618085CE4035A0B604AAF296C13";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -3152,7 +3152,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_4";
 	name "Battery_4";
-	guid "DB1C19B0590E19E7CD0D96D0A8385D4";
+	guid "6F1422E517EFD820671E3A77E2EF36FF";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -3180,7 +3180,7 @@ object generators.battery {
 object powerflow.transformer {
 	parent "main_node_C";
 	name "xfrm_1C";
-	guid "620C137E76A46B49146BF160355BBAE2";
+	guid "6546CA89AC7720CE4361E9899D185D39";
 	configuration "xfmr_config_C";
 	// class.parent = powerflow.link
 	status "CLOSED";
@@ -3209,7 +3209,7 @@ object powerflow.transformer {
 object powerflow.triplex_node {
 	parent "xfrm_1C";
 	name "node_1C";
-	guid "1BE8F207F78FACE115861CABCF3AB3AF";
+	guid "3914C309D223C7B81A2D2B523D43F64F";
 	busflags "HASSOURCE";
 	maximum_voltage_error "+0.00012 V";
 	voltage_1 "-59.9684+104.026j V";
@@ -3245,7 +3245,7 @@ object powerflow.triplex_node {
 object powerflow.triplex_meter {
 	parent "node_1C";
 	name "meter_5";
-	guid "F98D5D4F135A26E17B3D1B384687B62";
+	guid "985DDC92807FC995BD5F4B021C461B2";
 	measured_real_energy "+28442 Wh";
 	measured_reactive_energy "+25783.5 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -3301,7 +3301,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_5";
 	name "house_5";
-	guid "EC6E233AC4EF35667CCEB13BC88C9";
+	guid "4D571547C006B91EF66FF9B16ABDED";
 	weather "weather";
 	floor_area "+1436.07 sf";
 	gross_wall_area "+1237.66 sf";
@@ -3447,7 +3447,7 @@ object residential.house {
 object residential.ZIPload {
 	parent "house_5";
 	name "zip_GLD_5";
-	guid "2629D17090D3D13F3F26544C6485D4ED";
+	guid "42687DCD2E4D2AD925B953FFD5CE34BD";
 	base_power "+0.01 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
@@ -3485,7 +3485,7 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_5";
 	name "EV_inverter_5";
-	guid "A0D11E4659B5C1F566BBAAEA7F094AC";
+	guid "41E81380E11017235E50F863C3B6E50E";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -3566,7 +3566,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_5";
 	name "EV_5";
-	guid "6CA660ED0697EFC135F4493DFC4B333C";
+	guid "57AC0C70F1A60EAD73EED77A665096E2";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -3593,7 +3593,7 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_5";
 	name "PV_inverter_5";
-	guid "4A7B3710D037BAA17DFFBB3A84BADFA0";
+	guid "40D95110F8149D97576F9A767A39B35C";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
@@ -3676,7 +3676,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_5";
 	name "PV_5";
-	guid "13E9BD02871230EE122C8E6A03F3D16A";
+	guid "4C2159A301F5128450358365D72CB2E";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -3715,7 +3715,7 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_5";
 	name "Bat_inverter_5";
-	guid "51EAABDDC10902F12197103CC43F5A75";
+	guid "7BE0EB0FA5BD1C8852065B47D13A7076";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -3796,7 +3796,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_5";
 	name "Battery_5";
-	guid "518E1EA73B7FF5798CDC62CF3934B11";
+	guid "404D09B3434CF85B2C568F9262B9911C";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -3824,7 +3824,7 @@ object generators.battery {
 object powerflow.triplex_meter {
 	parent "node_1C";
 	name "meter_6";
-	guid "5B3644464F518C4D533F1563961211C1";
+	guid "25FEF493DB0DB9813064A44CE7AA283C";
 	measured_real_energy "+30013.1 Wh";
 	measured_reactive_energy "+26713.2 VAh";
 	measured_energy_delta_timestep "-1 s";
@@ -3878,7 +3878,7 @@ object powerflow.triplex_meter {
 object residential.house {
 	parent "meter_6";
 	name "house_6";
-	guid "2DC67F2D1F02C89840D263F4CD5CBB77";
+	guid "6B0D178A7C478D832932FA7B73B059E5";
 	weather "weather";
 	floor_area "+1314.37 sf";
 	gross_wall_area "+1184.06 sf";
@@ -4024,7 +4024,7 @@ object residential.house {
 object residential.ZIPload {
 	parent "house_6";
 	name "zip_GLD_6";
-	guid "30D76DFEA76A50807B29D4076F906D5A";
+	guid "13139EE923E318C3B97A4B563C857C9";
 	base_power "+0.01 kW";
 	power_pf "+0.9";
 	current_pf "+0.9";
@@ -4062,7 +4062,7 @@ object residential.ZIPload {
 object generators.inverter {
 	parent "meter_6";
 	name "EV_inverter_6";
-	guid "5423166B87EA051F554AAEECC3E4E9AD";
+	guid "4834B2F1FC97A9374BF008A2945ED231";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -4143,7 +4143,7 @@ object generators.inverter {
 object generators.battery {
 	parent "EV_inverter_6";
 	name "EV_6";
-	guid "1D2F798321EDCFDE47401CC5B80E4ACC";
+	guid "1D8B5DDF496766FFB8C1E938F7EAB0F";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -4170,7 +4170,7 @@ object generators.battery {
 object generators.inverter {
 	parent "meter_6";
 	name "PV_inverter_6";
-	guid "376BB6CD9CF6AED9165E5A8DFC527740";
+	guid "1D2ABAC9DB8AC60C916D7D277B077BC";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PF";
 	pf_reg "EXCLUDED";
@@ -4253,7 +4253,7 @@ object generators.inverter {
 object generators.solar {
 	parent "PV_inverter_6";
 	name "PV_6";
-	guid "35DA113F67083C2A1B3C722311CFA6B";
+	guid "71F547FECCAE187A7D2DE029ACE829CE";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	panel_type "SINGLE_CRYSTAL_SILICON";
@@ -4292,7 +4292,7 @@ object generators.solar {
 object generators.inverter {
 	parent "meter_6";
 	name "Bat_inverter_6";
-	guid "58672780F68C62071968554BACA5D986";
+	guid "738F134E4E8CEB3F1A7BBB15A02194A3";
 	inverter_type "FOUR_QUADRANT";
 	four_quadrant_control_mode "CONSTANT_PQ";
 	pf_reg "EXCLUDED";
@@ -4373,7 +4373,7 @@ object generators.inverter {
 object generators.battery {
 	parent "Bat_inverter_6";
 	name "Battery_6";
-	guid "5203FEA8DDB28C435E8BB7275AC94D72";
+	guid "60A6F2C8B91637CF4682292502F3B655";
 	generator_mode "SUPPLY_DRIVEN";
 	generator_status "ONLINE";
 	power_type "DC";
@@ -4400,7 +4400,7 @@ object generators.battery {
 }
 object tape.group_recorder {
 	name "rec_meter_load_P";
-	guid "7FB39C97AC09AFEB28026D2ED6071822";
+	guid "29D6185E979C43F34E60CE0978124CB5";
 	file "TESS/TESS_BC/meter_load_P.csv";
 	group "class=triplex_meter";
 	interval "+60 s";
@@ -4408,7 +4408,7 @@ object tape.group_recorder {
 }
 object tape.group_recorder {
 	name "rec_meter_load_Q";
-	guid "7BAA5D6BA6EA60145035490413D775BA";
+	guid "555B0B004ED7E7B958D03BDD21A52EE7";
 	file "TESS/TESS_BC/meter_load_Q.csv";
 	group "class=triplex_meter";
 	interval "+60 s";
@@ -4416,7 +4416,7 @@ object tape.group_recorder {
 }
 object tape.group_recorder {
 	name "rec_total_load";
-	guid "3A8D6D150CE875531E146A75DAF27D10";
+	guid "39EA6BAC0BCE6B302498D414E26AA319";
 	file "TESS/TESS_BC/total_load_all.csv";
 	group "class=house";
 	interval "+60 s";
@@ -4424,7 +4424,7 @@ object tape.group_recorder {
 }
 object tape.group_recorder {
 	name "rec_hvac_load";
-	guid "2C005C7765045B5A7318C2B0B60EF953";
+	guid "14D4E8E3058A369F40BD5A9BDED349FF";
 	file "TESS/TESS_BC/hvac_load_all.csv";
 	group "class=house";
 	interval "+60 s";
@@ -4432,7 +4432,7 @@ object tape.group_recorder {
 }
 object tape.group_recorder {
 	name "rec_T";
-	guid "6AA827264618243846E440343184F4D1";
+	guid "55CB5F0DB1D1E3CD59A2A3A8C2FBB2B6";
 	file "TESS/TESS_BC/T_all.csv";
 	group "class=house";
 	interval "+60 s";
@@ -4440,7 +4440,7 @@ object tape.group_recorder {
 }
 object tape.group_recorder {
 	name "rec_Tm";
-	guid "22ADAD350EDFDBB6201F6B85EE6EC226";
+	guid "607A60656692A5AE746A70CA8A78D7B5";
 	file "TESS/TESS_BC/Tm_all.csv";
 	group "class=house";
 	interval "+60 s";
@@ -4448,7 +4448,7 @@ object tape.group_recorder {
 }
 object tape.group_recorder {
 	name "rec_pv_infeed";
-	guid "38F7222E33324BD64929F2F671B328EE";
+	guid "7A323AACF868DF777FCA5D88FF154086";
 	file "TESS/TESS_BC/total_P_Out.csv";
 	group "class=inverter";
 	interval "+60 s";
@@ -4456,7 +4456,7 @@ object tape.group_recorder {
 }
 object tape.group_recorder {
 	name "rec_batt_soc";
-	guid "2826C0910F16D66A364FE9E3917752B8";
+	guid "1FF90D7B3FB5FDA27F97A84EDB5B9D97";
 	file "TESS/TESS_BC/battery_SOC.csv";
 	group "class=battery";
 	interval "+60 s";

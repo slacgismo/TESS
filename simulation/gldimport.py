@@ -5,6 +5,12 @@ from io import StringIO
 import json
 import gridlabd
 
+import mysql_functions as myfct
+
+#These function descrbe the physical interface: read out of physical environment / API --> provide information / fill into DB
+
+#Initialization: Find relevant objects and appliances
+
 def find_objects(criteria) :
 	finder = criteria.split("=")
 	if len(finder) < 2 :
@@ -20,9 +26,58 @@ def find_objects(criteria) :
 			pass
 	return result
 
+#Get specific object
+
 def get(obj):
 	finder = obj.split("=")
 	return
+
+#Get house characteristics and write to DB
+
+def get_houseobjects(house_name,time):
+	#Get information from physical representation
+	house_obj = gridlabd.get_object(house_name) #GUSTAVO: API implementation
+	#Switch off default control
+	gridlabd.set_value(house_name,'thermostat_control','NONE')
+	gridlabd.set_value(house_name,'system_mode','OFF')
+	
+	#Read out settings
+	k = float(house_obj['k'])
+	T_max = float(house_obj['T_max'])
+	cooling_setpoint = float(house_obj['cooling_setpoint'])
+	cooling_demand = float(house_obj['cooling_demand']) #cooling_demand is in kW
+	T_min = float(house_obj['T_min'])
+	heating_setpoint = float(house_obj['heating_setpoint'])
+	heating_demand = float(house_obj['heating_demand']) #heating_demand is in kW
+
+	#Save in long-term memory (in the db) - accessible for market code
+	parameter_string = '(timedate, k, T_min, heating_setpoint, T_max, cooling_setpoint)' #timedate TIMESTAMP PRIMARY KEY, 
+	value_tuple = (time, k,T_min,heating_setpoint,T_max,cooling_setpoint,)
+	myfct.set_values(house_name+'_settings', parameter_string, value_tuple)
+
+	return
+
+#Get house state and write to db
+
+def update_house_state(house_name,dt_sim_time):
+	#Get information from physical representation
+	house_obj = gridlabd.get_object(house_name) #GUSTAVO: API implementation
+
+	#Determine principal mode
+	#DAVE: this is a heuristic
+	T_air = float(house_obj['air_temperature'])
+	if T_air >= (float(house_obj['heating_setpoint']) + float(house_obj['cooling_setpoint']))/2:
+		mode = 'COOL'
+	else:
+		mode = 'HEAT'
+
+	#Save in long-term memory (in the db) - accessible for market code
+	parameter_string = '(timedate, mode, T_air, q_heat, q_cool)' #timedate TIMESTAMP PRIMARY KEY, 
+	value_tuple = (dt_sim_time, mode, T_air, float(house_obj['heating_demand']),float(house_obj['cooling_demand']),)
+	myfct.set_values(house_name+'_state_in', parameter_string, value_tuple)
+	return
+
+# NOT USED
 
 def sort_list(unsorted_list):
 	sorted_list = []

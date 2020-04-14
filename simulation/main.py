@@ -3,12 +3,13 @@ import pandas
 import time
 
 ###USER input
-ind = 0
-df_settings = pandas.read_csv('settings_TESS.csv',index_col=[0],parse_dates=['start_time','end_time'])
+ind = 1
+ip_address = '192.168.1.67'
 
 #write global file with settings from csv file: HH_global.py
+df_settings = pandas.read_csv('settings_TESS.csv',index_col=[0],parse_dates=['start_time','end_time'])
 import global_functions
-global_functions.write_global(df_settings.loc[ind],ind,'none')
+global_functions.write_global(df_settings.loc[ind],ind,ip_address)
 
 #Base case
 if ind == 0:

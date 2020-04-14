@@ -9,6 +9,8 @@ from datetime import timedelta
 from dateutil import parser
 import time
 
+import mysql_functions as myfct
+
 import HH_functions as HHfct
 from HH_functions import House
 
@@ -26,7 +28,12 @@ from supply_functions import WSSupplier
 
 from HH_global import results_folder, flexible_houses, C, p_max, market_data, which_price, city, month
 from HH_global import interval, prec, price_intervals, allocation_rule, unresp_factor, load_forecast
-from HH_global import FIXED_TARIFF, include_SO, EV_data
+from HH_global import FIXED_TARIFF, include_SO, EV_data, start_time_str
+
+table_list = ['house_1_settings','house_1_state_in','house_1_state_out','house_2_settings','house_2_state_in','house_2_state_out']
+table_list += ['house_3_settings','house_3_state_in','house_3_state_out','house_4_settings','house_4_state_in','house_4_state_out']
+table_list += ['house_5_settings','house_5_state_in','house_5_state_out','house_6_settings','house_6_state_in','house_6_state_out']
+table_list += ['WS_supply','supply_bids','buy_bids','clearing_pq']
 
 ########
 #To Do
@@ -41,10 +48,8 @@ def on_init(t):
 	global t0;
 	t0 = time.time()
 
-	global step;
-	step = 0
-
 	#Empty databases
+	myfct.clear_databases(table_list)
 	try:
 		os.remove(results_folder + '/df_supply_bids.csv')
 		os.remove(results_folder + '/df_demand_bids.csv')
@@ -52,15 +57,16 @@ def on_init(t):
 	except:
 		pass
 
-	#Find objects
+	#PHYSICS: Find objects and fill local DB with relevant settings
 	houses_names = gldimport.find_objects('class=house')
+	for house_name in houses_names:
+		gldimport.get_houseobjects(house_name,start_time_str)
+
+	#MARKET: Create house agents
 	global houses;
 	houses = []
-
-	#Create house objects with electric appliances
 	for house_name in houses_names:
-		house = HHfct.get_houseobjects(house_name)
-		houses += [house]
+		houses += [HHfct.create_agent_house(house_name)]
 
 	#Create WS supplier
 	global retailer;
@@ -110,8 +116,8 @@ def on_precommit(t):
 
 		global houses;
 		for house in houses:
-			house.update_settings()
-			house.update_state(dt_sim_time) #GUSTAVO - see comment in HH_functions.py
+			#gldimport.update_settings() #If user changes settings in API, this should be called
+			gldimport.update_house_state(house.name,dt_sim_time)
 		
 		global retailer;
 		retailer.get_slackload(dt_sim_time)
@@ -120,6 +126,12 @@ def on_precommit(t):
 		############
 		#Market side / no phycial APIs involved
 		############
+
+		#Get air temperature, determine mode
+		for house in houses:
+			#house.update_settings()
+			#HHfct.update_houseobjects(house_name,start_time_str)
+			house.update_state(dt_sim_time)
 
 		#Market Operator creates market for t
 		lem = LEM_operator.create_market(name='LEM')
@@ -157,13 +169,19 @@ def on_term(t):
 	print((t1-t0)/60)
 	return None
 
-def saving_results():
-	#Save settings of objects
-	#Saving mysql databases
-	#import download_databases
-	#download_databases.save_databases(timestamp)
-	#mysql_functions.clear_databases(table_list) #empty up database
+def save_databases(timestamp=None):
+	#mycursor.execute('SHOW TABLES')
+	#table_list = mycursor.fetchall()  
+	mydb, mycursor = myfct.connect()
+	for table_name in table_list:
+		query = 'SELECT * FROM '+table_name
+		df = pandas.read_sql(query, con=mydb)
+		df.to_csv(results_folder+'/'+table_name+'_'+str(timestamp)+'.csv')
 
+	print('Databases saved')
+	return
+
+def saving_results():
 	#Saving globals
 	file = 'HH_global.py'
 	new_file = results_folder+'/HH_global.py'
@@ -174,6 +192,10 @@ def saving_results():
 	    new_glm.write(line)
 	glm.close()
 	new_glm.close()
+
+	#Saving mysql databases
+	save_databases()
+	myfct.clear_databases(table_list) #empty up database
 
 	#Do evaluations
 	return
