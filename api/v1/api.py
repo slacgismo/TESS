@@ -60,12 +60,12 @@ def get_meter_schema():
     
     return jsonify(schema_data)
 
-# @app.route('api/v1/meters/<string:meter_id>', methods=['PUT'])
-# def modify_meter_info(meter_id):
+ @app.route('api/v1/meters/<string:meter_id>', methods=['PUT'])
+ def modify_meter_info(meter_id):
 
 #     try:
 #         meter = Meter.query.filter_by(meter_id = meter_id).one()
-        #req = request.get_json()
+    req = request.get_json()
 #     except MultipleResultsFound, e:
 #         print(e)
 

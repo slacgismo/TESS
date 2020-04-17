@@ -2,7 +2,13 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy 
 import enum
 from sqlalchemy import and_, ForeignKeyConstraint
+from datetime import datetime
+from sqlalchemy.types import TIMESTAMP
+import os
 
+#variables for connecting to db
+dbuser = os.environ['dbuser']
+dbpass = os.environ['dbpass']
 
 #Instatiate a SQLAlchemy object
 db = SQLAlchemy()
@@ -29,13 +35,12 @@ class Address(db.Model):
     address_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
     address = db.Column(db.String(100), nullable=False)
     address2 = db.Column(db.String(64))
-    district = db.Coumn(db.String(64))
+    district = db.Column(db.String(64))
     city = db.Column(db.String(100), nullable=False)
     country = db.Column(db.String(100), nullable=False)
     postal_code = db.Column(db.String(64), nullable=False)
     phone = db.Column(db.String(64))
-    last_update = db.Column(db.Timestamp, nullable=False)
-    location = db.Column(db.Geometry)
+    last_update = db.Column(TIMESTAMP, nullable=False)
 
     #one-to-one service location per address
     service_location = db.relationship('ServiceLocation', backref=db.backref('address'), uselist=False)
@@ -49,7 +54,7 @@ class ServiceLocation(db.Model):
     __tablename__ = 'service_locations'
 
     service_location_id = db.Column(db.String(64), primary_key=True, nullable=False)
-    address_id = db.Column(db.Integer, db.ForeignKey('address.address_id'), nullable=False)
+    address_id = db.Column(db.Integer, db.ForeignKey('addresses.address_id'), nullable=False)
     map_location = db.Column(db.String(64), nullable=False)
 
     #many-to-one meters per service location
@@ -65,8 +70,8 @@ class Utility(db.Model):
 
     utility_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
     name = db.Column(db.String(64), nullable=False)
-    subscription_start = db.Column(db.Timestamp, nullable=False)
-    subscription_end = db.Column(db.Timestamp, nullable=False)
+    subscription_start = db.Column(TIMESTAMP, nullable=False)
+    subscription_end = db.Column(TIMESTAMP, nullable=False)
 
     #many-to-one meters per utility
     meters = db.relationship('Meter', backref=db.backref('utility'))
@@ -74,7 +79,7 @@ class Utility(db.Model):
     def __repr__(self):
         return f'<Utility utility_id={self.utility_id} name={self.name}>'
 
-
+#enum fields for meter_type column in meter
 class MeterType(enum.Enum):
 
     #what values for meter type?
@@ -86,6 +91,7 @@ class Meter(db.Model):
     
     __tablename__ = 'meters'
 
+    #composite primary key - meter_id, utility_id, and service_location_id
     meter_id = db.Column(db.String(64), primary_key=True, nullable=False)
     utility_id = db.Column(db.Integer, db.ForeignKey('utilities.utility_id'), primary_key=True, nullable=False)
     service_location_id = db.Column(db.String(64), db.ForeignKey('service_locations.service_location_id'), primary_key=True, nullable=False)
@@ -122,27 +128,44 @@ class Channel(db.Model):
 
     channel_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
     meter_id = db.Column(db.String(64), nullable=False)
+    utility_id = db.Column(db.Integer, nullable=False)
+    service_location_id = db.Column(db.String(64), nullable=False)
     setting = db.Column(db.Integer, nullable = False) 
     channel_type = db.Column(db.String(64), nullable=False)
-    __table_args__ = (ForeignKeyConstraint([meter_id], [Meter.meter_id]), {})
+
+    #composite foreign key to meter
+    __table_args__ = (ForeignKeyConstraint([meter_id, utility_id, service_location_id],
+                                           [Meter.meter_id, Meter.utility_id, Meter.service_location_id]), 
+                                           {})
 
     def __repr__(self):
 
         return f'<Channel channel_id={self.channel_id} meter_id={self.meter_id} channel_type={self.channel_type}>'
 
+#enum fields for status column in interval
+class Status(enum.Enum):
+
+    #what values?
+    one = "valid"
 
 class Interval(db.Model):
 
     __tablename__ = 'intervals'
     
     interval_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
-    meter_id = db.Column(db.String(64), db.ForeignKey('meters.meter_id'), nullable=False)
+    meter_id = db.Column(db.String(64), nullable=False)
+    utility_id = db.Column(db.Integer, nullable=False)
+    service_location_id = db.Column(db.String(64), nullable=False)
     rate_id = db.Column(db.Integer, db.ForeignKey('rates.rate_id'), nullable=False) 
-    status = db.Column(db.String(64), nullable=False)
-    start_time = db.Column(db.Timestamp, nullable=False)
-    end_time = db.Column(db.Timestamp, nullable=False)
+    status = db.Column(db.Enum(Status), nullable=False)
+    start_time = db.Column(TIMESTAMP, nullable=False)
+    end_time = db.Column(TIMESTAMP, nullable=False)
     value = db.Column(db.Float, nullable=False)
 
+    #composite foreign key to meter
+    __table_args__ = (ForeignKeyConstraint([meter_id, utility_id, service_location_id],
+                                           [Meter.meter_id, Meter.utility_id, Meter.service_location_id]), 
+                                           {})
 
     @staticmethod
     def get_interval_coverage(interval_id_list):
@@ -163,7 +186,16 @@ class Interval(db.Model):
 
         return f'<Interval interval_id={self.interval_id} meter_id={self.meter_id} end_time={self.end_time} value={self.value}>'
 
-####### CONNECT TO RDS #######
+#local connection - switch to rds to deploy
+def connect_to_db(app, db_uri = 'mysql+pymysql://{0}:{1}@localhost/meter_tel'.format(dbuser, dbpass)):
+    '''Connect the database to app'''
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_ECHO'] = True
+
+    db.app = app
+    db.init_app(app)
 
 
  
