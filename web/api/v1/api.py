@@ -4,9 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 from meter_api_schema import schema_data
 from models.meter_model import (Meter, Channel, Interval, Utility, Rate, Address, ServiceLocation, connect_to_db, db)
 
-#for error handling routes - WIP
-#from sqlalchemy.orm.exc import NoResultFound
-#from sqlalchemy.orm.exc import MultipleResultsFound
+#for error handling routes
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import MultipleResultsFound
 
 app = Flask(__name__)
 
@@ -28,11 +28,13 @@ def get_meter_ids():
 @app.route('api/v1/meters/<string:meter_id>', methods=['GET'])
 def show_meter_info(meter_id):
     '''Returns meter information as json object'''
-
-    #retrieve for meter object matching meter_id
-    meter = Meter.query.filter_by(meter_id=meter_id).one()
     
-    #error handling if none is returned
+    try:  
+    #retrieve for meter object matching meter_id
+        meter = Meter.query.filter_by(meter_id=meter_id).one()
+
+    except (MultipleResultsFound, NoResultFound) as e:
+        print(e)
 
     #user_id, authorization_id and exports are not in schema yet
     meter_data = {meter.meter_id: {
