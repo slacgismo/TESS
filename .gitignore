@@ -624,3 +624,6 @@ lint/tmp/
 
 #mysql db connection
 models/secrets.sh
+
+selftest/
+
