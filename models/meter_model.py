@@ -200,7 +200,7 @@ def connect_to_db(app, db_uri = 'mysql+pymysql://{0}:{1}@localhost/meter_tel'.fo
 
 if __name__ == '__main__':
     
-    from api.v1.api import *
+    from api.v1.api import app
     connect_to_db(app)
 
     #for using interactively
