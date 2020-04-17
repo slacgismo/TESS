@@ -198,4 +198,10 @@ def connect_to_db(app, db_uri = 'mysql+pymysql://{0}:{1}@localhost/meter_tel'.fo
     db.init_app(app)
 
 
- 
+if __name__ == '__main__':
+    
+    from api.v1.api import *
+    connect_to_db(app)
+
+    #for using interactively
+    print('Connected to DB.')

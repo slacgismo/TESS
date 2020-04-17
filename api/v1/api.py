@@ -1,9 +1,13 @@
 from flask import (Flask, jsonify, request)
 from flask_sqlalchemy import SQLAlchemy 
-from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.orm.exc import MultipleResultsFound
+
 from meter_api_schema import schema_data
-from models.meter_model import (Meter, Channel, Interval, meter_channels, Utility, Rate, Address, City, Country, ServiceLocation)
+from models.meter_model import (Meter, Channel, Interval, Utility, Rate, Address, ServiceLocation, connect_to_db, db)
+
+#for error handling routes - WIP
+#from sqlalchemy.orm.exc import NoResultFound
+#from sqlalchemy.orm.exc import MultipleResultsFound
+
 app = Flask(__name__)
 
 
@@ -27,6 +31,7 @@ def show_meter_info(meter_id):
 
     #retrieve for meter object matching meter_id
     meter = Meter.query.filter_by(meter_id=meter_id).one()
+    
     #error handling if none is returned
 
     #user_id, authorization_id and exports are not in schema yet
@@ -63,22 +68,32 @@ def get_meter_schema():
  @app.route('api/v1/meters/<string:meter_id>', methods=['PUT'])
  def modify_meter_info(meter_id):
 
-#     try:
-#         meter = Meter.query.filter_by(meter_id = meter_id).one()
-    req = request.get_json()
+#error handling (WIP)
+#     try:  
+
 #     except MultipleResultsFound, e:
 #         print(e)
 
 #     except NoResultFound, e:
 #         print(e)
 
-#     return jsonify(meter_data)
+    meter = Meter.query.filter_by(meter_id=meter_id).one()
+    req = request.get_json()
+    return jsonify(req)
 
 
-# @app.route('api/v1/meters', methods=['POST'])
-# def add_meter_info():
-#     #not autoincremented, supply id 
-#     return ""
+@app.route('/api/v1/meters/', methods=['POST'])
+def add_meter_info():
+
+    meter_id = request.json['meter_id']
+    utility_id = request.json['utility_id']
+    service_location_id = request.json['service_location_id']
+    feeder = request.json['feeder']
+    substation = request.json['substation']
+    meter_type = request.json['meter_type']
+    is_active = request.json['is_active']
+    is_archived = request.json['is_archived']
 
 if __name__ == '__main__':
+    connect_to_db(app)
     app.run(debug=True, port=8080)
