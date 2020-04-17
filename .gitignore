@@ -621,6 +621,10 @@ lint/tmp/
 # End of https://www.gitignore.io/api/node,macos,python,django,pycharm,reactnative,visualstudiocode
 
 .ipynb_checkpoints/
+<<<<<<< HEAD
 
 #mysql db connection
 models/secrets.sh
+=======
+selftest/
+>>>>>>> origin
