@@ -1,5 +1,7 @@
 ## Required Software
 
+a diff change
+
 Install the following prescribed versions. You can _possibly_ have a more-recent version of these, however, these are the versions we know are currently working.
 
 app             | version | install notes |
