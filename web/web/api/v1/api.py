@@ -97,18 +97,43 @@ def get_meter_schema():
 #         return 'error'
 
 
+@app.route('/api/v1/meters', methods=['POST'])
+def add_meter_info():
+    '''Add new meter to database'''
 
-# @app.route('/api/v1/meters/', methods=['POST'])
-# def add_meter_info():
+    #retrieve input
+    meter_id = request.form.get('meter_id')
+    utility_id = int(request.form.get('utility_id'))
+    service_location_id = request.form.get('service_location_id')
+    feeder = request.form.get('feeder')
+    substation = request.form.get('substation')
+    meter_type = request.form.get('meter_type')
+    is_active = request.form.get('is_active')
+    is_archived = request.form.get('is_archived')
 
-#     meter_id = request.json['meter_id']
-#     utility_id = request.json['utility_id']
-#     service_location_id = request.json['service_location_id']
-#     feeder = request.json['feeder']
-#     substation = request.json['substation']
-#     meter_type = request.json['meter_type']
-#     is_active = request.json['is_active']
-#     is_archived = request.json['is_archived']
+    #check if utility, service location, feeder, substation are in database
+    #create helper for the above
+    
+    is_active = converts_to_bool(is_active)
+    is_archived = converts_to_bool(is_archived)
+
+    meter = Meter(meter_id=meter_id, utility_id=utility_id, service_location_id=service_location_id, feeder=feeder, substation=substation, meter_type=meter_type, is_active=is_active, is_archived=is_archived)
+
+    db.session.add(meter)
+    db.session.commit()
+
+
+#############################
+##### HELPER FUNCTIONS ######
+#############################
+
+
+def converts_to_bool(variable):
+    if variable:
+        variable = True
+    else:
+        variable = False
+    return variable
 
 # if __name__ == '__main__':
 #     connect_to_db(app)
