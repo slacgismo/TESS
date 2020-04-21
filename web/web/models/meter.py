@@ -7,8 +7,8 @@ from sqlalchemy.types import TIMESTAMP
 import os
 
 #variables for connecting to db
-dbuser = os.environ['dbuser']
-dbpass = os.environ['dbpass']
+dbuser = os.environ.get('dbuser', '')
+dbpass = os.environ.get('dbpass', '')
 
 #Instatiate a SQLAlchemy object
 db = SQLAlchemy()
@@ -198,10 +198,10 @@ def connect_to_db(app, db_uri = 'mysql+pymysql://{0}:{1}@localhost/meter_tel'.fo
     db.init_app(app)
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     
-    from api.v1.api import app
-    connect_to_db(app)
+#     from api.v1.api import app
+#     connect_to_db(app)
 
-    #for using interactively
-    print('Connected to DB.')
+#     #for using interactively
+#     print('Connected to DB.')
