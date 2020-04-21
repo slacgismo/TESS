@@ -1,14 +1,19 @@
-from flask import (Flask, jsonify, request)
+from web import app
+
+from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy 
 
-from meter_api_schema import schema_data
-from models.meter_model import (Meter, Channel, Interval, Utility, Rate, Address, ServiceLocation, connect_to_db, db)
+from .meter_api_schema import schema_data
+from web.models.meter import (Meter, Channel, Interval, Utility, Rate, Address, ServiceLocation, connect_to_db, db)
 
 #for error handling routes
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.exc import MultipleResultsFound
 
-app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return render_template('base.html', name="TESS")
 
 
 @app.route('/api/v1/meters', methods=['GET'])
@@ -25,7 +30,7 @@ def get_meter_ids():
     return jsonify(meter_ids)
 
 
-@app.route('api/v1/meters/<string:meter_id>', methods=['GET'])
+@app.route('/api/v1/meters/<string:meter_id>', methods=['GET'])
 def show_meter_info(meter_id):
     '''Returns meter information as json object'''
     
@@ -67,8 +72,8 @@ def get_meter_schema():
     
     return jsonify(schema_data)
 
- @app.route('api/v1/meters/<string:meter_id>', methods=['PUT'])
- def modify_meter_info(meter_id):
+@app.route('/api/v1/meters/<string:meter_id>', methods=['PUT'])
+def modify_meter_info(meter_id):
 
 #error handling (WIP)
 #     try:  
@@ -96,6 +101,6 @@ def add_meter_info():
     is_active = request.json['is_active']
     is_archived = request.json['is_archived']
 
-if __name__ == '__main__':
-    connect_to_db(app)
-    app.run(debug=True, port=8080)
+# if __name__ == '__main__':
+#     connect_to_db(app)
+#     app.run(debug=True, port=8080)
