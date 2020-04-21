@@ -9,4 +9,7 @@ pip install -r requirements.txt
 
 ## Running the project
 ```bash
+export FLASK_APP=web
+flask run
 ```
+... navigate to `localhost:5000`
