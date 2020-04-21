@@ -35,35 +35,47 @@ def show_meter_info(meter_id):
     '''Returns meter information as json object'''
     
     try:  
-    #retrieve for meter object matching meter_id
+        #retrieve for meter object matching meter_id
         meter = Meter.query.filter_by(meter_id=meter_id).one()
 
+        #to store rate descriptions for json object
+        rates = []
+
+        #to store interval ids for interval_coverage 
+        interval_ids = []
+
+        for interval in meter.intervals:
+
+            if interval.rate.description not in rates:
+                rates.append(interval.rate.description)
+        
+            interval_ids.append(interval.interval_id)
+
+        meter_data = [{meter.meter_id: {'utility_uid': meter.utility_id, 
+                                    'authorization_uid': '?', 
+                                    'user_id': '?', 
+                                    'meter_type': meter.meter_type.value, 
+                                    'is_archived': meter.is_archived, 
+                                    'is_active': meter.is_active, 
+                                    'created': '', 
+                                    'service_location': meter.service_location_id, 
+                                    'postal_code': meter.service_location.address.postal_code, 
+                                    'map_location': meter.service_location.map_location, 
+                                    'channels': [channel.setting for channel in meter.channels], 
+                                    'feeder': meter.feeder, 
+                                    'substation': meter.substation, 
+                                    'rate': rates,
+                                    'interval_count': meter.get_interval_count("2020-02-23", "2020-02-25"), 
+                                    'interval_coverage': Interval.get_interval_coverage(interval_ids), 
+                                    'exports': '?'}}] 
+
+        return jsonify(meter_data)
+
+
     except (MultipleResultsFound, NoResultFound) as e:
+        #no results or multiple results found 
         print(e)
-
-    #user_id, authorization_id and exports are not in schema yet
-    meter_data = {meter.meter_id: {
-                'utility_uid': meter.utility_id,
-                'authorization_uid': '',
-                'user_id': '',
-                'meter_type': meter.meter_type,
-                'status': meter.status,
-                'is_archived': meter.is_archived,
-                'is_active': meter.is_active,
-                'created': meter.created,
-                'service_location': meter.service_location_id,
-                'postal_code': meter.service_location.address.postal_code,
-                'map_location': meter.service_location.map_location,
-                'channel': meter.channel_id,
-                'feeder': meter.feeder,
-                'substation': meter.substation,
-                'rate': meter.rate.description,
-                'interval_count': '?',
-                'interval_coverage': '?',
-                'exports': ''}
-                }
-
-    return jsonify(meter_data)
+        return 'error'
 
 
 @app.route('/api/v1/meter/meta', methods=['GET'])
@@ -72,34 +84,31 @@ def get_meter_schema():
     
     return jsonify(schema_data)
 
-@app.route('/api/v1/meters/<string:meter_id>', methods=['PUT'])
-def modify_meter_info(meter_id):
-
-#error handling (WIP)
+# @app.route('/api/v1/meters/<string:meter_id>', methods=['PUT'])
+# def modify_meter_info(meter_id):
 #     try:  
+#        # meter = Meter.query.filter_by(meter_id=meter_id).one()
+#         req = request.get_json()
+#         return jsonify(req)
 
-#     except MultipleResultsFound, e:
+#     except (MultipleResultsFound, NoResultFound) as e:
+#         #no results or multiple results found 
 #         print(e)
-
-#     except NoResultFound, e:
-#         print(e)
-
-    meter = Meter.query.filter_by(meter_id=meter_id).one()
-    req = request.get_json()
-    return jsonify(req)
+#         return 'error'
 
 
-@app.route('/api/v1/meters/', methods=['POST'])
-def add_meter_info():
 
-    meter_id = request.json['meter_id']
-    utility_id = request.json['utility_id']
-    service_location_id = request.json['service_location_id']
-    feeder = request.json['feeder']
-    substation = request.json['substation']
-    meter_type = request.json['meter_type']
-    is_active = request.json['is_active']
-    is_archived = request.json['is_archived']
+# @app.route('/api/v1/meters/', methods=['POST'])
+# def add_meter_info():
+
+#     meter_id = request.json['meter_id']
+#     utility_id = request.json['utility_id']
+#     service_location_id = request.json['service_location_id']
+#     feeder = request.json['feeder']
+#     substation = request.json['substation']
+#     meter_type = request.json['meter_type']
+#     is_active = request.json['is_active']
+#     is_archived = request.json['is_archived']
 
 # if __name__ == '__main__':
 #     connect_to_db(app)
