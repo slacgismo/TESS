@@ -42,9 +42,6 @@ class Address(db.Model):
     phone = db.Column(db.String(64))
     last_update = db.Column(TIMESTAMP, nullable=False)
 
-    #one-to-one service location per address
-    service_location = db.relationship('ServiceLocation', backref=db.backref('address'), uselist=False)
-
     def __repr__(self):
         return f'<Address address_id={self.address_id} address={self.address} postal_code={self.postal_code}>'
 
@@ -57,8 +54,8 @@ class ServiceLocation(db.Model):
     address_id = db.Column(db.Integer, db.ForeignKey('addresses.address_id'), nullable=False)
     map_location = db.Column(db.String(64), nullable=False)
 
-    #many-to-one meters per service location
-    meters = db.relationship('Meter', backref=db.backref('meter'))
+    #one-to-one service location per address
+    address = db.relationship('Address', backref=db.backref('service_locations'), uselist=False)
 
     def __repr__(self):
         return f'<ServiceLocation service_location_id={self.service_location_id} address_id={self.address_id}>'
@@ -73,19 +70,19 @@ class Utility(db.Model):
     subscription_start = db.Column(TIMESTAMP, nullable=False)
     subscription_end = db.Column(TIMESTAMP, nullable=False)
 
-    #many-to-one meters per utility
-    meters = db.relationship('Meter', backref=db.backref('utility'))
-
     def __repr__(self):
         return f'<Utility utility_id={self.utility_id} name={self.name}>'
+
 
 #enum fields for meter_type column in meter
 class MeterType(enum.Enum):
 
-    #what values for meter type?
+    #What names for the meter types? 
+    #Replace one, two, three with corresponding names
     one = "kWh/Demand" 
     two = "Time-of-Day/KWH/Demand"
     three = "AXR-SD"
+
 
 class Meter(db.Model):
     
@@ -102,18 +99,25 @@ class Meter(db.Model):
     is_active = db.Column(db.Boolean(False))
     is_archived = db.Column(db.Boolean(False))
 
-    #many-to-one intervals per meter
-    intervals = db.relationship('Interval', backref=db.backref('meter'))
+    #many-to-one meters per service location
+    service_location = db.relationship('ServiceLocation', backref=db.backref('meters'))
+    
+    #many-to-one meters per utility
+    utility = db.relationship('Utility', backref=db.backref('meters'))
 
-    #many-to-one channels per meter
-    channels = db.relationship('Channel', backref=db.backref('meter'))
-
+    #interval count
     def get_interval_count(self, start, end):
         '''Takes in start and end ISO8601 times, 
             returns the interval count (integer) between start / end times, inclusively'''
-
+        
+        #get the meter's intervals
         self_intervals = self.intervals
-        selected_intervals = self_intervals.filter(and_(self_intervals.start_time >= start, self_intervals.end_time <= end)).all()
+
+        selected_intervals = []
+        
+        for interval in self_intervals:
+            if interval.start_time >= start and interval.end_time <= end:
+                selected_intervals.append(interval)
 
         return len(selected_intervals)
 
@@ -138,15 +142,20 @@ class Channel(db.Model):
                                            [Meter.meter_id, Meter.utility_id, Meter.service_location_id]), 
                                            {})
 
+    #many-to-one channels per meter
+    meter = db.relationship('Meter', backref=db.backref('channels'))
+
     def __repr__(self):
 
         return f'<Channel channel_id={self.channel_id} meter_id={self.meter_id} channel_type={self.channel_type}>'
 
+
 #enum fields for status column in interval
 class Status(enum.Enum):
 
-    #what values?
+    #what values/names for status?
     one = "valid"
+
 
 class Interval(db.Model):
 
@@ -167,12 +176,18 @@ class Interval(db.Model):
                                            [Meter.meter_id, Meter.utility_id, Meter.service_location_id]), 
                                            {})
 
+    #many-to-one intervals per meter
+    meter = db.relationship('Meter', backref=db.backref('intervals'))
+    
+    #many-to-one intervals per rate
+    rate = db.relationship('Rate', backref=db.backref('intervals'))
+
     @staticmethod
     def get_interval_coverage(interval_id_list):
         '''Takes in list of interval ids, 
             returns list of tuples for start and end times in ISO8601 format'''
         
-        #improve for error handling (id doesn't exist)
+        #improve for error handling (id doesn't exist in list)
 
         selected_intervals = Interval.query.filter(Interval.interval_id.in_(interval_id_list)).all()
         start_end_tuples_list = []
@@ -185,6 +200,7 @@ class Interval(db.Model):
     def __repr__(self):
 
         return f'<Interval interval_id={self.interval_id} meter_id={self.meter_id} end_time={self.end_time} value={self.value}>'
+
 
 #local connection - switch to rds to deploy
 def connect_to_db(app, db_uri = 'mysql+pymysql://{0}:{1}@localhost/meter_tel'.format(dbuser, dbpass)):
