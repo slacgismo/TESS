@@ -30,7 +30,7 @@ def get_meter_ids():
     return jsonify(meter_ids)
 
 
-@app.route('/api/v1/meters/<string:meter_id>', methods=['GET'])
+@app.route('/api/v1/meter/<string:meter_id>', methods=['GET'])
 def show_meter_info(meter_id):
     '''Returns meter information as json object'''
     
@@ -108,32 +108,19 @@ def add_meter_info():
     feeder = request.form.get('feeder')
     substation = request.form.get('substation')
     meter_type = request.form.get('meter_type')
-    is_active = request.form.get('is_active')
-    is_archived = request.form.get('is_archived')
+    is_active = request.form.get("is_active").upper() == "TRUE"
+    is_archived = request.form.get("is_archived").upper() == "TRUE"
 
-    #check if utility, service location, feeder, substation are in database
-    #create helper for the above
-    
-    is_active = converts_to_bool(is_active)
-    is_archived = converts_to_bool(is_archived)
+    try:
+        service_location = ServiceLocation.query.filter_by(service_location_id=service_location_id).one()
+        meter = Meter(meter_id=meter_id, utility_id=utility_id, service_location_id=service_location.service_location_id, feeder=feeder, substation=substation, meter_type=meter_type, is_active=is_active, is_archived=is_archived)
+        db.session.add(meter)
+        db.session.commit()
 
-    meter = Meter(meter_id=meter_id, utility_id=utility_id, service_location_id=service_location_id, feeder=feeder, substation=substation, meter_type=meter_type, is_active=is_active, is_archived=is_archived)
-
-    db.session.add(meter)
-    db.session.commit()
-
-
-#############################
-##### HELPER FUNCTIONS ######
-#############################
-
-
-def converts_to_bool(variable):
-    if variable:
-        variable = True
-    else:
-        variable = False
-    return variable
+    except (MultipleResultsFound,NoResultFound) as e:
+        #no results or multiple results found 
+        print(e)
+        return 'error'
 
 # if __name__ == '__main__':
 #     connect_to_db(app)
