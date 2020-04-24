@@ -93,7 +93,8 @@ def add_meter_info():
     #keys required in json body
     required_keys = ['meter_id', 'utility_id', 'service_location_id', 'feeder', 'substation', 'meter_type', 'is_active', 'is_archived']
     
-    #checks for missing keys, else throws error if missing
+    #ERROR HANDLING:
+    #checks for required keys in json body, else throws error
     for key in required_keys:
         if key not in new_meter:
             message = 'Key Error - ' + key + " is missing."
@@ -101,7 +102,6 @@ def add_meter_info():
             return jsonify({'error': message})
 
     meter_id = new_meter['meter_id']
-    utility_id = int(new_meter['utility_id'])
     service_location_id = new_meter['service_location_id']
     feeder = new_meter['feeder']
     substation = new_meter['substation']
@@ -110,7 +110,16 @@ def add_meter_info():
     is_archived = new_meter['is_archived'].upper() == 'TRUE'
 
     #ERROR HANDLING:
-    #service location and utility id must exist prior to meter id entry for composite key
+    #checks if utility_id is a numeric value, else throws error
+    if new_meter['utility_id'].isdigit():
+        utility_id = int(new_meter['utility_id'])
+    else:
+        message = 'Value error - ' + new_meter['utility_id'] + ' is not a numeric value.'
+        print(message)
+        return jsonify({'error': message})
+
+    #ERROR HANDLING:
+    #service location and utility id must exist prior to meter entry for composite key
     try: 
         ServiceLocation.query.filter_by(service_location_id=service_location_id).one()
         Utility.query.filter_by(utility_id=utility_id).one()
@@ -126,7 +135,7 @@ def add_meter_info():
         print(message)
         return jsonify({'error': message})
 
-    #set new meter object to be added to database
+    #sets new meter object to be added to database
     meter = Meter(meter_id=meter_id, 
                   utility_id=utility_id, 
                   service_location_id=service_location_id, 
