@@ -1,27 +1,41 @@
-
+import enum
+from sqlalchemy.types import TIMESTAMP
+from web.models.meter import Meter
+from sqlalchemy import ForeignKeyConstraint
+from web.database import (
+    db,
+    Model,
+    Column,
+    SurrogatePK,
+    relationship,
+    reference_col,
+)
 
 class Status(enum.Enum):
     one = "valid"
 
 
-class Interval(db.Model):
-
+class Interval(Model):
     __tablename__ = 'intervals'
     
-    interval_id = db.Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
-    meter_id = db.Column(db.String(64), nullable=False)
-    utility_id = db.Column(db.Integer, nullable=False)
-    service_location_id = db.Column(db.String(64), nullable=False)
-    rate_id = db.Column(db.Integer, db.ForeignKey('rates.rate_id'), nullable=False) 
-    status = db.Column(db.Enum(Status), nullable=False)
-    start_time = db.Column(TIMESTAMP, nullable=False)
-    end_time = db.Column(TIMESTAMP, nullable=False)
-    value = db.Column(db.Float, nullable=False)
+    interval_id = Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
+    meter_id = Column(db.String(64), nullable=False)
+    utility_id = Column(db.Integer, nullable=False)
+    service_location_id = Column(db.String(64), nullable=False)
+    rate_id = Column(db.Integer, db.ForeignKey('rates.rate_id'), nullable=False) 
+    status = Column(db.Enum(Status), nullable=False)
+    start_time = Column(TIMESTAMP, nullable=False)
+    end_time = Column(TIMESTAMP, nullable=False)
+    value = Column(db.Float, nullable=False)
 
     #composite foreign key to meter
-    __table_args__ = (ForeignKeyConstraint([meter_id, utility_id, service_location_id],
-                                           [Meter.meter_id, Meter.utility_id, Meter.service_location_id]), 
-                                           {})
+    __table_args__ = (
+        ForeignKeyConstraint(
+            [meter_id, utility_id, service_location_id],
+            [Meter.meter_id, Meter.utility_id, Meter.service_location_id]
+        ), 
+        {}
+    )
 
     #many-to-one intervals per meter
     meter = db.relationship('Meter', backref=db.backref('intervals'))
