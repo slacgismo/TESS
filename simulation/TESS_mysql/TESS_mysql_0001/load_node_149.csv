@@ -1,0 +1,15 @@
+# file...... TESS_mysql/TESS_mysql_0001/load_node_149.csv
+# date...... Tue Apr 14 05:33:10 2020
+# user...... (null)
+# host...... (null)
+# target.... meter 7
+# trigger... (none)
+# interval.. 60
+# limit..... 0
+# timestamp,measured_real_power, measured_reactive_power
+2016-07-01 00:00:00 PDT,+1096.42,+531.262
+2016-07-01 00:01:00 PDT,+1096.42,+531.262
+2016-07-01 00:02:00 PDT,+1096.42,+531.262
+2016-07-01 00:03:00 PDT,+1096.42,+531.262
+2016-07-01 00:04:00 PDT,+1096.42,+531.262
+# end of tape

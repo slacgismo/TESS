@@ -1,0 +1,4 @@
+#define TIMEZONE=${TIMEZONE:-US/CA/Los Angeles}
+#define WEATHER=${WEATHER:-CA-San_Jose_Intl_Ap.tmy3}
+#define STARTTIME=${STARTTIME:-2020-07-01 00:00:00}
+#define STOPTIME=${STOPTIME:-2020-07-08 00:00:00}
