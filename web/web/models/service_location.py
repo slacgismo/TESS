@@ -1,3 +1,4 @@
+from web.models.address import Address
 from web.database import (
     db,
     Model,

@@ -19,6 +19,29 @@ brew services stop mysql
 ```bash
 brew services start mysql
 # I use TablePlus, so at this point, launch tableplus and add in the parameters you created above
+# namely, localhost, username = root and password. You can leave the DB name blank for now
+
+# Alternatively, you can use the command line
+mysql -u root -p 'your root password'
+
+# Then, create the tess_user, something like: 
+# 👇 this user and password is for the development config
+# CREATE USER 'tess_user'@'localhost' IDENTIFIED BY 'tess_db_password_local';
+# FLUSH PRIVILEGES;
+# Make sure to grant the appropriate perms for this user.
+# You can follow instructions here if you're unsure: https://tableplus.com/blog/2019/08/how-to-manage-user-mysql-tableplus-gui.html
+
+# Lastly, create the DB - name it tess
+```
+
+## Almost there...
+```bash
+# the TESS DB now exists but its schema is still in the ether.
+# to ensure that our python models are reflected as tables, run
+flask db upgrade  
+
+# you only need to do this when first creating the DB or whenever
+# there are new models or changes to existing models!!
 ```
 
 ## Running the project

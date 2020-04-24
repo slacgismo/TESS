@@ -1,6 +1,7 @@
 import enum
 from sqlalchemy.types import TIMESTAMP
 from web.models.meter import Meter
+from web.models.rate import Rate
 from sqlalchemy import ForeignKeyConstraint
 from web.database import (
     db,

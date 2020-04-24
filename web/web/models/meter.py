@@ -1,4 +1,5 @@
 import enum
+from web.models.utility import Utility
 from web.database import (
     db,
     Model,
