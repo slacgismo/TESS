@@ -628,3 +628,4 @@ selftest/
 
 simulation/TESS/
 simulation/__pycache__/
+simulation/output
