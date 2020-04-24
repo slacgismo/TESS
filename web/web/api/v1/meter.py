@@ -4,14 +4,11 @@ from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy 
 
 from .meter_api_schema import schema_data
-from web.models.meter import (Meter, Channel, Interval, Utility, Rate, Address, ServiceLocation, connect_to_db, db)
+from web.models.meter import (Meter, Channel, MeterType, Interval, Utility, Rate, Address, ServiceLocation, connect_to_db, db)
 
-#for error handling routes
-from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.orm.exc import MultipleResultsFound
-
-#enables trailing and non-trailing slash routes
-app.url_map.strict_slashes = False
+#for error handling
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from sqlalchemy.exc import IntegrityError
 
 @app.route('/')
 def hello_world():
@@ -73,7 +70,6 @@ def show_meter_info(meter_id):
 
         return jsonify(meter_data)
 
-
     except (MultipleResultsFound, NoResultFound) as e:
         #no results or multiple results found 
         print(e)
@@ -86,61 +82,69 @@ def get_meter_schema():
     
     return jsonify(schema_data)
 
-    
-# @app.route('/api/v1/meters/<string:meter_id>', methods=['PUT'])
-# def modify_meter_info(meter_id):
-#     try:
-#         #checks if meter exists
-#         Meter.query.filter_by(meter_id = meter_id).one()
-#         new_meter_data = request.get_json()
-
-#         return jsonify(req)
-    
-#     except (MultipleResultsFound, NoResultFound) as e:
-#         print(e)
-#         return 'error'
-
 
 @app.route('/api/v1/meters', methods=['POST'])
 def add_meter_info():
     '''Add new meter to database'''
 
-    #retrieve input
+    #retrieves input
     new_meter = request.get_json()
 
+    #keys required in json body
+    required_keys = ['meter_id', 'utility_id', 'service_location_id', 'feeder', 'substation', 'meter_type', 'is_active', 'is_archived']
+    
+    #checks for missing keys, else throws error if missing
+    for key in required_keys:
+        if key not in new_meter:
+            message = 'Key Error - ' + key + " is missing."
+            print(message)
+            return jsonify({'error': message})
+
     meter_id = new_meter['meter_id']
-    utility_id = new_meter['utility_id']
+    utility_id = int(new_meter['utility_id'])
     service_location_id = new_meter['service_location_id']
     feeder = new_meter['feeder']
     substation = new_meter['substation']
     meter_type = new_meter['meter_type']
-    is_active = new_meter['is_active'].upper() == "TRUE"
-    is_archived = new_meter['is_archived'].upper() == "TRUE"
+    is_active = new_meter['is_active'].upper() == 'TRUE'
+    is_archived = new_meter['is_archived'].upper() == 'TRUE'
 
+    #ERROR HANDLING:
+    #service location and utility id must exist prior to meter id entry for composite key
+    try: 
+        ServiceLocation.query.filter_by(service_location_id=service_location_id).one()
+        Utility.query.filter_by(utility_id=utility_id).one()
+    except (MultipleResultsFound,NoResultFound) as e:
+        print(e)
+        return jsonify({'error': str(e)})
+
+    #ERROR HANDLING:
+    #checks to ensure meter_type value in an accepted enum value, else throws error
+    meter_types = [meter_type.value for meter_type in MeterType]
+    if meter_type not in meter_types:
+        message = "Meter Type - " + meter_type + " is not an enum value for meter types."
+        print(message)
+        return jsonify({'error': message})
+
+    #set new meter object to be added to database
+    meter = Meter(meter_id=meter_id, 
+                  utility_id=utility_id, 
+                  service_location_id=service_location_id, 
+                  feeder=feeder, 
+                  substation=substation, 
+                  meter_type=meter_type, 
+                  is_active=is_active, 
+                  is_archived=is_archived)
+
+    #ERROR HANDLING:
+    #adds meter to database if it doesn't conflict with database setup, else throws error
     try:
-        #TO DO: insert error handling to make sure meter id doesn't already exist
-        
-        #checks if service location exists
-        service_location=ServiceLocation.query.filter_by(service_location_id=service_location_id).one()
-        
-        meter = Meter(meter_id=meter_id, 
-                      utility_id=utility_id, 
-                      service_location_id=service_location.service_location_id, 
-                      feeder=feeder, 
-                      substation=substation, 
-                      meter_type=meter_type, 
-                      is_active=is_active, 
-                      is_archived=is_archived)
-        
         db.session.add(meter)
         db.session.commit()
-        
-        return jsonify({'success': meter.meter_id})
-
-    except (MultipleResultsFound,NoResultFound) as e:
-        #no results or multiple results found for service location
+    except IntegrityError as e:
+        db.session.rollback()
         print(e)
+        return jsonify({'error': str(e)})
 
-# if __name__ == '__main__':
-#     connect_to_db(app)
-#     app.run(debug=True, port=8080)
+    #returns successful response code
+    return jsonify({'success': 200})
