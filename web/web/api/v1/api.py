@@ -3,8 +3,10 @@ from web import app
 from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy 
 
+from flask_marshmallow import flask_marshmallow
+
 from .meter_api_schema import schema_data
-from web.models.meter import (Meter, Channel, Interval, Utility, Rate, Address, ServiceLocation, connect_to_db, db)
+from web.models.meter import (Meter, Channel, Interval, Utility, Rate, Address, ServiceLocation, connect_to_db, db, connect_to_ma, ma)
 
 #for error handling routes
 from sqlalchemy.orm.exc import NoResultFound
@@ -122,6 +124,7 @@ def add_meter_info():
         print(e)
         return 'error'
 
-# if __name__ == '__main__':
-#     connect_to_db(app)
-#     app.run(debug=True, port=8080)
+if __name__ == '__main__':
+    connect_to_db(app)
+    connect_to_ma(app)
+    app.run(debug=True)

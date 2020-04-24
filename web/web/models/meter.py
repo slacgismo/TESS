@@ -1,5 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy 
+from marshmallow import marshmallow
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 import enum
 from sqlalchemy import and_, ForeignKeyConstraint
 from datetime import datetime
@@ -79,7 +81,7 @@ class MeterType(enum.Enum):
 
     #What names for the meter types? 
     #Replace one, two, three with corresponding names
-    one = "kWh/Demand" 
+    one = "KWH/Demand" 
     two = "Time-of-Day/KWH/Demand"
     three = "AXR-SD"
 
@@ -124,6 +126,13 @@ class Meter(db.Model):
     def __repr__(self):
 
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
+
+
+#Marshmallow schema for Meter 
+class MeterSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Meter
+        include_fk = True
 
 
 class Channel(db.Model):
@@ -213,11 +222,16 @@ def connect_to_db(app, db_uri = 'mysql+pymysql://{0}:{1}@localhost/meter_tel'.fo
     db.app = app
     db.init_app(app)
 
+def connect_to_ma(app):
+    ma.app = app
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
     
-#     from api.v1.api import app
-#     connect_to_db(app)
+    from api.v1.api import app
 
-#     #for using interactively
-#     print('Connected to DB.')
+    #order matters - db initialized before marshmallow
+    connect_to_db(app)
+    connect_to_ma(app)
+
+    #for using interactively
+    print('Connected to DB.')
