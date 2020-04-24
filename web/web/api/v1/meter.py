@@ -97,7 +97,7 @@ def add_meter_info():
     #checks for required keys in json body, else throws error
     for key in required_keys:
         if key not in new_meter:
-            message = 'Key Error - ' + key + " is missing."
+            message = 'Key Error - ' + key + ' is missing.'
             print(message)
             return jsonify({'error': message})
 
@@ -131,7 +131,7 @@ def add_meter_info():
     #checks to ensure meter_type value in an accepted enum value, else throws error
     meter_types = [meter_type.value for meter_type in MeterType]
     if meter_type not in meter_types:
-        message = "Meter Type - " + meter_type + " is not an enum value for meter types."
+        message = 'Meter Type - ' + meter_type + ' is not an enum value for meter types.'
         print(message)
         return jsonify({'error': message})
 
