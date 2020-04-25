@@ -4,7 +4,9 @@ from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy 
 
 from .meter_api_schema import schema_data
-from web.models.meter import (Meter, Channel, Interval, Utility, Rate, Address, ServiceLocation, connect_to_db, db)
+from web.models.meter import Meter
+from web.models.interval import Interval
+from web.models.service_location import ServiceLocation
 
 #for error handling routes
 from sqlalchemy.orm.exc import NoResultFound
