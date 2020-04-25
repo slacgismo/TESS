@@ -1,7 +1,7 @@
 from flask import Flask
 from web.config import *
 from web.extensions import db, bcrypt, migrate
-
+from web.auth.auth import auth_bp
 
 def create_app(config_obj):
     """
@@ -28,7 +28,7 @@ def register_blueprints(app):
     """
     Register Flask blueprints.
     """
-    pass
+    app.register_blueprint(auth_bp, url_prefix='/')
 
 
 app = create_app(DevelopmentConfig())
