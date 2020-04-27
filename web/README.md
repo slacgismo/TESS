@@ -1,5 +1,7 @@
 # This is where the web platform will live!
 
+# MacOS setup
+
 ## Creating the env
 ```bash
 conda create -n venv_tess python=3.8
@@ -50,3 +52,11 @@ export FLASK_APP=web
 flask run
 ```
 ... navigate to `localhost:5000`
+
+# Docker Compose
+
+## Bring up the docker image
+
+```bash
+docker-compose up
+```

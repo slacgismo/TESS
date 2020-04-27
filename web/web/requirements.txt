@@ -1,0 +1,6 @@
+flask==1.1.2
+Flask-SQLAlchemy==2.4.1
+Flask-Migrate==2.5.3
+Flask-Bcrypt==0.7.1
+PyMySQL==0.9.3
+cryptography==2.9.2
