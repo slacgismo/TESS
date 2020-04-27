@@ -9,9 +9,6 @@ from web.database import (
     reference_col,
 )
 
-from marshmallow import marshmallow
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-
 class MeterType(enum.Enum):
     one = "kWh/Demand" 
     two = "Time-of-Day/KWH/Demand"
