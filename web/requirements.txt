@@ -1,4 +1,8 @@
 flask==1.1.2
-flask_sqlalchemy==2.4.1
+Flask-SQLAlchemy==2.4.1
+Flask-Migrate==2.5.3
+Flask-Bcrypt==0.7.1
+PyMySQL==0.9.3
+cryptography==2.9.2
 marshmallow==3.5.1
 marshmallow-sqlalchemy==0.22.3
