@@ -44,6 +44,14 @@ flask db upgrade
 # there are new models or changes to existing models!!
 ```
 
+## Our frontend is currently leveraging react and mdc to generate the whole experience 
+Everything gets bundled via webpack, however, for sake of speed (since I don't want to deal with routing on the web client) this is not a SPA, so we need to manually register every file to bundle in the webpack config. Anyways...
+```bash
+# make sure you have yarn installed, https://classic.yarnpkg.com/en/
+yarn install # install all the dependencies in the package.json
+yarn start   # bundle and deploy all the assets referenced in the application
+```
+
 ## Running the project
 ```bash
 export FLASK_APP=web
