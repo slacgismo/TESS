@@ -627,5 +627,5 @@ models/secrets.sh
 
 selftest/
 
-#virtual environment
-env
+# ignoring the bundled file since regenerating this locally will change it everytime
+web/web/static/bundles/*
