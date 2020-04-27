@@ -36,6 +36,9 @@ mysql -u root -p 'your root password'
 
 ## Almost there...
 ```bash
+# set the flask environmental variable
+export FLASK_APP=web
+
 # the TESS DB now exists but its schema is still in the ether.
 # to ensure that our python models are reflected as tables, run
 flask db upgrade  
@@ -46,7 +49,6 @@ flask db upgrade
 
 ## Running the project
 ```bash
-export FLASK_APP=web
 flask run
 ```
 ... navigate to `localhost:5000`

@@ -626,3 +626,6 @@ lint/tmp/
 models/secrets.sh
 
 selftest/
+
+#virtual environment
+env

@@ -3,8 +3,6 @@ from web import app
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy 
 
-from flask_marshmallow import flask_marshmallow
-
 from .meter_api_schema import schema_data
 from web.models.meter import Meter
 from web.models.interval import Interval
