@@ -9,6 +9,7 @@ from web.database import (
     reference_col,
 )
 
+
 class MeterType(enum.Enum):
     one = "kWh/Demand" 
     two = "Time-of-Day/KWH/Demand"

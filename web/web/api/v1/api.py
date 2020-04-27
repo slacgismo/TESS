@@ -120,8 +120,3 @@ def add_meter_info():
         #no results or multiple results found 
         print(e)
         return 'error'
-
-if __name__ == '__main__':
-    connect_to_db(app)
-    connect_to_ma(app)
-    app.run(debug=True)
