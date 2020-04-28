@@ -1,19 +1,16 @@
 from web import app
 
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy 
 
 from .meter_api_schema import schema_data
-from web.models.meter import (Meter, Channel, MeterType, Interval, Utility, Rate, Address, ServiceLocation, connect_to_db, db)
+from web.models.meter import Meter, MeterSchema
+from web.models.interval import Interval
+from web.models.service_location import ServiceLocation
 
 #for error handling
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import IntegrityError
-
-@app.route('/')
-def hello_world():
-    return render_template('base.html', name="TESS")
-
 
 @app.route('/api/v1/meters', methods=['GET'])
 def get_meter_ids():
@@ -22,7 +19,7 @@ def get_meter_ids():
     meter_ids = []
 
     meters = Meter.query.all()
-    
+
     for row in meters:
         meter_ids.append({'id': row.meter_id})
 
@@ -153,7 +150,11 @@ def add_meter_info():
     except IntegrityError as e:
         db.session.rollback()
         print(e)
+<<<<<<< HEAD:web/web/api/v1/meter.py
         return jsonify({'error': str(e)})
 
     #returns successful response code
     return jsonify({'success': 200})
+=======
+        return 'error'
+>>>>>>> origin/master:web/web/api/v1/api.py
