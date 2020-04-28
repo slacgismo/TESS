@@ -1,7 +1,5 @@
 # Transactive Energy Service System (TESS)
 
-change me
-
 ### Introduction
 As the share of renewable resources grows, the marginal cost of energy resources tends to zero, and the long term average cost of energy is increasingly dominated by cost of flexibility resources, and the cost of associated capacity.  Nearly all the existing work on Transactive Energy Systems is based on the retail analogy to wholesale energy markets, which are fundamentally designed around marginal cost pricing of energy resources (and constraints on associated capacity), not on the cost of other grid services.  The goal of the Transactive Energy Service System (TESS) project to design, develop, test, and validate retail-level Transactive Energy systems that are dominated by behind-the-meter renewable energy resources and energy storage resources.  
 
