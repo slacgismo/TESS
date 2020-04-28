@@ -48,4 +48,6 @@ SLAC National Accelerator Laboratory is operated for the U.S. Department of Ener
 ### Reference
 
 * [TESS White Paper](https://s3.us-east-2.amazonaws.com/tess.slacgismo.org/Chassin+et+al%2C+TESS+White+Paper+(2019).pdf)
+* [GridLAB-D Module](https://github.com/slacgismo/gridlabd/pull/430)
+* [Transactive Orderbook Design](https://github.com/slacgismo/gridlabd/blob/transactive_orderbook/transactive/Transactive%20Orderbook.ipynb)
 ### License
