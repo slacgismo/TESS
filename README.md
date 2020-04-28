@@ -45,4 +45,7 @@ TESS is funded by the U.S. Department of Energy Office of Electricity. For more 
 
 SLAC National Accelerator Laboratory is operated for the U.S. Department of Energy by Stanford University under Contract No. DE-AC02-76SF00515.
 
+### Reference
+
+* [TESS White Paper](https://s3.us-east-2.amazonaws.com/tess.slacgismo.org/Chassin+et+al%2C+TESS+White+Paper+(2019).pdf)
 ### License
