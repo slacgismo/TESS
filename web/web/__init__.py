@@ -1,6 +1,6 @@
 from flask import Flask
 from web.config import *
-from web.extensions import db, bcrypt, migrate
+from web.extensions import db, bcrypt, migrate, ma
 from web.auth.auth import auth_bp
 
 def create_app(config_obj):
@@ -22,6 +22,7 @@ def register_extensions(app):
     bcrypt.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
+    ma.init_app(app)
 
 
 def register_blueprints(app):

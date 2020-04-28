@@ -1,5 +1,7 @@
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 import enum
 from web.models.utility import Utility
+from web.models.service_location import ServiceLocation
 from web.database import (
     db,
     Model,
@@ -8,6 +10,7 @@ from web.database import (
     relationship,
     reference_col,
 )
+
 
 class MeterType(enum.Enum):
     one = "kWh/Demand" 
@@ -53,3 +56,8 @@ class Meter(Model):
 
     def __repr__(self):
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
+
+class MeterSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Meter
+        include_fk = True
