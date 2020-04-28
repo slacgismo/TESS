@@ -52,7 +52,7 @@ Everything gets bundled via webpack, however, for sake of speed (since I don't w
 ```bash
 # make sure you have yarn installed, https://classic.yarnpkg.com/en/
 yarn install # install all the dependencies in the package.json
-yarn start   # bundle and deploy all the assets referenced in the application
+yarn build   # bundle and deploy all the assets referenced in the application
 ```
 
 ## Running the project
