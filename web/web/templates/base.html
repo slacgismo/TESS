@@ -1,0 +1,11 @@
+<!doctype html>
+<html>
+  <head>
+    {% block head %}    
+    <title>TESS - {% block title %}{% endblock %}</title>
+    {% endblock %}
+  </head>
+  <body>
+    <div id="master-container">{% block content %}{% endblock %}</div>
+  </body>
+</html>

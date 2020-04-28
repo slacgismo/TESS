@@ -60,3 +60,9 @@ yarn start   # bundle and deploy all the assets referenced in the application
 flask run
 ```
 ... navigate to `localhost:5000`
+
+
+----
+
+Some things worth noting and some resources
+- Our frontend is leveraging the React Wrapper for the Material Design Components (MDC) from Google: https://rmwc.io/ and https://material.io/develop/web/
