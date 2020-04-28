@@ -1,9 +1,8 @@
 FROM conda/miniconda3-centos7
 
-WORKDIR /tmp
+WORKDIR /web
 
-COPY setup.sh /tmp/
-COPY requirements.txt /tmp/
+COPY . /web/
 
 RUN chmod +x *.sh
 RUN ./setup.sh
