@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { Button } from '@rmwc/button';
 import '@material/button/dist/mdc.button.css';
 import ConnectedComponentWrapper from '../../static/base';
 
@@ -14,7 +13,7 @@ class Auth extends React.Component {
 
     render() {
         return (
-            <Button onClick={this.onClick}>LOGIN</Button>
+            <div>Auth Page</div>
         );
     }
 }

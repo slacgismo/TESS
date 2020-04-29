@@ -7,8 +7,8 @@ def create_app(config_obj):
     """
     Create application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
     :param config_object: The configuration object to use.
-    """
-    app = Flask(__name__)
+    """    
+    app = Flask(__name__, static_url_path='')
     app.config.from_object(config_obj)
     register_extensions(app)
     register_blueprints(app)

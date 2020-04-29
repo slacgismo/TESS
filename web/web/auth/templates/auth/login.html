@@ -1,5 +1,5 @@
 {% extends "base.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
-    <script src="../../../static/bundles/auth.bundle.js"></script>
+    <script src="{{ url_for('static', filename='bundles/auth.bundle.js') }}"></script>
 {% endblock %}

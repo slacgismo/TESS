@@ -1,8 +1,10 @@
-import { combineReducers } from "redux"
-import auth from '../../auth/static/reducer'
+import { combineReducers } from "redux";
+import auth from '../../auth/static/reducer';
+import drawerNavigationMenu from './navigation_drawer_reducer';
 
 const appReducer = combineReducers({
-    auth
+    auth,
+    drawerNavigationMenu
 })
 
 // Reset to initial state when logging out.

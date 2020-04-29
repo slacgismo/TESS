@@ -1,7 +1,10 @@
 const path = require('path');
 const webpack = require("webpack");
 
-module.exports = {  
+module.exports = {
+    watchOptions: {
+        ignored: /node_modules/
+    },
     entry: {
         main: "./static/base.js",
         auth: "./auth/static/auth.js"
