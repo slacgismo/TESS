@@ -23,7 +23,7 @@ const ConnectedAuth = connect(state => ({
   }))(Auth)
 
 const authElement = (
-    <ConnectedComponentWrapper isVisible={false}>
+    <ConnectedComponentWrapper isVisible={true}>
         <ConnectedAuth/>
     </ConnectedComponentWrapper>
 );
