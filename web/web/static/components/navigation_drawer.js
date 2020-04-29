@@ -7,7 +7,16 @@ import '@rmwc/list/styles';
 import '@rmwc/drawer/styles';
 
 class NavigationDrawer extends React.Component {
+    constructor(props) {
+        super(props);
+
+    }
+
     render() {
+        if(!this.props.isVisible) {
+            return null
+        }
+        
         return (
             <Drawer dismissible open={this.props.isDrawerOpen}>
                 <DrawerContent>

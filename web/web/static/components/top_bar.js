@@ -11,6 +11,10 @@ class TopBar extends React.Component {
     }
 
     render() {
+        if(!this.props.isVisible) {
+            return null
+        }
+        
         return (
             <React.Fragment>
                 <SimpleTopAppBar

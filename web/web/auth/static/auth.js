@@ -22,5 +22,9 @@ const ConnectedAuth = connect(state => ({
     token: state.auth.token
   }))(Auth)
 
-const authElement = <ConnectedComponentWrapper><ConnectedAuth/></ConnectedComponentWrapper>;
+const authElement = (
+    <ConnectedComponentWrapper isVisible={false}>
+        <ConnectedAuth/>
+    </ConnectedComponentWrapper>
+);
 ReactDOM.render(authElement, document.getElementById('master-container'));

@@ -16,8 +16,8 @@ class ConnectedComponentWrapper extends React.Component {
         return (
             <Provider store={store}>
                 <PersistGate persistor={persistor}>
-                    <TopBar />
-                    <NavigationDrawer />
+                    <TopBar isVisible={this.props.isVisible}/>
+                    <NavigationDrawer isVisible={this.props.isVisible}/>
                     {this.props.children}
                 </PersistGate>
             </Provider>
