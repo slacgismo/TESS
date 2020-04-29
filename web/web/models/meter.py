@@ -1,5 +1,7 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from sqlalchemy.types import TIMESTAMP
 import enum
+from datetime import datetime
 from web.models.utility import Utility
 from web.models.service_location import ServiceLocation
 from web.database import (
@@ -13,10 +15,19 @@ from web.database import (
 
 
 class MeterType(enum.Enum):
-    one = "kWh/Demand" 
-    two = "Time-of-Day/KWH/Demand"
-    three = "AXR-SD"
-
+    one = 'kWh/Demand' 
+    two = 'Time-of-Day/KWH/Demand'
+    three = 'AXR-SD'
+    
+    # @staticmethod
+    # def check_value(str_value):
+    #     '''Takes in string value, returns False if it isn't an accepted enum value, else returns enum type.'''
+ 
+    #     for meter_type in MeterType:
+    #         if meter_type.value == str_value:
+    #             return meter_type
+        
+    #     return False
 
 class Meter(Model):
     __tablename__ = 'meters'
@@ -27,10 +38,12 @@ class Meter(Model):
     service_location_id = Column(db.String(64), db.ForeignKey('service_locations.service_location_id'), primary_key=True, nullable=False)
     
     feeder = Column(db.String(45), nullable=False) 
-    substation = Column(db.String(45), nullable=False) #?representation of transformer (kWh)
+    substation = Column(db.String(45), nullable=False) 
     meter_type = Column(db.Enum(MeterType), nullable=False) 
-    is_active = Column(db.Boolean(False))
-    is_archived = Column(db.Boolean(False))
+    is_active = Column(db.Boolean(False), nullable=False)
+    is_archived = Column(db.Boolean(False), nullable=False)
+    # created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
+    # updated_at = Column(TIMESTAMP, nullable=False,default=datetime.utcnow, onupdate=datetime.utcnow)
 
     #many-to-one meters per service location
     service_location = relationship('ServiceLocation', backref=db.backref('meters'))
@@ -38,7 +51,6 @@ class Meter(Model):
     #many-to-one meters per utility
     utility = relationship('Utility', backref=db.backref('meters'))
 
-    #interval count
     def get_interval_count(self, start, end):
         '''Takes in start and end ISO8601 times, 
             returns the interval count (integer) between start / end times, inclusively'''
@@ -57,6 +69,7 @@ class Meter(Model):
     def __repr__(self):
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
 
+#marshmallow schema
 class MeterSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Meter
