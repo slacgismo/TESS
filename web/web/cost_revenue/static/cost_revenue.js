@@ -1,28 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import ConnectedComponentWrapper from '../../static/base';
-
-import { Chart } from "react-google-charts";
+import CashFlowChart from './cash_flow_chart';
+import ConnectedComponentWrapper from '../../static/js/base';
 
 import * as action from './actions';
 
 class CostRevenue extends React.Component {
-    onClick = () => {
-        this.props.dispatch(action.loginSuccessful('asdf'));
-    }
+    onClick = () => {}
 
     render() {
         return (
-            <div className="">
-                <Chart
-                chartType="ScatterChart"
-                data={[["Age", "Weight"], [4, 5.5], [8, 12]]}
-                width="100%"
-                height="400px"
-                legendToggle
-                />
-            </div>
+            <React.Fragment>
+                <div className="chart-row-container">
+                    <div className="chart-container">
+                        <CashFlowChart xTitle="Time" yTitle="$/h"/>
+                    </div>
+                    <div className="chart-container">
+                        <CashFlowChart xTitle="∫ Qdt" yTitle="$" />
+                    </div>
+                </div>
+            </React.Fragment>
         );
     }
 }

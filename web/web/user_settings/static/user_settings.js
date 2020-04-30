@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import ConnectedComponentWrapper from '../../static/base';
+import ConnectedComponentWrapper from '../../static/js/base';
 
 import * as action from './actions';
 

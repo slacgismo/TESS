@@ -3,7 +3,7 @@ import '@rmwc/top-app-bar/styles';
 import React from 'react';
 import { connect } from 'react-redux';
 import { SimpleTopAppBar, TopAppBarFixedAdjust } from '@rmwc/top-app-bar';
-import { toggleNavigationDrawer } from '../../actions';
+import { toggleNavigationDrawer } from '../actions';
 
 class TopBar extends React.Component {
     toggleNavigationDrawer = () => {
