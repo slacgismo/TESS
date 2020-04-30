@@ -5,17 +5,19 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --mode development --config webpack.config.js",
-    "build": "webpack --mode production"
+    "build": "webpack --watch --mode production"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@rmwc/button": "^6.0.14",
     "@rmwc/drawer": "^6.0.14",
+    "@rmwc/list": "^6.0.14",
+    "@rmwc/top-app-bar": "^6.0.14",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",
-    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2",
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
@@ -44,9 +46,20 @@
   },
   "babel": {
     "plugins": [
-        "@babel/plugin-proposal-async-generator-functions",        
-        "@babel/plugin-proposal-object-rest-spread",
-        ["@babel/plugin-proposal-decorators", { "legacy": true }],
-        ["@babel/plugin-proposal-class-properties", { "loose": true }]]
+      "@babel/plugin-proposal-async-generator-functions",
+      "@babel/plugin-proposal-object-rest-spread",
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ],
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
+    ]
   }
 }

@@ -1,13 +1,13 @@
 from flask import Blueprint, render_template
 
-cost_revenue_bp = Blueprint(
-    'cost_revenue_bp', 
+user_settings_bp = Blueprint(
+    'user_settings_bp', 
     __name__,
     template_folder='templates',
     static_folder='static', 
     static_url_path='assets'
 )
 
-@cost_revenue_bp.route('/')
+@user_settings_bp.route('/')
 def index():    
-    return render_template('cost_revenue/index.html')
+    return render_template('user_settings/index.html')
