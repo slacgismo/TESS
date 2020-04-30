@@ -2,15 +2,20 @@ from web import app
 
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy 
+from marshmallow import ValidationError
 
 from .meter_api_schema import schema_data
 from web.models.meter import Meter, MeterSchema, MeterType
 from web.models.interval import Interval
 from web.models.service_location import ServiceLocation
+from web.database import db
 
 #for error handling
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import IntegrityError
+
+#for marshmallow
+meter_schema = MeterSchema()
 
 
 ##########################
@@ -40,20 +45,14 @@ def get_meter_ids():
 @app.route('/api/v1/meter/<string:meter_id>', methods=['GET'])
 def show_meter_info(meter_id):
     '''Returns meter information as json object'''
-    
+
     try:  
         meter = Meter.query.filter_by(meter_id=meter_id).one()
-
-    except (MultipleResultsFound, NoResultFound) as e:
-        print(e)
+    except (MultipleResultsFound, NoResultFound):
         return {'Error': 'No results or multiple results found for meter.'}
 
-    meter_schema = MeterSchema()
-    result = meter_schema.dump(meter)
-    print(result)
     #to store rate descriptions for json object
     rates = []
-
     #to store interval ids for interval_coverage 
     interval_ids = []
 
@@ -78,7 +77,7 @@ def show_meter_info(meter_id):
                                   'feeder': meter.feeder, 
                                   'substation': meter.substation, 
                                   'rate': rates,
-                                  'interval_count': meter.get_interval_count("2020-02-23", "2020-02-25"), 
+                                  'interval_count': meter.get_interval_count(), 
                                   'interval_coverage': Interval.get_interval_coverage(interval_ids), 
                                   'exports': 'NOT YET CREATED'}}] 
 
@@ -107,52 +106,36 @@ def update_meter(meter_id):
     '''Updates meter in database'''
 
     try:
-        meter = Meter.query.filter_by(meter_id=meter_id).one()
+        Meter.query.filter_by(meter_id=meter_id).one()
+    except (MultipleResultsFound,NoResultFound):
+        return {'error': 'Not an existing meter id'}
 
-    except (MultipleResultsFound,NoResultFound) as e:
-        print(e)
-        return jsonify({'Error': 'No results or multiple results found for meter.'})
-
-    #retrieve input
-    new_meter = request.get_json()
+    modified_meter = request.get_json()
 
     #keys required in json body
     required_keys = ['meter_id', 'utility_id', 'service_location_id', 'feeder', 'substation', 'meter_type', 'is_active', 'is_archived']
     
     #checks for missing keys, else throws error if missing
     for key in required_keys:
-        if key not in new_meter:
+        if key not in modified_meter:
             message = 'Key Error - ' + key + ' is missing.'
-            print(message)
             return jsonify({'error': message})
 
-    #checks to ensure meter_type value in an accepted enum value, else throws error
-    if not MeterType.check_value(new_meter['meter_type']):
-        message = 'Meter Type - ' + new_meter['meter_type'] + ' is not an enum value for meter types.'
-        print(message)
-        return jsonify({'error': message})
-
-    #checks if utility_id is a numeric value, else throws error
-    if new_meter['utility_id'].isdigit():
-        meter.utility_id = int(new_meter['utility_id'])
-    else:
-        message = 'Value error - ' + new_meter['utility_id'] + ' is not a numeric value.'
-        print(message)
-        return jsonify({'error': message})
-
-    meter.service_location_id = new_meter['service_location_id']
-    meter.feeder = new_meter['feeder']
-    meter.substation = new_meter['substation']
-    meter.meter_type = new_meter['meter_type']
-    meter.is_active = new_meter['is_active'].upper() == 'TRUE'
-    meter.is_archived = new_meter['is_archived'].upper() == 'TRUE'
-
+    #sets meter_type value equal to enum name
+    modified_meter['meter_type'] = MeterType.check_value(modified_meter['meter_type'])
+    if not modified_meter['meter_type']:
+        return {'error': 'not accepted value for meter type'}
+    
+    try:
+       modified_meter = meter_schema.load(modified_meter, session=db.session)
+    except ValidationError as e:
+        return e.messages, 422
+    
     #adds meter to database if it doesn't conflict with database setup, else throws error
     try:
         db.session.commit()
-    except IntegrityError as e:
+    except IntegrityError:
         db.session.rollback()
-        print(e)
         return jsonify({'error': 'Conflict commiting changes with database'})
 
     #returns successful response code
@@ -168,7 +151,6 @@ def update_meter(meter_id):
 def add_meter():
     '''Add new meter to database'''
 
-    #retrieve input
     new_meter = request.get_json()
 
     #keys required in json body
@@ -177,41 +159,25 @@ def add_meter():
     #checks for missing keys, else throws error if missing
     for key in required_keys:
         if key not in new_meter:
-            message = 'Key Error - ' + key + " is missing."
-            print(message)
+            message = 'Key Error - ' + key + ' is missing.'
             return jsonify({'error': message})
+            
+    #sets meter_type value equal to enum name
+    new_meter['meter_type'] = MeterType.check_value(new_meter['meter_type'])
+    if not new_meter['meter_type']:
+        return {'error': 'not accepted value for meter type'}
 
-    #checks to ensure meter_type value in an accepted enum value, else throws error
-    if not MeterType.check_value(new_meter['meter_type']):
-        message = 'Meter Type - ' + new_meter['meter_type'] + ' is not an enum value for meter types.'
-        print(message)
-        return jsonify({'error': message})
-
-    #checks if utility_id is a numeric value, else throws error
-    if new_meter['utility_id'].isdigit():
-        utility_id = int(new_meter['utility_id'])
-    else:
-        message = 'Value error - ' + new_meter['utility_id'] + ' is not a numeric value.'
-        print(message)
-        return jsonify({'error': message})
-    
-    #set new meter object to be added to database
-    meter = Meter(meter_id = new_meter['meter_id'], 
-                  utility_id = utility_id, 
-                  service_location_id = new_meter['service_location_id'], 
-                  feeder = new_meter['feeder'], 
-                  substation = new_meter['substation'], 
-                  meter_type = new_meter['meter_type'], 
-                  is_active = new_meter['is_active'].upper() == 'TRUE', 
-                  is_archived = new_meter['is_archived'].upper() == 'TRUE')
+    try:
+       new_meter = meter_schema.load(new_meter, session=db.session)
+    except ValidationError as e:
+        return e.messages, 422
 
     #adds meter to database if it doesn't conflict with database setup, else throws error
     try:
-        db.session.add(meter)
+        db.session.add(new_meter)
         db.session.commit()
-    except IntegrityError as e:
+    except IntegrityError:
         db.session.rollback()
-        print(e)
         return jsonify({'error': 'Conflict adding data to database'})
 
     #returns successful response code

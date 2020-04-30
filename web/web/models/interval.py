@@ -13,7 +13,7 @@ from web.database import (
 )
 
 class Status(enum.Enum):
-    one = "valid"
+   valid = 'valid'
 
 
 class Interval(Model):
@@ -48,8 +48,6 @@ class Interval(Model):
     def get_interval_coverage(interval_id_list):
         '''Takes in list of interval ids, 
             returns list of tuples for start and end times in ISO8601 format'''
-        
-        #improve for error handling (id doesn't exist in list)
 
         selected_intervals = Interval.query.filter(Interval.interval_id.in_(interval_id_list)).all()
         start_end_tuples_list = []

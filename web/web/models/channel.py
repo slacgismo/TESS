@@ -21,9 +21,7 @@ class Channel(Model):
     service_location_id = Column(db.String(64), nullable=False)
     setting = Column(db.Integer, nullable = False) 
     channel_type = Column(db.String(64), nullable=False)
-    # created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    # updated_at = Column(TIMESTAMP, nullable=False,default=datetime.utcnow, onupdate=datetime.utcnow)
-
+    
     #composite foreign key to meter
     __table_args__ = (
         ForeignKeyConstraint(
