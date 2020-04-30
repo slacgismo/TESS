@@ -1,6 +1,6 @@
 const initialStorageState = {}
 
-export default function storage(state = initialStorageState, action) {
+export function storage(state = initialStorageState, action) {
     switch (action.type) {        
         default:
             return state
@@ -9,7 +9,7 @@ export default function storage(state = initialStorageState, action) {
 
 const initialCapacityState = {}
 
-export default function capacity(state = initialCapacityState, action) {
+export function capacity(state = initialCapacityState, action) {
     switch (action.type) {        
         default:
             return state;
