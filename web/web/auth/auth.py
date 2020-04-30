@@ -9,5 +9,5 @@ auth_bp = Blueprint(
 )
 
 @auth_bp.route('/')
-def index():    
+def index():
     return render_template('auth/login.html')

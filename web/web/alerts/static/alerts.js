@@ -17,7 +17,7 @@ class Alerts extends React.Component {
     }
 }
 
-const ConnectedAlerts = connect(state => ({}))(Alerts)
+const ConnectedAlerts = connect(state => ({}))(Alerts);
 
 const alertsElement = (
     <ConnectedComponentWrapper isVisible={true}>

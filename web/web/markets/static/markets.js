@@ -17,7 +17,7 @@ class Markets extends React.Component {
     }
 }
 
-const ConnectedMarkets = connect(state => ({}))(Markets)
+const ConnectedMarkets = connect(state => ({}))(Markets);
 
 const marketsElement = (
     <ConnectedComponentWrapper isVisible={true}>

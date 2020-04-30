@@ -17,7 +17,7 @@ class Storage extends React.Component {
     }
 }
 
-const ConnectedStorage = connect(state => ({}))(Storage)
+const ConnectedStorage = connect(state => ({}))(Storage);
 
 const storageElement = (
     <ConnectedComponentWrapper isVisible={true}>

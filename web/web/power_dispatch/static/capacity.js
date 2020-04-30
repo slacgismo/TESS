@@ -17,7 +17,7 @@ class Capacity extends React.Component {
     }
 }
 
-const ConnectedCapacity = connect(state => ({}))(Capacity)
+const ConnectedCapacity = connect(state => ({}))(Capacity);
 
 const capacityElement = (
     <ConnectedComponentWrapper isVisible={true}>

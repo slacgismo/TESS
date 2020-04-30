@@ -17,7 +17,7 @@ class Constraints extends React.Component {
     }
 }
 
-const ConnectedConstraints = connect(state => ({}))(Constraints)
+const ConnectedConstraints = connect(state => ({}))(Constraints);
 
 const constraintsElement = (
     <ConnectedComponentWrapper isVisible={true}>

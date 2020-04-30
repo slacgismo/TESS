@@ -17,7 +17,7 @@ class Notifications extends React.Component {
     }
 }
 
-const ConnectedNotifications = connect(state => ({}))(Notifications)
+const ConnectedNotifications = connect(state => ({}))(Notifications);
 
 const notificationsElement = (
     <ConnectedComponentWrapper isVisible={true}>

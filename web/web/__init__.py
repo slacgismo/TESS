@@ -15,7 +15,7 @@ def create_app(config_obj):
     """
     Create application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
     :param config_object: The configuration object to use.
-    """    
+    """
     app = Flask(__name__, static_url_path='')
     app.config.from_object(config_obj)
     register_extensions(app)
@@ -47,7 +47,6 @@ def register_blueprints(app):
     app.register_blueprint(notifications_bp, url_prefix='/notifications')
     app.register_blueprint(user_settings_bp, url_prefix='/user_settings')
     
-
 
 app = create_app(DevelopmentConfig())
 

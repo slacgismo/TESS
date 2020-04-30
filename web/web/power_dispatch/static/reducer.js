@@ -12,6 +12,6 @@ const initialCapacityState = {}
 export default function capacity(state = initialCapacityState, action) {
     switch (action.type) {        
         default:
-            return state
+            return state;
     }
 }

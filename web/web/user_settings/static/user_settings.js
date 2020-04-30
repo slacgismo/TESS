@@ -17,7 +17,7 @@ class UserSettings extends React.Component {
     }
 }
 
-const ConnectedUserSettings = connect(state => ({}))(UserSettings)
+const ConnectedUserSettings = connect(state => ({}))(UserSettings);
 
 const userSettingsElement = (
     <ConnectedComponentWrapper isVisible={true}>
