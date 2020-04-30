@@ -1,3 +1,6 @@
 body {
     margin: 0;
 }
+.top-app-bar {
+    background-color: #404040 !important ;
+}

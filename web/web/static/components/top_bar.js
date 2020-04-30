@@ -18,6 +18,7 @@ class TopBar extends React.Component {
         return (
             <React.Fragment>
                 <SimpleTopAppBar
+                    className="top-app-bar"
                     title="TESS"
                     navigationIcon={true}
                     onNav={this.toggleNavigationDrawer}

@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import ConnectedComponentWrapper from '../../static/base';
 
+import { Chart } from "react-google-charts";
+
 import * as action from './actions';
 
 class CostRevenue extends React.Component {
@@ -12,7 +14,15 @@ class CostRevenue extends React.Component {
 
     render() {
         return (
-            <div>CostRevenue Page</div>
+            <div className="">
+                <Chart
+                chartType="ScatterChart"
+                data={[["Age", "Weight"], [4, 5.5], [8, 12]]}
+                width="100%"
+                height="400px"
+                legendToggle
+                />
+            </div>
         );
     }
 }
