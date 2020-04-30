@@ -7,7 +7,15 @@ module.exports = {
     },
     entry: {
         main: "./static/base.js",
-        auth: "./auth/static/auth.js"
+        auth: "./auth/static/auth.js",
+        alerts: "./alerts/static/alerts.js",
+        constraints: "./constraints/static/constraints.js",
+        cost_revenue: "./cost_revenue/static/cost_revenue.js",
+        markets: "./markets/static/markets.js",
+        notifications: "./notifications/static/notifications.js",
+        user_settings: "./user_settings/static/user_settings.js",
+        storage: "./power_dispatch/static/storage.js",
+        capacity: "./power_dispatch/static/capacity.js"
     },
     output: {
         path: __dirname + '/static/bundles',

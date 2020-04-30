@@ -1,6 +1,6 @@
 const initialState = {
     isDrawerOpen: true,
-    selectedMenuName: ""
+    selectedMenuName: "power-dispatch"
 }
 
 export default function drawerNavigationMenu(state = initialState, action) {
