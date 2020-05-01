@@ -6,7 +6,7 @@ from web.models.utility import Utility, UtilitySchema
 @app.route('/api/v1/utilities', methods=['GET'])
 def get_utilities():
     """
-    Retrieve all utility objecgts
+    Retrieve all utility objects
     """
     arw = ApiResponseWrapper()
 
