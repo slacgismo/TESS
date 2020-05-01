@@ -1,3 +1,21 @@
 body {
     margin: 0;
 }
+.top-app-bar {
+    background-color: #404040 !important;
+}
+
+/* COST REVENUE STYLES */
+.cost-revenue-main-content-container {
+    padding: 50px 20px;
+}
+.chart-row-container {
+    margin: 0 auto;
+    text-align: center;
+}
+.chart-container {
+    display: inline-block;
+}
+.chart-divider {
+    margin: 0 35px;
+}

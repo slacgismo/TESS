@@ -6,7 +6,7 @@ module.exports = {
         ignored: /node_modules/
     },
     entry: {
-        main: "./static/base.js",
+        main: "./static/js/base.js",
         auth: "./auth/static/auth.js",
         alerts: "./alerts/static/alerts.js",
         constraints: "./constraints/static/constraints.js",
@@ -50,7 +50,7 @@ module.exports = {
                     path.resolve('./node_modules/@material')
                 ],
                 use: ['style-loader', 'css-loader']
-            }   
+            }
         ]
     },
     plugins: [

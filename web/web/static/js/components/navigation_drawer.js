@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { List, SimpleListItem } from '@rmwc/list';
 import { Drawer, DrawerContent } from '@rmwc/drawer';
-import { selectMenuOption, toggleNavigationDrawer } from '../../actions';
+import { selectMenuOption, toggleNavigationDrawer } from '../actions';
 
 import '@rmwc/list/styles';
 import '@rmwc/drawer/styles';
