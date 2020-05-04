@@ -72,7 +72,10 @@ class House:
 	def bid(self,dt_sim_time,market):
 		time_delta = 12*24
 		df_prices_lem = myfct.get_values_td('clearing_pq', begin=(dt_sim_time - pandas.Timedelta(minutes=time_delta)), end=dt_sim_time)
-		if len(df_prices_lem) > 0:
+		if len(df_prices_lem) == 1:
+			P_exp = df_prices_lem['p_cleared'].mean()
+			P_dev = 1.
+		elif len(df_prices_lem) > 1:
 			P_exp = df_prices_lem['p_cleared'].mean()
 			P_dev = df_prices_lem['p_cleared'].var()
 		else:
@@ -83,8 +86,10 @@ class House:
 
 	def determine_dispatch(self,dt_sim_time):
 		#HH reads price from market DB
-		p_lem = myfct.get_values_td('clearing_pq', begin=dt_sim_time, end=dt_sim_time)['p_cleared'].iloc[0]
-		self.HVAC.dispatch(p_lem)
+		df = myfct.get_values_td('clearing_pq', begin=dt_sim_time, end=dt_sim_time)
+		p_lem = df['p_cleared'].iloc[0]
+		alpha = df['tie_break'].iloc[0]
+		self.HVAC.dispatch(p_lem,alpha)
 
 class HVAC:
 	def __init__(self,name,T_air=0.0,mode='OFF',k=0.0,T_max=None,cooling_setpoint=None,cooling_demand=None,T_min=None,heating_setpoint=None,heating_demand=None):
@@ -144,17 +149,24 @@ class HVAC:
 			m = 0
 			Q_bid = 0.0 
 		P_bid = P_exp - 3*np.sign(m)*P_dev*(self.T_air - self.T_des)/abs(T_ref - self.T_des)
+		self.P_bid = P_bid
+		self.Q_bid = Q_bid
 
 		#write P_bid, Q_bid to market DB
 		if (Q_bid > 0.0) and not (self.mode == 'OFF'):
 			timestamp_arrival = market.send_demand_bid(dt_sim_time, float(P_bid), float(Q_bid), 'HVAC_'+self.name) #Feedback: timestamp of arrival #C determined by market_operator
 		return
 
-	def dispatch(self,p_lem):
-		if (self.Q_bid > 0.0) and (self.P_bid >= p_lem):
+	def dispatch(self,p_lem,alpha):
+		if (self.Q_bid > 0.0) and (self.P_bid > p_lem):
+			gridlabd.set_value(self.name,'system_mode',self.mode)
+		elif (self.Q_bid > 0.0) and (self.P_bid == p_lem):
+			print('This HVAC is marginal; no partial implementation yet: '+str(alpha))
 			gridlabd.set_value(self.name,'system_mode',self.mode)
 		else:
 			gridlabd.set_value(self.name,'system_mode','OFF')
+		self.P_bid = 0.0
+		self.Q_bid = 0.0
 
 
 

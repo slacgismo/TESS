@@ -72,6 +72,7 @@ class Market :
         self.S_awarded = [] #awarded supply bids
         if surplusControl is not None:
             self.surplusControl = surplusControl
+        self.alpha = 1.0
 
     # Name a market
     def rename(self,name='') :
@@ -132,9 +133,10 @@ class Market :
         self.clear()
         Pd = self.Pd # cleared demand price
         Qd = self.Qd #in kW
+        alpha = 1.0 #self.alpha #partial clearing/tie break
 
         parameters = '(timedate, operating_mode, capacity, unresp_load, p_cleared, q_cleared, tie_break)'
-        myfct.set_values('clearing_pq', parameters, (dt_sim_time, 'normal', float(C), 0.0, float(Pd), float(Qd), 1.0))
+        myfct.set_values('clearing_pq', parameters, (dt_sim_time, 'normal', float(C), 0.0, float(Pd), float(Qd), float(alpha)))
         return 
 
     # Returns bid position in S array, 'message' if error

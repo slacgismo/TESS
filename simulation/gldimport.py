@@ -72,7 +72,7 @@ def get_houseobjects(house_name,time):
 
 def update_house_state(house_name,dt_sim_time):
 	#Get information from physical representation
-	house_obj = gridlabd.get_object(house_name) #GUSTAVO: API implementation
+	house_obj = gridlabd.get_object(house_name)
 
 	#Determine principal mode
 	#DAVE: this is a heuristic
@@ -81,10 +81,11 @@ def update_house_state(house_name,dt_sim_time):
 		mode = 'COOL'
 	else:
 		mode = 'HEAT'
+	actual_mode = float(house_obj['system_mode'])
 
 	#Save in long-term memory (in the db) - accessible for market code
 	parameter_string = '(timedate, mode, T_air, q_heat, q_cool)' #timedate TIMESTAMP PRIMARY KEY, 
-	value_tuple = (dt_sim_time, mode, T_air, float(house_obj['heating_demand']),float(house_obj['cooling_demand']),)
+	value_tuple = (dt_sim_time, mode, actual_mode, T_air, float(house_obj['heating_demand']),float(house_obj['cooling_demand']),)
 	myfct.set_values(house_name+'_state_in', parameter_string, value_tuple)
 	return
 
@@ -105,6 +106,7 @@ def get_slackload(dt_sim_time): #GUSTAVO: this information comes from HCE system
 ###############
 
 #This should be coming from HCE's system or other real-time portal
+
 def get_WSprice(dt_sim_time):
 	df_WS = pandas.read_csv('glm_generation_'+city+'/'+market_data,parse_dates=[-1],index_col=[0])
 	df_WS = pandas.DataFrame(index=pandas.to_datetime(df_WS.index.astype(str)),columns=df_WS.columns,data=df_WS.values.astype(float))

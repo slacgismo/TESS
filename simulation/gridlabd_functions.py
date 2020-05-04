@@ -147,16 +147,12 @@ def on_precommit(t):
 		lem.process_bids(dt_sim_time)
 		lem.clear_lem(dt_sim_time)
 
-		#Houses determine if they should bid
-		import pdb; pdb.set_trace()
-
 		############
 		#Get external information and information through APIs
 		############
 
 		#HHs determine dispatch based on price
 		for house in houses:
-			import pdb; pdb.set_trace()
 			house.determine_dispatch(dt_sim_time)
 
 		lem.reset()

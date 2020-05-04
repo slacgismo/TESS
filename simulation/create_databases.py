@@ -12,21 +12,21 @@ mydb, mycursor = mysql_functions.connect()
 
 mycursor.execute('SET FOREIGN_KEY_CHECKS = 0')
 
-# for house_no in range(1,7):
-#     table = 'house_'+str(house_no)+'_'+'state_in'
-#     sql = "DROP TABLE "+table #not needed
-#     try:
-#         mycursor.execute(sql) 
-#         print(sql)
-#     except:
-#         print(table+' does not exist')
+for house_no in range(1,7):
+    table = 'house_'+str(house_no)+'_'+'state_in'
+    sql = "DROP TABLE "+table #not needed
+    try:
+        mycursor.execute(sql) 
+        print(sql)
+    except:
+        print(table+' does not exist')
 
-sql = "DROP TABLE system_load" #not needed
-try:
-    mycursor.execute(sql) 
-    print(sql)
-except:
-    print(table+' does not exist')
+# sql = "DROP TABLE system_load" #not needed
+# try:
+#     mycursor.execute(sql) 
+#     print(sql)
+# except:
+#     print(table+' does not exist')
 
 #consumers: one DB per house
 for h in range(1,no_houses+1):
@@ -41,7 +41,7 @@ for h in range(1,no_houses+1):
     #Time-dependent state variables: begin of interval
     table_name = 'house_'+str(h)+'_state_in'
     try:
-        mycursor.execute('CREATE TABLE '+table_name+' (timedate TIMESTAMP PRIMARY KEY, mode VARCHAR(255), T_air FLOAT, q_heat FLOAT, q_cool FLOAT)')
+        mycursor.execute('CREATE TABLE '+table_name+' (timedate TIMESTAMP PRIMARY KEY, mode VARCHAR(255), actual_mode VARCHAR(255), T_air FLOAT, q_heat FLOAT, q_cool FLOAT)')
     except Exception as e:
         print('11')
         print('Error: ', e)
