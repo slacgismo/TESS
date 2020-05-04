@@ -24,8 +24,6 @@ import mysql_functions as myfct
 from HH_global import flexible_houses, C, p_max, interval, prec, start_time_str
 
 def create_agent_house(house_name):
-	df_house_settings = myfct.get_values_td(house_name+'_settings')
-
 	#Create agent
 	house = House(house_name)
 
@@ -39,6 +37,16 @@ def create_agent_house(house_name):
 	hvac.T_des = (df_house_settings['heating_setpoint'].iloc[-1] + df_house_settings['cooling_setpoint'].iloc[-1])/2. #Default
 	house.HVAC = hvac
 	#Other variables are related to continuously changing state and updated by update state: T_air, mode, cooling_demand, heating_demand
+
+	#Create battery if exists
+	battery_name = 'Battery_'+house_name[5:]
+	try:
+		df_battery_settings = myfct.get_values_td(battery_name + '_settings')
+	except:
+		df_battery_settings = pd.DataFrame()
+	for i in df_battery_settings.index: #if multiple batteries
+		battery = Battery(battery_name+'_'+str(i))
+
 
 	return house
 
@@ -168,6 +176,7 @@ class HVAC:
 		self.P_bid = 0.0
 		self.Q_bid = 0.0
 
+class Battery:
 
 
 

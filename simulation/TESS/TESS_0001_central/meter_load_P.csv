@@ -1,0 +1,9 @@
+# file...... TESS/TESS_0001/meter_load_P.csv
+# date...... Sat Apr  4 03:10:44 2020
+# user...... (null)
+# host...... (null)
+# group..... class=triplex_meter
+# property.. measured_real_power
+# limit..... 0
+# interval.. 60
+# timestamp,meter_1,meter_2,meter_3,meter_4,meter_5,meter_6

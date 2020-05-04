@@ -13,7 +13,7 @@ mydb, mycursor = mysql_functions.connect()
 mycursor.execute('SET FOREIGN_KEY_CHECKS = 0')
 
 for house_no in range(1,7):
-    table = 'house_'+str(house_no)+'_'+'state_in'
+    table = 'battery_'+str(house_no)+'_'+'settings'
     sql = "DROP TABLE "+table #not needed
     try:
         mycursor.execute(sql) 
@@ -28,7 +28,7 @@ for house_no in range(1,7):
 # except:
 #     print(table+' does not exist')
 
-#consumers: one DB per house
+#consumers: one DB per house and appliance
 for h in range(1,no_houses+1):
     #Settings
     table_name = 'house_'+str(h)+'_settings'
@@ -54,6 +54,29 @@ for h in range(1,no_houses+1):
         print('11')
         print('Error: ', e)
 
+#consumers: one DB per house
+for h in range(1,no_houses+1):
+    #Settings
+    table_name = 'battery_'+str(h)+'_settings'
+    try:
+        mycursor.execute('CREATE TABLE '+table_name+' (timedate TIMESTAMP PRIMARY KEY, SOC_min FLOAT, SOC_max FLOAT, i_max FLOAT, u_max FLOAT, efficiency FLOAT, k FLOAT)')
+    except Exception as e:
+        print('11')
+        print('Error: ', e)
+    #Time-dependent state variables: begin of interval
+    table_name = 'battery_'+str(h)+'_state_in'
+    try:
+        mycursor.execute('CREATE TABLE '+table_name+' (timedate TIMESTAMP PRIMARY KEY, SOC FLOAT, soc_rel FLOAT)')
+    except Exception as e:
+        print('11')
+        print('Error: ', e)
+    #Time-dependent state variables: end of interval
+    table_name = 'battery_'+str(h)+'_state_out'
+    try:
+        mycursor.execute('CREATE TABLE '+table_name+' (timedate TIMESTAMP PRIMARY KEY, p_demand FLOAT, p_supply FLOAT, u_t FLOAT)')
+    except Exception as e:
+        print('11')
+        print('Error: ', e)
 
 
 #WS supplier

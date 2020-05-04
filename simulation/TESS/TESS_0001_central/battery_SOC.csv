@@ -1,0 +1,9 @@
+# file...... TESS/TESS_0001/battery_SOC.csv
+# date...... Sat Apr  4 03:10:44 2020
+# user...... (null)
+# host...... (null)
+# group..... class=battery
+# property.. state_of_charge
+# limit..... 0
+# interval.. 60
+# timestamp,EV_1,Battery_1,EV_2,Battery_2,EV_3,Battery_3,EV_4,Battery_4,EV_5,Battery_5,EV_6,Battery_6

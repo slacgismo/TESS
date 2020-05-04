@@ -1,0 +1,10 @@
+# file...... TESS/TESS_0001/load_node_149.csv
+# date...... Sat Apr  4 03:10:44 2020
+# user...... (null)
+# host...... (null)
+# target.... meter 7
+# trigger... (none)
+# interval.. 60
+# limit..... 0
+# timestamp,measured_real_power, measured_reactive_power
+# end of tape

@@ -1,0 +1,9 @@
+# file...... TESS/TESS_0001/hvac_load_all.csv
+# date...... Sat Apr  4 03:10:44 2020
+# user...... (null)
+# host...... (null)
+# group..... class=house
+# property.. hvac_load
+# limit..... 0
+# interval.. 60
+# timestamp,house_1,house_2,house_3,house_4,house_5,house_6

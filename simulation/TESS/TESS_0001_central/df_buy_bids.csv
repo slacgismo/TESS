@@ -1,0 +1,5 @@
+,timestamp,appliance_name,bid_price,bid_quantity
+0,2016-07-02,Battery_1,14.14,3.9
+1,2016-07-02,Battery_2,14.14,3.9
+2,2016-07-02,EV_1,19.437669799999995,5.508
+3,2016-07-02,unresponsive_loads,100.0,0.0

@@ -68,6 +68,24 @@ def get_houseobjects(house_name,time):
 
 	return
 
+def get_batteries(house_name,time):
+	battery_name = 'Battery'+house_name[5:]
+	battery_obj = gridlabd.get_object(battery_name)
+
+	#Read out settings
+	import pdb; pdb.set_trace()
+	SOC_max = float(battery_obj['E_Max'])/1000. #kWh
+	SOC_min = 0.2*SOC_max #could be part of user settings
+	i_max = float(battery_obj['I_Max'].split('+')[1])
+	u_max = float(battery_obj['rated_power'])/1000. #kVA
+	efficiency = float(battery_obj['base_efficiency'])
+	k = float(battery_obj['k'])
+
+	#Save in long-term memory (in the db) - accessible for market code
+	parameter_string = '(timedate, SOC_min, SOC_max, i_max, u_max, efficiency, k)'
+	value_tuple = (time, SOC_min, SOC_max, i_max, u_max, efficiency, k,)
+	myfct.set_values(battery_name+'_settings', parameter_string, value_tuple)
+	
 #Get house state and write to db
 
 def update_house_state(house_name,dt_sim_time):
@@ -81,10 +99,10 @@ def update_house_state(house_name,dt_sim_time):
 		mode = 'COOL'
 	else:
 		mode = 'HEAT'
-	actual_mode = float(house_obj['system_mode'])
+	actual_mode = house_obj['system_mode']
 
 	#Save in long-term memory (in the db) - accessible for market code
-	parameter_string = '(timedate, mode, T_air, q_heat, q_cool)' #timedate TIMESTAMP PRIMARY KEY, 
+	parameter_string = '(timedate, mode, actual_mode, T_air, q_heat, q_cool)' #timedate TIMESTAMP PRIMARY KEY, 
 	value_tuple = (dt_sim_time, mode, actual_mode, T_air, float(house_obj['heating_demand']),float(house_obj['cooling_demand']),)
 	myfct.set_values(house_name+'_state_in', parameter_string, value_tuple)
 	return

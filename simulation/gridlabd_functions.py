@@ -33,6 +33,9 @@ from HH_global import FIXED_TARIFF, include_SO, EV_data, start_time_str
 table_list = ['house_1_settings','house_1_state_in','house_1_state_out','house_2_settings','house_2_state_in','house_2_state_out']
 table_list += ['house_3_settings','house_3_state_in','house_3_state_out','house_4_settings','house_4_state_in','house_4_state_out']
 table_list += ['house_5_settings','house_5_state_in','house_5_state_out','house_6_settings','house_6_state_in','house_6_state_out']
+table_list += ['battery_1_settings','battery_1_state_in','battery_1_state_out','battery_2_settings','battery_2_state_in','battery_2_state_out']
+table_list += ['battery_3_settings','battery_3_state_in','battery_3_state_out','battery_4_settings','battery_4_state_in','battery_4_state_out']
+table_list += ['battery_5_settings','battery_5_state_in','battery_5_state_out','battery_6_settings','battery_6_state_in','battery_6_state_out']
 table_list += ['system_load','WS_supply','supply_bids','buy_bids','clearing_pq']
 
 ########
@@ -61,6 +64,7 @@ def on_init(t):
 	houses_names = gldimport.find_objects('class=house')
 	for house_name in houses_names:
 		gldimport.get_houseobjects(house_name,start_time_str)
+		gldimport.get_batteries(house_name,start_time_str)
 
 	#MARKET: Create house agents
 	global houses;
@@ -118,6 +122,7 @@ def on_precommit(t):
 		for house in houses:
 			#gldimport.update_settings() #If user changes settings in API, this should be called
 			gldimport.update_house_state(house.name,dt_sim_time)
+			gldimport.update_battery_state(house.battery,dt_sim_time)
 		
 		global retailer;
 		gldimport.get_slackload(dt_sim_time)

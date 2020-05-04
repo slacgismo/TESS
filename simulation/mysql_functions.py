@@ -9,7 +9,7 @@ import pandas
 global table_list
 from HH_global import ip_address
 
-table_list = ['buy_bids','supply_bids','awarded_bids']
+#table_list = ['buy_bids','supply_bids','awarded_bids']
 
 #for connections outside of this file
 def connect():
