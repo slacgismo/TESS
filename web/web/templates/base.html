@@ -1,8 +1,13 @@
 <!doctype html>
-<title>TESS</title>
-{% if name %}
-  <h1>Hello {{ name }}!</h1>
-{% else %}
-  <h1>Hello, Worldzzzzz!</h1>
-{% endif %}
-
+<html>
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    {% block head %}    
+    <title>TESS - {% block title %}{% endblock %}</title>
+    {% endblock %}
+  </head>
+  <body>
+    <div id="master-container">{% block content %}{% endblock %}</div>
+  </body>
+</html>

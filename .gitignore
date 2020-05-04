@@ -608,9 +608,9 @@ lint/tmp/
 
 ### VisualStudioCode ###
 .vscode/*
-!.vscode/settings.json
+.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
+.vscode/launch.json
 !.vscode/extensions.json
 
 ### VisualStudioCode Patch ###
@@ -626,5 +626,9 @@ models/secrets.sh
 
 selftest/
 
+
 simulation/TESS/
 simulation/__pycache__/
+
+# ignoring the bundled file since regenerating this locally will change it everytime
+web/web/static/bundles/*
