@@ -1,0 +1,56 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7
+
+    steps:
+      - checkout
+      - run:
+          name: Diff Changes
+          command: echo "We'll eventually figure out what changes took place and only build/deploy those"
+  
+  selftest:
+    docker:
+      - image: circleci/python:3.7
+
+    steps:
+      - checkout
+      - run:
+          name: Selftests
+          command: |
+            pip3 install -q pandas matplotlib # TODO add to requirements
+            DIRLIST=agents
+            ROOTDIR=${PWD}
+            mkdir selftests
+            cd selftests
+            for DIR in ${DIRLIST} ; do
+              (mkdir ${DIR}; cd ${DIR} ; python3 ${ROOTDIR}/${DIR}/${DIR}.py)
+            done
+
+      - store_artifacts:
+          path: selftests/
+          destination: selftests/
+
+  deploy:
+    docker:
+      - image: circleci/python:3.7
+
+    steps:
+      - run: |
+          echo "We'll figure out deploy steps eventually"
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - selftest:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - selftest
+          filters:
+            branches:
+              only: master
