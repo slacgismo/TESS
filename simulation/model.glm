@@ -105,7 +105,7 @@ object player {
 
 object meter {
 	name node_149;
-	nominal_voltage 2401 V;
+	nominal_voltage 24.941kV;
 	phases ABCN;
 	bustype SWING;
 	object recorder {
@@ -118,7 +118,7 @@ object meter {
 
 object meter {
 	name feeder_node;
-	nominal_voltage 2401 V;
+	nominal_voltage 24.941kV;
 	phases ABCN;
 }
 
@@ -201,25 +201,25 @@ object line_spacing {
 }
 object meter {
 	name main_node;
-	nominal_voltage 2401 V;
+	nominal_voltage 24.941kV;
 	phases ABCN;
 }
 object meter {
 	name main_node_A;
 	parent main_node;
-	nominal_voltage 2401 V;
+	nominal_voltage 24.941kV;
 	phases AN;
 }
 object meter {
 	name main_node_B;
 	parent main_node;
-	nominal_voltage 2401 V;
+	nominal_voltage 24.941kV;
 	phases BN;
 }
 object meter {
 	name main_node_C;
 	parent main_node;
-	nominal_voltage 2401 V;
+	nominal_voltage 24.941kV;
 	phases CN;
 }
 
@@ -228,7 +228,7 @@ object transformer_configuration {
 	connect_type SINGLE_PHASE_CENTER_TAPPED;
 	install_type POLETOP;
 	powerA_rating 1000;
-	primary_voltage 2401;
+	primary_voltage 24.941kV;
 	secondary_voltage 120.000 V;
 	impedance 0.006+0.0136j;
 }
@@ -237,7 +237,7 @@ object transformer_configuration {
 	connect_type SINGLE_PHASE_CENTER_TAPPED;
 	install_type POLETOP;
 	powerB_rating 1000;
-	primary_voltage 2401 V;
+	primary_voltage 24.941kV;
 	secondary_voltage 120.000 V;
 	impedance 0.006+0.0136j;
 }
@@ -246,7 +246,7 @@ object transformer_configuration {
 	connect_type SINGLE_PHASE_CENTER_TAPPED;
 	install_type POLETOP;
 	powerC_rating 1000;
-	primary_voltage 2401 V;
+	primary_voltage 24.941kV;
 	secondary_voltage 120.000 V;
 	impedance 0.006+0.0136j;
 }

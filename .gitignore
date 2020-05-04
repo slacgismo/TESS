@@ -1,4 +1,3 @@
-
 # Created by https://www.gitignore.io/api/node,macos,python,django,pycharm,reactnative,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=node,macos,python,django,pycharm,reactnative,visualstudiocode
 
@@ -626,6 +625,12 @@ lint/tmp/
 models/secrets.sh
 
 selftest/
+
+# ignoring the bundled file since regenerating this locally will change it everytime
+web/web/static/bundles/*
+
+simulation/TESS/
+simulation/__pycache__/
 
 # ignoring the bundled file since regenerating this locally will change it everytime
 web/web/static/bundles/*
