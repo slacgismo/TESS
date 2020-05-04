@@ -631,6 +631,7 @@ web/web/static/bundles/*
 
 simulation/TESS/
 simulation/__pycache__/
+simulation/output
 
 # ignoring the bundled file since regenerating this locally will change it everytime
 web/web/static/bundles/*
