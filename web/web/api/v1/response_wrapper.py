@@ -44,11 +44,12 @@ class ApiResponseWrapper(object):
             }
         }
     
-    def set_errors(self, errors):
+    def add_errors(self, errors):
         """
-        Currently overwrites but should just concat the list...?
+        Allow users to append a value or an array of values
+        No validation for None at this time...
         """
-        self.response["errors"] = errors
+        self.response["errors"] = self.response["errors"] + (errors if isinstance(errors, list) else [errors])
 
     def to_json(self, data=[], status_code=200, headers=None):        
         if len(self.response["errors"]) > 0:
