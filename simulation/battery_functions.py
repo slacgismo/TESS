@@ -14,11 +14,109 @@ import numpy as np
 import pandas
 from dateutil import parser
 from datetime import timedelta
+import mysql_functions as myfct
 
 """NEW FUNCTIONS / MYSQL DATABASE AVAILABLE"""
 
 #HVAC
 from HH_global import flexible_houses, C, p_max, interval, prec, which_price, M, results_folder
+
+class Battery:
+      def __init__(self,name,soc_rel=0.0,soc_des=0.5,soc_min=0.0,SOC_max=0.0,i_max=None,u_max=None,efficiency=None,k=None):
+            self.name = name
+            self.soc_rel = soc_rel
+            self.soc_des = soc_des
+            self.SOC = soc_rel*SOC_max
+            self.soc_min = soc_min
+            self.SOC_max = SOC_max
+            self.i_max = i_max
+            self.u_max = u_max
+            self.efficiency = efficiency
+            self.k = k
+            #Last bids
+            self.P_sell_bid = 100000.0
+            self.P_buy_bid = -100000.0
+            self.Q_sell_bid = 0.0
+            self.Q_buy_bid = 0.0
+
+      def update_state(self,df_batt_state_in):
+            self.soc_rel = df_batt_state_in['soc_rel'].iloc[0]
+            self.SOC = self.soc_rel*self.SOC_max
+
+      def bid(self,dt_sim_time,market,P_exp,P_dev):
+            #Sell bid
+            if self.soc_rel <= self.soc_des:
+                  soc_ref = self.soc_min
+            else:
+                  soc_ref = 1.0
+            p_buy_bid = P_exp + 3*self.k*P_dev*(self.soc_rel - self.soc_des)/abs(soc_ref - self.soc_des)
+
+            #Buy bid
+            p_oc = P_exp + 3*self.k+P_dev*(self.soc_rel*self.SOC_max - self.soc_des*self.SOC_max + self.u_max*(interval/360.))/abs(soc_ref*self.SOC_max - self.soc_des*self.SOC_max + self.u_max*(interval/360.))
+            cap_cost = 500 #USD/KWh for Tesla powerwall
+            p_sell_bid = p_oc/self.efficiency + cap_cost/(self.soc_des + 0.4)**2
+
+            self.P_sell_bid = p_sell_bid
+            u_res = (self.soc_rel - self.soc_min)*self.SOC_max/(interval/360.)
+            self.Q_sell_bid = min(self.u_max,u_res)
+
+            self.P_buy_bid = p_buy_bid
+            u_res = (1. - self.soc_rel)*self.SOC_max/(interval/360.)
+            self.Q_buy_bid = min(self.u_max,u_res)
+
+            #write P_bid, Q_bid to market DB
+            timestamp_arrival_buy = market.send_demand_bid(dt_sim_time, float(p_buy_bid), float(self.Q_buy_bid), self.name) #Feedback: timestamp of arrival #C determined by market_operator
+            timestamp_arrival_sell = market.send_supply_bid(dt_sim_time, float(p_sell_bid), float(self.Q_sell_bid), self.name)
+            return
+
+      def dispatch(self,dt_sim_time,p_lem,alpha):
+            #import pdb; pdb.set_trace()
+            inverter = 'Bat_inverter_'+self.name.split('_')[-1]
+            if (self.Q_buy_bid > 0.0) and (self.P_buy_bid > p_lem):
+                  gridlabd.set_value(inverter,'P_Out',str(-self.Q_buy_bid*1000.))
+            elif (self.Q_buy_bid > 0.0) and (self.P_buy_bid == p_lem):
+                  print('This HVAC is marginal; no partial implementation yet: '+str(alpha))
+                  gridlabd.set_value(inverter,'P_Out',str(-self.Q_buy_bid*1000.))
+            elif (self.Q_sell_bid > 0.0) and (self.P_sell_bid < p_lem):
+                  gridlabd.set_value(inverter,'P_Out',str(self.Q_sell_bid*1000.))
+            elif (self.Q_sell_bid > 0.0) and (self.P_sell_bid == p_lem):
+                  print('This HVAC is marginal; no partial implementation yet: '+str(alpha))
+                  gridlabd.set_value(inverter,'P_Out',str(self.Q_sell_bid*1000.))
+            else:
+                  gridlabd.set_value(inverter,'P_Out',str(0.0))
+            myfct.set_values(self.name+'_state_out', '(timedate, p_demand, p_supply, q_demand, q_supply)', (dt_sim_time, str(self.P_buy_bid), str(self.P_sell_bid), str(self.Q_buy_bid), str(self.Q_sell_bid)))
+            self.P_sell_bid = 100000.0
+            self.P_buy_bid = -100000.0
+            self.Q_sell_bid = 0.0
+            self.Q_buy_bid = 0.0
+
+def get_battery(house,house_name):
+      battery_name = 'Battery'+house_name[5:]
+      #import pdb; pdb.set_trace()
+      try:
+            df_battery_settings = myfct.get_values_td(battery_name + '_settings')
+      except:
+            df_battery_settings = pandas.DataFrame()
+      #batteries = []
+      #for i in df_battery_settings.index: #if multiple batteries
+      i = 0
+      if len(df_battery_settings) > 0:
+            battery = Battery(battery_name)
+            battery.name = battery_name
+            #import pdb; pdb.set_trace()
+            battery.SOC_min = df_battery_settings['soc_min'].iloc[i]
+            battery.SOC_max = df_battery_settings['SOC_max'].iloc[i]
+            battery.i_max = df_battery_settings['i_max'].iloc[i]
+            battery.u_max = df_battery_settings['u_max'].iloc[i]
+            battery.efficiency = df_battery_settings['efficiency'].iloc[i]
+            battery.k = df_battery_settings['k'].iloc[i]
+            #batteries += [battery]
+            house.battery = battery
+      return house
+
+
+
+########### OLD - powernet ##############
 
 def get_settings_batteries(batterylist,interval,mysql=False):
       dt = parser.parse(gridlabd.get_global('clock')) #Better: getstart time!

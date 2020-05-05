@@ -14578,12 +14578,12 @@
 		"randomseed" : {
 			"type" : "int32",
 			"access" : "PUBLIC",
-			"value" : "65516486"
+			"value" : "116485910"
 		},
 		"randomstate" : {
 			"type" : "int32",
 			"access" : "PUBLIC",
-			"value" : "65516486"
+			"value" : "116485910"
 		},
 		"include" : {
 			"type" : "char1024",
@@ -18620,7 +18620,7 @@
 			"hvac_last_off": "2016-07-01 23:38:13 PDT",
 			"hvac_period_length": "29.2167 s",
 			"hvac_duty_cycle": "0.0895608",
-			"thermostat_control": "FULL",
+			"thermostat_control": "NONE",
 			"gas_enduses": "WATERHEATER|RANGE|DRYER",
 			"k": "2.10229",
 			"T_max": "72",
@@ -19863,7 +19863,7 @@
 			"hvac_last_off": "2016-07-01 23:50:08 PDT",
 			"hvac_period_length": "31.1 s",
 			"hvac_duty_cycle": "0.0894962",
-			"thermostat_control": "FULL",
+			"thermostat_control": "NONE",
 			"gas_enduses": "WATERHEATER|RANGE|DRYER",
 			"k": "3.84613",
 			"T_max": "72",
@@ -20904,7 +20904,7 @@
 			"thermostat_mode": "AUTO",
 			"system_type": "NONE",
 			"auxiliary_strategy": "DEADBAND",
-			"system_mode": "COOL",
+			"system_mode": "OFF",
 			"last_system_mode": "COOL",
 			"heating_system_type": "HEAT_PUMP",
 			"cooling_system_type": "HEAT_PUMP",
@@ -20955,7 +20955,7 @@
 			"hvac_last_off": "2016-07-01 23:25:30 PDT",
 			"hvac_period_length": "36.15 s",
 			"hvac_duty_cycle": "0.0899032",
-			"thermostat_control": "FULL",
+			"thermostat_control": "NONE",
 			"gas_enduses": "WATERHEATER|RANGE|DRYER",
 			"k": "2.12439",
 			"T_max": "72",
@@ -22198,7 +22198,7 @@
 			"hvac_last_off": "2016-07-01 23:48:36 PDT",
 			"hvac_period_length": "37.3167 s",
 			"hvac_duty_cycle": "0.0794998",
-			"thermostat_control": "FULL",
+			"thermostat_control": "NONE",
 			"gas_enduses": "WATERHEATER|RANGE|DRYER",
 			"k": "2.66974",
 			"T_max": "72",
@@ -23290,7 +23290,7 @@
 			"hvac_last_off": "2016-07-01 23:28:23 PDT",
 			"hvac_period_length": "36.0167 s",
 			"hvac_duty_cycle": "0.0916242",
-			"thermostat_control": "FULL",
+			"thermostat_control": "NONE",
 			"gas_enduses": "WATERHEATER|RANGE|DRYER",
 			"k": "3.02136",
 			"T_max": "72",

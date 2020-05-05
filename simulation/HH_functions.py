@@ -9,6 +9,8 @@ import gridlabd_functions
 #import mysql_functions
 #from HH_global import *
 
+import battery_functions as Bfct
+
 import datetime
 import numpy as np
 import pandas
@@ -26,6 +28,7 @@ from HH_global import flexible_houses, C, p_max, interval, prec, start_time_str
 def create_agent_house(house_name):
 	#Create agent
 	house = House(house_name)
+	df_house_settings = myfct.get_values_td(house_name + '_settings')
 
 	#Create HVAC
 	hvac = HVAC(house_name)
@@ -38,15 +41,8 @@ def create_agent_house(house_name):
 	house.HVAC = hvac
 	#Other variables are related to continuously changing state and updated by update state: T_air, mode, cooling_demand, heating_demand
 
-	#Create battery if exists
-	battery_name = 'Battery_'+house_name[5:]
-	try:
-		df_battery_settings = myfct.get_values_td(battery_name + '_settings')
-	except:
-		df_battery_settings = pd.DataFrame()
-	for i in df_battery_settings.index: #if multiple batteries
-		battery = Battery(battery_name+'_'+str(i))
-
+	#Create and assign battery object if exists
+	house = Bfct.get_battery(house,house_name)
 
 	return house
 
@@ -63,8 +59,10 @@ class House:
 
 	def update_state(self,dt_sim_time):
 		df_state_in = myfct.get_values_td(self.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
-		#Get state and Short-term Storage
 		self.HVAC.update_state(df_state_in)
+		if self.battery:
+			df_batt_state_in = myfct.get_values_td(self.battery.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
+			self.battery.update_state(df_batt_state_in)
 		return
 
 	#GUSTAVO: If the customer changes the settings through the App or at a device, that needs to be pushed here
@@ -90,6 +88,7 @@ class House:
 			P_exp = market.Pmax/2.
 			P_dev = 1.
 		self.HVAC.bid(dt_sim_time,market,P_exp,P_dev)
+		self.battery.bid(dt_sim_time,market,P_exp,P_dev)
 		return
 
 	def determine_dispatch(self,dt_sim_time):
@@ -97,7 +96,8 @@ class House:
 		df = myfct.get_values_td('clearing_pq', begin=dt_sim_time, end=dt_sim_time)
 		p_lem = df['p_cleared'].iloc[0]
 		alpha = df['tie_break'].iloc[0]
-		self.HVAC.dispatch(p_lem,alpha)
+		self.HVAC.dispatch(dt_sim_time,p_lem,alpha)
+		self.battery.dispatch(dt_sim_time,p_lem,alpha)
 
 class HVAC:
 	def __init__(self,name,T_air=0.0,mode='OFF',k=0.0,T_max=None,cooling_setpoint=None,cooling_demand=None,T_min=None,heating_setpoint=None,heating_demand=None):
@@ -165,26 +165,20 @@ class HVAC:
 			timestamp_arrival = market.send_demand_bid(dt_sim_time, float(P_bid), float(Q_bid), 'HVAC_'+self.name) #Feedback: timestamp of arrival #C determined by market_operator
 		return
 
-	def dispatch(self,p_lem,alpha):
+	def dispatch(self,dt_sim_time,p_lem,alpha):
 		if (self.Q_bid > 0.0) and (self.P_bid > p_lem):
 			gridlabd.set_value(self.name,'system_mode',self.mode)
+			operating_mode = self.mode
 		elif (self.Q_bid > 0.0) and (self.P_bid == p_lem):
 			print('This HVAC is marginal; no partial implementation yet: '+str(alpha))
 			gridlabd.set_value(self.name,'system_mode',self.mode)
+			operating_mode = self.mode
 		else:
 			gridlabd.set_value(self.name,'system_mode','OFF')
+			operating_mode = 'OFF'
+		myfct.set_values(self.name+'_state_out', '(timedate, operating_mode, p_HVAC)', (dt_sim_time, operating_mode, str(self.P_bid)))
 		self.P_bid = 0.0
 		self.Q_bid = 0.0
-
-class Battery:
-
-
-
-
-	
-
-
-
 
 
 def get_settings_houses(houselist,interval,mysql=False):

@@ -122,7 +122,8 @@ def on_precommit(t):
 		for house in houses:
 			#gldimport.update_settings() #If user changes settings in API, this should be called
 			gldimport.update_house_state(house.name,dt_sim_time)
-			gldimport.update_battery_state(house.battery,dt_sim_time)
+			if house.battery:
+				gldimport.update_battery_state(house.battery.name,dt_sim_time)
 		
 		global retailer;
 		gldimport.get_slackload(dt_sim_time)
@@ -134,8 +135,7 @@ def on_precommit(t):
 
 		#Get air temperature, determine mode
 		for house in houses:
-			#house.update_settings()
-			#HHfct.update_houseobjects(house_name,start_time_str)
+			#Reads in information and updates python objects (house + appliances)
 			house.update_state(dt_sim_time)
 
 		#Market Operator creates market for t

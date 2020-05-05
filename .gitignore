@@ -629,7 +629,9 @@ selftest/
 # ignoring the bundled file since regenerating this locally will change it everytime
 web/web/static/bundles/*
 
+# Simulation results
 simulation/TESS/
+simulation/TESS_mysql/
 simulation/__pycache__/
 simulation/output
 

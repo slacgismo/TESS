@@ -73,17 +73,17 @@ def get_batteries(house_name,time):
 	battery_obj = gridlabd.get_object(battery_name)
 
 	#Read out settings
-	import pdb; pdb.set_trace()
 	SOC_max = float(battery_obj['E_Max'])/1000. #kWh
-	SOC_min = 0.2*SOC_max #could be part of user settings
+	soc_min = 0.2 #could be part of user settings
+	soc_des = 0.5
 	i_max = float(battery_obj['I_Max'].split('+')[1])
 	u_max = float(battery_obj['rated_power'])/1000. #kVA
-	efficiency = float(battery_obj['base_efficiency'])
+	efficiency = float(battery_obj['round_trip_efficiency'])
 	k = float(battery_obj['k'])
 
 	#Save in long-term memory (in the db) - accessible for market code
-	parameter_string = '(timedate, SOC_min, SOC_max, i_max, u_max, efficiency, k)'
-	value_tuple = (time, SOC_min, SOC_max, i_max, u_max, efficiency, k,)
+	parameter_string = '(timedate, soc_des, soc_min, SOC_max, i_max, u_max, efficiency, k)'
+	value_tuple = (time, soc_des, soc_min, SOC_max, i_max, u_max, efficiency, k,)
 	myfct.set_values(battery_name+'_settings', parameter_string, value_tuple)
 	
 #Get house state and write to db
@@ -106,6 +106,15 @@ def update_house_state(house_name,dt_sim_time):
 	value_tuple = (dt_sim_time, mode, actual_mode, T_air, float(house_obj['heating_demand']),float(house_obj['cooling_demand']),)
 	myfct.set_values(house_name+'_state_in', parameter_string, value_tuple)
 	return
+
+def update_battery_state(battery_name,dt_sim_time):
+	#Get information from physical representation
+	batt_obj = gridlabd.get_object(battery_name)
+
+	#Save in long-term memory (in the db) - accessible for market code
+	parameter_string = '(timedate, soc_rel)' #timedate TIMESTAMP PRIMARY KEY, 
+	value_tuple = (dt_sim_time, float(batt_obj['state_of_charge']),)
+	myfct.set_values(battery_name+'_state_in', parameter_string, value_tuple)
 
 ###############
 # Market Operator
