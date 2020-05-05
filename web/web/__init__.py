@@ -52,3 +52,4 @@ app = create_app(DevelopmentConfig())
 
 
 import web.api.v1.api
+import web.api.v1.utility

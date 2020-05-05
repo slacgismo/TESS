@@ -1,3 +1,4 @@
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sqlalchemy.types import TIMESTAMP
 from web.database import (
     db,
@@ -19,3 +20,9 @@ class Utility(Model):
 
     def __repr__(self):
         return f'<Utility utility_id={self.utility_id} name={self.name}>'
+
+
+class UtilitySchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Utility
+        include_fk = True
