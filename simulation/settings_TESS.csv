@@ -1,0 +1,3 @@
+id,run,city,start_time,end_time,player_dir,tmy,month,slack_node,flexible_houses,PV_share,EV_share,Batt_share,line_capacity,market_data,EV_data,EV_speed,p_max,load_forecast,unresp_factor,fixed_tariff,interval,allocation_rule,delta,ref_price,price_intervals,which_price,include_SO,prec,M,Comment
+0,TESS_mysql,Austin,7/1/16 0:00,7/2/16 0:00,players_SanDiego_2015,722540TYA.tmy3,Jan,node_149,0,0.25,0.1,0.1,1250,Ercot_HBSouth.csv,None,slow,100,myopic,0,FALSE,300,by_award,3,historical,288,DA,FALSE,4,10000,base case
+1,TESS_mysql,Austin,7/1/16 0:00,7/2/16 0:00,players_SanDiego_2015,722540TYA.tmy3,Jan,node_149,0,0.25,0.1,0.1,1250,Ercot_HBSouth.csv,None,slow,100,myopic,0,FALSE,300,by_award,3,historical,288,DA,FALSE,4,10000,with market

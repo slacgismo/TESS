@@ -1,0 +1,7 @@
+,PV_name,house_name,inverter_name,rated_power,P_Out,p_sell,q_sell
+0,PV_1,GLD_1,PV_inverter_1,4.0,0.0,0.0,0.0
+1,PV_2,GLD_2,PV_inverter_2,4.0,0.0,0.0,0.0
+2,PV_3,GLD_3,PV_inverter_3,4.0,0.0,0.0,0.0
+3,PV_4,GLD_4,PV_inverter_4,4.0,0.0,0.0,0.0
+4,PV_5,GLD_5,PV_inverter_5,4.0,0.0,0.0,0.0
+5,PV_6,GLD_6,PV_inverter_6,4.0,0.0,0.0,0.0
