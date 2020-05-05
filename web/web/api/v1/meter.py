@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from marshmallow import ValidationError
 import dateutil.parser as parser
 
+from .response_wrapper import ApiResponseWrapper
 from .meter_api_schema import schema_data
 from web.models.meter import Meter, MeterSchema, MeterType
 from web.models.interval import Interval
@@ -15,6 +16,7 @@ from web.database import db
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import IntegrityError
 
+arw = ApiResponseWrapper()
 #for marshmallow
 meter_schema = MeterSchema()
 
@@ -114,32 +116,29 @@ def get_meter_schema():
 def update_meter(meter_id):
     '''Updates meter in database'''
 
+    modified_meter = request.get_json()
+
     try:
         Meter.query.filter_by(meter_id=meter_id).one()
     except (MultipleResultsFound,NoResultFound):
-        return {'Error': 'Not an existing meter id'}
+        arw.add_errors('No result found or multiple results found')
 
-    modified_meter = request.get_json()
-
-    #sets meter_type value equal to enum name
     modified_meter['meter_type'] = MeterType.check_value(modified_meter['meter_type'])
     if not modified_meter['meter_type']:
-        return {'Error': 'Not accepted value for meter type'}
+        arw.add_errors('Not an accepted value for meter type')
     
     try:
-       modified_meter = meter_schema.load(modified_meter, session=db.session)
-    except ValidationError as e:
-        return e.messages, 422
+        modified_meter = meter_schema.load(modified_meter, session=db.session)
+    except ValidationError:
+        arw.add_errors('Validation error')
     
-    #adds meter to database if it doesn't conflict with database setup, else throws error
     try:
         db.session.commit()
     except IntegrityError:
-        db.session.rollback()
-        return jsonify({'Error': 'Conflict commiting changes with database (pk or fk issue).'})
+        arw.add_errors('Integrity error')
 
-    #returns successful response code
-    return jsonify({'Success': 200})
+    results = meter_schema.dump(modified_meter, many=True)
+    return arw.to_json(results)
 
 
 #########################

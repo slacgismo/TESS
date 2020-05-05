@@ -54,10 +54,6 @@ def register_blueprints(app):
 
 app = create_app(DevelopmentConfig())
 
-<<<<<<< HEAD
-import web.api.v1.meter
-=======
 
-import web.api.v1.api
+import web.api.v1.meter
 import web.api.v1.utility
->>>>>>> origin
