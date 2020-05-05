@@ -29,6 +29,7 @@ class MeterType(enum.Enum):
         
         return False
 
+
 class Meter(Model):
     __tablename__ = 'meters'
 
@@ -51,23 +52,49 @@ class Meter(Model):
     #many-to-one meters per utility
     utility = relationship('Utility', backref=db.backref('meters'))
 
-    def get_interval_count(self, start= datetime.now() - timedelta(days=1), end = datetime.now()):
+    def get_interval_count(self, start, end):
         '''Takes in start and end ISO8601 times, 
             returns the interval count (integer) between start / end times, inclusively'''
         
-        #get the meter's intervals
         self_intervals = self.intervals
 
         selected_intervals = []
         
+        if start == None:
+            start = datetime.now() - timedelta(days=1)
+
+        if end == None:
+            end = datetime.now()
+
         for interval in self_intervals:
             if interval.start_time >= start and interval.end_time <= end:
                 selected_intervals.append(interval)
 
         return len(selected_intervals)
 
+    def get_rates(self):
+        '''Returns meter instance's rates as a set'''
+
+        rates = set()
+
+        for interval in self.intervals:
+            rates.add(interval.rate.description)
+        
+        return rates
+    
+    def get_all_intervals(self):
+        '''Returns all meter instances's intervals in a list'''
+        
+        intervals_list = []
+
+        for interval in self.intervals:
+            intervals_list.append(interval.interval_id)
+        
+        return intervals_list
+
     def __repr__(self):
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
+
 
 #marshmallow schema
 class MeterSchema(SQLAlchemyAutoSchema):

@@ -32,7 +32,7 @@ def get_meter_ids():
     meters = Meter.query.all()
     
     for row in meters:
-        meter_ids.append({'id': row.meter_id})
+        meter_ids.append({'meter_id': row.meter_id})
 
     return jsonify(meter_ids)
 
@@ -51,16 +51,24 @@ def show_meter_info(meter_id):
     except (MultipleResultsFound, NoResultFound):
         return {'Error': 'No results or multiple results found for meter.'}
 
-    #to store rate descriptions for json object
-    rates = []
-    #to store interval ids for interval_coverage 
-    interval_ids = []
+    interval_coverage = request.args.get('interval_coverage')
+    interval_count_start = request.args.get('interval_count_start')
+    interval_count_end = request.args.get('interval_count_end')
+    
+    if not interval_coverage:
+        interval_coverage = meter.get_all_intervals()
 
-    for interval in meter.intervals:
-        if interval.rate.description not in rates:
-            rates.append(interval.rate.description)
-        
-    interval_ids.append(interval.interval_id)
+    if interval_count_start:
+        try:
+            interval_count_start = parser.parse(interval_count_start)
+        except (TypeError, ValueError):
+            return {'Error': 'Not an accepted format for interval count start and/or interval count end'}
+    
+    if interval_count_end:
+        try:
+            interval_count_end = parser.parse(interval_count_end) 
+        except (TypeError, ValueError):
+            return {'Error': 'Not an accepted format for interval count start and/or interval count end'} 
 
     meter_data = [{'meter_data': {'uid': meter.meter_id,
                                   'utility_uid': meter.utility_id, 
@@ -76,9 +84,9 @@ def show_meter_info(meter_id):
                                   'channels': [channel.setting for channel in meter.channels], 
                                   'feeder': meter.feeder, 
                                   'substation': meter.substation, 
-                                  'rate': rates,
-                                  'interval_count': meter.get_interval_count(), 
-                                  'interval_coverage': Interval.get_interval_coverage(interval_ids), 
+                                  'rate': meter.get_rates(),
+                                  'interval_count': meter.get_interval_count(interval_count_start, interval_count_end), 
+                                  'interval_coverage': Interval.get_interval_coverage(interval_coverage), 
                                   'exports': 'NOT YET CREATED'}}] 
 
     return jsonify(meter_data)
@@ -108,23 +116,14 @@ def update_meter(meter_id):
     try:
         Meter.query.filter_by(meter_id=meter_id).one()
     except (MultipleResultsFound,NoResultFound):
-        return {'error': 'Not an existing meter id'}
+        return {'Error': 'Not an existing meter id'}
 
     modified_meter = request.get_json()
-
-    #keys required in json body
-    required_keys = ['meter_id', 'utility_id', 'service_location_id', 'feeder', 'substation', 'meter_type', 'is_active', 'is_archived']
-    
-    #checks for missing keys, else throws error if missing
-    for key in required_keys:
-        if key not in modified_meter:
-            message = 'Key Error - ' + key + ' is missing.'
-            return jsonify({'error': message})
 
     #sets meter_type value equal to enum name
     modified_meter['meter_type'] = MeterType.check_value(modified_meter['meter_type'])
     if not modified_meter['meter_type']:
-        return {'error': 'not accepted value for meter type'}
+        return {'Error': 'Not accepted value for meter type'}
     
     try:
        modified_meter = meter_schema.load(modified_meter, session=db.session)
@@ -136,10 +135,10 @@ def update_meter(meter_id):
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
-        return jsonify({'error': 'Conflict commiting changes with database'})
+        return jsonify({'Error': 'Conflict commiting changes with database (pk or fk issue).'})
 
     #returns successful response code
-    return jsonify({'success': 200})
+    return jsonify({'Success': 200})
 
 
 #########################
@@ -147,25 +146,16 @@ def update_meter(meter_id):
 #########################
 
 
-@app.route('/api/v1/meters', methods=['POST'])
+@app.route('/api/v1/meter', methods=['POST'])
 def add_meter():
     '''Add new meter to database'''
 
     new_meter = request.get_json()
-
-    #keys required in json body
-    required_keys = ['meter_id', 'utility_id', 'service_location_id', 'feeder', 'substation', 'meter_type', 'is_active', 'is_archived']
-    
-    #checks for missing keys, else throws error if missing
-    for key in required_keys:
-        if key not in new_meter:
-            message = 'Key Error - ' + key + ' is missing.'
-            return jsonify({'error': message})
             
     #sets meter_type value equal to enum name
     new_meter['meter_type'] = MeterType.check_value(new_meter['meter_type'])
     if not new_meter['meter_type']:
-        return {'error': 'not accepted value for meter type'}
+        return {'Error': 'Not accepted value for meter type'}
 
     try:
        new_meter = meter_schema.load(new_meter, session=db.session)
@@ -178,7 +168,7 @@ def add_meter():
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
-        return jsonify({'error': 'Conflict adding data to database'})
+        return jsonify({'Error': 'Conflict adding data to database (pk or fk issue).'})
 
     #returns successful response code
-    return jsonify({'success': 200})
+    return jsonify({'Success': 200})
