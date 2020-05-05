@@ -50,9 +50,11 @@ flask db upgrade
 ## Our frontend is currently leveraging react and mdc to generate the whole experience 
 Everything gets bundled via webpack, however, for sake of speed (since I don't want to deal with routing on the web client) this is not a SPA, so we need to manually register every file to bundle in the webpack config. Anyways...
 ```bash
+# make sure you have node/nvm installed
+nvm use  # this will ensure that the node verison is loaded to the pegged version in the .nvmrc
 # make sure you have yarn installed, https://classic.yarnpkg.com/en/
 yarn install # install all the dependencies in the package.json
-yarn start   # bundle and deploy all the assets referenced in the application
+yarn build   # bundle and deploy all the assets referenced in the application
 ```
 
 ## Running the project
@@ -60,3 +62,9 @@ yarn start   # bundle and deploy all the assets referenced in the application
 flask run
 ```
 ... navigate to `localhost:5000`
+
+
+----
+
+Some things worth noting and some resources
+- Our frontend is leveraging the React Wrapper for the Material Design Components (MDC) from Google: https://rmwc.io/ and https://material.io/develop/web/

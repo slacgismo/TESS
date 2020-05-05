@@ -1,12 +1,30 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
+import '@material/button/dist/mdc.button.css';
+import ConnectedComponentWrapper from '../../static/js/base';
+
+import * as action from './actions';
 
 class Auth extends React.Component {
+    onClick = () => {
+        this.props.dispatch(action.loginSuccessful('asdf'));
+    }
+
     render() {
         return (
-            <h1>HELLO AUTH PAGE</h1>
+            <div>Auth Page</div>
         );
     }
 }
 
-ReactDOM.render(<Auth />, document.getElementById('master-container'));
+const ConnectedAuth = connect(state => ({
+    token: state.auth.token
+  }))(Auth)
+
+const authElement = (
+    <ConnectedComponentWrapper isVisible={true}>
+        <ConnectedAuth/>
+    </ConnectedComponentWrapper>
+);
+ReactDOM.render(authElement, document.getElementById('master-container'));

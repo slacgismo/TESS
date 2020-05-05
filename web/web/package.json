@@ -4,20 +4,32 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack --config webpack.config.js"
+    "start": "webpack-dev-server --mode development --config webpack.config.js",
+    "build": "webpack --watch --mode production"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "material-components-web": "^6.0.0",
+    "@rmwc/button": "^6.0.14",
+    "@rmwc/drawer": "^6.0.14",
+    "@rmwc/list": "^6.0.14",
+    "@rmwc/top-app-bar": "^6.0.14",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-google-charts": "^3.0.15",
     "react-redux": "^7.2.0",
+    "react-router-dom": "^5.1.2",
     "redux": "^4.0.5",
-    "redux-persist": "^6.0.0"
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-async-generator-functions": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.9.5",
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-react": "^7.9.4",
     "babel-cli": "6",
@@ -28,8 +40,27 @@
     "file-loader": "^6.0.0",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
+    "style-loader": "^1.2.1",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
+  },
+  "babel": {
+    "plugins": [
+      "@babel/plugin-proposal-async-generator-functions",
+      "@babel/plugin-proposal-object-rest-spread",
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ],
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
+    ]
   }
 }
