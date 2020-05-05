@@ -45,7 +45,10 @@ class ApiResponseWrapper(object):
         }
     
     def set_errors(self, errors):
-        self.response.errors = errors
+        """
+        Currently overwrites but should just concat the list...?
+        """
+        self.response["errors"] = errors
 
     def to_json(self, data=[], status_code=200, headers=None):        
         if len(self.response["errors"]) > 0:
