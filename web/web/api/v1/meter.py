@@ -3,6 +3,7 @@ from web import app
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy 
 from marshmallow import ValidationError
+import dateutil.parser as parser
 
 from .meter_api_schema import schema_data
 from web.models.meter import Meter, MeterSchema, MeterType
@@ -62,13 +63,13 @@ def show_meter_info(meter_id):
         try:
             interval_count_start = parser.parse(interval_count_start)
         except (TypeError, ValueError):
-            return {'Error': 'Not an accepted format for interval count start and/or interval count end'}
+            return {'Error': 'Not an accepted format for interval count start'}
     
     if interval_count_end:
         try:
             interval_count_end = parser.parse(interval_count_end) 
         except (TypeError, ValueError):
-            return {'Error': 'Not an accepted format for interval count start and/or interval count end'} 
+            return {'Error': 'Not an accepted format for interval count end'} 
 
     meter_data = [{'meter_data': {'uid': meter.meter_id,
                                   'utility_uid': meter.utility_id, 

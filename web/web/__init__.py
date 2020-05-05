@@ -3,6 +3,9 @@ from web.config import *
 from web.extensions import db, bcrypt, migrate, ma
 from web.auth.auth import auth_bp
 
+#enables trailing and non-trailing slash routes
+
+
 def create_app(config_obj):
     """
     Create application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -10,6 +13,7 @@ def create_app(config_obj):
     """
     app = Flask(__name__)
     app.config.from_object(config_obj)
+    app.url_map.strict_slashes = False
     register_extensions(app)
     register_blueprints(app)
     return app
@@ -33,6 +37,5 @@ def register_blueprints(app):
 
 
 app = create_app(DevelopmentConfig())
-
 
 import web.api.v1.meter
