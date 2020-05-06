@@ -33,7 +33,7 @@ def get_meter_ids():
     meter_ids = []
 
     meters = Meter.query.all()
-    
+
     for row in meters:
         meter_ids.append({'meter_id': row.meter_id})
 
@@ -135,6 +135,7 @@ def update_meter(meter_id):
     try:
         db.session.commit()
     except IntegrityError:
+        db.session.rollback()
         arw.add_errors('Integrity error')
 
     results = meter_schema.dump(modified_meter, many=True)

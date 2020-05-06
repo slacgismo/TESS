@@ -11,8 +11,6 @@ from web.cost_revenue.cost_revenue import cost_revenue_bp
 from web.notifications.notifications import notifications_bp
 from web.user_settings.user_settings import user_settings_bp
 
-#enables trailing and non-trailing slash routes
-
 
 def create_app(config_obj):
     """
@@ -21,7 +19,6 @@ def create_app(config_obj):
     """
     app = Flask(__name__, static_url_path='')
     app.config.from_object(config_obj)
-    app.url_map.strict_slashes = False
     register_extensions(app)
     register_blueprints(app)
     return app
@@ -53,7 +50,8 @@ def register_blueprints(app):
     
 
 app = create_app(DevelopmentConfig())
-
+#enables trailing and non-trailing slash routes
+app.url_map.strict_slashes = False
 
 import web.api.v1.meter
 import web.api.v1.utility
