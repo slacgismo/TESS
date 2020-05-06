@@ -118,8 +118,3 @@ def add_meter_info():
         #no results or multiple results found 
         print(e)
         return 'error'
-
-
-@app.route('/api/v1/test', methods=['GET'])
-def get_test():
-    return jsonify({"testing": 12341234}), 400

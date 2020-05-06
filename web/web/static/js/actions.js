@@ -13,9 +13,27 @@ export function selectMenuOption(selectedMenuName) {
     }
 }
 
-export function testGet() {
-    return dispatch => {
-        const testResponse = api.get('test', (data) => {
+// FIXME: DELETE LATER
+// THIS IS HERE AS AN EXAMPLE ON HOW TO INTERACT WITH THE API CLIENT
+export function getUtilities() {
+    return dispatch => {        
+        const getUtilitiesRequest = api.get('utilities', (data) => {
+            console.warn("This is a success handler", data);
+        }, (error) => {
+            console.warn("This is an error handler", error);
+        });
+    }
+}
+export function postUtilities() {
+    return dispatch => {        
+        const json = {
+            json: {
+                name: "test util",
+                subscription_start: (new Date()).toISOString(),
+                subscription_end: (new Date()).toISOString()
+            }
+        }
+        const postUtilitiesRequest = api.post('utilities', json, (data) => {
             console.warn("This is a success handler", data);
         }, (error) => {
             console.warn("This is an error handler", error);
