@@ -7,7 +7,7 @@ import { toggleNavigationDrawer } from '../actions';
 
 class TopBar extends React.Component {
     toggleNavigationDrawer = () => {
-        this.props.dispatch(toggleNavigationDrawer())
+        this.props.dispatch(toggleNavigationDrawer());
     }
 
     render() {

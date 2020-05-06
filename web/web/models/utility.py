@@ -26,3 +26,4 @@ class UtilitySchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Utility
         include_fk = True
+        load_instance = True
