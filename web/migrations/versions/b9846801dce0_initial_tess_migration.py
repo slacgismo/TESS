@@ -55,7 +55,7 @@ def upgrade():
     sa.Column('service_location_id', sa.String(length=64), nullable=False),
     sa.Column('feeder', sa.String(length=45), nullable=False),
     sa.Column('substation', sa.String(length=45), nullable=False),
-    sa.Column('meter_type', sa.Enum('one', 'two', 'three', name='metertype'), nullable=False),
+    sa.Column('meter_type', sa.Enum('AXR_SD', 'KWH_DEMAND', 'TOD_KWH_DEMAND', name='metertype'), nullable=False),
     sa.Column('is_active', sa.Boolean(create_constraint=False), nullable=True),
     sa.Column('is_archived', sa.Boolean(create_constraint=False), nullable=True),
     sa.ForeignKeyConstraint(['service_location_id'], ['service_locations.service_location_id'], ),

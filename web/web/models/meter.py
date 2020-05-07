@@ -16,9 +16,9 @@ from web.database import (
 
 
 class MeterType(enum.Enum):
-    one = 'kWh/Demand' 
-    two = 'Time-of-Day/KWH/Demand'
-    three = 'AXR-SD'
+    AXR_SD = 'AXR-SD'
+    KWH_DEMAND = 'kWh/Demand' 
+    TOD_KWH_DEMAND = 'Time-of-Day/KWH/Demand'
 
     @staticmethod
     def check_value(str_value):
