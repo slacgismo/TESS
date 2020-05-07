@@ -1,9 +1,10 @@
-from marshmallow import fields
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from sqlalchemy.types import TIMESTAMP
 import enum
-from datetime import datetime, timedelta
+from marshmallow import fields
+from sqlalchemy.types import TIMESTAMP
 from web.models.utility import Utility
+from datetime import datetime, timedelta
+from .service_location import ServiceLocationSchema
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.models.service_location import ServiceLocation
 from web.database import (
     db,
@@ -97,9 +98,9 @@ class Meter(Model):
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
 
 
-#marshmallow schema
 class MeterSchema(SQLAlchemyAutoSchema):
     meter_type = fields.Method("get_meter_type")
+    service_location = fields.Nested(ServiceLocationSchema)
 
     def get_meter_type(self, obj):
         return obj.meter_type.value

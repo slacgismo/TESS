@@ -16,19 +16,13 @@ from web.database import db
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from sqlalchemy.exc import IntegrityError
 
-arw = ApiResponseWrapper()
-#for marshmallow
-meter_schema = MeterSchema()
-
-
-##########################
-##### VIEW METER IDS #####
-##########################
-
 
 @app.route('/api/v1/meters', methods=['GET'])
 def get_meter_ids():
-    '''Returns meter ids as json object'''
+    """
+    Return all meter objects
+    TODO: support query string filtering on props like is_active/is_archived
+    """    
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema()
     meters = Meter.query.all()
@@ -37,19 +31,24 @@ def get_meter_ids():
     return arw.to_json(results)
 
 
-##########################
-##### VIEW ONE METER #####
-##########################
-
-
 @app.route('/api/v1/meter/<string:meter_id>', methods=['GET'])
 def show_meter_info(meter_id):
-    '''Returns meter information as json object'''
+    """
+    Returns meter information as json object
+    """
+    arw = ApiResponseWrapper()
+    meter_schema = MeterSchema()
 
     try:  
         meter = Meter.query.filter_by(meter_id=meter_id).one()
-    except (MultipleResultsFound, NoResultFound):
-        return {'Error': 'No results or multiple results found for meter.'}
+    
+    except MultipleResultsFound:
+        arw.add_errors({meter_id: 'Multiple results found for the given meter.'})
+        return arw.to_json()
+    
+    except NoResultFound:
+        arw.add_errors({meter_id: 'Multiple results found for the given meter.'})
+        return arw.to_json()
 
     interval_coverage = request.args.get('interval_coverage')
     interval_count_start = request.args.get('interval_count_start')
@@ -62,34 +61,44 @@ def show_meter_info(meter_id):
         try:
             interval_count_start = parser.parse(interval_count_start)
         except (TypeError, ValueError):
-            return {'Error': 'Not an accepted format for interval count start'}
+            arw.add_errors({'interval_count_start': 'Not an accepted format for interval count start'})
+            return arw.to_json()
     
     if interval_count_end:
         try:
             interval_count_end = parser.parse(interval_count_end) 
         except (TypeError, ValueError):
-            return {'Error': 'Not an accepted format for interval count end'} 
+            arw.add_errors({'interval_count_end': 'Not an accepted format for interval count end'})
+            return arw.to_json()
 
-    meter_data = [{'meter_data': {'uid': meter.meter_id,
-                                  'utility_uid': meter.utility_id, 
-                                  'authorization_uid': 'NOT YET CREATED', 
-                                  'user_id': 'NOT YET CREATED', 
-                                  'meter_type': meter.meter_type.value, 
-                                  'is_archived': meter.is_archived, 
-                                  'is_active': meter.is_active, 
-                                  'created': meter.created_at, 
-                                  'service_location': meter.service_location_id, 
-                                  'postal_code': meter.service_location.address.postal_code, 
-                                  'map_location': meter.service_location.map_location, 
-                                  'channels': [channel.setting for channel in meter.channels], 
-                                  'feeder': meter.feeder, 
-                                  'substation': meter.substation, 
-                                  'rate': meter.get_rates(),
-                                  'interval_count': meter.get_interval_count(interval_count_start, interval_count_end), 
-                                  'interval_coverage': Interval.get_interval_coverage(interval_coverage), 
-                                  'exports': 'NOT YET CREATED'}}] 
 
-    return jsonify(meter_data)
+    # meter_data = [
+    #     {
+    #         'meter_data': {
+    #             'uid': meter.meter_id,
+    #             'utility_uid': meter.utility_id, 
+    #             'authorization_uid': 'NOT YET CREATED', 
+    #             'user_id': 'NOT YET CREATED', 
+    #             'meter_type': meter.meter_type.value, 
+    #             'is_archived': meter.is_archived, 
+    #             'is_active': meter.is_active, 
+    #             'created': meter.created_at, 
+    #             'service_location': meter.service_location_id, 
+    #             'postal_code': meter.service_location.address.postal_code, 
+    #             'map_location': meter.service_location.map_location, 
+    #             'channels': [channel.setting for channel in meter.channels], 
+    #             'feeder': meter.feeder, 
+    #             'substation': meter.substation, 
+    #             'rate': meter.get_rates(),
+    #             'interval_count': meter.get_interval_count(interval_count_start, interval_count_end), 
+    #             'interval_coverage': Interval.get_interval_coverage(interval_coverage), 
+    #             'exports': 'NOT YET CREATED'
+    #         }
+    #     }
+    # ] 
+
+    results = meter_schema.dump(meter)
+    return arw.to_json(results)
 
 
 #############################
@@ -100,7 +109,6 @@ def show_meter_info(meter_id):
 @app.route('/api/v1/meter/meta', methods=['GET'])
 def get_meter_schema():
     '''Returns meter schema as json object'''
-    
     return jsonify(schema_data)
 
 

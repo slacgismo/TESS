@@ -55,6 +55,6 @@ class ApiResponseWrapper(object):
         if len(self.response["errors"]) > 0:
             return jsonify(self.response), status_code, headers
 
-        self.response["results"]["count"] = len(data)
+        self.response["results"]["count"] = len(data) if isinstance(data, list) else 1
         self.response["results"]["data"] = data
         return jsonify(self.response), status_code, headers
