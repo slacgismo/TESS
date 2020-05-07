@@ -29,15 +29,12 @@ meter_schema = MeterSchema()
 @app.route('/api/v1/meters', methods=['GET'])
 def get_meter_ids():
     '''Returns meter ids as json object'''
-    
-    meter_ids = []
-
+    arw = ApiResponseWrapper()
+    meter_schema = MeterSchema()
     meters = Meter.query.all()
-
-    for row in meters:
-        meter_ids.append({'meter_id': row.meter_id})
-
-    return jsonify(meter_ids)
+    results = meter_schema.dump(meters, many=True)
+    
+    return arw.to_json(results)
 
 
 ##########################

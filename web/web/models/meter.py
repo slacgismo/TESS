@@ -1,3 +1,4 @@
+from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sqlalchemy.types import TIMESTAMP
 import enum
@@ -18,7 +19,7 @@ class MeterType(enum.Enum):
     one = 'kWh/Demand' 
     two = 'Time-of-Day/KWH/Demand'
     three = 'AXR-SD'
-    
+
     @staticmethod
     def check_value(str_value):
         '''Takes in string value, returns False if it isn't an accepted enum value, else returns enum type name.'''
@@ -44,7 +45,7 @@ class Meter(Model):
     is_active = Column(db.Boolean(False), nullable=False)
     is_archived = Column(db.Boolean(False), nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP, nullable=False,default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     #many-to-one meters per service location
     service_location = relationship('ServiceLocation', backref=db.backref('meters'))
@@ -98,6 +99,11 @@ class Meter(Model):
 
 #marshmallow schema
 class MeterSchema(SQLAlchemyAutoSchema):
+    meter_type = fields.Method("get_meter_type")
+
+    def get_meter_type(self, obj):
+        return obj.meter_type.value
+
     class Meta:
         model = Meter
         include_relationships = True
