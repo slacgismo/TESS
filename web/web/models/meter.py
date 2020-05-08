@@ -149,7 +149,6 @@ class MeterSchema(SQLAlchemyAutoSchema):
 
     def get_interval_coverage(self, obj):
         from web.models.interval import Interval
-        print("is this the error?")
         return Interval.get_interval_coverage(self.context['coverage'])
 
     class Meta:
