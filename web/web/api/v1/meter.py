@@ -75,11 +75,12 @@ def show_meter_info(meter_id):
     # 'authorization_uid': 'NOT YET CREATED', 
     # 'user_id': 'NOT YET CREATED', 
     # 'channels': [channel.setting for channel in meter.channels], 
-    # 'rate': meter.get_rates(),
-    # 'interval_count': meter.get_interval_count(interval_count_start, interval_count_end), 
-    # 'interval_coverage': Interval.get_interval_coverage(interval_coverage), 
+    # 'rate': meter.get_rates(), 
     # 'exports': 'NOT YET CREATED'
 
+    meter_schema.context['start'] = interval_count_start
+    meter_schema.context['end'] = interval_count_end
+    meter_schema.context['coverage'] = interval_coverage
     results = meter_schema.dump(meter)
     return arw.to_json(results)
 
