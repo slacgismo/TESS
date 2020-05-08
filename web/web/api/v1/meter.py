@@ -71,79 +71,58 @@ def show_meter_info(meter_id):
             arw.add_errors({'interval_count_end': 'Not an accepted format for interval count end'})
             return arw.to_json()
 
-
-    # meter_data = [
-    #     {
-    #         'meter_data': {
-    #             'uid': meter.meter_id,
-    #             'utility_uid': meter.utility_id, 
-    #             'authorization_uid': 'NOT YET CREATED', 
-    #             'user_id': 'NOT YET CREATED', 
-    #             'meter_type': meter.meter_type.value, 
-    #             'is_archived': meter.is_archived, 
-    #             'is_active': meter.is_active, 
-    #             'created': meter.created_at, 
-    #             'service_location': meter.service_location_id, 
-    #             'postal_code': meter.service_location.address.postal_code, 
-    #             'map_location': meter.service_location.map_location, 
-    #             'channels': [channel.setting for channel in meter.channels], 
-    #             'feeder': meter.feeder, 
-    #             'substation': meter.substation, 
-    #             'rate': meter.get_rates(),
-    #             'interval_count': meter.get_interval_count(interval_count_start, interval_count_end), 
-    #             'interval_coverage': Interval.get_interval_coverage(interval_coverage), 
-    #             'exports': 'NOT YET CREATED'
-    #         }
-    #     }
-    # ] 
+    # PENDING PROPS TO ADD TO THE RESPONSE
+    # 'authorization_uid': 'NOT YET CREATED', 
+    # 'user_id': 'NOT YET CREATED', 
+    # 'channels': [channel.setting for channel in meter.channels], 
+    # 'feeder': meter.feeder, 
+    # 'substation': meter.substation, 
+    # 'rate': meter.get_rates(),
+    # 'interval_count': meter.get_interval_count(interval_count_start, interval_count_end), 
+    # 'interval_coverage': Interval.get_interval_coverage(interval_coverage), 
+    # 'exports': 'NOT YET CREATED'
 
     results = meter_schema.dump(meter)
     return arw.to_json(results)
 
 
-#############################
-##### VIEW METER SCHEMA #####
-#############################
-
-
 @app.route('/api/v1/meter/meta', methods=['GET'])
 def get_meter_schema():
-    '''Returns meter schema as json object'''
+    """
+    Returns meter schema as json object
+    """
     return jsonify(schema_data)
-
-
-#########################
-##### MODIFY METER ######
-#########################
 
 
 @app.route('/api/v1/meter/<string:meter_id>', methods=['PUT'])
 def update_meter(meter_id):
     '''Updates meter in database'''
-
+    arw = ApiResponseWrapper()
+    meter_schema = MeterSchema()
     modified_meter = request.get_json()
-
+    
     try:
         Meter.query.filter_by(meter_id=meter_id).one()
+        modified_meter = meter_schema.load(modified_meter, session=db.session)
+        db.session.commit()
+    
     except (MultipleResultsFound,NoResultFound):
         arw.add_errors('No result found or multiple results found')
-
-    modified_meter['meter_type'] = MeterType.check_value(modified_meter['meter_type'])
-    if not modified_meter['meter_type']:
-        arw.add_errors('Not an accepted value for meter type')
     
-    try:
-        modified_meter = meter_schema.load(modified_meter, session=db.session)
-    except ValidationError:
-        arw.add_errors('Validation error')
-    
-    try:
-        db.session.commit()
-    except IntegrityError:
+    except IntegrityError as ie:
         db.session.rollback()
         arw.add_errors('Integrity error')
+    
+    except ValidationError as ve:
+        db.session.rollback()
+        # FIXME: args is already an array, which within arw.errors = [ [ { ... } ] ]
+        # this is too much of a pain to traverse
+        arw.add_errors(ve.args)
 
-    results = meter_schema.dump(modified_meter, many=True)
+    if arw.has_errors():
+        return arw.to_json()
+
+    results = meter_schema.dump(modified_meter)
     return arw.to_json(results)
 
 

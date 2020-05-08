@@ -1,5 +1,5 @@
 import enum
-from marshmallow import fields
+from marshmallow import fields, ValidationError
 from sqlalchemy.types import TIMESTAMP
 from web.models.utility import Utility
 from datetime import datetime, timedelta
@@ -99,8 +99,8 @@ class Meter(Model):
 
 
 class MeterSchema(SQLAlchemyAutoSchema):
-    meter_type = fields.Method("get_meter_type")
-    map_location = fields.Method("get_map_location")
+    meter_type = fields.Method("get_meter_type", deserialize="load_meter_type")
+    map_location = fields.Method("get_map_location", deserialize="load_map_location")
     postal_code = fields.Method("get_postal_code")
 
     def get_postal_code(self, obj):
@@ -109,8 +109,17 @@ class MeterSchema(SQLAlchemyAutoSchema):
     def get_map_location(self, obj):
         return obj.service_location.map_location
 
+    def load_map_location(self, value):
+        return
+
     def get_meter_type(self, obj):
         return obj.meter_type.value
+
+    def load_meter_type(self, value):
+        meter_enum = MeterType.check_value(value)
+        if not meter_enum:
+            raise ValidationError(f'{value} is an invalid meter type')
+        return meter_enum
 
     class Meta:
         model = Meter

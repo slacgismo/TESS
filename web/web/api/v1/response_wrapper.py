@@ -44,6 +44,9 @@ class ApiResponseWrapper(object):
             }
         }
     
+    def has_errors(self):
+        return len(self.response["errors"]) != 0
+
     def add_errors(self, errors):
         """
         Allow users to append a value or an array of values
