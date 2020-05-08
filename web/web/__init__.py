@@ -1,6 +1,8 @@
 from flask import Flask
 from web.config import *
 from web.extensions import db, bcrypt, migrate, ma
+
+# FRONT-END TEMPLATE BP ROUTES
 from web.auth.auth import auth_bp
 from web.alerts.alerts import alerts_bp
 from web.markets.markets import markets_bp
@@ -10,6 +12,9 @@ from web.constraints.constraints import constraints_bp
 from web.cost_revenue.cost_revenue import cost_revenue_bp
 from web.notifications.notifications import notifications_bp
 from web.user_settings.user_settings import user_settings_bp
+
+# API V1 BP ROUTES
+from web.api.v1.utility import utility_api_bp
 
 
 def create_app(config_obj):
@@ -38,6 +43,7 @@ def register_blueprints(app):
     """
     Register Flask blueprints.
     """
+    # register frontend template blueprint routes
     app.register_blueprint(auth_bp, url_prefix='/')
     app.register_blueprint(alerts_bp, url_prefix='/alerts')
     app.register_blueprint(markets_bp, url_prefix='/markets')
@@ -47,6 +53,9 @@ def register_blueprints(app):
     app.register_blueprint(cost_revenue_bp, url_prefix='/cost_revenue')
     app.register_blueprint(notifications_bp, url_prefix='/notifications')
     app.register_blueprint(user_settings_bp, url_prefix='/user_settings')
+
+    # register api v1 blueprint routes
+    app.register_blueprint(utility_api_bp, url_prefix='/api/v1/')
     
 
 app = create_app(DevelopmentConfig())
@@ -54,4 +63,3 @@ app = create_app(DevelopmentConfig())
 app.url_map.strict_slashes = False
 
 import web.api.v1.meter
-import web.api.v1.utility
