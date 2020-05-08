@@ -75,8 +75,6 @@ def show_meter_info(meter_id):
     # 'authorization_uid': 'NOT YET CREATED', 
     # 'user_id': 'NOT YET CREATED', 
     # 'channels': [channel.setting for channel in meter.channels], 
-    # 'feeder': meter.feeder, 
-    # 'substation': meter.substation, 
     # 'rate': meter.get_rates(),
     # 'interval_count': meter.get_interval_count(interval_count_start, interval_count_end), 
     # 'interval_coverage': Interval.get_interval_coverage(interval_coverage), 
