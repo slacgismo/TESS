@@ -116,7 +116,7 @@ def update_meter(meter_id):
         arw.add_errors(ve.messages)
 
     if arw.has_errors():
-        return arw.to_json()
+        return arw.to_json(None, 400)
 
     results = meter_schema.dump(modified_meter)
     return arw.to_json(results)
