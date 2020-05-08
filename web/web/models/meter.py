@@ -100,7 +100,14 @@ class Meter(Model):
 
 class MeterSchema(SQLAlchemyAutoSchema):
     meter_type = fields.Method("get_meter_type")
-    service_location = fields.Nested(ServiceLocationSchema)
+    map_location = fields.Method("get_map_location")
+    postal_code = fields.Method("get_postal_code")
+
+    def get_postal_code(self, obj):
+        return obj.service_location.address.postal_code
+
+    def get_map_location(self, obj):
+        return obj.service_location.map_location
 
     def get_meter_type(self, obj):
         return obj.meter_type.value

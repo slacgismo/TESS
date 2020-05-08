@@ -37,7 +37,7 @@ def show_meter_info(meter_id):
     Returns meter information as json object
     """
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema()
+    meter_schema = MeterSchema(exclude=['service_location'])
 
     try:  
         meter = Meter.query.filter_by(meter_id=meter_id).one()
