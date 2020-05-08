@@ -113,9 +113,7 @@ def update_meter(meter_id):
     
     except ValidationError as ve:
         db.session.rollback()
-        # FIXME: args is already an array, which within arw.errors = [ [ { ... } ] ]
-        # this is too much of a pain to traverse
-        arw.add_errors(ve.args)
+        arw.add_errors(ve.messages)
 
     if arw.has_errors():
         return arw.to_json()
