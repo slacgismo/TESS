@@ -2,7 +2,8 @@ import dateutil.parser as parser
 
 from web.database import db
 from marshmallow import ValidationError
-from web.models.interval import Interval
+
+
 from .meter_api_schema import schema_data
 from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
@@ -24,10 +25,11 @@ def get_meter_ids():
     TODO: support query string filtering on props like is_active/is_archived
     """    
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema()
+    meter_schema = MeterSchema(only=["meter_id"])
+
     meters = Meter.query.all()
-    results = meter_schema.dump(meters, many=True)
-    
+    results = meter_schema.dumps(meters)
+
     return arw.to_json(results)
 
 
@@ -47,7 +49,7 @@ def show_meter_info(meter_id):
         return arw.to_json()
     
     except NoResultFound:
-        arw.add_errors({meter_id: 'Multiple results found for the given meter.'})
+        arw.add_errors({meter_id: 'No results found for the given meter.'})
         return arw.to_json()
 
     interval_coverage = request.args.get('interval_coverage')
@@ -75,12 +77,12 @@ def show_meter_info(meter_id):
     # 'authorization_uid': 'NOT YET CREATED', 
     # 'user_id': 'NOT YET CREATED', 
     # 'channels': [channel.setting for channel in meter.channels], 
-    # 'rate': meter.get_rates(), 
     # 'exports': 'NOT YET CREATED'
 
     meter_schema.context['start'] = interval_count_start
     meter_schema.context['end'] = interval_count_end
     meter_schema.context['coverage'] = interval_coverage
+
     results = meter_schema.dump(meter)
     return arw.to_json(results)
 
@@ -131,6 +133,8 @@ def update_meter(meter_id):
 @meter_api_bp.route('/meter', methods=['POST'])
 def add_meter():
     '''Add new meter to database'''
+    arw = ApiResponseWrapper()
+    meter_schema = MeterSchema()
 
     new_meter = request.get_json()
             

@@ -3,7 +3,7 @@ import enum
 from marshmallow import fields, ValidationError
 from sqlalchemy.types import TIMESTAMP
 from web.models.utility import Utility
-
+from web.models.channel import Channel
 from datetime import datetime, timedelta
 from .service_location import ServiceLocationSchema
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
@@ -56,6 +56,8 @@ class Meter(Model):
     #many-to-one meters per utility
     utility = relationship('Utility', backref=db.backref('meters'))
 
+    #many-to-one channels per meter
+    channels = relationship('Channel', backref=db.backref('meter'))
 
     def get_interval_count(self, start, end):
         '''Takes in start and end ISO8601 times, 
@@ -86,14 +88,14 @@ class Meter(Model):
         
         return rates
     
-    # def get_channels(self):
-    #     '''Returns meter instance's channel settings as a set'''
+    def get_channels(self):
+        '''Returns meter instance's channel settings as a set'''
 
-    #     channels = set()
-    #     for channel in self.channels:
-    #         channels.add(channel.setting)
+        channels = set()
+        for channel in self.channels:
+            channels.add(channel.setting)
         
-    #     return channels
+        return channels
 
     def get_all_intervals(self):
         '''Returns all meter instances's intervals in a list'''
@@ -113,8 +115,8 @@ class MeterSchema(SQLAlchemyAutoSchema):
     meter_type = fields.Method('get_meter_type', deserialize='load_meter_type')
     map_location = fields.Method('get_map_location', deserialize='load_map_location')
     postal_code = fields.Method('get_postal_code')
-    rates = fields.Method('get_rates')
-    channels = fields.Method('get_channels')
+    rates = fields.Method('get_rates', dump_only=True)
+    channels = fields.Method('get_channels', dump_only=True)
     interval_count = fields.Method('get_interval_count', dump_only=True)
     interval_coverage = fields.Method('get_interval_coverage', dump_only=True)
 
@@ -139,14 +141,15 @@ class MeterSchema(SQLAlchemyAutoSchema):
     def get_rates(self, obj):
         return obj.get_rates()
 
-    # def get_channels(self, obj):
-    #     return obj.get_channels()
+    def get_channels(self, obj):
+        return obj.get_channels()
 
     def get_interval_count(self, obj):
         return obj.get_interval_count(self.context['start'], self.context['end'])
 
     def get_interval_coverage(self, obj):
         from web.models.interval import Interval
+        print("is this the error?")
         return Interval.get_interval_coverage(self.context['coverage'])
 
     class Meta:

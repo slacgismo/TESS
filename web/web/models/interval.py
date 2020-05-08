@@ -3,6 +3,7 @@ from sqlalchemy.types import TIMESTAMP
 from web.models.meter import Meter
 from web.models.rate import Rate
 from sqlalchemy import ForeignKeyConstraint
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.database import (
     db,
     Model,
@@ -39,7 +40,7 @@ class Interval(Model):
     )
 
     #many-to-one intervals per meter
-    meter = db.relationship('Meter', backref=db.backref('intervals'))
+    meter = db.relationship('Meter', backref=db.backref('intervals'), lazy='dynamic')
     
     #many-to-one intervals per rate
     rate = db.relationship('Rate', backref=db.backref('intervals'))
@@ -59,3 +60,10 @@ class Interval(Model):
 
     def __repr__(self):
         return f'<Interval interval_id={self.interval_id} meter_id={self.meter_id} end_time={self.end_time} value={self.value}>'
+
+class IntervalSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Interval
+        include_relationships = True
+        load_instance = True
+        include_fk = True
