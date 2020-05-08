@@ -14,6 +14,7 @@ from web.notifications.notifications import notifications_bp
 from web.user_settings.user_settings import user_settings_bp
 
 # API V1 BP ROUTES
+from web.api.v1.meter import meter_api_bp
 from web.api.v1.utility import utility_api_bp
 
 
@@ -55,11 +56,9 @@ def register_blueprints(app):
     app.register_blueprint(user_settings_bp, url_prefix='/user_settings')
 
     # register api v1 blueprint routes
+    app.register_blueprint(meter_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(utility_api_bp, url_prefix='/api/v1/')
     
 
 app = create_app(DevelopmentConfig())
-#enables trailing and non-trailing slash routes
 app.url_map.strict_slashes = False
-
-import web.api.v1.meter

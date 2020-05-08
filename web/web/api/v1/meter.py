@@ -1,23 +1,23 @@
-from web import app
-
-from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy 
-from marshmallow import ValidationError
 import dateutil.parser as parser
 
-from .response_wrapper import ApiResponseWrapper
-from .meter_api_schema import schema_data
-from web.models.meter import Meter, MeterSchema, MeterType
-from web.models.interval import Interval
-from web.models.service_location import ServiceLocation
 from web.database import db
+from marshmallow import ValidationError
+from web.models.interval import Interval
+from .meter_api_schema import schema_data
+from flask import jsonify, request, Blueprint
+from .response_wrapper import ApiResponseWrapper
+from web.models.meter import Meter, MeterSchema, MeterType
+from web.models.service_location import ServiceLocation
 
-#for error handling
-from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+# DB Error Handling
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 
-@app.route('/api/v1/meters', methods=['GET'])
+meter_api_bp = Blueprint('meter_api_bp', __name__)
+
+
+@meter_api_bp.route('/meters', methods=['GET'])
 def get_meter_ids():
     """
     Return all meter objects
@@ -31,7 +31,7 @@ def get_meter_ids():
     return arw.to_json(results)
 
 
-@app.route('/api/v1/meter/<string:meter_id>', methods=['GET'])
+@meter_api_bp.route('/meter/<string:meter_id>', methods=['GET'])
 def show_meter_info(meter_id):
     """
     Returns meter information as json object
@@ -84,7 +84,7 @@ def show_meter_info(meter_id):
     return arw.to_json(results)
 
 
-@app.route('/api/v1/meter/meta', methods=['GET'])
+@meter_api_bp.route('/meter/meta', methods=['GET'])
 def get_meter_schema():
     """
     Returns meter schema as json object
@@ -92,7 +92,7 @@ def get_meter_schema():
     return jsonify(schema_data)
 
 
-@app.route('/api/v1/meter/<string:meter_id>', methods=['PUT'])
+@meter_api_bp.route('/meter/<string:meter_id>', methods=['PUT'])
 def update_meter(meter_id):
     '''Updates meter in database'''
     arw = ApiResponseWrapper()
@@ -127,7 +127,7 @@ def update_meter(meter_id):
 #########################
 
 
-@app.route('/api/v1/meter', methods=['POST'])
+@meter_api_bp.route('/meter', methods=['POST'])
 def add_meter():
     '''Add new meter to database'''
 
