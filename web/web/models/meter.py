@@ -29,7 +29,7 @@ class MeterType(enum.Enum):
  
         for meter_type in MeterType:
             if meter_type.value == str_value:
-                return meter_type.name
+                return meter_type
         
         return False
 
@@ -80,20 +80,22 @@ class Meter(Model):
 
 
     def get_rates(self):
-        '''Returns meter instance's rates as a set'''
+        '''Returns meter instance's rates as a list'''
 
-        rates = set()
+        rates = []
         for interval in self.intervals:
-            rates.add(interval.rate.description)
+            if interval.rate.description not in rates:
+                rates.append(interval.rate.description)
         
         return rates
     
     def get_channels(self):
-        '''Returns meter instance's channel settings as a set'''
+        '''Returns meter instance's channel settings as a list'''
 
-        channels = set()
+        channels = []
         for channel in self.channels:
-            channels.add(channel.setting)
+            if channel.setting not in channels:
+                channels.append(channel.setting)
         
         return channels
 
@@ -119,6 +121,8 @@ class MeterSchema(SQLAlchemyAutoSchema):
     channels = fields.Method('get_channels', dump_only=True)
     interval_count = fields.Method('get_interval_count', dump_only=True)
     interval_coverage = fields.Method('get_interval_coverage', dump_only=True)
+    meter_type = fields.Method('get_meter_type', dump_only=True)
+    add_meter_type = fields.Method('load_meter_type', load_only=True)
 
     def get_postal_code(self, obj):
         return obj.service_location.address.postal_code
@@ -137,7 +141,8 @@ class MeterSchema(SQLAlchemyAutoSchema):
         if not meter_enum:
             raise ValidationError(f'{value} is an invalid meter type')
         return meter_enum
-    
+
+
     def get_rates(self, obj):
         return obj.get_rates()
 

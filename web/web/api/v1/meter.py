@@ -2,14 +2,16 @@ import dateutil.parser as parser
 
 from web.database import db
 from marshmallow import ValidationError
-
-
+from web.models.utility import Utility
+from web.models.address import Address
+from web.models.channel import Channel
+from web.models.rate import Rate
 from .meter_api_schema import schema_data
 from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.meter import Meter, MeterSchema, MeterType
 from web.models.service_location import ServiceLocation
-
+from web.models.interval import Interval, Status
 # DB Error Handling
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -25,7 +27,7 @@ def get_meter_ids():
     TODO: support query string filtering on props like is_active/is_archived
     """    
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema(only=["meter_id"])
+    meter_schema = MeterSchema(only=['meter_id'])
 
     meters = Meter.query.all()
     results = meter_schema.dumps(meters)
@@ -75,8 +77,7 @@ def show_meter_info(meter_id):
 
     # PENDING PROPS TO ADD TO THE RESPONSE
     # 'authorization_uid': 'NOT YET CREATED', 
-    # 'user_id': 'NOT YET CREATED', 
-    # 'channels': [channel.setting for channel in meter.channels], 
+    # 'user_id': 'NOT YET CREATED',  
     # 'exports': 'NOT YET CREATED'
 
     meter_schema.context['start'] = interval_count_start
@@ -101,12 +102,14 @@ def update_meter(meter_id):
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema()
     modified_meter = request.get_json()
-    
+
     try:
-        Meter.query.filter_by(meter_id=meter_id).one()
+        meter =Meter.query.filter_by(meter_id=meter_id).one()
+
         modified_meter = meter_schema.load(modified_meter, session=db.session)
+
         db.session.commit()
-    
+
     except (MultipleResultsFound,NoResultFound):
         arw.add_errors('No result found or multiple results found')
     
@@ -122,6 +125,7 @@ def update_meter(meter_id):
         return arw.to_json(None, 400)
 
     results = meter_schema.dump(modified_meter)
+
     return arw.to_json(results)
 
 
