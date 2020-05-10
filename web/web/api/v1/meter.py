@@ -20,15 +20,29 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 meter_api_bp = Blueprint('meter_api_bp', __name__)
 
 
-@meter_api_bp.route('/meters', methods=['GET'])
+@meter_api_bp.route('/meters/', methods=['GET'])
 def get_meter_ids():
     """
     Return all meter objects
     TODO: support query string filtering on props like is_active/is_archived
-    """    
+    TODO: decorator or Mixin for fields_to_filter_on!!!
+    """
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema(only=['meter_id'])
 
+    # get the list fields we want on the response
+    fields_to_filter_on = request.args.getlist("fields")
+
+    # validate that they exist
+    if len(fields_to_filter_on) > 0:
+        for field in fields_to_filter_on:
+            if field not in Meter.__table__.columns:
+                arw.add_errors({field: "Invalid Meter field"})
+                return arw.to_json(None, 400)
+    else:
+        # make sure we get everything if no fields are given
+        fields_to_filter_on = None
+
+    meter_schema = MeterSchema(only=fields_to_filter_on)
     meters = Meter.query.all()
     results = meter_schema.dump(meters, many=True)
 
@@ -104,10 +118,8 @@ def update_meter(meter_id):
     modified_meter = request.get_json()
 
     try:
-        meter =Meter.query.filter_by(meter_id=meter_id).one()
-
+        meter = Meter.query.filter_by(meter_id=meter_id).one()
         modified_meter = meter_schema.load(modified_meter, session=db.session)
-
         db.session.commit()
 
     except (MultipleResultsFound,NoResultFound):
@@ -129,36 +141,26 @@ def update_meter(meter_id):
     return arw.to_json(results)
 
 
-#########################
-##### ADD NEW METER #####
-#########################
-
-
 @meter_api_bp.route('/meter', methods=['POST'])
 def add_meter():
     '''Add new meter to database'''
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema()
-
     new_meter = request.get_json()
             
-    #sets meter_type value equal to enum name
-    new_meter['meter_type'] = MeterType.check_value(new_meter['meter_type'])
-    if not new_meter['meter_type']:
-        return {'Error': 'Not accepted value for meter type'}
-
     try:
        new_meter = meter_schema.load(new_meter, session=db.session)
-    except ValidationError as e:
-        return e.messages, 422
+       db.session.add(new_meter)
+       db.session.commit()
 
-    #adds meter to database if it doesn't conflict with database setup, else throws error
-    try:
-        db.session.add(new_meter)
-        db.session.commit()
     except IntegrityError:
         db.session.rollback()
-        return jsonify({'Error': 'Conflict adding data to database (pk or fk issue).'})
-
-    #returns successful response code
-    return jsonify({'Success': 200})
+        arw.add_errors({"meter_id": "The given meter already exists."})
+        return arw.to_json(None, 400)
+    
+    except ValidationError as e:
+        arw.add_errors(e.messages)
+        return arw.to_json(None, 400)
+    
+    result = MeterSchema().dump(new_meter)
+    return arw.to_json(result)

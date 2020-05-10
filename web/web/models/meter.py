@@ -5,6 +5,7 @@ from sqlalchemy.types import TIMESTAMP
 from web.models.utility import Utility
 from web.models.channel import Channel
 from datetime import datetime, timedelta
+from web.models.interval import Interval
 from .service_location import ServiceLocationSchema
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.models.service_location import ServiceLocation
@@ -50,14 +51,11 @@ class Meter(Model):
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    #many-to-one meters per service location
+    # Relationships
     service_location = relationship('ServiceLocation', backref=db.backref('meters'))
-
-    #many-to-one meters per utility
     utility = relationship('Utility', backref=db.backref('meters'))
-
-    #many-to-one channels per meter
-    channels = relationship('Channel', backref=db.backref('meter'))
+    channels = relationship('Channel', backref=db.backref('meters'))
+    intervals = relationship('Interval', backref=db.backref('meters'))
 
     def get_interval_count(self, start, end):
         '''Takes in start and end ISO8601 times, 
@@ -121,8 +119,6 @@ class MeterSchema(SQLAlchemyAutoSchema):
     channels = fields.Method('get_channels', dump_only=True)
     interval_count = fields.Method('get_interval_count', dump_only=True)
     interval_coverage = fields.Method('get_interval_coverage', dump_only=True)
-    meter_type = fields.Method('get_meter_type', dump_only=True)
-    add_meter_type = fields.Method('load_meter_type', load_only=True)
 
     def get_postal_code(self, obj):
         return obj.service_location.address.postal_code
@@ -142,7 +138,6 @@ class MeterSchema(SQLAlchemyAutoSchema):
             raise ValidationError(f'{value} is an invalid meter type')
         return meter_enum
 
-
     def get_rates(self, obj):
         return obj.get_rates()
 
@@ -150,11 +145,13 @@ class MeterSchema(SQLAlchemyAutoSchema):
         return obj.get_channels()
 
     def get_interval_count(self, obj):
-        return obj.get_interval_count(self.context['start'], self.context['end'])
+        start = self.context['start'] if 'start' in self.context else None
+        end = self.context['end'] if 'end' in self.context else None
+        return obj.get_interval_count(start, end)
 
     def get_interval_coverage(self, obj):
-        from web.models.interval import Interval
-        return Interval.get_interval_coverage(self.context['coverage'])
+        coverage = self.context['coverage'] if 'coverage' in self.context else []
+        return Interval.get_interval_coverage(coverage)
 
     class Meta:
         model = Meter

@@ -1,7 +1,6 @@
 import enum
-from sqlalchemy.types import TIMESTAMP
-from web.models.meter import Meter
 from web.models.rate import Rate
+from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import ForeignKeyConstraint
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.database import (
@@ -28,11 +27,8 @@ class Interval(Model):
     end_time = Column(TIMESTAMP, nullable=False)
     value = Column(db.Float, nullable=False)
     
-    #many-to-one intervals per rate
+    # many-to-one intervals per rate
     rate = relationship('Rate', backref=db.backref('intervals'))
-    
-    #many-to-one intervals per meter
-    meter = relationship('Meter', backref=db.backref('intervals'))
 
     @staticmethod
     def get_interval_coverage(interval_id_list):
