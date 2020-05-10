@@ -30,7 +30,7 @@ def get_meter_ids():
     meter_schema = MeterSchema(only=['meter_id'])
 
     meters = Meter.query.all()
-    results = meter_schema.dumps(meters)
+    results = meter_schema.dump(meters, many=True)
 
     return arw.to_json(results)
 
