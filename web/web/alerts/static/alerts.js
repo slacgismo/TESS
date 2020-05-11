@@ -3,13 +3,78 @@ import ReactDOM from 'react-dom';
 import * as action from './actions';
 import { connect } from 'react-redux';
 import * as DT from '@rmwc/data-table';
-import { Grid, GridCell } from '@rmwc/grid';
 import { TextField } from '@rmwc/textfield';
 import ConnectedComponentWrapper from '../../static/js/base';
 
 import '@rmwc/grid/styles';
 import '@rmwc/textfield/styles';
 import '@rmwc/data-table/styles';
+
+const tempData = [
+    {
+        "date": "2020-01-01",
+        "time": "19:20",
+        "type": "Capacity Bounds",
+        "description": "Lorem Ipsum dolor sit amet....",
+        "status": "Pending",
+        "assigned_to": "Operator 1",
+        "resolution": "A random resolution input"
+    },
+    {
+        "date": "2020-01-02",
+        "time": "19:30",
+        "type": "Resource Depletion",
+        "description": "Lorem Ipsum dolor sit amet....Lorem Ipsum dolor sit amet....Lorem Ipsum dolor sit amet....Lorem Ipsum dolor sit amet....",
+        "status": "Resolved",
+        "assigned_to": "Automated System",
+        "resolution": ""
+    },
+    {
+        "date": "2020-01-21",
+        "time": "08:20",
+        "type": "Price Alerts",
+        "description": "Lorem Ipsum dolor sit amet....",
+        "status": "Open",
+        "assigned_to": "SLAC Gismo",
+        "resolution": ""
+    },
+    {
+        "date": "2020-01-22",
+        "time": "09:20",
+        "type": "Capacity Bounds",
+        "description": "Lorem Ipsum dolor sit amet....",
+        "status": "Resolved",
+        "assigned_to": "SLAC Gismo",
+        "resolution": "I resolved this somehow"
+    },
+    {
+        "date": "2020-01-23",
+        "time": "18:20",
+        "type": "Resource Depletion",
+        "description": "Lorem Ipsum dolor sit amet...Lorem Ipsum dolor sit amet....Lorem Ipsum dolor sit amet.....",
+        "status": "Resolved",
+        "assigned_to": "Automated System",
+        "resolution": "system recovered"
+    },
+    {
+        "date": "2020-01-24",
+        "time": "19:20",
+        "type": "Price Alerts",
+        "description": "Lorem Ipsum dolor sit amet....",
+        "status": "Open",
+        "assigned_to": "Operator 2",
+        "resolution": "Resolved"
+    },
+    {
+        "date": "2020-01-25",
+        "time": "20:20",
+        "type": "Capacity Bounds",
+        "description": "Lorem Ipsum dolor sit amet..Lorem Ipsum dolor sit amet....Lorem Ipsum dolor sit amet....Lorem Ipsum dolor sit amet....Lorem Ipsum dolor sit amet....Lorem Ipsum dolor sit amet....Lorem Ipsum dolor sit amet......",
+        "status": "Pending",
+        "assigned_to": "Operator 1",
+        "resolution": "Resolved"
+    }
+]
 
 class Alerts extends React.Component {
     onClick = () => {
@@ -33,44 +98,30 @@ class Alerts extends React.Component {
     }
 
     getBody = () => {
-        return (
-            <DT.DataTableBody>
+        const dataTableBody = tempData.map(item => {
+            return (
                 <DT.DataTableRow>
-                    <DT.DataTableCell>Cookies</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>25</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>$2.90</DT.DataTableCell>
-                    <DT.DataTableCell>Cookies</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>25</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>$2.90</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>$2.90</DT.DataTableCell>
+                    <DT.DataTableCell>{item.date}</DT.DataTableCell>
+                    <DT.DataTableCell>{item.time}</DT.DataTableCell>
+                    <DT.DataTableCell>{item.type}</DT.DataTableCell>
+                    <DT.DataTableCell className="alerts-text-wrap">{item.description}</DT.DataTableCell>
+                    <DT.DataTableCell>{item.status}</DT.DataTableCell>
+                    <DT.DataTableCell>{item.assigned_to}</DT.DataTableCell>
+                    <DT.DataTableCell>
+                        <TextField outline={false} fullwidth value={item.resolution} />
+                    </DT.DataTableCell>
                 </DT.DataTableRow>
-                <DT.DataTableRow selected>
-                    <DT.DataTableCell>zxcvzxcv</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>2225</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>$22.90</DT.DataTableCell>
-                    <DT.DataTableCell>zxcvzxcv</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>25</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>$211.90</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>$112.90</DT.DataTableCell>
-                </DT.DataTableRow>
-                <DT.DataTableRow>
-                    <DT.DataTableCell>asdfasdf</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>24565</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>$2.90</DT.DataTableCell>
-                    <DT.DataTableCell>asdfadsf</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>245</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>$24.90</DT.DataTableCell>
-                    <DT.DataTableCell alignEnd>$2444.90</DT.DataTableCell>
-                </DT.DataTableRow>
-            </DT.DataTableBody>
-        )
+            )
+        })
+
+        return (<DT.DataTableBody>{dataTableBody}</DT.DataTableBody>)
     }
 
     render() {
         return (
             <div>
                 <div className="alert-search-bar">
-                    <TextField icon="search" trailingIcon="close" label="Search" />
+                    <TextField fullwidth icon="search" trailingIcon="close" label="Search" />
                 </div>
                 <DT.DataTable className="alerts-data-table">
                     <DT.DataTableContent>
