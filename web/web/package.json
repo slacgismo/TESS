@@ -11,8 +11,11 @@
   "license": "ISC",
   "dependencies": {
     "@rmwc/button": "^6.0.14",
+    "@rmwc/data-table": "^6.0.14",
     "@rmwc/drawer": "^6.0.14",
+    "@rmwc/grid": "^6.0.14",
     "@rmwc/list": "^6.0.14",
+    "@rmwc/textfield": "^6.1.0",
     "@rmwc/top-app-bar": "^6.0.14",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
