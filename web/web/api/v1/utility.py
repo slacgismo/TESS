@@ -1,9 +1,12 @@
-from web import app
+from flask import Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.utility import Utility, UtilitySchema
 
 
-@app.route('/api/v1/utilities', methods=['GET'])
+utility_api_bp = Blueprint('utility_api_bp', __name__)
+
+
+@utility_api_bp.route('/utilities', methods=['GET'])
 def get_utilities():
     """
     Retrieve all utility objects

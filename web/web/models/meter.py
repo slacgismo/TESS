@@ -1,8 +1,13 @@
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from sqlalchemy.types import TIMESTAMP
 import enum
-from datetime import datetime, timedelta
+
+from marshmallow import fields, ValidationError
+from sqlalchemy.types import TIMESTAMP
 from web.models.utility import Utility
+from web.models.channel import Channel
+from datetime import datetime, timedelta
+from web.models.interval import Interval
+from .service_location import ServiceLocationSchema
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.models.service_location import ServiceLocation
 from web.database import (
     db,
@@ -15,17 +20,17 @@ from web.database import (
 
 
 class MeterType(enum.Enum):
-    one = 'kWh/Demand' 
-    two = 'Time-of-Day/KWH/Demand'
-    three = 'AXR-SD'
-    
+    AXR_SD = 'AXR-SD'
+    KWH_DEMAND = 'kWh/Demand' 
+    TOD_KWH_DEMAND = 'Time-of-Day/KWH/Demand'
+
     @staticmethod
     def check_value(str_value):
         '''Takes in string value, returns False if it isn't an accepted enum value, else returns enum type name.'''
  
         for meter_type in MeterType:
             if meter_type.value == str_value:
-                return meter_type.name
+                return meter_type
         
         return False
 
@@ -44,20 +49,19 @@ class Meter(Model):
     is_active = Column(db.Boolean(False), nullable=False)
     is_archived = Column(db.Boolean(False), nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP, nullable=False,default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    #many-to-one meters per service location
+    # Relationships
     service_location = relationship('ServiceLocation', backref=db.backref('meters'))
-    
-    #many-to-one meters per utility
     utility = relationship('Utility', backref=db.backref('meters'))
+    channels = relationship('Channel', backref=db.backref('meters'))
+    intervals = relationship('Interval', backref=db.backref('meters'))
 
     def get_interval_count(self, start, end):
         '''Takes in start and end ISO8601 times, 
             returns the interval count (integer) between start / end times, inclusively'''
         
         self_intervals = self.intervals
-
         selected_intervals = []
         
         if start == None:
@@ -72,32 +76,83 @@ class Meter(Model):
 
         return len(selected_intervals)
 
+
     def get_rates(self):
-        '''Returns meter instance's rates as a set'''
+        '''Returns meter instance's rates as a list'''
 
-        rates = set()
-
+        rates = []
         for interval in self.intervals:
-            rates.add(interval.rate.description)
+            if interval.rate.description not in rates:
+                rates.append(interval.rate.description)
         
         return rates
     
+    def get_channels(self):
+        '''Returns meter instance's channel settings as a list'''
+
+        channels = []
+        for channel in self.channels:
+            if channel.setting not in channels:
+                channels.append(channel.setting)
+        
+        return channels
+
     def get_all_intervals(self):
         '''Returns all meter instances's intervals in a list'''
         
         intervals_list = []
-
         for interval in self.intervals:
             intervals_list.append(interval.interval_id)
         
         return intervals_list
 
+
     def __repr__(self):
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
 
 
-#marshmallow schema
 class MeterSchema(SQLAlchemyAutoSchema):
+    meter_type = fields.Method('get_meter_type', deserialize='load_meter_type')
+    map_location = fields.Method('get_map_location', deserialize='load_map_location')
+    postal_code = fields.Method('get_postal_code')
+    rates = fields.Method('get_rates', dump_only=True)
+    channels = fields.Method('get_channels', dump_only=True)
+    interval_count = fields.Method('get_interval_count', dump_only=True)
+    interval_coverage = fields.Method('get_interval_coverage', dump_only=True)
+
+    def get_postal_code(self, obj):
+        return obj.service_location.address.postal_code
+
+    def get_map_location(self, obj):
+        return obj.service_location.map_location
+
+    def load_map_location(self, value):
+        return
+    
+    def get_meter_type(self, obj):
+        return obj.meter_type.value
+
+    def load_meter_type(self, value):
+        meter_enum = MeterType.check_value(value)
+        if not meter_enum:
+            raise ValidationError(f'{value} is an invalid meter type')
+        return meter_enum
+
+    def get_rates(self, obj):
+        return obj.get_rates()
+
+    def get_channels(self, obj):
+        return obj.get_channels()
+
+    def get_interval_count(self, obj):
+        start = self.context['start'] if 'start' in self.context else None
+        end = self.context['end'] if 'end' in self.context else None
+        return obj.get_interval_count(start, end)
+
+    def get_interval_coverage(self, obj):
+        coverage = self.context['coverage'] if 'coverage' in self.context else []
+        return Interval.get_interval_coverage(coverage)
+
     class Meta:
         model = Meter
         include_relationships = True

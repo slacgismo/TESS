@@ -1,58 +1,72 @@
-from web import app
-
-from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy 
-from marshmallow import ValidationError
 import dateutil.parser as parser
 
-from .response_wrapper import ApiResponseWrapper
-from .meter_api_schema import schema_data
-from web.models.meter import Meter, MeterSchema, MeterType
-from web.models.interval import Interval
-from web.models.service_location import ServiceLocation
 from web.database import db
-
-#for error handling
-from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from marshmallow import ValidationError
+from web.models.utility import Utility
+from web.models.address import Address
+from web.models.channel import Channel
+from web.models.rate import Rate
+from .meter_api_schema import schema_data
+from flask import jsonify, request, Blueprint
+from .response_wrapper import ApiResponseWrapper
+from web.models.meter import Meter, MeterSchema, MeterType
+from web.models.service_location import ServiceLocation
+from web.models.interval import Interval, Status
+# DB Error Handling
 from sqlalchemy.exc import IntegrityError
-
-arw = ApiResponseWrapper()
-#for marshmallow
-meter_schema = MeterSchema()
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 
-##########################
-##### VIEW METER IDS #####
-##########################
+meter_api_bp = Blueprint('meter_api_bp', __name__)
 
 
-@app.route('/api/v1/meters', methods=['GET'])
+@meter_api_bp.route('/meters/', methods=['GET'])
 def get_meter_ids():
-    '''Returns meter ids as json object'''
-    
-    meter_ids = []
+    """
+    Return all meter objects
+    TODO: support query string filtering on props like is_active/is_archived
+    TODO: decorator or Mixin for fields_to_filter_on!!!
+    """
+    arw = ApiResponseWrapper()
 
+    # get the list fields we want on the response
+    fields_to_filter_on = request.args.getlist("fields")
+
+    # validate that they exist
+    if len(fields_to_filter_on) > 0:
+        for field in fields_to_filter_on:
+            if field not in Meter.__table__.columns:
+                arw.add_errors({field: "Invalid Meter field"})
+                return arw.to_json(None, 400)
+    else:
+        # make sure we get everything if no fields are given
+        fields_to_filter_on = None
+
+    meter_schema = MeterSchema(only=fields_to_filter_on)
     meters = Meter.query.all()
+    results = meter_schema.dump(meters, many=True)
 
-    for row in meters:
-        meter_ids.append({'meter_id': row.meter_id})
-
-    return jsonify(meter_ids)
+    return arw.to_json(results)
 
 
-##########################
-##### VIEW ONE METER #####
-##########################
-
-
-@app.route('/api/v1/meter/<string:meter_id>', methods=['GET'])
+@meter_api_bp.route('/meter/<string:meter_id>', methods=['GET'])
 def show_meter_info(meter_id):
-    '''Returns meter information as json object'''
+    """
+    Returns meter information as json object
+    """
+    arw = ApiResponseWrapper()
+    meter_schema = MeterSchema(exclude=['service_location'])
 
     try:  
         meter = Meter.query.filter_by(meter_id=meter_id).one()
-    except (MultipleResultsFound, NoResultFound):
-        return {'Error': 'No results or multiple results found for meter.'}
+    
+    except MultipleResultsFound:
+        arw.add_errors({meter_id: 'Multiple results found for the given meter.'})
+        return arw.to_json()
+    
+    except NoResultFound:
+        arw.add_errors({meter_id: 'No results found for the given meter.'})
+        return arw.to_json()
 
     interval_coverage = request.args.get('interval_coverage')
     interval_count_start = request.args.get('interval_count_start')
@@ -65,111 +79,102 @@ def show_meter_info(meter_id):
         try:
             interval_count_start = parser.parse(interval_count_start)
         except (TypeError, ValueError):
-            return {'Error': 'Not an accepted format for interval count start'}
+            arw.add_errors({'interval_count_start': 'Not an accepted format for interval count start'})
+            return arw.to_json()
     
     if interval_count_end:
         try:
             interval_count_end = parser.parse(interval_count_end) 
         except (TypeError, ValueError):
-            return {'Error': 'Not an accepted format for interval count end'} 
+            arw.add_errors({'interval_count_end': 'Not an accepted format for interval count end'})
+            return arw.to_json()
 
-    meter_data = [{'meter_data': {'uid': meter.meter_id,
-                                  'utility_uid': meter.utility_id, 
-                                  'authorization_uid': 'NOT YET CREATED', 
-                                  'user_id': 'NOT YET CREATED', 
-                                  'meter_type': meter.meter_type.value, 
-                                  'is_archived': meter.is_archived, 
-                                  'is_active': meter.is_active, 
-                                  'created': meter.created_at, 
-                                  'service_location': meter.service_location_id, 
-                                  'postal_code': meter.service_location.address.postal_code, 
-                                  'map_location': meter.service_location.map_location, 
-                                  'channels': [channel.setting for channel in meter.channels], 
-                                  'feeder': meter.feeder, 
-                                  'substation': meter.substation, 
-                                  'rate': meter.get_rates(),
-                                  'interval_count': meter.get_interval_count(interval_count_start, interval_count_end), 
-                                  'interval_coverage': Interval.get_interval_coverage(interval_coverage), 
-                                  'exports': 'NOT YET CREATED'}}] 
+    # PENDING PROPS TO ADD TO THE RESPONSE
+    # 'authorization_uid': 'NOT YET CREATED', 
+    # 'user_id': 'NOT YET CREATED',  
+    # 'exports': 'NOT YET CREATED'
 
-    return jsonify(meter_data)
+    meter_schema.context['start'] = interval_count_start
+    meter_schema.context['end'] = interval_count_end
+    meter_schema.context['coverage'] = interval_coverage
 
-
-#############################
-##### VIEW METER SCHEMA #####
-#############################
-
-
-@app.route('/api/v1/meter/meta', methods=['GET'])
-def get_meter_schema():
-    '''Returns meter schema as json object'''
-    
-    return jsonify(schema_data)
-
-
-#########################
-##### MODIFY METER ######
-#########################
-
-
-@app.route('/api/v1/meter/<string:meter_id>', methods=['PUT'])
-def update_meter(meter_id):
-    '''Updates meter in database'''
-
-    modified_meter = request.get_json()
-
-    try:
-        Meter.query.filter_by(meter_id=meter_id).one()
-    except (MultipleResultsFound,NoResultFound):
-        arw.add_errors('No result found or multiple results found')
-
-    modified_meter['meter_type'] = MeterType.check_value(modified_meter['meter_type'])
-    if not modified_meter['meter_type']:
-        arw.add_errors('Not an accepted value for meter type')
-    
-    try:
-        modified_meter = meter_schema.load(modified_meter, session=db.session)
-    except ValidationError:
-        arw.add_errors('Validation error')
-    
-    try:
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
-        arw.add_errors('Integrity error')
-
-    results = meter_schema.dump(modified_meter, many=True)
+    results = meter_schema.dump(meter)
     return arw.to_json(results)
 
 
-#########################
-##### ADD NEW METER #####
-#########################
+@meter_api_bp.route('/meter/meta', methods=['GET'])
+def get_meter_schema():
+    """
+    Returns meter schema as json object
+    """
+    return jsonify(schema_data)
 
 
-@app.route('/api/v1/meter', methods=['POST'])
+@meter_api_bp.route('/meter/<string:meter_id>', methods=['PUT'])
+def update_meter(meter_id):
+    '''Updates meter in database'''
+    arw = ApiResponseWrapper()
+    meter_schema = MeterSchema()
+    modified_meter = request.get_json()
+
+    try:
+        meter = Meter.query.filter_by(meter_id=meter_id).one()
+        modified_meter = meter_schema.load(modified_meter, session=db.session)
+        db.session.commit()
+
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
+    
+    except IntegrityError as ie:
+        db.session.rollback()
+        arw.add_errors('Integrity error')
+    
+    except ValidationError as ve:
+        db.session.rollback()
+        arw.add_errors(ve.messages)
+
+    if arw.has_errors():
+        return arw.to_json(None, 400)
+
+    results = meter_schema.dump(modified_meter)
+
+    return arw.to_json(results)
+
+
+@meter_api_bp.route('/meter', methods=['POST'])
 def add_meter():
     '''Add new meter to database'''
-
-    new_meter = request.get_json()
+    arw = ApiResponseWrapper()
+    meter_schema = MeterSchema()
+    meter_json = request.get_json()
             
-    #sets meter_type value equal to enum name
-    new_meter['meter_type'] = MeterType.check_value(new_meter['meter_type'])
-    if not new_meter['meter_type']:
-        return {'Error': 'Not accepted value for meter type'}
-
     try:
-       new_meter = meter_schema.load(new_meter, session=db.session)
-    except ValidationError as e:
-        return e.messages, 422
+        # sql alchemy and marshmallow seem to update instead of raise an
+        # integrity error...🤨
+        meter_id = meter_json["meter_id"] if "meter_id" in meter_json else None
+        service_id = meter_json["service_location_id"] if "service_location_id" in meter_json else None
+        utility_id = meter_json["utility_id"] if "utility_id" in meter_json else None
+        does_meter_exist = Meter.query.filter_by(
+            meter_id=meter_id, 
+            service_location_id=service_id, 
+            utility_id=utility_id
+        ).count() > 0
 
-    #adds meter to database if it doesn't conflict with database setup, else throws error
-    try:
+        if does_meter_exist:
+            raise IntegrityError("Meter already exists", None, None)
+
+        new_meter = meter_schema.load(meter_json, session=db.session)
         db.session.add(new_meter)
         db.session.commit()
+
     except IntegrityError:
         db.session.rollback()
-        return jsonify({'Error': 'Conflict adding data to database (pk or fk issue).'})
-
-    #returns successful response code
-    return jsonify({'Success': 200})
+        arw.add_errors({"meter_id": "The given meter already exists."})
+        return arw.to_json(None, 400)
+    
+    except ValidationError as e:
+        arw.add_errors(e.messages)
+        return arw.to_json(None, 400)
+    
+    result = MeterSchema().dump(new_meter)
+    return arw.to_json(result)
