@@ -1,3 +1,5 @@
+from sqlalchemy.types import TIMESTAMP
+from datetime import datetime
 from web.database import (
     db,
     Model,

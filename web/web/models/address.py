@@ -1,4 +1,5 @@
 from sqlalchemy.types import TIMESTAMP
+from datetime import datetime
 from web.database import (
     db,
     Model,
@@ -19,7 +20,8 @@ class Address(Model):
     country = Column(db.String(100), nullable=False)
     postal_code = Column(db.String(64), nullable=False)
     phone = Column(db.String(64))
-    last_update = Column(TIMESTAMP, nullable=False)
+    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
+    updated_at = Column(TIMESTAMP, nullable=False,default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __repr__(self):
         return f'<Address address_id={self.address_id} address={self.address} postal_code={self.postal_code}>'

@@ -44,6 +44,9 @@ class ApiResponseWrapper(object):
             }
         }
     
+    def has_errors(self):
+        return len(self.response["errors"]) != 0
+
     def add_errors(self, errors):
         """
         Allow users to append a value or an array of values
@@ -55,6 +58,6 @@ class ApiResponseWrapper(object):
         if len(self.response["errors"]) > 0:
             return jsonify(self.response), status_code, headers
 
-        self.response["results"]["count"] = len(data)
+        self.response["results"]["count"] = len(data) if isinstance(data, list) else 1
         self.response["results"]["data"] = data
         return jsonify(self.response), status_code, headers
