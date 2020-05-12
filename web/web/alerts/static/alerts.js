@@ -12,8 +12,8 @@ import '@rmwc/data-table/styles';
 
 
 class Alerts extends React.Component {
-    onClick = () => {
-        this.props.dispatch(action.loginSuccessful('asdf'));
+    componentDidMount() {
+        this.props.dispatch(action.getAlerts());
     }
 
     getHeader = () => {
@@ -29,11 +29,11 @@ class Alerts extends React.Component {
                     <DT.DataTableHeadCell>Resolution</DT.DataTableHeadCell>
                 </DT.DataTableRow>
             </DT.DataTableHead>
-        )
+        );
     }
 
     getBody = () => {
-        const dataTableBody = tempData.map(item => {
+        const dataTableBody = this.props.alerts.map(item => {
             return (
                 <DT.DataTableRow>
                     <DT.DataTableCell>{item.date}</DT.DataTableCell>
@@ -47,9 +47,9 @@ class Alerts extends React.Component {
                     </DT.DataTableCell>
                 </DT.DataTableRow>
             )
-        })
+        });
 
-        return (<DT.DataTableBody>{dataTableBody}</DT.DataTableBody>)
+        return (<DT.DataTableBody>{dataTableBody}</DT.DataTableBody>);
     }
 
     render() {
@@ -69,7 +69,9 @@ class Alerts extends React.Component {
     }
 }
 
-const ConnectedAlerts = connect(state => ({}))(Alerts);
+const ConnectedAlerts = connect(state => ({
+    alerts: state.alerts.alertEntries
+}))(Alerts);
 
 const alertsElement = (
     <ConnectedComponentWrapper isVisible={true}>
