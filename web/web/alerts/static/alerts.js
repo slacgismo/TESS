@@ -13,6 +13,19 @@ import '@rmwc/data-table/styles';
 
 
 class Alerts extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            inputValueReferences: {}
+        };
+    }
+    
+    handleChange = (event, id) => {        
+        let refs = this.state.inputValueReferences;
+        refs[id] = event.target.value;
+        this.setState({inputValueReferences: refs});
+    }
+
     componentDidMount() {
         // if a user decides to navigate back and forth through the
         // browser arrows, the menu selection won't update accordingly,
@@ -39,7 +52,12 @@ class Alerts extends React.Component {
     }
 
     getBody = () => {
-        const dataTableBody = this.props.alerts.map(item => {
+        const dataTableBody = this.props.alerts.map((item, index) => {
+            // if there's a value and the user removes it, we want to persist
+            // the removal, so we check if it's an empty string
+            const resolutionValue = this.state.inputValueReferences[index] === ""
+                ? this.state.inputValueReferences[index]
+                : this.state.inputValueReferences[index] || item.resolution;
             return (
                 <DT.DataTableRow>
                     <DT.DataTableCell>{item.date}</DT.DataTableCell>
@@ -49,7 +67,12 @@ class Alerts extends React.Component {
                     <DT.DataTableCell>{item.status}</DT.DataTableCell>
                     <DT.DataTableCell>{item.assigned_to}</DT.DataTableCell>
                     <DT.DataTableCell>
-                        <TextField outline={false} fullwidth value={item.resolution} />
+                        <TextField
+                            onChange={(e) => this.handleChange(e, index)}
+                            outlined={false} 
+                            fullwidth={true} 
+                            align="start" 
+                            value={resolutionValue} />
                     </DT.DataTableCell>
                 </DT.DataTableRow>
             )
