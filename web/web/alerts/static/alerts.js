@@ -4,6 +4,7 @@ import * as action from './actions';
 import { connect } from 'react-redux';
 import * as DT from '@rmwc/data-table';
 import { TextField } from '@rmwc/textfield';
+import { selectMenuOption } from '../../static/js/actions';
 import ConnectedComponentWrapper from '../../static/js/base';
 
 import '@rmwc/grid/styles';
@@ -13,6 +14,11 @@ import '@rmwc/data-table/styles';
 
 class Alerts extends React.Component {
     componentDidMount() {
+        // if a user decides to navigate back and forth through the
+        // browser arrows, the menu selection won't update accordingly,
+        // so we fix that by having each component do it, 😔, this is 
+        // not great since the component shouldn't care about the menu
+        this.props.dispatch(selectMenuOption('alerts'));
         this.props.dispatch(action.getAlerts());
     }
 
@@ -38,7 +44,7 @@ class Alerts extends React.Component {
                 <DT.DataTableRow>
                     <DT.DataTableCell>{item.date}</DT.DataTableCell>
                     <DT.DataTableCell>{item.time}</DT.DataTableCell>
-                    <DT.DataTableCell>{item.type}</DT.DataTableCell>
+                    <DT.DataTableCell>{item.alert_type}</DT.DataTableCell>
                     <DT.DataTableCell className="alerts-text-wrap">{item.description}</DT.DataTableCell>
                     <DT.DataTableCell>{item.status}</DT.DataTableCell>
                     <DT.DataTableCell>{item.assigned_to}</DT.DataTableCell>
