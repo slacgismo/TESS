@@ -20,17 +20,33 @@ body {
     margin: 0 35px;
 }
 
-/* ALERTS DATA TABLE PAGE STYLES */
+/* ALERTS AND NOTIFICATIONS DATA TABLE PAGE STYLES */
 .alerts-data-table,
 .notification-data-table {
     width: 100%;
 }
-.alert-search-bar,
-.notification-search-bar {
+.alert-search-bar {
     padding: 0 !important;
     width: 400px;
 }
 .alerts-text-wrap {
     max-width: 400px;
     overflow: scroll !important;
+}
+
+.notification-search-bar {
+    float: left;
+    padding: 0 !important;
+    width: 400px;
+}
+.notification-page-button-container {
+    float: right;    
+}
+.notification-page-button-container button {
+    vertical-align: middle;
+    display: inline-block;
+}
+.notification-spacer {
+    display: inline-block;
+    margin: 0 10px;
 }

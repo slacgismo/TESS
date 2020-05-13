@@ -2,12 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as action from './actions';
 import { connect } from 'react-redux';
+import { Button } from '@rmwc/button';
 import * as DT from '@rmwc/data-table';
 import { Checkbox } from '@rmwc/checkbox';
 import { TextField } from '@rmwc/textfield';
 import { selectMenuOption } from '../../static/js/actions';
 import ConnectedComponentWrapper from '../../static/js/base';
 
+import '@rmwc/button/styles';
 import '@rmwc/checkbox/styles';
 import '@rmwc/textfield/styles';
 import '@rmwc/data-table/styles';
@@ -102,9 +104,15 @@ class Notifications extends React.Component {
     render() {
         return (
             <div>
-                <div className="notification-search-bar">
-                    <TextField fullwidth icon="search" trailingIcon="close" label="Search" />
-                    
+                <div>
+                    <div className="notification-search-bar">
+                        <TextField fullwidth icon="search" trailingIcon="close" label="Search" />
+                    </div>
+                    <div className="notification-page-button-container">
+                        <Button label="Add New Row" unelevated />
+                        <div className="notification-spacer"></div>
+                        <Button danger label="Delete Selected" unelevated disabled={true} />
+                    </div>
                 </div>
                 <DT.DataTable className="notification-data-table">
                     <DT.DataTableContent>

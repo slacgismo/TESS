@@ -24,7 +24,6 @@ class NotificationTypeSchema(Schema):
     is_active = fields.Bool()
 
 
-
 class NotificationSchema(Schema):
     email = fields.Str()
     notifications = fields.List(fields.Nested(NotificationTypeSchema))
