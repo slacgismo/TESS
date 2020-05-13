@@ -18,9 +18,6 @@ class Login(Model):
     username = Column(db.String(100), db.ForeignKey('users.user_id'), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
 
-    #one-to-one relationship with user
-    username = relationship('User', backref=db.backref('logins'), uselist=False)
-
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
