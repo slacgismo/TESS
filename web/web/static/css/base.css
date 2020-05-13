@@ -19,3 +19,16 @@ body {
 .chart-divider {
     margin: 0 35px;
 }
+
+/* ALERTS DATA TABLE PAGE STYLES */
+.alerts-data-table {
+    width: 100%;
+}
+.alert-search-bar {
+    padding: 0 !important;
+    width: 400px;
+}
+.alerts-text-wrap {
+    max-width: 400px;
+    overflow: scroll !important;
+}
