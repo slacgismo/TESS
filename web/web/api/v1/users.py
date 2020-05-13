@@ -1,22 +1,33 @@
-from web import app
+from flask import Blueprint
+from .response_wrapper import ApiResponseWrapper
+from web.models.user import User, UserSchema
 
-from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy 
+user_api_bp = Blueprint('user_api_bp', __name__)
 
-from web.models.user import User 
-
-@app.route('/api/v1/users', methods=['GET'])
+@user_api_bp.route('/users', methods=['GET'])
 def get_user_ids():
-    pass
+    """
+    Retrieve all user objects
+    """
+    arw = ApiResponseWrapper()
 
-@app.route('/api/v1/user/<string:user_id>', methods=['GET'])
+    users = User.query.all()
+    user_schema = UserSchema()
+    results = user_schema.dump(users, many=True)
+    
+    return arw.to_json(results)
+
+
+@user_api_bp.route('/<string:user_id>', methods=['GET'])
 def show_user_info(user_id):
     pass
 
-@app.route('api/v1/user/<string:user_id>', methods=['PUT'])
+
+@user_api_bp.route('/<string:user_id>', methods=['PUT'])
 def modify_user(user_id):
     pass
 
-@app.route('api/v1/user', methods=['POST'])
+
+@user_api_bp.route('/user', methods=['POST'])
 def add_user():
     pass

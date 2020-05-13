@@ -3,7 +3,7 @@ from sqlalchemy.types import TIMESTAMP
 
 #TODO: add in user mixin for built in flask-user capabilities
 # from flask_user import UserMixin
-
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.models.address import Address
 from web.database import (
     db,
@@ -32,3 +32,10 @@ class User(Model):
     #relationships
     login = relationship('Login', backref=db.backref('user'), uselist=False)
     group = relationship('Group', backref=db.backref('user'), uselist=False)
+
+
+class UserSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
+        include_fk = True
+        load_instance = True
