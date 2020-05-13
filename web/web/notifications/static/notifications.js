@@ -104,11 +104,11 @@ class Notifications extends React.Component {
     render() {
         return (
             <div>
-                <div>
+                <div className="notification-action-bar-container">
                     <div className="notification-search-bar">
                         <TextField fullwidth icon="search" trailingIcon="close" label="Search" />
                     </div>
-                    <div className="notification-page-button-container">
+                    <div className="notification-button-container">
                         <Button label="Add New Row" unelevated />
                         <div className="notification-spacer"></div>
                         <Button danger label="Delete Selected" unelevated disabled={true} />
