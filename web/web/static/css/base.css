@@ -21,10 +21,12 @@ body {
 }
 
 /* ALERTS DATA TABLE PAGE STYLES */
-.alerts-data-table {
+.alerts-data-table,
+.notification-data-table {
     width: 100%;
 }
-.alert-search-bar {
+.alert-search-bar,
+.notification-search-bar {
     padding: 0 !important;
     width: 400px;
 }

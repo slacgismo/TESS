@@ -7,10 +7,8 @@ import { TextField } from '@rmwc/textfield';
 import { selectMenuOption } from '../../static/js/actions';
 import ConnectedComponentWrapper from '../../static/js/base';
 
-import '@rmwc/grid/styles';
 import '@rmwc/textfield/styles';
 import '@rmwc/data-table/styles';
-
 
 class Alerts extends React.Component {
     constructor(props) {
