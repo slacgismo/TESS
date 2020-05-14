@@ -18,9 +18,9 @@ class Alerts extends React.Component {
         };
     }
     
-    handleChange = (event, id) => {        
+    handleChange = (e, id) => {        
         let refs = this.state.inputValueReferences;
-        refs[id] = event.target.value;
+        refs[id] = e.target.value;
         this.setState({inputValueReferences: refs});
     }
 

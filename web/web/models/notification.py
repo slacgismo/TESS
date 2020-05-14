@@ -25,5 +25,6 @@ class NotificationTypeSchema(Schema):
 
 
 class NotificationSchema(Schema):
+    pk = fields.Str()
     email = fields.Str()
     notifications = fields.List(fields.Nested(NotificationTypeSchema))

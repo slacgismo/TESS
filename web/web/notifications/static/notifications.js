@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as action from './actions';
+import { v4 as uuidv4 } from 'uuid';
 import { connect } from 'react-redux';
 import { Button } from '@rmwc/button';
 import * as DT from '@rmwc/data-table';
@@ -15,21 +16,22 @@ import '@rmwc/textfield/styles';
 import '@rmwc/data-table/styles';
 
 const defaultHeaders = [
-    { "label": "Yellow Alarm (Load)" },
-    { "label": "Telecomm Alerts" },
-    { "label": "Red Alarm (Load)" },
-    { "label": "Red Alarm (Price)" },
-    { "label": "Yellow Alarm (Price)" },
-    { "label": "Capacity Bounds" },
-    { "label": "Resource Depletion" },
-    { "label": "Price Alerts" }
+    { "is_active": false, "notification_type": "YELLOW_ALARM_LOAD", "label": "Yellow Alarm (Load)" },
+    { "is_active": false, "notification_type": "TELECOMM_ALERTS", "label": "Telecomm Alerts" },
+    { "is_active": false, "notification_type": "RED_ALARM_LOAD", "label": "Red Alarm (Load)" },
+    { "is_active": false, "notification_type": "RED_ALARM_PRICE", "label": "Red Alarm (Price)" },
+    { "is_active": false, "notification_type": "YELLOW_ALARM_PRICE", "label": "Yellow Alarm (Price)" },
+    { "is_active": false, "notification_type": "CAPACITY_BOUNDS", "label": "Capacity Bounds" },
+    { "is_active": false, "notification_type": "RESOURCE_DEPLETION", "label": "Resource Depletion" },
+    { "is_active": false, "notification_type": "PRICE_ALERTS", "label": "Price Alerts" }
 ]
 
 class Notifications extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            checkboxReferences: {}
+            checkboxReferences: {},
+            inputValueReferences: {}
         };
     }
 
@@ -40,6 +42,12 @@ class Notifications extends React.Component {
         // not great since the component shouldn't care about the menu
         this.props.dispatch(selectMenuOption('notifications'));
         this.props.dispatch(action.getNotifications());
+    }
+
+    handleEmailChange = (e, id) => {
+        let refs = this.state.inputValueReferences;
+        refs[id] = e.target.value;
+        this.setState({inputValueReferences: refs});
     }
 
     handleChange = (e, id, email, notificationType) => {
@@ -72,12 +80,23 @@ class Notifications extends React.Component {
 
     getBody = () => {
         const dataTableBody = this.props.notificationEntries.map((item, index) => {
+            const rowId = item.pk
+            const emailValue = this.state.inputValueReferences[rowId] === ""
+                ? this.state.inputValueReferences[rowId]
+                : this.state.inputValueReferences[rowId] || item.email;
             return (
                 <DT.DataTableRow>
                     <DT.DataTableCell>
                         <Checkbox />
                     </DT.DataTableCell>
-                    <DT.DataTableCell>{item.email}</DT.DataTableCell>
+                    <DT.DataTableCell>
+                        <TextField
+                            onChange={(e) => this.handleEmailChange(e, item.pk)}
+                            outlined={false} 
+                            fullwidth={true} 
+                            align="start" 
+                            value={emailValue} />
+                    </DT.DataTableCell>
                     {
                         item.notifications.map(notificationItem => {
                             const id = index.toString() + notificationItem.notification_type;
@@ -101,6 +120,26 @@ class Notifications extends React.Component {
         return (<DT.DataTableBody>{dataTableBody}</DT.DataTableBody>);
     }
 
+    addNewRow = () => {
+        let notifications = [];
+        if(!this.props.notificationEntries.length) {
+            notifications = defaultHeaders;
+        } else {
+            // use the first entry in notification entries as the template, since there may
+            // new, unaccounted for columns
+            notifications = this.props.notificationEntries[0].notifications.map(item => {
+                item.is_active = false;
+                return item;
+            });
+        }
+        const rowTemplate = {
+            pk: uuidv4(),
+            email: "",
+            notifications: notifications
+        };
+        this.props.dispatch(action.addNewNotificationRow(rowTemplate));
+    }
+
     render() {
         return (
             <div>
@@ -109,9 +148,17 @@ class Notifications extends React.Component {
                         <TextField fullwidth icon="search" trailingIcon="close" label="Search" />
                     </div>
                     <div className="notification-button-container">
-                        <Button label="Add New Row" unelevated />
+                        <Button
+                            unelevated
+                            label="Add New Row"
+                            onClick={this.addNewRow} />
                         <div className="notification-spacer"></div>
-                        <Button danger label="Delete Selected" unelevated disabled={true} />
+                        <Button
+                            danger
+                            unelevated
+                            label="Delete Selected"
+                            disabled={true}
+                            onClick={this.deleteRow} />
                     </div>
                 </div>
                 <DT.DataTable className="notification-data-table">

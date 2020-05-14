@@ -7,6 +7,13 @@ function updateFetchedNotifications(data) {
     }
 }
 
+export function addNewNotificationRow(rowTemplate) {
+    return { 
+        type: 'ADD_NEW_NOTIFICATION_ROW',
+        rowTemplate
+    }
+}
+
 export function getNotifications() {
     return dispatch => {
         api.get('notifications', (response) => {

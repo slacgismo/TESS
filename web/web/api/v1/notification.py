@@ -8,6 +8,7 @@ notifications_api_bp = Blueprint('notifications_api_bp', __name__)
 
 test_data = [
     {
+        "pk": 1,
         "email": "one@tess.com",
         "notifications": [
             { "notification_type": "YELLOW_ALARM_LOAD", "label": "Yellow Alarm (Load)", "is_active": False },
@@ -21,6 +22,7 @@ test_data = [
         ]
     },
     {
+        "pk": 2,
         "email": "two@tess.com",
         "notifications": [
             { "notification_type": "YELLOW_ALARM_LOAD", "label": "Yellow Alarm (Load)", "is_active": False },
@@ -34,6 +36,7 @@ test_data = [
         ]
     },
     {
+        "pk": 3,
         "email": "three@tess.com",
         "notifications": [
             { "notification_type": "YELLOW_ALARM_LOAD", "label": "Yellow Alarm (Load)", "is_active": False },
@@ -47,6 +50,7 @@ test_data = [
         ]
     },
     {
+        "pk": 4,
         "email": "four@tess.com",
         "notifications": [
             { "notification_type": "YELLOW_ALARM_LOAD", "label": "Yellow Alarm (Load)", "is_active": True },
@@ -60,6 +64,7 @@ test_data = [
         ]
     },
     {
+        "pk": 5,
         "email": "five@tess.com",
         "notifications": [
             { "notification_type": "YELLOW_ALARM_LOAD", "label": "Yellow Alarm (Load)", "is_active": False },
@@ -73,6 +78,7 @@ test_data = [
         ]
     },
     {
+        "pk": 6,
         "email": "six@tess.com",
         "notifications": [
             { "notification_type": "YELLOW_ALARM_LOAD", "label": "Yellow Alarm (Load)", "is_active": True },
