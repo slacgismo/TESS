@@ -13,16 +13,20 @@ from web.database import (
 )
 
 
-class Login(Model):
+class Login(Model, UserMixin):
     __tablename__ = 'logins'
 
     login_id = Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    user_id = Column(db.Integer, db.ForeignKey('users.user_id'), unique=True, nullable=False)
-    username = Column(db.String(100), db.ForeignKey('users.user_id'), unique=True, nullable=False)
+    user_id = Column(db.Integer, db.ForeignKey('users.user_id'), ondelete='CASCADE', nullable=False)
+    
+    username = Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
+
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # Relationships
+    user = relationship('User', uselist=False, foreign_keys=user_id, backref=db.backref('login'))
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

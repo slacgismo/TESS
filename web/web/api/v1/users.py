@@ -106,12 +106,12 @@ def add_user():
 
     except IntegrityError as ie:
         db.session.rollback()
-        arw.add_errors({ie.messages})
+        arw.add_errors(ie.messages)
         return arw.to_json(None, 400)
     
     except ValidationError as ve:
         arw.add_errors(ve.messages)
         return arw.to_json(None, 400)
     
-    result = UserSchema().dump(new_user)
-    return arw.to_json(result)
+    results = UserSchema().dump(new_user)
+    return arw.to_json(results)
