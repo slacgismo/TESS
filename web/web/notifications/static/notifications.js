@@ -31,7 +31,8 @@ class Notifications extends React.Component {
         super(props);
         this.state = {
             checkboxReferences: {},
-            inputValueReferences: {}
+            inputValueReferences: {},
+            selectedRowIdsToDelete: []
         };
     }
 
@@ -50,11 +51,32 @@ class Notifications extends React.Component {
         this.setState({inputValueReferences: refs});
     }
 
-    handleChange = (e, id, email, notificationType) => {
+    handleNotificationChange = (e, id, email, notificationType) => {
         let refs = this.state.checkboxReferences;
         refs[id] = e.currentTarget.checked;
         this.setState({checkboxReferences: refs});
         //this.props.dispatch(updateNotificationPreference(email, notificationType, event.currentTarget.checked));
+    }
+
+    handleRowDeleteChange = (e, id) => {
+        let indexToRemove = null;
+        for(let i = 0; i < this.state.selectedRowIdsToDelete.length; i++) {
+            if(this.state.selectedRowIdsToDelete[i] === id) {
+                indexToRemove = i;
+            }
+        }
+        if(indexToRemove !== null) {
+            this.setState({
+                selectedRowIdsToDelete: [
+                    ...this.state.selectedRowIdsToDelete.slice(0, indexToRemove),
+                    ...this.state.selectedRowIdsToDelete.slice(indexToRemove + 1)
+                ]
+            });
+        } else {
+            this.setState({
+                selectedRowIdsToDelete: [...this.state.selectedRowIdsToDelete, id]
+            });
+        }
     }
 
     getHeader = () => {
@@ -87,7 +109,9 @@ class Notifications extends React.Component {
             return (
                 <DT.DataTableRow>
                     <DT.DataTableCell>
-                        <Checkbox />
+                        <Checkbox
+                            checked={this.state.selectedRowIdsToDelete.includes(rowId)}
+                            onChange={evt => this.handleRowDeleteChange(evt, rowId)} />
                     </DT.DataTableCell>
                     <DT.DataTableCell>
                         <TextField
@@ -108,7 +132,7 @@ class Notifications extends React.Component {
                                 <DT.DataTableCell>
                                     <Checkbox 
                                         checked={checkboxSelection}
-                                        onChange={evt => this.handleChange(evt, id, item.email, notificationItem.notification_type)} />
+                                        onChange={evt => this.handleNotificationChange(evt, id, item.email, notificationItem.notification_type)} />
                                 </DT.DataTableCell>
                             );
                         })
@@ -157,7 +181,7 @@ class Notifications extends React.Component {
                             danger
                             unelevated
                             label="Delete Selected"
-                            disabled={true}
+                            disabled={!this.state.selectedRowIdsToDelete.length}
                             onClick={this.deleteRow} />
                     </div>
                 </div>
