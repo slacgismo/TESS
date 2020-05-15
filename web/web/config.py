@@ -21,6 +21,7 @@ class ProductionConfig(Config):
     DB_USER = "tess_user"
     DB_PASSWORD = ""
 
+
 class DevelopmentConfig(Config):
     DB_SERVER = 'localhost'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
