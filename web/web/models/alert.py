@@ -15,7 +15,7 @@ from marshmallow import Schema, fields
 #     __tablename__ = 'alerts'
 
 #     def __repr__(self):
-#         return f'<Utility utility_id={self.utility_id} name={self.name}>'
+#         return f'<Alert>'
 
 
 class AlertSchema(Schema):

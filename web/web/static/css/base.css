@@ -20,8 +20,9 @@ body {
     margin: 0 35px;
 }
 
-/* ALERTS DATA TABLE PAGE STYLES */
-.alerts-data-table {
+/* ALERTS AND NOTIFICATIONS DATA TABLE PAGE STYLES */
+.alerts-data-table,
+.notification-data-table {
     width: 100%;
 }
 .alert-search-bar {
@@ -31,4 +32,26 @@ body {
 .alerts-text-wrap {
     max-width: 400px;
     overflow: scroll !important;
+}
+.notification-action-bar-container,
+.notification-search-bar,
+.notification-button-container {
+    height: 55px;
+}
+.notification-search-bar {
+    float: left;
+    padding: 0 !important;
+    width: 400px;
+}
+.notification-button-container button{
+    height: 45px;
+    margin: 5px 0;
+}
+.notification-button-container {
+    float: right;
+    margin: 0 5px;
+}
+.notification-spacer {
+    display: inline-block;
+    margin: 0 10px;
 }
