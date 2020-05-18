@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { selectMenuOption } from '../../static/js/actions'; 
+import ResourcesChart from './resources';
+import SystemLoadChart from './system_load';
+import { Grid, GridRow, GridCell } from '@rmwc/grid';
+import { selectMenuOption } from '../../static/js/actions';
 import ConnectedComponentWrapper from '../../static/js/base';
 
 import * as action from './actions';
@@ -17,7 +20,29 @@ class Capacity extends React.Component {
 
     render() {
         return (
-            <div></div>
+            <Grid className="power-dispatch-container">
+                <GridRow>
+                    <GridCell className="power-dispatch-chart-container" span={6}>
+                        <div className="pd-chart-system-load">
+                            <SystemLoadChart 
+                                xTitle="Hours" 
+                                yTitle="MW" 
+                                chartTitle="System Load"
+                                chartSubtitle="Transformer Capacity" />
+                        </div>
+                        <div className="pd-chart-resource">
+                            <ResourcesChart 
+                                xTitle="Hours" 
+                                yTitle="MW" 
+                                chartTitle="Resources in the System"
+                                chartSubtitle="" />
+                        </div>
+                    </GridCell>
+                    <GridCell className="power-dispatch-form-container" span={6}>
+                        <p>a random form</p>
+                    </GridCell>
+                </GridRow>
+            </Grid>
         );
     }
 }
