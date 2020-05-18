@@ -57,8 +57,10 @@ body {
 .notification-data-table {
     width: 100%;
 }
-.alert-search-bar {
+.alerts-search-bar {
     padding: 0 !important;
+}
+.alerts-search-bar input {
     width: 400px;
 }
 .alerts-text-wrap {
@@ -73,6 +75,8 @@ body {
 .notification-search-bar {
     float: left;
     padding: 0 !important;
+}
+.notification-search-bar input {
     width: 400px;
 }
 .notification-button-container button{
