@@ -5,6 +5,38 @@ body {
     background-color: #404040 !important;
 }
 
+/* LOGIN PAGE */
+.login-page-container {
+    background: url('../img/bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    text-align: center;
+
+    /* Set rules to fill background */
+    min-height: 100%;
+    min-width: 1024px;
+        
+    /* Set up proportionate scaling */
+    width: 100%;
+    height: auto;
+        
+    /* Set up positioning */
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 200px;
+}
+
+.login-form-container {
+    width: 500px;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: inline-block;
+    padding: 20px;
+}
+.login-form-container input,
+.login-form-container button { 
+    width: 400px;
+}
+
 /* COST REVENUE STYLES */
 .cost-revenue-main-content-container {
     padding: 50px 20px;
@@ -25,8 +57,10 @@ body {
 .notification-data-table {
     width: 100%;
 }
-.alert-search-bar {
+.alerts-search-bar {
     padding: 0 !important;
+}
+.alerts-search-bar input {
     width: 400px;
 }
 .alerts-text-wrap {
@@ -41,6 +75,8 @@ body {
 .notification-search-bar {
     float: left;
     padding: 0 !important;
+}
+.notification-search-bar input {
     width: 400px;
 }
 .notification-button-container button{

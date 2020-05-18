@@ -67,8 +67,8 @@ class Alerts extends React.Component {
                     <DT.DataTableCell>
                         <TextField
                             onChange={(e) => this.handleChange(e, index)}
-                            outlined={false} 
-                            fullwidth={true} 
+                            outlined={false}
+                            fullwidth={true}
                             align="start" 
                             value={resolutionValue} />
                     </DT.DataTableCell>
@@ -82,8 +82,11 @@ class Alerts extends React.Component {
     render() {
         return (
             <div>
-                <div className="alert-search-bar">
-                    <TextField fullwidth icon="search" trailingIcon="close" label="Search" />
+                <div className="alerts-search-bar">
+                    <TextField 
+                        icon="search"
+                        trailingIcon="close"
+                        label="Search" />
                 </div>
                 <DT.DataTable className="alerts-data-table">
                     <DT.DataTableContent>

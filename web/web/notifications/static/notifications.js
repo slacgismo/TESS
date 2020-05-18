@@ -169,7 +169,10 @@ class Notifications extends React.Component {
             <div>
                 <div className="notification-action-bar-container">
                     <div className="notification-search-bar">
-                        <TextField fullwidth icon="search" trailingIcon="close" label="Search" />
+                        <TextField
+                            icon="search"
+                            trailingIcon="close"
+                            label="Search" />
                     </div>
                     <div className="notification-button-container">
                         <Button
