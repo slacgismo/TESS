@@ -28,7 +28,7 @@ class ConnectedComponentWrapper extends React.Component {
                     <NavigationDrawer isVisible={this.props.isVisible}/>
                     <div className={`load-price-notification-container ${!this.props.isVisible ? "lpn-hidden" : ""}`}>
                         <div className="lpn-pull-left">
-                            <Typography use="headline5">{this.props.pageTitle || ""}</Typography>
+                            {/* <Typography use="headline5">{this.props.pageTitle || ""}</Typography> */}
                         </div>
                         <div className="lpn-pull-right">
                             <Button label="LOAD" trailingIcon={
