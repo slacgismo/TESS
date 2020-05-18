@@ -8,6 +8,7 @@ body {
 /* LOAD/PRICE NOTIFICATION CONTAINER */
 .load-price-notification-container {
     overflow: auto;
+    padding: 10px 50px;
     border-bottom: 1px solid #404040;
 }
 .lpn-spacer {
@@ -16,11 +17,9 @@ body {
 }
 .lpn-pull-left {
     float: left;
-    padding: 0 0 0 50px;
 }
 .lpn-pull-right {
     float: right;
-    padding: 10px 50px;
 }
 .lpn-hidden {
     display: none;
