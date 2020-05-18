@@ -65,4 +65,3 @@ def register_blueprints(app):
     
 
 app = create_app(DevelopmentConfig())
-app.url_map.strict_slashes = False
