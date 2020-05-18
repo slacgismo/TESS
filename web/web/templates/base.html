@@ -1,13 +1,14 @@
 <!doctype html>
 <html>
   <head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     {% block head %}    
     <title>TESS - {% block title %}{% endblock %}</title>
     {% endblock %}
   </head>
-  <body>
+  <body class="mdc-typography">
     <div id="master-container">{% block content %}{% endblock %}</div>
   </body>
 </html>

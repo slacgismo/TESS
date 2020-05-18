@@ -17,7 +17,7 @@ class UserSettings extends React.Component {
 
     render() {
         return (
-            <div>UserSettings Page</div>
+            <div></div>
         );
     }
 }
@@ -25,7 +25,7 @@ class UserSettings extends React.Component {
 const ConnectedUserSettings = connect(state => ({}))(UserSettings);
 
 const userSettingsElement = (
-    <ConnectedComponentWrapper isVisible={true}>
+    <ConnectedComponentWrapper isVisible={true} pageTitle="USER SETTINGS">
         <ConnectedUserSettings/>
     </ConnectedComponentWrapper>
 );

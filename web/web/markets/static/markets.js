@@ -17,7 +17,7 @@ class Markets extends React.Component {
 
     render() {
         return (
-            <div>Markets Page</div>
+            <div></div>
         );
     }
 }
@@ -25,7 +25,7 @@ class Markets extends React.Component {
 const ConnectedMarkets = connect(state => ({}))(Markets);
 
 const marketsElement = (
-    <ConnectedComponentWrapper isVisible={true}>
+    <ConnectedComponentWrapper isVisible={true} pageTitle="MARKETS">
         <ConnectedMarkets/>
     </ConnectedComponentWrapper>
 );

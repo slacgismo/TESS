@@ -17,7 +17,7 @@ class Storage extends React.Component {
 
     render() {
         return (
-            <div>Storage Page</div>
+            <div></div>
         );
     }
 }
@@ -25,7 +25,7 @@ class Storage extends React.Component {
 const ConnectedStorage = connect(state => ({}))(Storage);
 
 const storageElement = (
-    <ConnectedComponentWrapper isVisible={true}>
+    <ConnectedComponentWrapper isVisible={true} pageTitle="POWER DISPATCH">
         <ConnectedStorage/>
     </ConnectedComponentWrapper>
 );

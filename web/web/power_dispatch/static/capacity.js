@@ -17,7 +17,7 @@ class Capacity extends React.Component {
 
     render() {
         return (
-            <div>Capacity Page</div>
+            <div></div>
         );
     }
 }
@@ -25,7 +25,7 @@ class Capacity extends React.Component {
 const ConnectedCapacity = connect(state => ({}))(Capacity);
 
 const capacityElement = (
-    <ConnectedComponentWrapper isVisible={true}>
+    <ConnectedComponentWrapper isVisible={true} pageTitle="CAPACITY">
         <ConnectedCapacity/>
     </ConnectedComponentWrapper>
 );
