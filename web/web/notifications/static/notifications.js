@@ -204,7 +204,7 @@ const ConnectedNotifications = connect(state => ({
 }))(Notifications);
 
 const notificationsElement = (
-    <ConnectedComponentWrapper isVisible={true} pageTitle="NOTIFICATIOINS">
+    <ConnectedComponentWrapper isVisible={true} pageTitle="NOTIFICATIONS">
         <ConnectedNotifications/>
     </ConnectedComponentWrapper>
 );
