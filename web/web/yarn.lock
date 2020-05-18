@@ -1073,6 +1073,25 @@
     "@material/feature-targeting" "^5.1.0"
     "@material/rtl" "^5.1.0"
 
+"@material/snackbar@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@material/snackbar/-/snackbar-5.1.0.tgz#f5a075cebc314f5d3fbe887c7d2231c9587e9d9d"
+  integrity sha512-bn6WydEGKZxq24aZ6BfnLGPbhCww2srOe+mn2W9VJFBfZEh9qnCcya2jHs295pPbzRtDM1b2oR2LiAKBfIBt3A==
+  dependencies:
+    "@material/animation" "^5.1.0"
+    "@material/base" "^5.1.0"
+    "@material/button" "^5.1.0"
+    "@material/dom" "^5.1.0"
+    "@material/elevation" "^5.1.0"
+    "@material/feature-targeting" "^5.1.0"
+    "@material/icon-button" "^5.1.0"
+    "@material/ripple" "^5.1.0"
+    "@material/rtl" "^5.1.0"
+    "@material/shape" "^5.1.0"
+    "@material/theme" "^5.1.0"
+    "@material/typography" "^5.1.0"
+    tslib "^1.9.3"
+
 "@material/textfield@^5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@material/textfield/-/textfield-5.1.0.tgz#75f68c62dc916116330a4c958ba3866c87bd6002"
@@ -1281,6 +1300,18 @@
     "@material/ripple" "^5.1.0"
     "@rmwc/base" "^6.0.14"
     "@rmwc/provider" "^6.0.14"
+    "@rmwc/types" "^6.0.5"
+
+"@rmwc/snackbar@^6.0.14":
+  version "6.0.14"
+  resolved "https://registry.yarnpkg.com/@rmwc/snackbar/-/snackbar-6.0.14.tgz#b1331e8c24f6a1c31e36b036eb5af330af7be6e1"
+  integrity sha512-SOOrsAMt5vS9YmLXwW8XrzL09antc6gwSS7dE6kKZawwI4dKUiYtYcRxBEwtJmAqgC9Vqsu1jDHMVPxQJyJjgQ==
+  dependencies:
+    "@material/snackbar" "^5.1.0"
+    "@rmwc/base" "^6.0.14"
+    "@rmwc/button" "^6.0.14"
+    "@rmwc/icon" "^6.0.14"
+    "@rmwc/icon-button" "^6.0.14"
     "@rmwc/types" "^6.0.5"
 
 "@rmwc/textfield@^6.1.0":
