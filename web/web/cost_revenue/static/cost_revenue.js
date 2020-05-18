@@ -62,7 +62,7 @@ class CostRevenue extends React.Component {
 const ConnectedCostRevenue = connect(state => ({}))(CostRevenue);
 
 const costRevenueElement = (
-    <ConnectedComponentWrapper isVisible={true}>
+    <ConnectedComponentWrapper isVisible={true} pageTitle="COST REVENUE">
         <ConnectedCostRevenue/>
     </ConnectedComponentWrapper>
 );

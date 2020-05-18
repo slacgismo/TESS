@@ -104,7 +104,7 @@ const ConnectedAlerts = connect(state => ({
 }))(Alerts);
 
 const alertsElement = (
-    <ConnectedComponentWrapper isVisible={true}>
+    <ConnectedComponentWrapper isVisible={true} pageTitle="ALERTS">
         <ConnectedAlerts/>
     </ConnectedComponentWrapper>
 );

@@ -17,7 +17,7 @@ class Constraints extends React.Component {
 
     render() {
         return (
-            <div>Constraints Page</div>
+            <div></div>
         );
     }
 }
@@ -25,7 +25,7 @@ class Constraints extends React.Component {
 const ConnectedConstraints = connect(state => ({}))(Constraints);
 
 const constraintsElement = (
-    <ConnectedComponentWrapper isVisible={true}>
+    <ConnectedComponentWrapper isVisible={true} pageTitle="CONSTRAINTS">
         <ConnectedConstraints/>
     </ConnectedComponentWrapper>
 );
