@@ -115,15 +115,28 @@ body {
 /* POWER DISPATCH */
 .power-dispatch-container {
     margin: 10px;
+    text-align: center;
+    overflow: auto;
+}
+.power-dispatch-margin-fix {
+    margin: 0 auto;
+    display: inline-block;
+    overflow: auto;
+}
+.power-dispatch-chart-container {
+    margin: 0 15px 0 0;
 }
 .power-dispatch-chart-container,
 .power-dispatch-form-container {
+    float: left;
     padding: 15px;
     border: 1px solid #404040;
+    height: 720px;
+    min-width: 610px;
 }
 .pd-chart-system-load {
     margin: 0 0 15px 0;
 }
-.pd-chart-resource {
-
+.power-dispatch-form-container {
+    text-align: left;
 }
