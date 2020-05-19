@@ -9,11 +9,13 @@ const ResourcesChart = props => {
             chartType="Bar"
             loader={<div>Loading Chart</div>}
             data={[
-                ['Year', 'Sales', 'Expenses', 'Profit'],
-                ['2014', 1000, 400, 200],
-                ['2015', 1170, 460, 250],
-                ['2016', 660, 1120, 300],
-                ['2017', 1030, 540, 350],
+                ['', 'Unvailable', 'Available', 'Dispatched'],
+                ['Total', 1000, 400, 200],
+                ['Batteries', 1170, 460, 250],
+                ['Chargers', 1660, 120, 300],
+                ['PV', 1030, 540, 350],
+                ['HVAC', 1030, 540, 350],
+                ['Hot Water', 1030, 540, 350],
             ]}
             options={{
                 // Material design options
@@ -21,7 +23,8 @@ const ResourcesChart = props => {
                     title: props.chartTitle,
                     subtitle: '',
                 },
-                isStacked: true
+                isStacked: 'percent',
+                bars: 'horizontal'
             }}
             // For tests
             rootProps={{ 'data-testid': '2' }}

@@ -1092,6 +1092,22 @@
     "@material/typography" "^5.1.0"
     tslib "^1.9.3"
 
+"@material/switch@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@material/switch/-/switch-5.1.0.tgz#80894dbfdf799aa4220189f39fcd3100722df2b6"
+  integrity sha512-cHFzquY8NINZIIaDdA+T3gwBR5V0lRORh6BNq4EBD69GiGQamoz1S8APr5ea1Sodt7Dm1yzkDRbbDO+yoNgR9g==
+  dependencies:
+    "@material/animation" "^5.1.0"
+    "@material/base" "^5.1.0"
+    "@material/density" "^5.1.0"
+    "@material/dom" "^5.1.0"
+    "@material/elevation" "^5.1.0"
+    "@material/feature-targeting" "^5.1.0"
+    "@material/ripple" "^5.1.0"
+    "@material/rtl" "^5.1.0"
+    "@material/theme" "^5.1.0"
+    tslib "^1.9.3"
+
 "@material/textfield@^5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@material/textfield/-/textfield-5.1.0.tgz#75f68c62dc916116330a4c958ba3866c87bd6002"
@@ -1312,6 +1328,18 @@
     "@rmwc/button" "^6.0.14"
     "@rmwc/icon" "^6.0.14"
     "@rmwc/icon-button" "^6.0.14"
+    "@rmwc/types" "^6.0.5"
+
+"@rmwc/switch@^6.0.14":
+  version "6.0.14"
+  resolved "https://registry.yarnpkg.com/@rmwc/switch/-/switch-6.0.14.tgz#07c2b61df55c2475afa9787e68f2ab3d393be121"
+  integrity sha512-Yw1EghMhY/ICCii7YoUdtstvs+JF9Ouo5q+zW5afn6iQhPG0b/f+arYhm/g7R2QnCzg9hCg23ckRw8pFngRsEQ==
+  dependencies:
+    "@material/switch" "^5.1.0"
+    "@rmwc/base" "^6.0.14"
+    "@rmwc/formfield" "^6.0.14"
+    "@rmwc/ripple" "^6.0.14"
+    "@rmwc/toggleable" "^6.0.14"
     "@rmwc/types" "^6.0.5"
 
 "@rmwc/textfield@^6.1.0":

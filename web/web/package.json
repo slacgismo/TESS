@@ -17,6 +17,7 @@
     "@rmwc/grid": "^6.0.14",
     "@rmwc/list": "^6.0.14",
     "@rmwc/snackbar": "^6.0.14",
+    "@rmwc/switch": "^6.0.14",
     "@rmwc/textfield": "^6.1.0",
     "@rmwc/top-app-bar": "^6.0.14",
     "@rmwc/typography": "^6.0.14",

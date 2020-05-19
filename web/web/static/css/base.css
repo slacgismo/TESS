@@ -127,7 +127,7 @@ body {
     margin: 0 15px 0 0;
 }
 .power-dispatch-chart-container,
-.power-dispatch-form-container {
+.power-dispatch-forms-container {
     float: left;
     padding: 15px;
     border: 1px solid #404040;
@@ -137,6 +137,37 @@ body {
 .pd-chart-system-load {
     margin: 0 0 15px 0;
 }
-.power-dispatch-form-container {
+.power-dispatch-forms-container {
     text-align: left;
+}
+.power-dispatch-forms-container h3 {
+    margin-top: 0;
+}
+.pd-form-title {
+    text-decoration: solid underline black;
+}
+.pd-form-row > div {
+    display: inline-block;
+    margin-bottom: 7px;
+}
+.pd-form-element-label {
+    width: 250px;
+}
+.pd-form-element-input {
+    width: 200px;
+}
+.pd-form-element-unit {
+    width: 100px;
+    padding: 0 0 0 30px;
+}
+.pd-form-button-container {
+    margin: 0 auto;
+    text-align: center;
+}
+.first-unit,
+.second-unit {
+    width: 35px;
+}
+.pd-form-element-input > label{
+    height: 30px;
 }
