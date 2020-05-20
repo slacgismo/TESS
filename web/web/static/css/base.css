@@ -25,6 +25,27 @@ body {
     display: none;
 }
 
+/* ERROR PAGES */
+.four-oh-four {
+    background: url('../img/404.jpg') no-repeat center center fixed;
+    background-size: cover;
+    text-align: center;
+
+    /* Set rules to fill background */
+    min-height: 100%;
+    min-width: 1024px;
+        
+    /* Set up proportionate scaling */
+    width: 100%;
+    height: auto;
+        
+    /* Set up positioning */
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 200px;
+}
+
 /* LOGIN PAGE */
 .login-page-container {
     background: url('../img/bg.jpg') no-repeat center center fixed;

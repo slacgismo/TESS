@@ -9,11 +9,11 @@ export const menuRoutes = [
         label: 'Power Dispatch - Storage',
         path: '/power/storage'
     },
-    {
-        id: 'constraints',
-        label: 'Constraints',
-        path: '/constraints'
-    },
+    // {
+    //     id: 'constraints',
+    //     label: 'Constraints',
+    //     path: '/constraints'
+    // },
     {
         id: 'markets',
         label: 'Markets',

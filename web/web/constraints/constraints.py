@@ -10,4 +10,5 @@ constraints_bp = Blueprint(
 
 @constraints_bp.route('/')
 def index():    
-    return render_template('constraints/index.html')
+    # return render_template('constraints/index.html')
+    return render_template('404.html'), 404
