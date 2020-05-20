@@ -86,7 +86,7 @@ class Markets extends React.Component {
                             
                             <hr />
                             
-                            <div className="pd-form-button-container">
+                            <div className="pd-form-button-container markets-margin-override">
                                 <Button 
                                     label="SET" 
                                     onClick={this.addNewRow}
