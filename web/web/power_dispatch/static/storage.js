@@ -12,7 +12,7 @@ class Storage extends React.Component {
         // browser arrows, the menu selection won't update accordingly,
         // so we fix that by having each component do it, 😔, this is 
         // not great since the component shouldn't care about the menu
-        this.props.dispatch(selectMenuOption('power-dispatch'));        
+        this.props.dispatch(selectMenuOption('power-dispatch-storage'));        
     }
 
     render() {

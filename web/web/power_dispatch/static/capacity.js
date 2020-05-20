@@ -20,7 +20,7 @@ class Capacity extends React.Component {
         // browser arrows, the menu selection won't update accordingly,
         // so we fix that by having each component do it, 😔, this is 
         // not great since the component shouldn't care about the menu
-        this.props.dispatch(selectMenuOption('power-dispatch'));
+        this.props.dispatch(selectMenuOption('power-dispatch-capacity'));
     }
 
     render() {
@@ -29,14 +29,16 @@ class Capacity extends React.Component {
                 <div className="power-dispatch-margin-fix">
                     <div className="power-dispatch-chart-container">
                         <div className="pd-chart-system-load">
-                            <SystemLoadChart 
+                            <SystemLoadChart
+                                id="pd-capacity-system-load-chart"
                                 xTitle="Hours" 
                                 yTitle="MW" 
                                 chartTitle="System Load"
                                 chartSubtitle="Transformer Capacity" />
                         </div>
                         <div className="pd-chart-resource">
-                            <ResourcesChart 
+                            <ResourcesChart
+                                id="pd-capacity-resources-chart"
                                 xTitle="Hours" 
                                 yTitle="MW" 
                                 chartTitle="Resources in the System"
@@ -110,7 +112,10 @@ class Capacity extends React.Component {
                             
                             <hr />
                             <div className="pd-form-button-container">
-                                <Button label="SET" onClick={this.addNewRow} />
+                                <Button 
+                                    label="SET" 
+                                    onClick={this.addNewRow}
+                                    outlined />
                             </div>
                         </div>
                         
