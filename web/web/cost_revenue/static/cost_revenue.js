@@ -21,7 +21,8 @@ class CostRevenue extends React.Component {
             <div className="cost-revenue-main-content-container">
                 <div className="chart-row-container">
                     <div className="chart-container">                        
-                        <CostRevenueChart 
+                        <CostRevenueChart
+                            id="cr-chart-cash-flow"
                             xTitle="Time" 
                             yTitle="$/h" 
                             chartTitle="Cash Flow"
@@ -29,25 +30,28 @@ class CostRevenue extends React.Component {
                     </div>
                     <div className="chart-container chart-divider"></div>
                     <div className="chart-container">
-                        <CostRevenueChart 
-                            xTitle="Time" 
-                            yTitle="$/h" 
-                            chartTitle="Surplus / Welfare"
+                        <CostRevenueChart
+                            id="cr-chart-cash-flow-integral"
+                            xTitle="∫ Qdt" 
+                            yTitle="$"
+                            chartTitle="Cash Flow (Integral)"
                             chartSubtitle="" />
                     </div>
                 </div>
                 <br />
                 <div className="chart-row-container">
                     <div className="chart-container">
-                        <CostRevenueChart 
-                            xTitle="∫ Qdt" 
-                            yTitle="$"
-                            chartTitle="Cash Flow"
-                            chartSubtitle="" />                        
+                        <CostRevenueChart
+                            id="cr-chart-surplus-welfare"
+                            xTitle="Time" 
+                            yTitle="$/h" 
+                            chartTitle="Surplus / Welfare"
+                            chartSubtitle="" />
                     </div>
                     <div className="chart-container chart-divider"></div>
                     <div className="chart-container">
-                        <CostRevenueChart 
+                        <CostRevenueChart
+                            id="cr-chart-integral-target"
                             xTitle="Time" 
                             yTitle="$" 
                             chartTitle="Integral W.R.T. Target"

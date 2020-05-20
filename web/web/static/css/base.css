@@ -25,6 +25,27 @@ body {
     display: none;
 }
 
+/* ERROR PAGES */
+.four-oh-four {
+    background: url('../img/404.jpg') no-repeat center center fixed;
+    background-size: cover;
+    text-align: center;
+
+    /* Set rules to fill background */
+    min-height: 100%;
+    min-width: 1024px;
+        
+    /* Set up proportionate scaling */
+    width: 100%;
+    height: auto;
+        
+    /* Set up positioning */
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 200px;
+}
+
 /* LOGIN PAGE */
 .login-page-container {
     background: url('../img/bg.jpg') no-repeat center center fixed;
@@ -110,4 +131,70 @@ body {
 .notification-spacer {
     display: inline-block;
     margin: 0 10px;
+}
+
+/* POWER DISPATCH */
+.power-dispatch-container {
+    margin: 10px;
+    text-align: center;
+    overflow: auto;
+}
+.power-dispatch-margin-fix {
+    margin: 0 auto;
+    display: inline-block;
+    overflow: auto;
+    height: 100%;
+}
+.power-dispatch-chart-container {
+    margin: 0 15px 0 0;
+}
+.power-dispatch-chart-container,
+.power-dispatch-forms-container {
+    float: left;
+    padding: 15px;
+    border: 1px solid #404040;
+    max-height: 1200px;
+    min-height: 720px;
+    min-width: 610px;
+}
+.pd-chart-system-load {
+    margin: 0 0 15px 0;
+}
+.power-dispatch-forms-container {
+    text-align: left;
+}
+.power-dispatch-forms-container h3 {
+    margin-top: 0;
+}
+.pd-form-title {
+    text-decoration: solid underline black;
+}
+.pd-form-row > div {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+.pd-form-element-label {
+    width: 250px;
+}
+.pd-form-element-input {
+    width: 200px;
+}
+.pd-form-element-unit {
+    width: 100px;
+    padding: 0 0 0 30px;
+}
+.pd-form-button-container {
+    margin: 24px auto 25px auto;
+    text-align: center;
+}
+.pd-form-button-container button {
+    height: 50px;
+    width: 300px
+}
+.first-unit,
+.second-unit {
+    width: 35px;
+}
+.pd-form-element-input > label{
+    height: 40px;
 }

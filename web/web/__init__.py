@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from web.config import *
 from web.extensions import db, bcrypt, migrate, ma
 
@@ -20,6 +20,10 @@ from web.api.v1.alert import alerts_api_bp
 from web.api.v1.notification import notifications_api_bp
 
 
+def page_not_found(e):
+  return render_template('404.html'), 404
+
+
 def create_app(config_obj):
     """
     Create application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
@@ -29,6 +33,7 @@ def create_app(config_obj):
     app.config.from_object(config_obj)
     register_extensions(app)
     register_blueprints(app)
+    app.register_error_handler(404, page_not_found)
     return app
 
 

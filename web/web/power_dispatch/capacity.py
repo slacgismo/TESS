@@ -9,5 +9,6 @@ capacity_bp = Blueprint(
 )
 
 @capacity_bp.route('/')
+@capacity_bp.route('/capacity')
 def index():    
     return render_template('capacity/index.html')

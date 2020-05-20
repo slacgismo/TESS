@@ -1,14 +1,19 @@
 export const menuRoutes = [
     {
-        id: 'power-dispatch',
-        label: 'Power Dispatch',
-        path: '/power'
+        id: 'power-dispatch-capacity',
+        label: 'Power Dispatch - Capacity',
+        path: '/power/capacity'
     },
     {
-        id: 'constraints',
-        label: 'Constraints',
-        path: '/constraints'
+        id: 'power-dispatch-storage',
+        label: 'Power Dispatch - Storage',
+        path: '/power/storage'
     },
+    // {
+    //     id: 'constraints',
+    //     label: 'Constraints',
+    //     path: '/constraints'
+    // },
     {
         id: 'markets',
         label: 'Markets',
