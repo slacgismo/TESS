@@ -1,10 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import * as action from './actions';
 import { connect } from 'react-redux';
+import { ListDivider } from '@rmwc/list';
+import { TextField } from '@rmwc/textfield';
+import { Typography } from '@rmwc/typography';
 import { selectMenuOption } from '../../static/js/actions'; 
 import ConnectedComponentWrapper from '../../static/js/base';
+import { Card, CardPrimaryAction, CardActions, CardActionButton } from '@rmwc/card';
 
-import * as action from './actions';
+import '@rmwc/card/styles';
+import '@rmwc/list/styles';
+import '@rmwc/textfield/styles';
+import '@rmwc/typography/styles';
 
 class UserSettings extends React.Component {
     componentDidMount() {
@@ -17,7 +25,62 @@ class UserSettings extends React.Component {
 
     render() {
         return (
-            <div></div>
+            <Card className="user-settings-container" outlined style={{ width: '700px', margin: '20px auto' }}>
+                <Typography
+                    use="subtitle1"
+                    tag="div"
+                    style={{ padding: '0.5rem 1rem' }}>
+                    User Settings
+                </Typography>
+
+                <ListDivider />
+
+                <CardPrimaryAction>
+                    <div style={{ padding: '1rem' }}>
+                        <Typography use="headline5" tag="div">
+                            Username
+                        </Typography>
+                        <Typography use="body1" tag="p">
+                            Sorry but you can't change your username right now
+                        </Typography>
+                        <TextField disabled value="my-username" />
+                    </div>
+                </CardPrimaryAction>
+
+                <ListDivider />
+
+                <CardPrimaryAction>
+                    <div style={{ padding: '1rem' }}>
+                        <Typography use="headline5" tag="div">
+                            Password
+                        </Typography>
+                        <Typography use="body1" tag="p">
+                            Your password must be at least 8 characters long
+                        </Typography>
+                        <TextField type="password" placeholder="***************" />
+                    </div>
+                </CardPrimaryAction>
+
+                <ListDivider />
+
+                <CardPrimaryAction>
+                    <div style={{ padding: '1rem' }}>
+                        <Typography use="headline5" tag="div">
+                            Full Name
+                        </Typography>
+                        <Typography use="body1" tag="p">
+                            Here you'll be able to change your name
+                        </Typography>
+                        <TextField placeholder="Your First Name and your Last Name" />
+                    </div>
+                </CardPrimaryAction>
+
+                <ListDivider />
+
+                <CardActions fullBleed>
+                    <CardActionButton label="Save Changes" />
+                </CardActions>
+            </Card>
         );
     }
 }

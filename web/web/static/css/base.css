@@ -4,6 +4,9 @@ body {
 .top-app-bar {
     background-color: #404040 !important;
 }
+ul, li {
+    list-style-type: none;
+}
 
 /* LOAD/PRICE NOTIFICATION CONTAINER */
 .load-price-notification-container {
@@ -198,6 +201,13 @@ body {
 .pd-form-element-input > label{
     height: 40px;
 }
+
+/* MARKETS */
 .markets-margin-override {
     margin-bottom: 38px;
+}
+
+/* USER SETTINGS */
+.user-settings-container input{
+    width: 500px;
 }
