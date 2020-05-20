@@ -886,6 +886,18 @@
     "@material/touch-target" "^5.1.0"
     "@material/typography" "^5.1.0"
 
+"@material/card@^5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@material/card/-/card-5.1.0.tgz#db3e0b52b09e832cb39f81e9384b792e33c24104"
+  integrity sha512-/syao6oR/PAvzs04quybeCWHZVn4W2dNnxIOWIJTRQced0/o3gYrHgQSX+edC+6pEnSr3Drwbo2cye7nRdbixA==
+  dependencies:
+    "@material/elevation" "^5.1.0"
+    "@material/feature-targeting" "^5.1.0"
+    "@material/ripple" "^5.1.0"
+    "@material/rtl" "^5.1.0"
+    "@material/shape" "^5.1.0"
+    "@material/theme" "^5.1.0"
+
 "@material/checkbox@^5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@material/checkbox/-/checkbox-5.1.0.tgz#2f689f6a409f0ed906a0d73bcd0078a768eaf9d1"
@@ -1188,6 +1200,18 @@
     "@rmwc/base" "^6.0.14"
     "@rmwc/icon" "^6.0.14"
     "@rmwc/provider" "^6.0.14"
+    "@rmwc/ripple" "^6.0.14"
+    "@rmwc/types" "^6.0.5"
+
+"@rmwc/card@^6.0.14":
+  version "6.0.14"
+  resolved "https://registry.yarnpkg.com/@rmwc/card/-/card-6.0.14.tgz#c312e078eba4a9b02691d613ad5c738b1ea7b7d8"
+  integrity sha512-UUu2GVSnbqzpzhLUBHZgZip6/Mi7izrAuT47ayvRWkdZrZ8M1FjnQzsTdhHp9qrQHWLulkkoanieQaesqYh0Pg==
+  dependencies:
+    "@material/card" "^5.1.0"
+    "@rmwc/base" "^6.0.14"
+    "@rmwc/button" "^6.0.14"
+    "@rmwc/icon-button" "^6.0.14"
     "@rmwc/ripple" "^6.0.14"
     "@rmwc/types" "^6.0.5"
 
