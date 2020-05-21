@@ -6,13 +6,13 @@ from web.models.utility import Utility
 from web.models.address import Address
 from web.models.channel import Channel
 from web.models.rate import Rate
-from .meter_api_schema import schema_data
+from web.api.v1.schema.meter import schema_data
 from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.meter import Meter, MeterSchema, MeterType
 from web.models.service_location import ServiceLocation
 from web.models.interval import Interval, Status
-# DB Error Handling
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
