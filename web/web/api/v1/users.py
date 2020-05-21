@@ -6,10 +6,16 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
 from web.models.user import User, UserSchema
+# from web.models.address import Address
+# from web.models.role import Role, RoleType
+# from web.models.group import Group
+# from web.models.utility import Utility
+# from datetime import datetime
 
-user_api_bp = Blueprint('user_api_bp', __name__)
+users_api_bp = Blueprint('users_api_bp', __name__)
 
-@user_api_bp.route('/users', methods=['GET'])
+
+@users_api_bp.route('/users', methods=['GET'])
 def get_user_ids():
     '''
     Retrieve all user objects
@@ -23,7 +29,7 @@ def get_user_ids():
     return arw.to_json(results)
 
 
-@user_api_bp.route('/<string:user_id>', methods=['GET'])
+@users_api_bp.route('/user/<string:user_id>', methods=['GET'])
 def show_user_info(user_id):
     '''
     Retrieve one user object
@@ -47,13 +53,13 @@ def show_user_info(user_id):
     return arw.to_json(results)
 
 
-@user_api_bp.route('/<string:user_id>', methods=['PUT'])
+@users_api_bp.route('user/<string:user_id>', methods=['PUT'])
 def modify_user(user_id):
     '''
     Update one user object in database
     '''
     arw = ApiResponseWrapper()
-    user_schema = UserSchema()
+    user_schema = UserSchema(exclude=['email_confirmed_at', 'created_at'])
     modified_user = request.get_json()
 
     try:
@@ -85,7 +91,7 @@ def modify_user(user_id):
     return arw.to_json(results)
 
 
-@user_api_bp.route('/user', methods=['POST'])
+@users_api_bp.route('/user', methods=['POST'])
 def add_user():
     '''
     Add new user object to database
@@ -95,18 +101,19 @@ def add_user():
     new_user = request.get_json()
             
     try:
-        does_user_exist = User.query.filter_by(user_id=new_user['user_id']).count() > 0
+        does_user_exist = User.query.filter_by(email=new_user['email']).count() > 0
 
         if does_user_exist:
-            raise IntegrityError('User already exists', None, None)
+            raise IntegrityError('Email already in use', None, None)
 
         new_user = user_schema.load(new_user, session=db.session)
         db.session.add(new_user)
         db.session.commit()
 
     except IntegrityError as ie:
+        print(ie)
         db.session.rollback()
-        arw.add_errors(ie.messages)
+        arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
     
     except ValidationError as ve:

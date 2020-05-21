@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
 
-from flask_user import UserMixin
+from flask_login import UserMixin
 from marshmallow import post_load, fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.models.address import Address
@@ -14,7 +14,7 @@ from web.database import (
     reference_col,
 )
 
-class User(Model):
+class User(UserMixin, Model):
 
     __tablename__ = 'users'
 
@@ -34,14 +34,19 @@ class User(Model):
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+#def generate_confirmation_token(self, expiration=3600):
+
 class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         include_fk = True
         load_instance = True
         ordered = True
-        password = fields.Str(load_only=True)
+        exlude = ('emailed_confirmed_at',)
+
+    def get_email_confirmed_at(self, obj):
+        return obj.get_email_confirmed_at
     
-    @post_load
-    def make_user(self, data, **kwargs):
-        return User(**data)
+    # @post_load
+    # def make_user(self, data, **kwargs):
+    #     return User(**data)

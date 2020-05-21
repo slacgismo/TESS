@@ -1,7 +1,7 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
-from flask_user import UserMixin
+from flask_login import UserMixin
 from web.models.user import User
 from web.database import (
     db,
@@ -13,7 +13,7 @@ from web.database import (
 )
 
 
-class Login(Model, UserMixin):
+class Login(UserMixin, Model):
     __tablename__ = 'logins'
 
     login_id = Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
