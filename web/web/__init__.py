@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from web.config import *
 from web.extensions import db, bcrypt, migrate, ma
 
@@ -16,7 +16,16 @@ from web.user_settings.user_settings import user_settings_bp
 # API V1 BP ROUTES
 from web.api.v1.meter import meter_api_bp
 from web.api.v1.utility import utility_api_bp
+<<<<<<< HEAD
 from web.api.v1.users import user_api_bp
+=======
+from web.api.v1.alert import alerts_api_bp
+from web.api.v1.notification import notifications_api_bp
+
+
+def page_not_found(e):
+  return render_template('404.html'), 404
+>>>>>>> origin
 
 
 def create_app(config_obj):
@@ -28,6 +37,7 @@ def create_app(config_obj):
     app.config.from_object(config_obj)
     register_extensions(app)
     register_blueprints(app)
+    app.register_error_handler(404, page_not_found)
     return app
 
 
@@ -59,7 +69,12 @@ def register_blueprints(app):
     # register api v1 blueprint routes
     app.register_blueprint(meter_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(utility_api_bp, url_prefix='/api/v1/')
+<<<<<<< HEAD
     app.register_blueprint(user_api_bp, url_prefix=('/api/v1/'))
+=======
+    app.register_blueprint(alerts_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(notifications_api_bp, url_prefix='/api/v1/')
+    
+>>>>>>> origin
 
 app = create_app(DevelopmentConfig())
-app.url_map.strict_slashes = False

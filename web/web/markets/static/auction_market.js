@@ -1,7 +1,7 @@
 import React from "react";
 import Chart from 'chart.js';
 
-class CostRevenueChart extends React.Component {
+class AuctionMarketChart extends React.Component {
     componentDidMount() {
         this.updateChart();
     }
@@ -10,25 +10,26 @@ class CostRevenueChart extends React.Component {
         const ctx = document.getElementById(this.props.id);
         new Chart(ctx, {
             // The type of chart we want to create
-            type: 'line',
+            type: 'bar',
 
             // The data for our dataset
             data: {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                datasets: [
+			    datasets: [
                     {
-                        label: 'My First dataset',
-                        fill: false,
-                        backgroundColor: 'rgb(255, 99, 132)',
-                        borderColor: 'rgb(255, 99, 132)',
-                        data: [0, 10, 5, 2, 20, 30, 45]
+                        label: 'Dataset 1',
+                        backgroundColor: 'red',
+                        data: [1,2,3,4,5,6,7]
                     },
                     {
-                        label: 'My Second dataset',
-                        fill: false,
-                        backgroundColor: 'rgb(55, 99, 255)',
-                        borderColor: 'rgb(55, 99, 255)',
-                        data: [0, 50, 3, 20, 20, 20, 15]
+                        label: 'Dataset 2',
+                        backgroundColor: 'blue',
+                        data: [7,6,5,4,3,2,1]
+                    },
+                    {
+				        label: 'Dataset 3',
+				        backgroundColor: 'green',
+                        data: [11,21,31,4,15,6,17]
                     }
                 ]
             },
@@ -50,6 +51,7 @@ class CostRevenueChart extends React.Component {
 				},
 				scales: {
 					xAxes: [{
+                        stacked: true,
 						display: true,
 						scaleLabel: {
 							display: true,
@@ -57,6 +59,7 @@ class CostRevenueChart extends React.Component {
 						}
 					}],
 					yAxes: [{
+                        stacked: true,
 						display: true,
 						scaleLabel: {
 							display: true,
@@ -70,9 +73,9 @@ class CostRevenueChart extends React.Component {
 
     render() {
         return (
-            <canvas id={this.props.id} width="500" height="400"></canvas>
+            <canvas id={this.props.id} width="500px" height="350px"></canvas>
         );
     }
 }
 
-export default CostRevenueChart;
+export default AuctionMarketChart;

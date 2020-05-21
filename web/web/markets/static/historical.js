@@ -1,7 +1,7 @@
 import React from "react";
 import Chart from 'chart.js';
 
-class CostRevenueChart extends React.Component {
+class HistoricalChart extends React.Component {
     componentDidMount() {
         this.updateChart();
     }
@@ -70,9 +70,9 @@ class CostRevenueChart extends React.Component {
 
     render() {
         return (
-            <canvas id={this.props.id} width="500" height="400"></canvas>
+            <canvas id={this.props.id} width="500px" height="350px"></canvas>
         );
     }
 }
 
-export default CostRevenueChart;
+export default HistoricalChart;
