@@ -16,16 +16,12 @@ from web.user_settings.user_settings import user_settings_bp
 # API V1 BP ROUTES
 from web.api.v1.meter import meter_api_bp
 from web.api.v1.utility import utility_api_bp
-<<<<<<< HEAD
-from web.api.v1.users import user_api_bp
-=======
 from web.api.v1.alert import alerts_api_bp
 from web.api.v1.notification import notifications_api_bp
 
 
 def page_not_found(e):
   return render_template('404.html'), 404
->>>>>>> origin
 
 
 def create_app(config_obj):
@@ -69,12 +65,8 @@ def register_blueprints(app):
     # register api v1 blueprint routes
     app.register_blueprint(meter_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(utility_api_bp, url_prefix='/api/v1/')
-<<<<<<< HEAD
-    app.register_blueprint(user_api_bp, url_prefix=('/api/v1/'))
-=======
     app.register_blueprint(alerts_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(notifications_api_bp, url_prefix='/api/v1/')
     
->>>>>>> origin
 
 app = create_app(DevelopmentConfig())

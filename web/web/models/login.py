@@ -28,6 +28,11 @@ class Login(Model, UserMixin):
     # Relationships
     user = relationship('User', uselist=False, foreign_keys=user_id, backref=db.backref('login'))
 
+    @property 
+    def password(self):
+        raise AttributeError('Password is not a readable attribute.')
+
+    @password.setter
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
