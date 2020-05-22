@@ -12,48 +12,40 @@ function normalizeToPercentage(ds) {
     return normalizedDs;
 }
 
-const datasets = {
-    battery: [1,2,3],
-    charger: [5,7,9],
-    pv: [3,3,3],
-    hvac: [10,15,3],
-    hotWater: [12,1,9]
-};
-
 class ResourcesChart extends React.Component {
     componentDidMount() {
+
         // normalize the data set for each device to 1.0
-        for (const property in datasets) {
-            datasets[property] = normalizeToPercentage(datasets[property]);
+        for (const property in this.props.datasets) {
+            this.props.datasets[property] = normalizeToPercentage(this.props.datasets[property]);
         }
 
         // produce a totals array based on the previous vals and calc a normalized total
         let totalVals = []
-        for (const property in datasets) {
+        for (const property in this.props.datasets) {
             if(totalVals.length === 0) {
-                totalVals = datasets[property];
+                totalVals = this.props.datasets[property];
             } else {
                 totalVals = totalVals.map((val, idx) => {
-                    return val + datasets[property][idx];
+                    return val + this.props.datasets[property][idx];
                 });
             }
         }
-        datasets["total"] = normalizeToPercentage(totalVals);
+        this.props.datasets["total"] = normalizeToPercentage(totalVals);
 
-        // split the data across unavail/avail/dispatched
-        const finalDataSet = {
-            "unavailable": [],
-            "available": [],
-            "dispatched": []
+        for (const dsProp in this.props.datasets) {
+            if("unavailable" in this.props.finalDataSet) {
+                this.props.finalDataSet["unavailable"].push(this.props.datasets[dsProp][0]);
+            }
+            if("available" in this.props.finalDataSet) {
+                this.props.finalDataSet["available"].push(this.props.datasets[dsProp][1]);
+            }
+            if("dispatched" in this.props.finalDataSet) {
+                this.props.finalDataSet["dispatched"].push(this.props.datasets[dsProp][2]);
+            }
         }
 
-        for (const dsProp in datasets) {
-            finalDataSet["unavailable"].push(datasets[dsProp][0]);
-            finalDataSet["available"].push(datasets[dsProp][1]);
-            finalDataSet["dispatched"].push(datasets[dsProp][2]);
-        }
-
-        this.updateChart(finalDataSet);
+        this.updateChart(this.props.finalDataSet);
     }
 
     updateChart = (ds) => {
@@ -69,17 +61,20 @@ class ResourcesChart extends React.Component {
                     {
 				        label: 'Dispatched',
 				        backgroundColor: '#f5f590',
-                        data: ds["dispatched"]
+                        data: ds["dispatched"],
+                        hidden: this.props.hiddenDataSets && this.props.hiddenDataSets["dispatched"]
                     },
                     {
                         label: 'Available',
                         backgroundColor: '#426e2f',
-                        data: ds["available"]
+                        data: ds["available"],
+                        hidden: this.props.hiddenDataSets && this.props.hiddenDataSets["available"]
                     },
                     {
                         label: 'Unavailable',
                         backgroundColor: '#dbdbdb',
-                        data: ds["unavailable"]
+                        data: ds["unavailable"],
+                        hidden: this.props.hiddenDataSets && this.props.hiddenDataSets["unavailable"]
                     }
                 ]
             },
@@ -98,7 +93,10 @@ class ResourcesChart extends React.Component {
 				hover: {
 					mode: 'nearest',
 					intersect: true
-				},
+                },
+                legend: {
+                    position: 'bottom'
+                },
 				scales: {
 					xAxes: [{
                         stacked: true,

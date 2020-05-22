@@ -39,7 +39,10 @@ class SystemLoadChart extends React.Component {
 				title: {
 					display: true,
 					text: this.props.chartTitle
-				},
+                },
+                legend: {
+                    display: false
+                },
 				tooltips: {
 					mode: 'index',
 					intersect: false,

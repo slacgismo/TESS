@@ -14,6 +14,19 @@ import '@rmwc/switch/styles';
 import '@rmwc/button/styles';
 import '@rmwc/textfield/styles';
 
+const datasets = {
+    battery: [1,2,3],
+    charger: [5,7,9],
+    pv: [3,3,3],
+    hvac: [10,15,3],
+    hotWater: [12,1,9]
+};
+const finalDataSet = {
+    "unavailable": [],
+    "available": [],
+    "dispatched": []
+};
+
 class Capacity extends React.Component {
     componentDidMount() {
         // if a user decides to navigate back and forth through the
@@ -40,7 +53,9 @@ class Capacity extends React.Component {
                             <ResourcesChart
                                 id="pd-capacity-resources-chart"
                                 xTitle="" 
-                                yTitle="" 
+                                yTitle=""
+                                datasets={datasets}
+                                finalDataSet={finalDataSet}
                                 chartTitle="Resources in the System"
                                 chartSubtitle="" />
                         </div>

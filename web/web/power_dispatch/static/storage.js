@@ -15,6 +15,20 @@ import '@rmwc/button/styles';
 import '@rmwc/textfield/styles';
 
 
+const datasets = {
+    battery: [1,2,0],
+    charger: [5,7,0],
+    pv: [3,3,0],
+    hvac: [10,15,0],
+    hotWater: [12,1,0]
+};
+const finalDataSet = {
+    "unavailable": [],
+    "available": [],
+    "dispatched": []
+};
+
+
 class Storage extends React.Component {
     componentDidMount() {
         // if a user decides to navigate back and forth through the
@@ -40,8 +54,11 @@ class Storage extends React.Component {
                         <div className="pd-chart-resource">
                             <ResourcesChart
                                 id="pd-capacity-resources-chart"
-                                xTitle="Hours" 
-                                yTitle="MW" 
+                                xTitle="" 
+                                yTitle=""
+                                datasets={datasets}
+                                finalDataSet={finalDataSet}
+                                hiddenDataSets={{dispatched: true}}
                                 chartTitle="Resources in the System"
                                 chartSubtitle="" />
                         </div>
