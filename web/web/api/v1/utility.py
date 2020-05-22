@@ -2,7 +2,6 @@ from flask import Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.utility import Utility, UtilitySchema
 
-
 utility_api_bp = Blueprint('utility_api_bp', __name__)
 
 
@@ -16,5 +15,5 @@ def get_utilities():
     utilities = Utility.query.all()
     utility_schema = UtilitySchema()
     results = utility_schema.dump(utilities, many=True)
-    
+
     return arw.to_json(results)
