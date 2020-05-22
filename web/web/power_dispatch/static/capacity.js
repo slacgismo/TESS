@@ -39,8 +39,8 @@ class Capacity extends React.Component {
                         <div className="pd-chart-resource">
                             <ResourcesChart
                                 id="pd-capacity-resources-chart"
-                                xTitle="Hours" 
-                                yTitle="MW" 
+                                xTitle="" 
+                                yTitle="" 
                                 chartTitle="Resources in the System"
                                 chartSubtitle="" />
                         </div>

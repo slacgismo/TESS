@@ -1,12 +1,62 @@
 import React from "react";
 import Chart from 'chart.js';
 
+function normalizeToPercentage(ds) {
+    if(!ds.length) {
+        return ds;
+    }
+    // assume for now that the dataset is an array of ints
+    const dsSum = ds.reduce((acc, item) => acc + item);
+    const normalizer = 1 / dsSum;
+    const normalizedDs = ds.map(item => (item * normalizer) * 100);
+    return normalizedDs;
+}
+
+const datasets = {
+    battery: [1,2,3],
+    charger: [5,7,9],
+    pv: [3,3,3],
+    hvac: [10,15,3],
+    hotWater: [12,1,9]
+};
+
 class ResourcesChart extends React.Component {
     componentDidMount() {
-        this.updateChart();
+        // normalize the data set for each device to 1.0
+        for (const property in datasets) {
+            datasets[property] = normalizeToPercentage(datasets[property]);
+        }
+
+        // produce a totals array based on the previous vals and calc a normalized total
+        let totalVals = []
+        for (const property in datasets) {
+            if(totalVals.length === 0) {
+                totalVals = datasets[property];
+            } else {
+                totalVals = totalVals.map((val, idx) => {
+                    return val + datasets[property][idx];
+                });
+            }
+        }
+        datasets["total"] = normalizeToPercentage(totalVals);
+
+        // split the data across unavail/avail/dispatched
+        const finalDataSet = {
+            "unavailable": [],
+            "available": [],
+            "dispatched": []
+        }
+
+        for (const dsProp in datasets) {
+            finalDataSet["unavailable"].push(datasets[dsProp][0]);
+            finalDataSet["available"].push(datasets[dsProp][1]);
+            finalDataSet["dispatched"].push(datasets[dsProp][2]);
+        }
+
+        this.updateChart(finalDataSet);
     }
 
-    updateChart = () => {
+    updateChart = (ds) => {
         const ctx = document.getElementById(this.props.id);
         new Chart(ctx, {
             // The type of chart we want to create
@@ -14,22 +64,22 @@ class ResourcesChart extends React.Component {
 
             // The data for our dataset
             data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                labels: ['Total', 'Battery', 'Chargers', 'PV', 'HVAC', 'Hot Water'],
 			    datasets: [
                     {
-                        label: 'Dataset 1',
-                        backgroundColor: 'red',
-                        data: [1,2,3,4,5,6,7]
+				        label: 'Dispatched',
+				        backgroundColor: '#f5f590',
+                        data: ds["dispatched"]
                     },
                     {
-                        label: 'Dataset 2',
-                        backgroundColor: 'blue',
-                        data: [7,6,5,4,3,2,1]
+                        label: 'Available',
+                        backgroundColor: '#426e2f',
+                        data: ds["available"]
                     },
                     {
-				        label: 'Dataset 3',
-				        backgroundColor: 'green',
-                        data: [11,21,31,4,15,6,17]
+                        label: 'Unavailable',
+                        backgroundColor: '#dbdbdb',
+                        data: ds["unavailable"]
                     }
                 ]
             },
@@ -64,7 +114,14 @@ class ResourcesChart extends React.Component {
 						scaleLabel: {
 							display: true,
 							labelString: this.props.yTitle
-						}
+                        },
+                        ticks: {
+                            min: 0,
+                            max: 100,
+                            callback: function(value, index, values) {
+                                return `${value}%`;
+                            }
+                        }
 					}]
 				}
             }
