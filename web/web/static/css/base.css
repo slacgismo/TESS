@@ -50,7 +50,8 @@ ul, li {
 }
 
 /* LOGIN PAGE */
-.login-page-container {
+.login-page-container,
+.create-account-page-container {
     background: url('../img/bg.jpg') no-repeat center center fixed;
     background-size: cover;
     text-align: center;
@@ -67,14 +68,19 @@ ul, li {
     position: fixed;
     top: 0;
     left: 0;
-    padding-top: 200px;
 }
-
 .login-form-container {
     width: 500px;
+    margin-top: 200px;
     background-color: rgba(255, 255, 255, 0.8);
     display: inline-block;
     padding: 20px;
+}
+.create-account-form-container {
+    text-align: left;
+    margin-top: 40px;
+    display: inline-block;
+    padding: 10px;
 }
 .login-form-container input,
 .login-form-container button { 
