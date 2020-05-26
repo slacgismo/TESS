@@ -75,15 +75,14 @@ def modify_user(user_id):
         arw.add_errors({user_id: 'No results found for the given user id.'})
         return arw.to_json()
 
-    except IntegrityError as ie:
+    except IntegrityError:
         db.session.rollback()
-        arw.add_errors(ie.messages)
+        arw.add_errors('Conflict while loading data')
+        return arw.to_json(None, 400)
     
     except ValidationError as ve:
         db.session.rollback()
         arw.add_errors(ve.messages)
-
-    if arw.has_errors():
         return arw.to_json(None, 400)
 
     results = user_schema.dump(modified_user)
@@ -105,13 +104,13 @@ def add_user():
 
         if does_user_exist:
             raise IntegrityError('Email already in use', None, None)
-
+        
+        #user schema create (marshmallow) ?
         new_user = user_schema.load(new_user, session=db.session)
         db.session.add(new_user)
         db.session.commit()
 
     except IntegrityError as ie:
-        print(ie)
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)

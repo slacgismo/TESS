@@ -47,7 +47,6 @@ def register_extensions(app):
     migrate.init_app(app, db)
     ma.init_app(app)
 
-
 def register_blueprints(app):
     """
     Register Flask blueprints.
