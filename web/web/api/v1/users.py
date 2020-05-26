@@ -22,7 +22,7 @@ def get_user_ids():
     arw = ApiResponseWrapper()
 
     users = User.query.all()
-    user_schema = UserSchema()
+    user_schema = UserSchema(exclude=['utility_id'])
     results = user_schema.dump(users, many=True)
     
     return arw.to_json(results)
@@ -34,10 +34,10 @@ def show_user_info(user_id):
     Retrieve one user object
     '''
     arw = ApiResponseWrapper()
-    user_schema = UserSchema()
+    user_schema = UserSchema(exclude=['utility_id'])
 
     try:  
-        user = User.query.filter_by(user_id=user_id).one()
+        user = User.query.filter_by(id=user_id).one()
     
     except MultipleResultsFound:
         arw.add_errors({user_id: 'Multiple results found for the given user id.'})
@@ -58,11 +58,11 @@ def modify_user(user_id):
     Update one user object in database
     '''
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(exclude=['email_confirmed_at', 'created_at'])
+    user_schema = UserSchema(exclude=['email_confirmed_at', 'created_at', 'address', 'roles', 'utility'])
     modified_user = request.get_json()
 
     try:
-        User.query.filter_by(user_id=user_id).one()
+        User.query.filter_by(id=user_id).one()
         modified_user = user_schema.load(modified_user, session=db.session)
         db.session.commit()
 
