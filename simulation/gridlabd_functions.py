@@ -36,6 +36,8 @@ table_list += ['house_5_settings','house_5_state_in','house_5_state_out','house_
 table_list += ['battery_1_settings','battery_1_state_in','battery_1_state_out','battery_2_settings','battery_2_state_in','battery_2_state_out']
 table_list += ['battery_3_settings','battery_3_state_in','battery_3_state_out','battery_4_settings','battery_4_state_in','battery_4_state_out']
 table_list += ['battery_5_settings','battery_5_state_in','battery_5_state_out','battery_6_settings','battery_6_state_in','battery_6_state_out']
+table_list += ['CP_1_settings','CP_2_settings','CP_3_settings','CP_4_settings','CP_5_settings','CP_6_settings']
+table_list += ['EV_1_arrival','EV_2_arrival','EV_3_arrival','EV_4_arrival','EV_5_arrival','EV_6_arrival']
 table_list += ['system_load','WS_supply','supply_bids','buy_bids','clearing_pq']
 
 ########
@@ -61,10 +63,12 @@ def on_init(t):
 		pass
 
 	#PHYSICS: Find objects and fill local DB with relevant settings
+	#import pdb; pdb.set_trace()
 	houses_names = gldimport.find_objects('class=house')
 	for house_name in houses_names:
 		gldimport.get_houseobjects(house_name,start_time_str)
 		gldimport.get_batteries(house_name,start_time_str)
+		gldimport.get_chargers(house_name,start_time_str)
 
 	#MARKET: Create house agents
 	global houses;
@@ -79,20 +83,6 @@ def on_init(t):
 	#Create market operator
 	global LEM_operator;
 	LEM_operator = MarketOperator(interval,p_max)
-	#global df_prices, df_WS;
-	#df_prices = pandas.DataFrame(columns=['clearing_price','clearing_quantity','unresponsive_loads','slack_t-1'])
-	#df_WS = pandas.read_csv('glm_generation_'+city+'/'+market_data,parse_dates=[-1],index_col=[0])
-	#df_WS = pandas.DataFrame(index=pandas.to_datetime(df_WS.index.astype(str)),columns=df_WS.columns,data=df_WS.values.astype(float))
-	
-	#Align weekdays of Pecan Street Data and WS: For yearly data only (TESS, not powernet)
-	# year_sim = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None).year
-	# first_weekday = pandas.Timestamp(year_sim,1,1).weekday() 
-	# first_weekday_WS = df_WS.index[0].weekday()
-	# while not first_weekday_WS == first_weekday:
-	# 	df_WS = df_WS.iloc[1:]
-	# 	first_weekday_WS = df_WS.index[0].weekday()
-	# df_WS =df_WS.iloc[:(365*24*12)] #Should not be hardcoded
-	# df_WS.index = pandas.date_range(pandas.Timestamp(year_sim,1,1,0),pandas.Timestamp(year_sim,12,31,23,55),freq='5min')
 
 	print('Initialize finished after '+str(time.time()-t0))
 	return True
@@ -115,15 +105,24 @@ def on_precommit(t):
 		print('Start precommit: '+str(dt_sim_time))
 
 		############
-		#Get external information and information through APIs
+		#Imitates physical process of arrival
 		############
 
 		global houses;
+		for house in houses:
+			gldimport.get_EVs(house_name,start_time_str)
+
+		############
+		#Get external information and information through APIs
+		############
+
 		for house in houses:
 			#gldimport.update_settings() #If user changes settings in API, this should be called
 			gldimport.update_house_state(house.name,dt_sim_time)
 			if house.battery:
 				gldimport.update_battery_state(house.battery.name,dt_sim_time)
+			if house.EV:
+				gldimport.update_EV_state(house.EV.name,dt_sim_time)
 		
 		global retailer;
 		gldimport.get_slackload(dt_sim_time)

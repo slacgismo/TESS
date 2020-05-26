@@ -1031,8 +1031,12 @@ object residential.ZIPload {
 	configuration "IS110";
 	power_state "UNKNOWN";
 }
-object generators.inverter {
+object powerflow.meter {
 	parent "meter_1";
+	name "meter_1_EV";
+}
+object generators.inverter {
+	parent "meter_1_EV";
 	name "EV_inverter_1";
 	guid "33414D12E64FD1041EC184EEABF19274";
 	inverter_type "FOUR_QUADRANT";
@@ -1609,6 +1613,10 @@ object residential.ZIPload {
 	breaker_amps "+1000 A";
 	configuration "IS110";
 	power_state "UNKNOWN";
+}
+object powerflow.meter {
+	parent "meter_2";
+	name "meter_2_EV";
 }
 object generators.inverter {
 	parent "meter_2";
@@ -2254,6 +2262,10 @@ object residential.ZIPload {
 	configuration "IS110";
 	power_state "UNKNOWN";
 }
+object powerflow.meter {
+	parent "meter_3";
+	name "meter_3_EV";
+}
 object generators.inverter {
 	parent "meter_3";
 	name "EV_inverter_3";
@@ -2838,6 +2850,10 @@ object residential.ZIPload {
 	breaker_amps "+1000 A";
 	configuration "IS110";
 	power_state "UNKNOWN";
+}
+object powerflow.meter {
+	parent "meter_4";
+	name "meter_4_EV";
 }
 object generators.inverter {
 	parent "meter_4";
@@ -3483,6 +3499,10 @@ object residential.ZIPload {
 	configuration "IS110";
 	power_state "UNKNOWN";
 }
+object powerflow.meter {
+	parent "meter_5";
+	name "meter_5_EV";
+}
 object generators.inverter {
 	parent "meter_5";
 	name "EV_inverter_5";
@@ -4059,6 +4079,10 @@ object residential.ZIPload {
 	breaker_amps "+1000 A";
 	configuration "IS110";
 	power_state "UNKNOWN";
+}
+object powerflow.meter {
+	parent "meter_6";
+	name "meter_6_EV";
 }
 object generators.inverter {
 	parent "meter_6";

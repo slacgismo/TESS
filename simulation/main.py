@@ -23,7 +23,7 @@ if ind == 0:
 #Test cases
 else:
 	#This uses the saved model of the first basecase run
-	import glm_functions_sparse
-	glm_functions_sparse.modify_glmfile() #creates model_ts from model_bc (include module gridlabd_functions) - make sure it's identical!
+	#import glm_functions_sparse
+	#glm_functions_sparse.modify_glmfile() #creates model_ts from model_bc (include module gridlabd_functions) - make sure it's identical!
 	gridlabd.command('model_ts.glm')
 	gridlabd.start('wait')

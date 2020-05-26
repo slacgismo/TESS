@@ -10,6 +10,7 @@ import gridlabd_functions
 #from HH_global import *
 
 import battery_functions as Bfct
+import EV_functions as EVfct
 
 import datetime
 import numpy as np
@@ -43,6 +44,7 @@ def create_agent_house(house_name):
 
 	#Create and assign battery object if exists
 	house = Bfct.get_battery(house,house_name)
+	house = EVfct.get_EV(house,house_name)
 
 	return house
 

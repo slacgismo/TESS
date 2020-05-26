@@ -1,6 +1,7 @@
 #import gridlabd_functions
 import os
 import pandas
+import numpy
 #import pycurl
 from io import StringIO
 import json
@@ -85,6 +86,71 @@ def get_batteries(house_name,time):
 	parameter_string = '(timedate, soc_des, soc_min, SOC_max, i_max, u_max, efficiency, k)'
 	value_tuple = (time, soc_des, soc_min, SOC_max, i_max, u_max, efficiency, k,)
 	myfct.set_values(battery_name+'_settings', parameter_string, value_tuple)
+
+#This connects to the ChargePoint chargers = a meter
+#No technical information is provided!!
+def get_chargers(house_name,time):
+	#Get charger object
+	CP_name = 'meter'+house_name[5:]+'_EV'
+	CP_obj = gridlabd.get_object(CP_name)
+	CP_inv_name = 'EV_inverter'+house_name[5:]
+	CP_inv_obj = gridlabd.get_object(CP_inv_name)
+
+	#Save in long-term memory (in the db) - accessible for market code
+	charge_rate = float(CP_inv_obj['rated_power'])
+	parameter_string = '(timedate, charge_rate)'
+	value_tuple = (time, charge_rate,)
+	myfct.set_values('CP'+house_name[5:]+'_settings', parameter_string, value_tuple)
+
+	#Check if EV is connected
+	EV_name = 'EV'+house_name[5:]
+	try:
+		EV_obj = gridlabd.get_object(EV_name)
+		status = True
+	except:
+		status = False
+	if status:
+		parameter_string = '(timedate, est_departure, battery_capacity, top_up)'
+		try:
+			est_departure = EV_obj['est_departure']
+		except:
+			est_departure = time
+		try:
+			battery_capacity = EV_obj['battery_capacity']
+		except:
+			battery_capacity = 1000.0 #Set very large
+		try:
+			top_up = EV_obj['top_up']
+		except:
+			top_up = 100.0 #100% / full charge
+
+		value_tuple = (time, est_departure, battery_capacity, top_up,)
+		myfct.set_values(EV_name+'_arrival', parameter_string, value_tuple)
+
+#get EVs: connects to cars directly if they have an API
+#Not readily developed yet!
+def get_EVs(house_name,time):
+	#Get EV object
+	EV_inv_name = 'EV_inv'+house_name[5:]
+	
+
+	#Get all relevant objects
+	EV_name = 'EV'+house_name[5:]
+	EV_obj = gridlabd.get_object(EV_name)
+
+	#Read out settings
+	#EV_name = 'EV'+house_name[5:]
+	Kev = EV_obj['k']
+	Emax = EV_obj['battery_capacity']
+	Qmax = EV_obj['rated_power']
+	Qon = EV_obj['rated_power'] #???
+	Qoff = 0.0 #???
+	Status = 'OFF'
+
+	#Save in long-term memory (in the db) - accessible for market code
+	parameter_string = '(timedate, Kev, Emax, Qmax, Qon, Qoff, Status)'
+	value_tuple = (time, Kev, Emax, Qmax, Qon, Qoff, Status,)
+	myfct.set_values(EV_name+'_settings', parameter_string, value_tuple)
 	
 #Get house state and write to db
 
@@ -114,6 +180,23 @@ def update_battery_state(battery_name,dt_sim_time):
 	#Save in long-term memory (in the db) - accessible for market code
 	parameter_string = '(timedate, soc_rel)' #timedate TIMESTAMP PRIMARY KEY, 
 	value_tuple = (dt_sim_time, float(batt_obj['state_of_charge']),)
+	myfct.set_values(battery_name+'_state_in', parameter_string, value_tuple)
+
+def update_EV_state(battery_name,dt_sim_time):
+	#Get information from physical representation
+	EV_obj = gridlabd.get_object(EV_name)
+
+	#Save in long-term memory (in the db) - accessible for market code
+	E = float(EV_obj['state_of_charge'])
+# 	treq = 
+# trem
+# Eest
+# Qset
+# Qobs
+
+
+	parameter_string = '(timedate, E, treq, trem, Qset, Qobs)' #timedate TIMESTAMP PRIMARY KEY, 
+	value_tuple = (dt_sim_time, E, treq, trem, Qset, Qobs,)
 	myfct.set_values(battery_name+'_state_in', parameter_string, value_tuple)
 
 ###############
