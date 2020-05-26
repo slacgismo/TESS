@@ -6,14 +6,13 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
 from web.models.user import User, UserSchema
-# from web.models.address import Address
-# from web.models.role import Role, RoleType
-# from web.models.group import Group
-# from web.models.utility import Utility
-# from datetime import datetime
+from web.models.address import Address
+from web.models.role import Role, RoleType
+from web.models.group import Group
+from web.models.utility import Utility
+from datetime import datetime
 
 users_api_bp = Blueprint('users_api_bp', __name__)
-
 
 @users_api_bp.route('/users', methods=['GET'])
 def get_user_ids():
@@ -105,7 +104,6 @@ def add_user():
         if does_user_exist:
             raise IntegrityError('Email already in use', None, None)
         
-        #user schema create (marshmallow) ?
         new_user = user_schema.load(new_user, session=db.session)
         db.session.add(new_user)
         db.session.commit()

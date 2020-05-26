@@ -2,6 +2,7 @@ from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
 
 from flask_user import UserMixin
+from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.models.address import Address
 from web.database import (
@@ -36,7 +37,8 @@ class User(UserMixin, Model):
 
     # Relationships
     utility = relationship('Utility', backref=db.backref('groups'))
-
+    address = relationship('Address', backref=db.backref('addresses'))
+    
     def get_roles(self):
         '''returns list of user role object'''
         roles = []
@@ -45,6 +47,15 @@ class User(UserMixin, Model):
         return roles
 
 class UserSchema(SQLAlchemyAutoSchema):
+    roles = fields.Method('get_roles', dump_only=True)
+    address = fields.Method('get_address', dump_only=True)
+    
+    def get_roles(self, obj):
+        return obj.get_roles()
+
+    def get_address(self, obj):
+        return obj.address
+
     class Meta:
         model = User
         include_fk = True
