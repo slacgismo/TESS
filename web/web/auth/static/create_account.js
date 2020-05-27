@@ -20,7 +20,7 @@ class CreateAccount extends React.PureComponent {
 
     render() {
         return (
-            <Card className="user-settings-container" outlined style={{ width: '700px', margin: '20px auto', backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
+            <Card outlined>
                 <Typography
                     use="subtitle1"
                     tag="div"
