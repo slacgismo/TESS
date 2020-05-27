@@ -9,8 +9,8 @@ import { menuRoutes } from '../../static/js/config/routes';
 import ConnectedComponentWrapper from '../../static/js/base';
 import { queue } from '../../static/js/components/app_notification_queue';
 
+import '@rmwc/button/styles';
 import '@rmwc/textfield/styles';
-import '@material/button/dist/mdc.button.css';
 
 class Auth extends React.Component {
     state = {
@@ -94,14 +94,14 @@ class Auth extends React.Component {
                     <br />
                     <div>
                         <Button
-                            unelevated
+                            outlined
                             label="LOGIN"
                             onClick={this.handleLogin} />
                     </div>
-                    <hr />
+                    <br />
                     <div>
                         <Button
-                            unelevated
+                            outlined
                             label="SIGN UP"
                             onClick={() => this.setUserCreateFlow(true)} />
                     </div>

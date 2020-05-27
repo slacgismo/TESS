@@ -113,7 +113,7 @@ class Storage extends React.Component {
                             <div>
                                 <h4>Alerts</h4>
                                 <div className="pd-form-row">
-                                    <div className="pd-form-element-label">Capacity Boundary</div>
+                                    <div className="pd-form-element-label">Capacity Bounds</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined />
                                     </div>
