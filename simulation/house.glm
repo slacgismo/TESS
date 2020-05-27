@@ -7,6 +7,8 @@ class house {
 class battery {
 	char32 charging_type;
 	double k;
+	char32 est_departure;
+	double top_on;
 }
 
 object transformer {
@@ -77,6 +79,8 @@ object triplex_meter:..${COUNT} {
 			generator_mode SUPPLY_DRIVEN;
 			charging_type residential;
 			k random.uniform(5,10);
+			est_departure None;
+			top_on 100.0;
 		};
 	};
 	object inverter {

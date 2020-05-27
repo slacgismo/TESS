@@ -68,7 +68,8 @@ def on_init(t):
 	for house_name in houses_names:
 		gldimport.get_houseobjects(house_name,start_time_str)
 		gldimport.get_batteries(house_name,start_time_str)
-		gldimport.get_chargers(house_name,start_time_str)
+		gldimport.get_chargers(house_name,start_time_str) #Gets charger inverters and maximum charging rates
+		gldimport.initialize_EVs(house_name,start_time_str) #Checks if EVs are connected
 
 	#MARKET: Create house agents
 	global houses;
@@ -109,8 +110,9 @@ def on_precommit(t):
 		############
 
 		global houses;
+		#Simulates arrival and disconnects EV upon departure - this function should be deleted in physical system
 		for house in houses:
-			gldimport.get_EVs(house_name,start_time_str)
+			gldimport.simulate_EVs(house.name,dt_sim_time)
 
 		############
 		#Get external information and information through APIs
@@ -121,8 +123,8 @@ def on_precommit(t):
 			gldimport.update_house_state(house.name,dt_sim_time)
 			if house.battery:
 				gldimport.update_battery_state(house.battery.name,dt_sim_time)
-			if house.EV:
-				gldimport.update_EV_state(house.EV.name,dt_sim_time)
+			if house.EVCP:
+				gldimport.update_CP_state(house.EVCP.name,dt_sim_time)
 		
 		global retailer;
 		gldimport.get_slackload(dt_sim_time)

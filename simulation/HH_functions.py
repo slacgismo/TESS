@@ -44,7 +44,7 @@ def create_agent_house(house_name):
 
 	#Create and assign battery object if exists
 	house = Bfct.get_battery(house,house_name)
-	house = EVfct.get_EV(house,house_name)
+	house = EVfct.get_CP(house,house_name)
 
 	return house
 
@@ -57,7 +57,7 @@ class House:
 		self.HVAC = None
 		self.PV = None
 		self.battery = None
-		self.EV = None
+		self.EVCP = None
 
 	def update_state(self,dt_sim_time):
 		df_state_in = myfct.get_values_td(self.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)

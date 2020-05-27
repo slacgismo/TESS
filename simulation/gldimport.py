@@ -2,6 +2,7 @@
 import os
 import pandas
 import numpy
+import random
 #import pycurl
 from io import StringIO
 import json
@@ -90,9 +91,8 @@ def get_batteries(house_name,time):
 #This connects to the ChargePoint chargers = a meter
 #No technical information is provided!!
 def get_chargers(house_name,time):
+
 	#Get charger object
-	CP_name = 'meter'+house_name[5:]+'_EV'
-	CP_obj = gridlabd.get_object(CP_name)
 	CP_inv_name = 'EV_inverter'+house_name[5:]
 	CP_inv_obj = gridlabd.get_object(CP_inv_name)
 
@@ -102,6 +102,7 @@ def get_chargers(house_name,time):
 	value_tuple = (time, charge_rate,)
 	myfct.set_values('CP'+house_name[5:]+'_settings', parameter_string, value_tuple)
 
+def initialize_EVs(house_name,time):
 	#Check if EV is connected
 	EV_name = 'EV'+house_name[5:]
 	try:
@@ -112,46 +113,75 @@ def get_chargers(house_name,time):
 	if status:
 		parameter_string = '(timedate, est_departure, battery_capacity, top_up)'
 		try:
-			est_departure = EV_obj['est_departure']
+			est_departure = pandas.to_datetime(EV_obj['est_departure'])
 		except:
-			est_departure = time
+			#Assuming that departure is in the morning
+			t0 = pandas.to_datetime(time)
+			t0.hours = 0
+			est_departure = t0 + pandas.Timedelta(hours=0) + pandas.Timedelta(minutes=random.randint(0, 60*1))
+			gridlabd.set_value(EV_name,'est_departure',str(est_departure))
 		try:
-			battery_capacity = EV_obj['battery_capacity']
+			battery_capacity = float(EV_obj['battery_capacity'])
 		except:
 			battery_capacity = 1000.0 #Set very large
 		try:
-			top_up = EV_obj['top_up']
+			top_up = float(EV_obj['top_up'])
 		except:
 			top_up = 100.0 #100% / full charge
+		if top_up == 0.0:
+			top_up = 100.0
 
-		value_tuple = (time, est_departure, battery_capacity, top_up,)
+		value_tuple = (time, str(est_departure), battery_capacity, top_up,)
 		myfct.set_values(EV_name+'_arrival', parameter_string, value_tuple)
-
-#get EVs: connects to cars directly if they have an API
-#Not readily developed yet!
-def get_EVs(house_name,time):
-	#Get EV object
-	EV_inv_name = 'EV_inv'+house_name[5:]
 	
-
-	#Get all relevant objects
+#Simulates arrival and disconnects EV upon departure - this function should be deleted in physical system
+#Therefore also no interaction with DB yet - that's in update_EV_state()
+def simulate_EVs(house_name,dt_sim_time):
 	EV_name = 'EV'+house_name[5:]
 	EV_obj = gridlabd.get_object(EV_name)
+	online_t = EV_obj['generator_status']
+	CP_inv_name = 'EV_inverter'+house_name[5:]
 
-	#Read out settings
-	#EV_name = 'EV'+house_name[5:]
-	Kev = EV_obj['k']
-	Emax = EV_obj['battery_capacity']
-	Qmax = EV_obj['rated_power']
-	Qon = EV_obj['rated_power'] #???
-	Qoff = 0.0 #???
-	Status = 'OFF'
-
-	#Save in long-term memory (in the db) - accessible for market code
-	parameter_string = '(timedate, Kev, Emax, Qmax, Qon, Qoff, Status)'
-	value_tuple = (time, Kev, Emax, Qmax, Qon, Qoff, Status,)
-	myfct.set_values(EV_name+'_settings', parameter_string, value_tuple)
+	if dt_sim_time.hour >= 0 and dt_sim_time.hour <= 19:
+		if online_t == 'OFFLINE':
+			arrival = numpy.random.choice([True,False],p=[10/60.,1. - 10/60.])
+			if arrival:
+				gridlabd.set_value(EV_name,'generator_status','ONLINE')
+				est_departure = dt_sim_time + pandas.Timedelta(hours=7) + pandas.Timedelta(minutes=random.randint(0, 60*1))
+				gridlabd.set_value(EV_name,'est_departure',str(est_departure))
+				top_up = numpy.random.choice(numpy.arange(5.,30.,5.),p=[1/5.]*5)
+				gridlabd.set_value(EV_name,'top_up',str(top_up))
+				gridlabd.set_value(CP_inv_name,'EV_connected',str(1))				
 	
+	if online_t == 'ONLINE':
+		#EV_obj = gridlabd.get_object(EV_name) #get new departure time
+		if pandas.to_datetime(EV_obj['est_departure']) < dt_sim_time:
+			gridlabd.set_value(EV_name,'generator_status','OFFLINE')
+			gridlabd.set_value(CP_inv_name,'EV_connected',str(-1))
+	#import pdb; pdb.set_trace()
+
+def update_CP_state(CP_name,dt_sim_time):
+	#Check if EV is there
+	CP_obj = gridlabd.get_object(CP_name)
+	EV_name = 'EV_'+CP_name.split('_')[-1]
+	EV_obj = gridlabd.get_object(EV_name)
+	#New car arrived
+	#import pdb; pdb.set_trace()
+	print(int(CP_obj['EV_connected']))
+	if int(CP_obj['EV_connected']) == 1: #This should be whatever signal which pushes the new that a car arrived/disconnected
+		#import pdb; pdb.set_trace()
+		est_departure = pandas.to_datetime(EV_obj['est_departure'])
+		battery_capacity = float(EV_obj['battery_capacity'])
+		top_up = float(EV_obj['top_up'])
+		#Write to database
+		parameter_string = '(timedate, est_departure, battery_capacity, top_up)'
+		value_tuple = (str(dt_sim_time), str(est_departure), battery_capacity, top_up,)
+		myfct.set_values(EV_name+'_arrival', parameter_string, value_tuple)
+		#Reset action pointer
+		gridlabd.set_value(CP_name,'EV_connected',str(0))
+	elif int(CP_obj['EV_connected']) == -1:
+		gridlabd.set_value(CP_name,'EV_connected',str(0))
+
 #Get house state and write to db
 
 def update_house_state(house_name,dt_sim_time):

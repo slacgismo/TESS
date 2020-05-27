@@ -8,6 +8,7 @@ import gridlabd_functions
 #from gridlabd_functions import p_max # ???????????????
 #import mysql_functions
 #from HH_global import *
+import mysql_functions as myfct
 
 import datetime
 import numpy as np
@@ -25,105 +26,103 @@ arr_hours = [16,17,18,19,20]
 list_SOC = [30.,40.,50.,60.]
 list_u = [7.,10.,14.,20.]
 
-class EV:
-      def __init__(self,name,Kev=0.0,Emax=0.0,Qmax=0.0,Qon=0.0,Qoff=0.0,Status='OFF',E=0.0,treq=pandas.Timedelta(seconds=0),trem=pandas.Timedelta(seconds=0),Eest=0.0,Qset=0.0,Qobs=0.0):
+class EVCP:
+      def __init__(self,name,charge_rate=0.0):
             self.name = name
 
             #Configuration
-            self.Kev = Kev
-            self.Emax = Emax
-            self.Qmax = Qmax
-            self.Qon = Qon
-            self.Qoff = Qoff
-            self.Status = Status
+            self.charge_rate = charge_rate
 
-            #State
-            self.E = E #Energy
-            self.treq = treq #Time required to fully charge the battery
-            self.trem = trem #Time remaining before the battery should be fully charged
-            self.Eest = Eest #Estimated charge added to the battery
-            self.Qset = Qset #Power setpoint (maximum allowed power a vehicle can draw)
-            self.Qobs = Qobs #Current power been draw
-
-            #Last bids
-            self.P_sell_bid = 100000.0
-            self.P_buy_bid = -100000.0
-            self.Q_sell_bid = 0.0
-            self.Q_buy_bid = 0.0
-
-      def update_state(self,df_batt_state_in):
-            self.soc_rel = df_batt_state_in['soc_rel'].iloc[0]
-            self.SOC = self.soc_rel*self.SOC_max
-
-      def bid(self,dt_sim_time,market,P_exp,P_dev):
-            #Sell bid
-            if self.soc_rel <= self.soc_des:
-                  soc_ref = self.soc_min
-            else:
-                  soc_ref = 1.0
-            p_buy_bid = P_exp + 3*self.k*P_dev*(self.soc_rel - self.soc_des)/abs(soc_ref - self.soc_des)
-
-            #Buy bid
-            p_oc = P_exp + 3*self.k+P_dev*(self.soc_rel*self.SOC_max - self.soc_des*self.SOC_max + self.u_max*(interval/360.))/abs(soc_ref*self.SOC_max - self.soc_des*self.SOC_max + self.u_max*(interval/360.))
-            cap_cost = 500 #USD/KWh for Tesla powerwall
-            p_sell_bid = p_oc/self.efficiency + cap_cost/(self.soc_des + 0.4)**2
-
-            self.P_sell_bid = p_sell_bid
-            u_res = (self.soc_rel - self.soc_min)*self.SOC_max/(interval/360.)
-            self.Q_sell_bid = min(self.u_max,u_res)
-
-            self.P_buy_bid = p_buy_bid
-            u_res = (1. - self.soc_rel)*self.SOC_max/(interval/360.)
-            self.Q_buy_bid = min(self.u_max,u_res)
-
-            #write P_bid, Q_bid to market DB
-            timestamp_arrival_buy = market.send_demand_bid(dt_sim_time, float(p_buy_bid), float(self.Q_buy_bid), self.name) #Feedback: timestamp of arrival #C determined by market_operator
-            timestamp_arrival_sell = market.send_supply_bid(dt_sim_time, float(p_sell_bid), float(self.Q_sell_bid), self.name)
-            return
-
-      def dispatch(self,dt_sim_time,p_lem,alpha):
-            #import pdb; pdb.set_trace()
-            inverter = 'Bat_inverter_'+self.name.split('_')[-1]
-            if (self.Q_buy_bid > 0.0) and (self.P_buy_bid > p_lem):
-                  gridlabd.set_value(inverter,'P_Out',str(-self.Q_buy_bid*1000.))
-            elif (self.Q_buy_bid > 0.0) and (self.P_buy_bid == p_lem):
-                  print('This HVAC is marginal; no partial implementation yet: '+str(alpha))
-                  gridlabd.set_value(inverter,'P_Out',str(-self.Q_buy_bid*1000.))
-            elif (self.Q_sell_bid > 0.0) and (self.P_sell_bid < p_lem):
-                  gridlabd.set_value(inverter,'P_Out',str(self.Q_sell_bid*1000.))
-            elif (self.Q_sell_bid > 0.0) and (self.P_sell_bid == p_lem):
-                  print('This HVAC is marginal; no partial implementation yet: '+str(alpha))
-                  gridlabd.set_value(inverter,'P_Out',str(self.Q_sell_bid*1000.))
-            else:
-                  gridlabd.set_value(inverter,'P_Out',str(0.0))
-            myfct.set_values(self.name+'_state_out', '(timedate, p_demand, p_supply, q_demand, q_supply)', (dt_sim_time, str(self.P_buy_bid), str(self.P_sell_bid), str(self.Q_buy_bid), str(self.Q_sell_bid)))
-            self.P_sell_bid = 100000.0
-            self.P_buy_bid = -100000.0
-            self.Q_sell_bid = 0.0
-            self.Q_buy_bid = 0.0
-
-def get_EV(house,house_name):
-      EV_name = 'EV'+house_name[5:]
+def get_CP(house,house_name):
+      CP_name = 'CP'+house_name[5:]
       #import pdb; pdb.set_trace()
       try:
-            df_EV_settings = myfct.get_values_td(EV_name + '_settings')
+            df_CP_settings = myfct.get_values_td(CP_name + '_settings')
       except:
-            df_EV_settings = pandas.DataFrame()
+            df_CP_settings = pandas.DataFrame()
 
-      if len(df_EV_settings) > 0:
-            EV = EV(EV_name)
-            EV.name = EV_name
+      #If house has a charger
+      if len(df_CP_settings) > 0:
+            evcp = EVCP('EV_inverter'+house_name[5:])
             #import pdb; pdb.set_trace()
             #Configuration
-            EV.Kev = df_EV_settings['Kev']
-            EV.Emax = df_EV_settings['Emax']
-            EV.Qmax = df_EV_settings['Qmax']
-            EV.Qon = df_EV_settings['Qon']
-            EV.Qoff = df_EV_settings['Qoff']
-            EV.Status = df_EV_settings['Status']
-
-            house.EV = EV
+            evcp.charge_rate = df_CP_settings['charge_rate']
+            house.EVCP = evcp
       return house
+
+
+# class EV:
+#       def __init__(self,name,Kev=0.0,Emax=0.0,Qmax=0.0,Qon=0.0,Qoff=0.0,Status='OFF',E=0.0,treq=pandas.Timedelta(seconds=0),trem=pandas.Timedelta(seconds=0),Eest=0.0,Qset=0.0,Qobs=0.0):
+#             self.name = name
+
+#             #Configuration
+#             self.charge_rate
+
+#             #State
+#             self.E = E #Energy
+#             self.treq = treq #Time required to fully charge the battery
+#             self.trem = trem #Time remaining before the battery should be fully charged
+#             self.Eest = Eest #Estimated charge added to the battery
+#             self.Qset = Qset #Power setpoint (maximum allowed power a vehicle can draw)
+#             self.Qobs = Qobs #Current power been draw
+
+#             #Last bids
+#             self.P_sell_bid = 100000.0
+#             self.P_buy_bid = -100000.0
+#             self.Q_sell_bid = 0.0
+#             self.Q_buy_bid = 0.0
+
+#             def update_state(self,df_batt_state_in):
+#             self.soc_rel = df_batt_state_in['soc_rel'].iloc[0]
+#             self.SOC = self.soc_rel*self.SOC_max
+
+#       def bid(self,dt_sim_time,market,P_exp,P_dev):
+#             #Sell bid
+#             if self.soc_rel <= self.soc_des:
+#                   soc_ref = self.soc_min
+#             else:
+#                   soc_ref = 1.0
+#             p_buy_bid = P_exp + 3*self.k*P_dev*(self.soc_rel - self.soc_des)/abs(soc_ref - self.soc_des)
+
+#             #Buy bid
+#             p_oc = P_exp + 3*self.k+P_dev*(self.soc_rel*self.SOC_max - self.soc_des*self.SOC_max + self.u_max*(interval/360.))/abs(soc_ref*self.SOC_max - self.soc_des*self.SOC_max + self.u_max*(interval/360.))
+#             cap_cost = 500 #USD/KWh for Tesla powerwall
+#             p_sell_bid = p_oc/self.efficiency + cap_cost/(self.soc_des + 0.4)**2
+
+#             self.P_sell_bid = p_sell_bid
+#             u_res = (self.soc_rel - self.soc_min)*self.SOC_max/(interval/360.)
+#             self.Q_sell_bid = min(self.u_max,u_res)
+
+#             self.P_buy_bid = p_buy_bid
+#             u_res = (1. - self.soc_rel)*self.SOC_max/(interval/360.)
+#             self.Q_buy_bid = min(self.u_max,u_res)
+
+#             #write P_bid, Q_bid to market DB
+#             timestamp_arrival_buy = market.send_demand_bid(dt_sim_time, float(p_buy_bid), float(self.Q_buy_bid), self.name) #Feedback: timestamp of arrival #C determined by market_operator
+#             timestamp_arrival_sell = market.send_supply_bid(dt_sim_time, float(p_sell_bid), float(self.Q_sell_bid), self.name)
+#             return
+
+#       def dispatch(self,dt_sim_time,p_lem,alpha):
+#             #import pdb; pdb.set_trace()
+#             inverter = 'Bat_inverter_'+self.name.split('_')[-1]
+#             if (self.Q_buy_bid > 0.0) and (self.P_buy_bid > p_lem):
+#                   gridlabd.set_value(inverter,'P_Out',str(-self.Q_buy_bid*1000.))
+#             elif (self.Q_buy_bid > 0.0) and (self.P_buy_bid == p_lem):
+#                   print('This HVAC is marginal; no partial implementation yet: '+str(alpha))
+#                   gridlabd.set_value(inverter,'P_Out',str(-self.Q_buy_bid*1000.))
+#             elif (self.Q_sell_bid > 0.0) and (self.P_sell_bid < p_lem):
+#                   gridlabd.set_value(inverter,'P_Out',str(self.Q_sell_bid*1000.))
+#             elif (self.Q_sell_bid > 0.0) and (self.P_sell_bid == p_lem):
+#                   print('This HVAC is marginal; no partial implementation yet: '+str(alpha))
+#                   gridlabd.set_value(inverter,'P_Out',str(self.Q_sell_bid*1000.))
+#             else:
+#                   gridlabd.set_value(inverter,'P_Out',str(0.0))
+#             myfct.set_values(self.name+'_state_out', '(timedate, p_demand, p_supply, q_demand, q_supply)', (dt_sim_time, str(self.P_buy_bid), str(self.P_sell_bid), str(self.Q_buy_bid), str(self.Q_sell_bid)))
+#             self.P_sell_bid = 100000.0
+#             self.P_buy_bid = -100000.0
+#             self.Q_sell_bid = 0.0
+#             self.Q_buy_bid = 0.0
+
 
 ############### OLD #############
 
