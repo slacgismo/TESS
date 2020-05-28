@@ -22,6 +22,7 @@ const datasets = {
     hvac: [10,15,0],
     hotWater: [12,1,0]
 };
+
 const finalDataSet = {
     "unavailable": [],
     "available": [],

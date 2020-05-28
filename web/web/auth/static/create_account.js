@@ -78,8 +78,8 @@ class CreateAccount extends React.PureComponent {
                 <ListDivider />
 
                 <CardActions fullBleed>
-                    <CardActionButton label="Go Back" onClick={() => this.props.setCreateFlow(false)} />
-                    <CardActionButton label="Create Account" />
+                    <CardActionButton label=" Go Back" onClick={() => this.props.setCreateFlow(false)} />
+                    <CardActionButton label=" Create Account" />
                 </CardActions>
             </Card>
         );

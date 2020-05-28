@@ -73,15 +73,15 @@ ul, li {
     height: 100%;
     min-height: 1200px;
     width: 500px;
-    background-color: rgba(255, 255, 255, 0.93);
-    padding: 200px 0 0 0;
+    background-color: rgba(255, 255, 255, 1);
+    padding: 250px 0 0 0;
     float: left;
 }
 .create-account-form-container {
     height: 100%;
     min-height: 1200px;
     width: 500px;
-    background-color: rgba(255, 255, 255, 0.93);
+    background-color: rgba(255, 255, 255, 1);
     padding: 50px 0;
     float: left;
     text-align: left;
