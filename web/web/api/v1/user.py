@@ -6,11 +6,6 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
 from web.models.user import User, UserSchema
-from web.models.address import Address
-from web.models.role import Role, RoleType
-from web.models.group import Group
-from web.models.utility import Utility
-from datetime import datetime
 
 users_api_bp = Blueprint('users_api_bp', __name__)
 
@@ -21,8 +16,18 @@ def get_user_ids():
     '''
     arw = ApiResponseWrapper()
 
+    fields_to_filter_on = request.args.getlist('fields')
+
+    if len(fields_to_filter_on) > 0:
+        for field in fields_to_filter_on:
+            if field not in User.__table__.columns:
+                arw.add_errors({field: 'Invalid User field'})
+                return arw.to_json(None, 400)
+    else:
+        fields_to_filter_on = None
+
     users = User.query.all()
-    user_schema = UserSchema(exclude=['utility_id'])
+    user_schema = UserSchema(exclude=['address_id'], only=fields_to_filter_on)
     results = user_schema.dump(users, many=True)
     
     return arw.to_json(results)
@@ -34,7 +39,7 @@ def show_user_info(user_id):
     Retrieve one user object
     '''
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(exclude=['utility_id'])
+    user_schema = UserSchema(exclude=['address_id'])
 
     try:  
         user = User.query.filter_by(id=user_id).one()
@@ -58,7 +63,7 @@ def modify_user(user_id):
     Update one user object in database
     '''
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(exclude=['email_confirmed_at', 'created_at', 'address', 'roles', 'utility'])
+    user_schema = UserSchema(exclude=['email_confirmed_at', 'created_at', 'address'])
     modified_user = request.get_json()
 
     try:
@@ -97,7 +102,7 @@ def add_user():
     arw = ApiResponseWrapper()
     user_schema = UserSchema()
     new_user = request.get_json()
-            
+       
     try:
         does_user_exist = User.query.filter_by(email=new_user['email']).count() > 0
 
@@ -105,6 +110,7 @@ def add_user():
             raise IntegrityError('Email already in use', None, None)
         
         new_user = user_schema.load(new_user, session=db.session)
+
         db.session.add(new_user)
         db.session.commit()
 
@@ -112,10 +118,11 @@ def add_user():
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
-    
+
     except ValidationError as ve:
         arw.add_errors(ve.messages)
         return arw.to_json(None, 400)
-    
+
     results = UserSchema().dump(new_user)
+
     return arw.to_json(results)

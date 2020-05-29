@@ -17,7 +17,7 @@ from web.user_settings.user_settings import user_settings_bp
 from web.api.v1.meter import meter_api_bp
 from web.api.v1.utility import utility_api_bp
 from web.api.v1.alert import alerts_api_bp
-from web.api.v1.users import users_api_bp
+from web.api.v1.user import users_api_bp
 from web.api.v1.notification import notifications_api_bp
 
 

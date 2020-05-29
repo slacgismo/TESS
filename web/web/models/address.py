@@ -1,5 +1,7 @@
-from sqlalchemy.types import TIMESTAMP
 from datetime import datetime
+from sqlalchemy.types import TIMESTAMP
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+
 from web.database import (
     db,
     Model,
@@ -25,3 +27,16 @@ class Address(Model):
 
     def __repr__(self):
         return f'<Address address_id={self.address_id} address={self.address} postal_code={self.postal_code}>'
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
+
+class AddressSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Address
+        include_fk = True
+        load_instance = True
+        transient = True
+        sqla_session = db.session
+    

@@ -1,4 +1,6 @@
 import enum
+from marshmallow import fields, ValidationError
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.database import (
     db,
     Model,
@@ -28,3 +30,21 @@ class Role(Model):
 
     role_id = Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     name = Column(db.Enum(RoleType), unique=True, nullable=False)
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
+
+class RoleSchema(SQLAlchemyAutoSchema):
+    roles = fields.Method('load_role_type', load_only=True)
+    
+    def load_role_type(self, value):
+        role_enum = RoleType.check_value(value)
+        if not role_enum:
+            raise ValidationError(f'{value} is an invalid role type')
+        return role_enum
+
+    class Meta:
+        model = Role
+        include_fk = True
+        load_instance = True

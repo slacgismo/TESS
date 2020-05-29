@@ -1,10 +1,10 @@
 from datetime import datetime
-from sqlalchemy.types import TIMESTAMP
-
 from flask_user import UserMixin
-from marshmallow import fields, ValidationError
+from sqlalchemy.types import TIMESTAMP
+from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from web.models.address import Address
+
+from web.models.address import Address, AddressSchema
 from web.models.role import Role, RoleType
 from web.database import (
     db,
@@ -21,11 +21,11 @@ class User(UserMixin, Model):
 
     id = Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
 
-    #user email information
+    # User email information
     email = Column(db.String(255), nullable=False, unique=True)
     email_confirmed_at = Column(TIMESTAMP)
 
-    #user information
+    # User information
     first_name = Column(db.String(64), nullable=False)
     last_name = Column(db.String(64), nullable=False)
     address_id = Column(db.Integer, db.ForeignKey('addresses.address_id'))
@@ -40,18 +40,32 @@ class User(UserMixin, Model):
     utility = relationship('Utility', backref=db.backref('groups'))
     address = relationship('Address', backref=db.backref('addresses'))
 
+    # Methods
     def get_roles(self):
-        '''returns list of user role object'''
+        '''Returns list of user role objects'''
+
         roles = []
         for group in self.groups:
             roles.append(group.role)
         return roles
+    
+    def does_user_role_exist(self, role_name):
+        '''Returns true or false whether user has assigned role'''
+
+        for group in self.groups:
+            if group.role.name.value == role_name:
+                return True
+        return False
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
 
 class UserSchema(SQLAlchemyAutoSchema):
-    roles = fields.Method('get_roles', dump_only=True) #deserialize='load_role_type'
-    address = fields.Method('get_address', dump_only=True)
-    utility = fields.Method('get_utility_name', dump_only=True)
-
+    roles = fields.Method('get_roles', dump_only=True)
+    postal_code = fields.Method('get_postal_code', dump_only=True)
+    address = fields.Nested(AddressSchema(), load_only=True)
+    
     def get_roles(self, obj):
         roles = obj.get_roles()
         result_roles = []
@@ -59,23 +73,12 @@ class UserSchema(SQLAlchemyAutoSchema):
             result_roles.append(role.name.value)
         return result_roles
 
-    def get_address(self, obj):
-        address = {'city': obj.address.city,
-                   'country': obj.address.country,
-                   'postal code': obj.address.postal_code}
+    def get_postal_code(self, obj):
+        address = {'postal code': obj.address.postal_code,
+                   'country': obj.address.country}
         return address
-
-    def get_utility_name(self, obj):
-        return obj.utility.name
-
-    # def load_role_type(self, value):
-    #     role_enum = RoleType.check_value(value)
-    #     if not role_enum:
-    #         raise ValidationError(f'{value} is an invalid role type')
-    #     return role_enum
 
     class Meta:
         model = User
         include_fk = True
         load_instance = True
-        ordered = True

@@ -1,14 +1,13 @@
 import enum
-
-from marshmallow import fields, ValidationError
+from datetime import datetime, timedelta
 from sqlalchemy.types import TIMESTAMP
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow import fields, ValidationError
+
 from web.models.utility import Utility
 from web.models.channel import Channel
-from datetime import datetime, timedelta
 from web.models.interval import Interval
-from .service_location import ServiceLocationSchema
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from web.models.service_location import ServiceLocation
+from web.models.service_location import ServiceLocation, ServiceLocationSchema
 from web.database import (
     db,
     Model,
@@ -17,7 +16,6 @@ from web.database import (
     relationship,
     reference_col,
 )
-
 
 class MeterType(enum.Enum):
     AXR_SD = 'AXR-SD'
@@ -38,7 +36,7 @@ class MeterType(enum.Enum):
 class Meter(Model):
     __tablename__ = 'meters'
 
-    #composite primary key - meter_id, utility_id, and service_location_id
+    # Composite primary key
     meter_id = Column(db.String(64), primary_key=True, nullable=False)
     utility_id = Column(db.Integer, db.ForeignKey('utilities.utility_id'), primary_key=True, nullable=False)
     service_location_id = Column(db.String(64), db.ForeignKey('service_locations.service_location_id'), primary_key=True, nullable=False)
@@ -57,6 +55,7 @@ class Meter(Model):
     channels = relationship('Channel', backref=db.backref('meters'))
     intervals = relationship('Interval', backref=db.backref('meters'))
 
+    # Methods
     def get_interval_count(self, start, end):
         '''Takes in start and end ISO8601 times, 
             returns the interval count (integer) between start / end times, inclusively'''
@@ -75,7 +74,6 @@ class Meter(Model):
                 selected_intervals.append(interval)
 
         return len(selected_intervals)
-
 
     def get_rates(self):
         '''Returns meter instance's rates as a list'''
@@ -106,10 +104,12 @@ class Meter(Model):
         
         return intervals_list
 
-
     def __repr__(self):
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
 
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
 
 class MeterSchema(SQLAlchemyAutoSchema):
     meter_type = fields.Method('get_meter_type', deserialize='load_meter_type')

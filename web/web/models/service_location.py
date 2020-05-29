@@ -1,7 +1,9 @@
 from datetime import datetime
-from web.models.address import Address
 from sqlalchemy.types import TIMESTAMP
+from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+
+from web.models.address import Address, AddressSchema
 from web.database import (
     db,
     Model,
@@ -27,8 +29,14 @@ class ServiceLocation(Model):
     def __repr__(self):
         return f'<ServiceLocation service_location_id={self.service_location_id} address_id={self.address_id}>'
 
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
 
 class ServiceLocationSchema(SQLAlchemyAutoSchema):
+    postal_code = fields.Method('get_postal_code', dump_only=True)
+    address = fields.Nested(AddressSchema(), load_only=True)
+
     class Meta:
         model = ServiceLocation
         include_relationships = True
