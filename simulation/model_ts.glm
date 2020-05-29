@@ -17,7 +17,7 @@
 // CLOCK
 clock {
 	timezone "PST8PDT";
-	starttime "2016-07-01 00:00:00 PDT";
+	starttime "2016-07-01 12:00:00 PDT";
 	stoptime "2016-07-02 00:00:00 PDT";
 }
 

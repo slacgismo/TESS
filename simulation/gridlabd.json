@@ -14593,12 +14593,12 @@
 		"randomseed" : {
 			"type" : "int32",
 			"access" : "PUBLIC",
-			"value" : "57349312"
+			"value" : "232793429"
 		},
 		"randomstate" : {
 			"type" : "int32",
 			"access" : "PUBLIC",
-			"value" : "57349312"
+			"value" : "232793429"
 		},
 		"include" : {
 			"type" : "char1024",
@@ -17864,7 +17864,7 @@
 			"reserve_state_of_charge": "0 pu",
 			"charging_type": "residential",
 			"k": "9.48685",
-			"est_departure": "2016-07-01 00:16:00 PDT",
+			"est_departure": "2016-07-01 00:08:00 PDT",
 			"top_up": "0"
 		},
 		"PV_inverter_1" : {
@@ -18963,7 +18963,7 @@
 			"reserve_state_of_charge": "0 pu",
 			"charging_type": "residential",
 			"k": "8.91891",
-			"est_departure": "2016-07-01 00:37:00 PDT",
+			"est_departure": "2016-07-01 00:42:00 PDT",
 			"top_up": "0"
 		},
 		"PV_inverter_2" : {
@@ -20213,7 +20213,7 @@
 			"reserve_state_of_charge": "0 pu",
 			"charging_type": "residential",
 			"k": "6.56387",
-			"est_departure": "2016-07-01 01:00:00 PDT",
+			"est_departure": "2016-07-01 00:27:00 PDT",
 			"top_up": "0"
 		},
 		"PV_inverter_3" : {
@@ -21312,7 +21312,7 @@
 			"reserve_state_of_charge": "0 pu",
 			"charging_type": "residential",
 			"k": "6.93008",
-			"est_departure": "2016-07-01 00:02:00 PDT",
+			"est_departure": "2016-07-01 00:53:00 PDT",
 			"top_up": "0"
 		},
 		"PV_inverter_4" : {
@@ -22562,7 +22562,7 @@
 			"reserve_state_of_charge": "0 pu",
 			"charging_type": "residential",
 			"k": "7.7832",
-			"est_departure": "2016-07-01 00:07:00 PDT",
+			"est_departure": "2016-07-01 00:12:00 PDT",
 			"top_up": "0"
 		},
 		"PV_inverter_5" : {

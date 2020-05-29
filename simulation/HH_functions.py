@@ -11,6 +11,7 @@ import gridlabd_functions
 
 import battery_functions as Bfct
 import EV_functions as EVfct
+import PV_functions as PVfct
 
 import datetime
 import numpy as np
@@ -43,6 +44,7 @@ def create_agent_house(house_name):
 	#Other variables are related to continuously changing state and updated by update state: T_air, mode, cooling_demand, heating_demand
 
 	#Create and assign battery object if exists
+	house = PVfct.get_PV(house,house_name)
 	house = Bfct.get_battery(house,house_name)
 	house = EVfct.get_CP(house,house_name)
 
@@ -62,6 +64,9 @@ class House:
 	def update_state(self,dt_sim_time):
 		df_state_in = myfct.get_values_td(self.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
 		self.HVAC.update_state(df_state_in)
+		if self.PV:
+			df_PV_state_in = myfct.get_values_td(self.PV.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
+			self.PV.update_state(df_PV_state_in)
 		if self.battery:
 			df_batt_state_in = myfct.get_values_td(self.battery.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
 			self.battery.update_state(df_batt_state_in)
@@ -90,6 +95,7 @@ class House:
 			P_exp = market.Pmax/2.
 			P_dev = 1.
 		self.HVAC.bid(dt_sim_time,market,P_exp,P_dev)
+		self.PV.bid(dt_sim_time,market,P_exp,P_dev)
 		self.battery.bid(dt_sim_time,market,P_exp,P_dev)
 		return
 
@@ -99,6 +105,7 @@ class House:
 		p_lem = df['p_cleared'].iloc[0]
 		alpha = df['tie_break'].iloc[0]
 		self.HVAC.dispatch(dt_sim_time,p_lem,alpha)
+		self.PV.dispatch(dt_sim_time,p_lem,alpha)
 		self.battery.dispatch(dt_sim_time,p_lem,alpha)
 
 class HVAC:

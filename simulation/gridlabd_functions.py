@@ -33,6 +33,9 @@ from HH_global import FIXED_TARIFF, include_SO, EV_data, start_time_str
 table_list = ['house_1_settings','house_1_state_in','house_1_state_out','house_2_settings','house_2_state_in','house_2_state_out']
 table_list += ['house_3_settings','house_3_state_in','house_3_state_out','house_4_settings','house_4_state_in','house_4_state_out']
 table_list += ['house_5_settings','house_5_state_in','house_5_state_out','house_6_settings','house_6_state_in','house_6_state_out']
+table_list += ['PV_1_settings','PV_1_state_in','PV_1_state_out','PV_2_settings','PV_2_state_in','PV_2_state_out']
+table_list += ['PV_3_settings','PV_3_state_in','PV_3_state_out','PV_4_settings','PV_4_state_in','PV_4_state_out']
+table_list += ['PV_5_settings','PV_5_state_in','PV_5_state_out','PV_6_settings','PV_6_state_in','PV_6_state_out']
 table_list += ['battery_1_settings','battery_1_state_in','battery_1_state_out','battery_2_settings','battery_2_state_in','battery_2_state_out']
 table_list += ['battery_3_settings','battery_3_state_in','battery_3_state_out','battery_4_settings','battery_4_state_in','battery_4_state_out']
 table_list += ['battery_5_settings','battery_5_state_in','battery_5_state_out','battery_6_settings','battery_6_state_in','battery_6_state_out']
@@ -67,6 +70,7 @@ def on_init(t):
 	houses_names = gldimport.find_objects('class=house')
 	for house_name in houses_names:
 		gldimport.get_houseobjects(house_name,start_time_str)
+		gldimport.get_PVs(house_name,start_time_str)
 		gldimport.get_batteries(house_name,start_time_str)
 		gldimport.get_chargers(house_name,start_time_str) #Gets charger inverters and maximum charging rates
 		gldimport.initialize_EVs(house_name,start_time_str) #Checks if EVs are connected
@@ -115,12 +119,14 @@ def on_precommit(t):
 			gldimport.simulate_EVs(house.name,dt_sim_time)
 
 		############
-		#Get external information and information through APIs
+		#Get external information and information through APIs: HEILA --> market
 		############
 
 		for house in houses:
 			#gldimport.update_settings() #If user changes settings in API, this should be called
 			gldimport.update_house_state(house.name,dt_sim_time)
+			if house.PV:
+				gldimport.update_PV_state(house.PV.name,dt_sim_time)
 			if house.battery:
 				gldimport.update_battery_state(house.battery.name,dt_sim_time)
 			if house.EVCP:
@@ -153,15 +159,22 @@ def on_precommit(t):
 		lem.process_bids(dt_sim_time)
 		lem.clear_lem(dt_sim_time)
 
-		############
-		#Get external information and information through APIs
-		############
-
 		#HHs determine dispatch based on price
 		for house in houses:
 			house.determine_dispatch(dt_sim_time)
 
 		lem.reset()
+
+		############
+		# Implemet dispatch
+		############
+
+		for house in houses:
+			#gldimport.update_settings() #If user changes settings in API, this should be called
+			#gldimport.update_house_state(house.name,dt_sim_time)
+			if house.PV:
+				gldimport.dispatch_PV(house.PV.name,dt_sim_time)
+
 		return t
 
 def on_term(t):

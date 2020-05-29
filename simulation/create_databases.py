@@ -13,7 +13,7 @@ mydb, mycursor = mysql_functions.connect()
 mycursor.execute('SET FOREIGN_KEY_CHECKS = 0')
 
 for house_no in range(1,7):
-    table = 'EV_'+str(house_no)+'_'+'settings'
+    table = 'PV_'+str(house_no)+'_'+'state_in'
     sql = "DROP TABLE "+table #not needed
     try:
         mycursor.execute(sql) 
@@ -89,6 +89,27 @@ for h in range(1,no_houses+1):
     table_name = 'EV_'+str(h)+'_arrival'
     try:
         mycursor.execute('CREATE TABLE '+table_name+' (timedate TIMESTAMP PRIMARY KEY, est_departure TIMESTAMP, battery_capacity FLOAT, top_up FLOAT)')
+    except Exception as e:
+        print('11')
+        print('Error: ', e)
+#consumers: one DB per house
+for h in range(1,no_houses+1):
+    #Settings
+    table_name = 'PV_'+str(h)+'_settings'
+    try:
+        mycursor.execute('CREATE TABLE '+table_name+' (timedate TIMESTAMP PRIMARY KEY, Q_rated FLOAT)')
+    except Exception as e:
+        print('11')
+        print('Error: ', e)
+    table_name = 'PV_'+str(h)+'_state_in'
+    try:
+        mycursor.execute('CREATE TABLE '+table_name+' (timedate TIMESTAMP PRIMARY KEY, E FLOAT, Qmtp FLOAT)')
+    except Exception as e:
+        print('11')
+        print('Error: ', e)
+    table_name = 'PV_'+str(h)+'_state_out'
+    try:
+        mycursor.execute('CREATE TABLE '+table_name+' (timedate TIMESTAMP PRIMARY KEY, P_bid FLOAT, Q_bid FLOAT, mode FLOAT)')
     except Exception as e:
         print('11')
         print('Error: ', e)

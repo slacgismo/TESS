@@ -10,7 +10,7 @@ import gridlabd
 
 import mysql_functions as myfct
 
-from HH_global import city, market_data, C
+from HH_global import city, market_data, C, interval
 
 #These function descrbe the physical interface: read out of physical environment / API --> provide information / fill into DB
 
@@ -69,6 +69,19 @@ def get_houseobjects(house_name,time):
 	myfct.set_values(house_name+'_settings', parameter_string, value_tuple)
 
 	return
+
+def get_PVs(house_name,time):
+	#import pdb; pdb.set_trace()
+	PV_name = 'PV'+house_name[5:]
+	PV_obj = gridlabd.get_object(PV_name)
+
+	#Read out settings
+	Q_rated = float(PV_obj['rated_power'])/1000. #kWh
+
+	#Save in long-term memory (in the db) - accessible for market code
+	parameter_string = '(timedate, Q_rated)'
+	value_tuple = (time, Q_rated,)
+	myfct.set_values(PV_name+'_settings', parameter_string, value_tuple)
 
 def get_batteries(house_name,time):
 	battery_name = 'Battery'+house_name[5:]
@@ -160,29 +173,11 @@ def simulate_EVs(house_name,dt_sim_time):
 			gridlabd.set_value(CP_inv_name,'EV_connected',str(-1))
 	#import pdb; pdb.set_trace()
 
-def update_CP_state(CP_name,dt_sim_time):
-	#Check if EV is there
-	CP_obj = gridlabd.get_object(CP_name)
-	EV_name = 'EV_'+CP_name.split('_')[-1]
-	EV_obj = gridlabd.get_object(EV_name)
-	#New car arrived
-	#import pdb; pdb.set_trace()
-	print(int(CP_obj['EV_connected']))
-	if int(CP_obj['EV_connected']) == 1: #This should be whatever signal which pushes the new that a car arrived/disconnected
-		#import pdb; pdb.set_trace()
-		est_departure = pandas.to_datetime(EV_obj['est_departure'])
-		battery_capacity = float(EV_obj['battery_capacity'])
-		top_up = float(EV_obj['top_up'])
-		#Write to database
-		parameter_string = '(timedate, est_departure, battery_capacity, top_up)'
-		value_tuple = (str(dt_sim_time), str(est_departure), battery_capacity, top_up,)
-		myfct.set_values(EV_name+'_arrival', parameter_string, value_tuple)
-		#Reset action pointer
-		gridlabd.set_value(CP_name,'EV_connected',str(0))
-	elif int(CP_obj['EV_connected']) == -1:
-		gridlabd.set_value(CP_name,'EV_connected',str(0))
-
-#Get house state and write to db
+###########################
+#
+# These functions here describe the writing from HEILA API to the DB
+#
+###########################
 
 def update_house_state(house_name,dt_sim_time):
 	#Get information from physical representation
@@ -202,6 +197,41 @@ def update_house_state(house_name,dt_sim_time):
 	value_tuple = (dt_sim_time, mode, actual_mode, T_air, float(house_obj['heating_demand']),float(house_obj['cooling_demand']),)
 	myfct.set_values(house_name+'_state_in', parameter_string, value_tuple)
 	return
+
+def update_PV_state(PV_name,dt_sim_time):
+	#Get information from physical representation
+	PV_obj = gridlabd.get_object(PV_name)
+
+	Qmtp = float(PV_obj['P_Out'][1:].split('+')[0])/1000. #kW
+	E = Qmtp/(3600./interval)
+
+	#Save in long-term memory (in the db) - accessible for market code
+	parameter_string = '(timedate, E, Qmtp)' #timedate TIMESTAMP PRIMARY KEY, 
+	value_tuple = (dt_sim_time, E, Qmtp,)
+	myfct.set_values(PV_name+'_state_in', parameter_string, value_tuple)
+
+
+def update_CP_state(CP_name,dt_sim_time):
+	#Check if EV is there
+	CP_obj = gridlabd.get_object(CP_name)
+	EV_name = 'EV_'+CP_name.split('_')[-1]
+	EV_obj = gridlabd.get_object(EV_name)
+	#New car arrived
+	#import pdb; pdb.set_trace()
+	#print(int(CP_obj['EV_connected']))
+	if int(CP_obj['EV_connected']) == 1: #This should be whatever signal which pushes the new that a car arrived/disconnected
+		#import pdb; pdb.set_trace()
+		est_departure = pandas.to_datetime(EV_obj['est_departure'])
+		battery_capacity = float(EV_obj['battery_capacity'])
+		top_up = float(EV_obj['top_up'])
+		#Write to database
+		parameter_string = '(timedate, est_departure, battery_capacity, top_up)'
+		value_tuple = (str(dt_sim_time), str(est_departure), battery_capacity, top_up,)
+		myfct.set_values(EV_name+'_arrival', parameter_string, value_tuple)
+		#Reset action pointer
+		gridlabd.set_value(CP_name,'EV_connected',str(0))
+	elif int(CP_obj['EV_connected']) == -1:
+		gridlabd.set_value(CP_name,'EV_connected',str(0))
 
 def update_battery_state(battery_name,dt_sim_time):
 	#Get information from physical representation
@@ -228,6 +258,18 @@ def update_EV_state(battery_name,dt_sim_time):
 	parameter_string = '(timedate, E, treq, trem, Qset, Qobs)' #timedate TIMESTAMP PRIMARY KEY, 
 	value_tuple = (dt_sim_time, E, treq, trem, Qset, Qobs,)
 	myfct.set_values(battery_name+'_state_in', parameter_string, value_tuple)
+
+###########################
+#
+# These functions here describe the implementation of the market results (writing result to state)
+#
+###########################
+
+def dispatch_PV(PV_name,dt_sim_time):
+	df_state_out = myfct.get_values_td(PV_name+'_state_out', begin=dt_sim_time, end=dt_sim_time)
+	for ind in df_state_out.index:
+		if df_state_out['mode'].loc[ind] == 0:
+			print('PV should be disconnected; no action taken')
 
 ###############
 # Market Operator

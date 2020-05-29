@@ -15,10 +15,65 @@ import pandas
 from dateutil import parser
 from datetime import timedelta
 
+import mysql_functions as myfct
+
 """NEW FUNCTIONS / MYSQL DATABASE AVAILABLE"""
 
 #HVAC
 from HH_global import flexible_houses, C, p_max, interval, prec, load_forecast, city, month
+
+class PV:
+      def __init__(self, name, Q_rated):
+            self.name = name
+            self.Q_rated = Q_rated
+            self.Qmtp = 0.0 #Last measured power
+            self.E = 0.0 #Energy in past 15min
+            self.P_bid = 0.0
+            self.Q_bid = 0.0
+            self.mode = 1
+
+      def update_state(self,df_PV_state_in):
+            self.Qmtp = float(df_PV_state_in['Qmtp'].iloc[0])
+            self.E = float(df_PV_state_in['E'].iloc[0])
+
+
+      def bid(self,dt_sim_time,market,P_exp,P_dev):
+            self.P_bid = 0.0
+            self.Q_bid = self.Qmtp
+            if (self.Q_bid > 0.0):
+                  timestamp_arrival = market.send_supply_bid(dt_sim_time, float(self.P_bid), float(self.Q_bid), self.name) #Feedback: timestamp of arrival #C determined by market_operator
+            return
+
+      def dispatch(self,dt_sim_time,p_lem,alpha):
+            if self.P_bid <= p_lem:
+                  self.mode = 1
+            else:
+                  self.mode = 0 #Curtailment during negative prices?
+
+            parameter_string = '(timedate, P_bid, Q_bid, mode)' #timedate TIMESTAMP PRIMARY KEY, 
+            value_tuple = (dt_sim_time, self.P_bid, self.Q_bid, self.mode,)
+            myfct.set_values(self.name+'_state_out', parameter_string, value_tuple)
+            #Reset
+            self.P_bid = 0.0
+            self.Q_bid = 0.0
+
+
+def get_PV(house,house_name):
+      PV_name = 'PV'+house_name[5:]
+      try:
+            df_PV_settings = myfct.get_values_td(PV_name + '_settings')
+      except:
+            df_PV_settings = pandas.DataFrame()
+
+      #If house has a PV
+      for ind in df_PV_settings.index:
+            pv = PV('PV'+house_name[5:],df_PV_settings['Q_rated'].loc[ind])
+            house.PV = pv
+      return house
+
+
+
+# OLD
 
 def get_settings(pvlist,interval,mysql=False):
       cols_PV = ['PV_name','house_name','inverter_name','rated_power','P_Out']
