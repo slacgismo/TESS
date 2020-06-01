@@ -14,19 +14,6 @@ import '@rmwc/switch/styles';
 import '@rmwc/button/styles';
 import '@rmwc/textfield/styles';
 
-const datasets = {
-    battery: [1,2,3],
-    charger: [5,7,9],
-    pv: [3,3,3],
-    hvac: [10,15,3],
-    hotWater: [12,1,9]
-};
-const finalDataSet = {
-    "unavailable": [],
-    "available": [],
-    "dispatched": []
-};
-
 class Capacity extends React.Component {
     componentDidMount() {
         // if a user decides to navigate back and forth through the
@@ -34,12 +21,12 @@ class Capacity extends React.Component {
         // so we fix that by having each component do it, 😔, this is 
         // not great since the component shouldn't care about the menu
         this.props.dispatch(selectMenuOption('power-dispatch-capacity'));
-        this.props.dispatch(action.getSystemLoadData());
+        this.props.dispatch(action.getCapacitySystemLoadData());
         this.props.dispatch(action.getResourcesData());
     }
 
     render() {
-        console.warn(this.props.systemLoadData)
+        console.warn(this.props.resourcesData)
         return (
             <div className="power-dispatch-container">
                 <div className="power-dispatch-margin-fix">
@@ -56,11 +43,10 @@ class Capacity extends React.Component {
                         <div className="pd-chart-resource">
                             <ResourcesChart
                                 id="pd-capacity-resources-chart"
-                                ds={this.props.resourcesData}
                                 xTitle="" 
                                 yTitle=""
-                                datasets={datasets}
-                                finalDataSet={finalDataSet}
+                                datasets={this.props.resourcesData.datasets}
+                                finalDataSet={this.props.resourcesData.groupedDataset}
                                 chartTitle="Resources in the System"
                                 chartSubtitle="" />
                         </div>

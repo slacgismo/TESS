@@ -14,21 +14,21 @@ class SystemLoadChart extends React.Component {
 
             // The data for our dataset
             data: {
-                labels: this.props.ds.one.x,
+                labels: this.props.ds ? this.props.ds.labels : [],
                 datasets: [
                     {
                         label: 'DS 01',
                         fill: false,
                         backgroundColor: 'rgb(255, 99, 132)',
                         borderColor: 'rgb(255, 99, 132)',
-                        data: this.props.ds.one.y
+                        data: this.props.ds ? this.props.ds.one : []
                     },
                     {
                         label: 'DS 02',
                         fill: false,
                         backgroundColor: 'rgb(55, 99, 255)',
                         borderColor: 'rgb(55, 99, 255)',
-                        data: this.props.ds.two.y
+                        data: this.props.ds ? this.props.ds.two : []
                     }
                 ]
             },

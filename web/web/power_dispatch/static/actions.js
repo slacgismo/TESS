@@ -1,18 +1,35 @@
 import { api } from '../../static/js/network_client';
 
-export function getSystemLoadData() {
+export function getCapacitySystemLoadData() {
     return dispatch => {
-        api.get('power/system_load', (response) => {
-            dispatch(systemLoadDataUpdated(response.results.data));
+        api.get('power/system_load/?is_capacity=true', (response) => {
+            dispatch(capacitySystemLoadDataUpdated(response.results.data));
         }, (error) => {
             console.warn(error);
         });
     };
 }
 
-export function systemLoadDataUpdated(data) {
+export function getStorageSystemLoadData() {
+    return dispatch => {
+        api.get('power/system_load/?is_storage=true', (response) => {
+            dispatch(storageSystemLoadDataUpdated(response.results.data));
+        }, (error) => {
+            console.warn(error);
+        });
+    };
+}
+
+export function capacitySystemLoadDataUpdated(data) {
     return {
-        type: 'SYSTEM_LOAD_DATA_UPDATED',
+        type: 'CAPACITY_SYSTEM_LOAD_DATA_UPDATED',
+        data
+    };
+}
+
+export function storageSystemLoadDataUpdated(data) {
+    return {
+        type: 'STORAGE_SYSTEM_LOAD_DATA_UPDATED',
         data
     };
 }
@@ -20,16 +37,16 @@ export function systemLoadDataUpdated(data) {
 export function getResourcesData() {
     return dispatch => {
         api.get('power/resources', (response) => {
-            dispatch(resourcesDataUpdated(response.results.data));
+            dispatch(capacityResourcesDataUpdated(response.results.data));
         }, (error) => {
             console.warn(error);
         });
     }
 }
 
-export function resourcesDataUpdated(data) {
+export function capacityResourcesDataUpdated(data) {
     return {
-        type: 'RESOURCES_DATA_UPDATED',
+        type: 'CAPACITY_RESOURCES_DATA_UPDATED',
         data
     };
 }

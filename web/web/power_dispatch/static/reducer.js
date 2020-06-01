@@ -1,7 +1,16 @@
-const initialStorageState = {}
+const initialStorageState = {
+    systemLoadData: [],
+    resourcesData: []
+}
 
 export function storage(state = initialStorageState, action) {
     switch (action.type) {        
+        case 'STORAGE_SYSTEM_LOAD_DATA_UPDATED':
+            return { ...state, systemLoadData: action.data };
+        
+        case 'STORAGE_RESOURCES_DATA_UPDATED':
+            return { ...state, resourcesData: action.data };
+
         default:
             return state;
     }
@@ -14,10 +23,10 @@ const initialCapacityState = {
 
 export function capacity(state = initialCapacityState, action) {
     switch (action.type) {        
-        case 'SYSTEM_LOAD_DATA_UPDATED':
+        case 'CAPACITY_SYSTEM_LOAD_DATA_UPDATED':
             return { ...state, systemLoadData: action.data };
         
-        case 'RESOURCES_DATA_UPDATED':
+        case 'CAPACITY_RESOURCES_DATA_UPDATED':
             return { ...state, resourcesData: action.data };
 
         default:

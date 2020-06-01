@@ -31,6 +31,7 @@ class ResourcesChart extends React.Component {
                 });
             }
         }
+        
         this.props.datasets["total"] = normalizeToPercentage(totalVals);
 
         for (const dsProp in this.props.datasets) {

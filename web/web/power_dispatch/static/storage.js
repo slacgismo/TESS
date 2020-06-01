@@ -36,10 +36,12 @@ class Storage extends React.Component {
         // browser arrows, the menu selection won't update accordingly,
         // so we fix that by having each component do it, 😔, this is 
         // not great since the component shouldn't care about the menu
-        this.props.dispatch(selectMenuOption('power-dispatch-storage'));        
+        this.props.dispatch(selectMenuOption('power-dispatch-storage'));
+        this.props.dispatch(action.getStorageSystemLoadData());      
     }
 
     render() {
+        console.warn("WTF", this.props.systemLoadData)
         return (
             <div className="power-dispatch-container">
                 <div className="power-dispatch-margin-fix">
@@ -47,6 +49,7 @@ class Storage extends React.Component {
                         <div className="pd-chart-system-load">
                             <SystemLoadChart
                                 id="pd-capacity-system-load-chart"
+                                ds={this.props.systemLoadData}
                                 xTitle="Hours" 
                                 yTitle="kWh" 
                                 chartTitle="Energy Storage"
@@ -186,7 +189,10 @@ class Storage extends React.Component {
     }
 }
 
-const ConnectedStorage = connect(state => ({}))(Storage);
+const ConnectedStorage = connect(state => ({
+    systemLoadData: state.storage.systemLoadData,
+    resourcesData: state.storage.resourcesData
+}))(Storage);
 
 const storageElement = (
     <ConnectedComponentWrapper isVisible={true} pageTitle="POWER DISPATCH">
