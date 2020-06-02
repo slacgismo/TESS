@@ -10,9 +10,9 @@ from web.models.group import Group, GroupSchema
 group_api_bp = Blueprint('group_api_bp', __name__)
 
 @group_api_bp.route('/groups', methods=['GET'])
-def get_user_ids():
+def get_group_ids():
     '''
-    Retrieve all user objects
+    Retrieve all group objects
     '''
     arw = ApiResponseWrapper()
 
@@ -34,22 +34,22 @@ def get_user_ids():
 
 
 @group_api_bp.route('/group/<string:group_id>', methods=['GET'])
-def show_user_info(user_id):
+def show_group_info(group_id):
     '''
-    Retrieve one user object
+    Retrieve one group object
     '''
     arw = ApiResponseWrapper()
     group_schema = GroupSchema()
 
     try:  
-        service_location = Group.query.filter_by(group_id=group_id).one()
+        group = Group.query.filter_by(group_id=group_id).one()
     
     except MultipleResultsFound:
-        arw.add_errors({group_id: 'Multiple results found for the given service location id.'})
+        arw.add_errors({group_id: 'Multiple results found for the given group id.'})
         return arw.to_json()
     
     except NoResultFound:
-        arw.add_errors({group_id: 'No results found for the given service location id.'})
+        arw.add_errors({group_id: 'No results found for the given group id.'})
         return arw.to_json()
 
     results = group_schema.dump(group)
@@ -57,13 +57,13 @@ def show_user_info(user_id):
     return arw.to_json(results)
 
 
-@group_api_bp.route('servicelocation/<string:group_id>', methods=['PUT'])
-def modify_user(user_id):
+@group_api_bp.route('/group/<string:group_id>', methods=['PUT'])
+def modify_group(group_id):
     '''
-    Update one user object in database
+    Update one group object in database
     '''
     arw = ApiResponseWrapper()
-    group_schema = GroupSchema(exclude=['email_confirmed_at', 'created_at', 'address'])
+    group_schema = GroupSchema(exclude=['created_at', 'user', 'role'])
     modified_group = request.get_json()
 
     try:
@@ -94,20 +94,25 @@ def modify_user(user_id):
     return arw.to_json(results)
 
 
-@group_api_bp.route('/servicelocation', methods=['POST'])
-def add_user():
+@group_api_bp.route('/group', methods=['POST'])
+def add_group():
     '''
-    Add new user object to database
+    Add new group object to database
     '''
     arw = ApiResponseWrapper()
-    group_schema = GroupSchema()
+    group_schema = GroupSchema(exclude=['created_at', 'user', 'role', 'group_id', 'updated_at'])
     new_group = request.get_json()
             
     try:
-        does_group_exist = Group.query.filter_by(id=new_group['group_id']).count() > 0
+        user_id = new_group['user_id'] if 'user_id' in new_group else None
+        role_id = new_group['role_id'] if 'role_id' in new_group else None
+        does_group_exist = Group.query.filter_by(
+            user_id=user_id, 
+            role_id=role_id
+        ).count() > 0
 
         if does_group_exist:
-            raise IntegrityError('Group already exists', None, None)
+            raise IntegrityError('Group already exists with given role and user', None, None)
         
         new_group= group_schema.load(new_group, session=db.session)
         db.session.add(new_group)

@@ -2,8 +2,8 @@ from sqlalchemy.types import TIMESTAMP
 from marshmallow import fields, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from datetime import datetime
-from web.models.role import Role
-from web.models.user import User
+from web.models.role import Role, RoleSchema
+from web.models.user import User, UserSchema
 from web.models.utility import Utility
 from web.database import (
     db,
@@ -36,7 +36,9 @@ class Group(Model):
 ##########################
 
 class GroupSchema(SQLAlchemyAutoSchema):
-    # roles = fields.Nested(RoleSchema(), load_only=True)
+    role = fields.Nested(RoleSchema(only=('name',)), dump_only=True)
+    user = fields.Nested(UserSchema(only=('email',)), dump_only=True)
+
     class Meta:
         model = Group
         include_fk = True

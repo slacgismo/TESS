@@ -36,8 +36,11 @@ class Role(Model):
 ##########################
 
 class RoleSchema(SQLAlchemyAutoSchema):
-    roles = fields.Method('load_role_type', load_only=True)
+    name = fields.Method('get_role_name', deserialize='load_role_type')
     
+    def get_role_name(self, obj):
+        return obj.name.value
+
     def load_role_type(self, value):
         role_enum = RoleType.check_value(value)
         if not role_enum:
@@ -48,3 +51,4 @@ class RoleSchema(SQLAlchemyAutoSchema):
         model = Role
         include_fk = True
         load_instance = True
+        transient = True

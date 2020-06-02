@@ -38,5 +38,4 @@ class AddressSchema(SQLAlchemyAutoSchema):
         include_fk = True
         load_instance = True
         transient = True
-        sqla_session = db.session
     
