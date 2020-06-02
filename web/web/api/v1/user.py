@@ -46,11 +46,11 @@ def show_user_info(user_id):
     
     except MultipleResultsFound:
         arw.add_errors({user_id: 'Multiple results found for the given user id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
     
     except NoResultFound:
         arw.add_errors({user_id: 'No results found for the given user id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
 
     results = user_schema.dump(user)
 
@@ -73,11 +73,11 @@ def modify_user(user_id):
 
     except MultipleResultsFound:
         arw.add_errors({user_id: 'Multiple results found for the given user id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
     
     except NoResultFound:
         arw.add_errors({user_id: 'No results found for the given user id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
 
     except IntegrityError:
         db.session.rollback()

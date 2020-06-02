@@ -46,11 +46,11 @@ def show_group_info(group_id):
     
     except MultipleResultsFound:
         arw.add_errors({group_id: 'Multiple results found for the given group id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
     
     except NoResultFound:
         arw.add_errors({group_id: 'No results found for the given group id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
 
     results = group_schema.dump(group)
 
@@ -73,11 +73,11 @@ def modify_group(group_id):
 
     except MultipleResultsFound:
         arw.add_errors({group_id: 'Multiple results found for the given group id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
     
     except NoResultFound:
         arw.add_errors({group_id: 'No results found for the given group id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
 
     except IntegrityError:
         db.session.rollback()
@@ -118,7 +118,7 @@ def add_group():
         db.session.add(new_group)
         db.session.commit()
 
-    except IntegrityError as ie:
+    except IntegrityError:
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)

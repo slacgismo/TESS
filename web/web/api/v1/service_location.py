@@ -47,11 +47,11 @@ def show_service_location_info(service_location_id):
     
     except MultipleResultsFound:
         arw.add_errors({service_location_id: 'Multiple results found for the given service location id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
     
     except NoResultFound:
         arw.add_errors({service_location_id: 'No results found for the given service location id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
 
     results = service_location_schema.dump(service_location, many=True)
 
@@ -74,11 +74,11 @@ def modify_service_location(service_location_id):
 
     except MultipleResultsFound:
         arw.add_errors({service_location_id: 'Multiple results found for the given service location id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
     
     except NoResultFound:
         arw.add_errors({service_location_id: 'No results found for the given service location id.'})
-        return arw.to_json()
+        return arw.to_json(None, 400)
 
     except IntegrityError:
         db.session.rollback()
@@ -114,7 +114,7 @@ def add_service_location():
         db.session.add(new_service_location)
         db.session.commit()
 
-    except IntegrityError as ie:
+    except IntegrityError:
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
