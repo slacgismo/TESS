@@ -1,5 +1,11 @@
 import { api } from './network_client';
 
+export function logout() {
+    return {
+        type: "CLEAR_AUTHENTICATION_TOKEN"
+    }
+}
+
 export function toggleNavigationDrawer() {
     return {
         type: "TOGGLE_NAVIGATION_DRAWER"

@@ -16,19 +16,31 @@ from web.database import (
 class Login(UserMixin, Model):
     __tablename__ = 'logins'
 
-    login_id = Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
-    user_id = Column(db.Integer, db.ForeignKey('users.id'), ondelete='CASCADE', nullable=False)
-    
+    login_id = Column(db.Integer,
+                      primary_key=True,
+                      autoincrement=True,
+                      nullable=False)
+    user_id = Column(db.Integer,
+                     db.ForeignKey('users.id'),
+                     ondelete='CASCADE',
+                     nullable=False)
+
     username = Column(db.String(50), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
 
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(TIMESTAMP,
+                        nullable=False,
+                        default=datetime.utcnow,
+                        onupdate=datetime.utcnow)
 
     # Relationships
-    user = relationship('User', uselist=False, foreign_keys=user_id, backref=db.backref('login'))
+    user = relationship('User',
+                        uselist=False,
+                        foreign_keys=user_id,
+                        backref=db.backref('login'))
 
-    @property 
+    @property
     def password(self):
         raise AttributeError('Password is not a readable attribute.')
 

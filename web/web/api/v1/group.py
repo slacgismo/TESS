@@ -9,6 +9,7 @@ from web.models.group import Group, GroupSchema
 
 group_api_bp = Blueprint('group_api_bp', __name__)
 
+
 @group_api_bp.route('/groups', methods=['GET'])
 def get_group_ids():
     '''
@@ -29,7 +30,7 @@ def get_group_ids():
     groups = Group.query.all()
     group_schema = GroupSchema(only=fields_to_filter_on)
     results = group_schema.dump(groups, many=True)
-    
+
     return arw.to_json(results)
 
 
@@ -41,13 +42,14 @@ def show_group_info(group_id):
     arw = ApiResponseWrapper()
     group_schema = GroupSchema()
 
-    try:  
+    try:
         group = Group.query.filter_by(group_id=group_id).one()
-    
+
     except MultipleResultsFound:
-        arw.add_errors({group_id: 'Multiple results found for the given group id.'})
+        arw.add_errors(
+            {group_id: 'Multiple results found for the given group id.'})
         return arw.to_json(None, 400)
-    
+
     except NoResultFound:
         arw.add_errors({group_id: 'No results found for the given group id.'})
         return arw.to_json(None, 400)
@@ -72,9 +74,10 @@ def modify_group(group_id):
         db.session.commit()
 
     except MultipleResultsFound:
-        arw.add_errors({group_id: 'Multiple results found for the given group id.'})
+        arw.add_errors(
+            {group_id: 'Multiple results found for the given group id.'})
         return arw.to_json(None, 400)
-    
+
     except NoResultFound:
         arw.add_errors({group_id: 'No results found for the given group id.'})
         return arw.to_json(None, 400)
@@ -83,7 +86,7 @@ def modify_group(group_id):
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
-    
+
     except ValidationError as ve:
         db.session.rollback()
         arw.add_errors(ve.messages)
@@ -100,21 +103,21 @@ def add_group():
     Add new group object to database
     '''
     arw = ApiResponseWrapper()
-    group_schema = GroupSchema(exclude=['created_at', 'user', 'role', 'group_id', 'updated_at'])
+    group_schema = GroupSchema(
+        exclude=['created_at', 'user', 'role', 'group_id', 'updated_at'])
     new_group = request.get_json()
-            
+
     try:
         user_id = new_group['user_id'] if 'user_id' in new_group else None
         role_id = new_group['role_id'] if 'role_id' in new_group else None
-        does_group_exist = Group.query.filter_by(
-            user_id=user_id, 
-            role_id=role_id
-        ).count() > 0
+        does_group_exist = Group.query.filter_by(user_id=user_id,
+                                                 role_id=role_id).count() > 0
 
         if does_group_exist:
-            raise IntegrityError('Group already exists with given role and user', None, None)
-        
-        new_group= group_schema.load(new_group, session=db.session)
+            raise IntegrityError(
+                'Group already exists with given role and user', None, None)
+
+        new_group = group_schema.load(new_group, session=db.session)
         db.session.add(new_group)
         db.session.commit()
 
@@ -122,10 +125,10 @@ def add_group():
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
-    
+
     except ValidationError as ve:
         arw.add_errors(ve.messages)
         return arw.to_json(None, 400)
-    
+
     results = GroupSchema().dump(new_group)
     return arw.to_json(results)

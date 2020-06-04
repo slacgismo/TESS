@@ -9,6 +9,7 @@ from web.models.user import User, UserSchema
 
 users_api_bp = Blueprint('users_api_bp', __name__)
 
+
 @users_api_bp.route('/users', methods=['GET'])
 def get_user_ids():
     '''
@@ -29,7 +30,7 @@ def get_user_ids():
     users = User.query.all()
     user_schema = UserSchema(exclude=['address_id'], only=fields_to_filter_on)
     results = user_schema.dump(users, many=True)
-    
+
     return arw.to_json(results)
 
 
@@ -41,13 +42,14 @@ def show_user_info(user_id):
     arw = ApiResponseWrapper()
     user_schema = UserSchema(exclude=['address_id'])
 
-    try:  
+    try:
         user = User.query.filter_by(id=user_id).one()
-    
+
     except MultipleResultsFound:
-        arw.add_errors({user_id: 'Multiple results found for the given user id.'})
+        arw.add_errors(
+            {user_id: 'Multiple results found for the given user id.'})
         return arw.to_json(None, 400)
-    
+
     except NoResultFound:
         arw.add_errors({user_id: 'No results found for the given user id.'})
         return arw.to_json(None, 400)
@@ -63,7 +65,8 @@ def modify_user(user_id):
     Update one user object in database
     '''
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(exclude=['email_confirmed_at', 'created_at', 'address'])
+    user_schema = UserSchema(
+        exclude=['email_confirmed_at', 'created_at', 'address'])
     modified_user = request.get_json()
 
     try:
@@ -72,9 +75,10 @@ def modify_user(user_id):
         db.session.commit()
 
     except MultipleResultsFound:
-        arw.add_errors({user_id: 'Multiple results found for the given user id.'})
+        arw.add_errors(
+            {user_id: 'Multiple results found for the given user id.'})
         return arw.to_json(None, 400)
-    
+
     except NoResultFound:
         arw.add_errors({user_id: 'No results found for the given user id.'})
         return arw.to_json(None, 400)
@@ -83,7 +87,7 @@ def modify_user(user_id):
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
-    
+
     except ValidationError as ve:
         db.session.rollback()
         arw.add_errors(ve.messages)
@@ -102,13 +106,14 @@ def add_user():
     arw = ApiResponseWrapper()
     user_schema = UserSchema()
     new_user = request.get_json()
-       
+
     try:
-        does_user_exist = User.query.filter_by(email=new_user['email']).count() > 0
+        does_user_exist = User.query.filter_by(
+            email=new_user['email']).count() > 0
 
         if does_user_exist:
             raise IntegrityError('Email already in use', None, None)
-        
+
         new_user = user_schema.load(new_user, session=db.session)
 
         db.session.add(new_user)

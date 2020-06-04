@@ -15,16 +15,33 @@ import '@rmwc/button/styles';
 import '@rmwc/textfield/styles';
 
 
+const datasets = {
+    battery: [1,2,0],
+    charger: [5,7,0],
+    pv: [3,3,0],
+    hvac: [10,15,0],
+    hotWater: [12,1,0]
+};
+
+const finalDataSet = {
+    "unavailable": [],
+    "available": [],
+    "dispatched": []
+};
+
+
 class Storage extends React.Component {
     componentDidMount() {
         // if a user decides to navigate back and forth through the
         // browser arrows, the menu selection won't update accordingly,
         // so we fix that by having each component do it, 😔, this is 
         // not great since the component shouldn't care about the menu
-        this.props.dispatch(selectMenuOption('power-dispatch-storage'));        
+        this.props.dispatch(selectMenuOption('power-dispatch-storage'));
+        this.props.dispatch(action.getStorageSystemLoadData());      
     }
 
     render() {
+        console.warn("WTF", this.props.systemLoadData)
         return (
             <div className="power-dispatch-container">
                 <div className="power-dispatch-margin-fix">
@@ -32,6 +49,7 @@ class Storage extends React.Component {
                         <div className="pd-chart-system-load">
                             <SystemLoadChart
                                 id="pd-capacity-system-load-chart"
+                                ds={this.props.systemLoadData}
                                 xTitle="Hours" 
                                 yTitle="kWh" 
                                 chartTitle="Energy Storage"
@@ -40,8 +58,11 @@ class Storage extends React.Component {
                         <div className="pd-chart-resource">
                             <ResourcesChart
                                 id="pd-capacity-resources-chart"
-                                xTitle="Hours" 
-                                yTitle="MW" 
+                                xTitle="" 
+                                yTitle=""
+                                datasets={datasets}
+                                finalDataSet={finalDataSet}
+                                hiddenDataSets={{dispatched: true}}
                                 chartTitle="Resources in the System"
                                 chartSubtitle="" />
                         </div>
@@ -96,7 +117,7 @@ class Storage extends React.Component {
                             <div>
                                 <h4>Alerts</h4>
                                 <div className="pd-form-row">
-                                    <div className="pd-form-element-label">Capacity Boundary</div>
+                                    <div className="pd-form-element-label">Capacity Bounds</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined />
                                     </div>
@@ -168,7 +189,10 @@ class Storage extends React.Component {
     }
 }
 
-const ConnectedStorage = connect(state => ({}))(Storage);
+const ConnectedStorage = connect(state => ({
+    systemLoadData: state.storage.systemLoadData,
+    resourcesData: state.storage.resourcesData
+}))(Storage);
 
 const storageElement = (
     <ConnectedComponentWrapper isVisible={true} pageTitle="POWER DISPATCH">

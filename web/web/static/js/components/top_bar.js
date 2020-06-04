@@ -3,16 +3,22 @@ import '@rmwc/top-app-bar/styles';
 import React from 'react';
 import { connect } from 'react-redux';
 import { SimpleTopAppBar, TopAppBarFixedAdjust } from '@rmwc/top-app-bar';
-import { toggleNavigationDrawer } from '../actions';
+import { toggleNavigationDrawer, logout } from '../actions';
 
 class TopBar extends React.Component {
     toggleNavigationDrawer = () => {
         this.props.dispatch(toggleNavigationDrawer());
     }
 
+    logoutOfTess = () => {
+        console.log("logging out of the application, will need to clear the token cache");
+        this.props.dispatch(logout());
+        window.location.href = "/";
+    }
+
     render() {
         if(!this.props.isVisible) {
-            return null
+            return null;
         }
         
         return (
@@ -25,7 +31,7 @@ class TopBar extends React.Component {
                     actionItems={[
                         {
                             icon: 'exit_to_app',
-                            onClick: () => console.log('logout off the application')
+                            onClick: this.logoutOfTess
                         }
                     ]}
                 />
