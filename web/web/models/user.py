@@ -5,6 +5,7 @@ from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.models.address import Address, AddressSchema
+from web.models.tenant import Tenant, TenantSchema
 from web.models.role import Role, RoleType
 from web.database import (
     db,
@@ -17,7 +18,6 @@ from web.database import (
 
 
 class User(UserMixin, Model):
-
     __tablename__ = 'users'
 
     id = Column(db.Integer,
@@ -32,6 +32,7 @@ class User(UserMixin, Model):
     # User information
     first_name = Column(db.String(64), nullable=False)
     last_name = Column(db.String(64), nullable=False)
+    tenant_id = Column(db.Integer, db.ForeignKey('tenant.tenant_id'))
     address_id = Column(db.Integer, db.ForeignKey('addresses.address_id'))
     utility_id = Column(db.Integer,
                         db.ForeignKey('utilities.utility_id'),
@@ -65,11 +66,6 @@ class User(UserMixin, Model):
             if group.role.name.value == role_name:
                 return True
         return False
-
-
-##########################
-### MARSHMALLOW SCHEMA ###
-##########################
 
 
 class UserSchema(SQLAlchemyAutoSchema):
