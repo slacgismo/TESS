@@ -6,7 +6,7 @@ from marshmallow import fields, ValidationError
 
 from web.models.utility import Utility
 from web.models.channel import Channel
-from web.models.interval import Interval
+from web.models.meter_interval import MeterInterval
 from web.models.service_location import ServiceLocation, ServiceLocationSchema
 from web.database import (
     db,
@@ -53,14 +53,14 @@ class Meter(Model):
     service_location = relationship('ServiceLocation', backref=db.backref('meters'))
     utility = relationship('Utility', backref=db.backref('meters'))
     channels = relationship('Channel', backref=db.backref('meters'))
-    intervals = relationship('Interval', backref=db.backref('meters'))
+    meter_intervals = relationship('MeterInterval', backref=db.backref('meters'))
 
     # Methods
     def get_interval_count(self, start, end):
         '''Takes in start and end ISO8601 times, 
             returns the interval count (integer) between start / end times, inclusively'''
         
-        self_intervals = self.intervals
+        self_intervals = self.meter_intervals
         selected_intervals = []
         
         if start == None:
@@ -69,9 +69,9 @@ class Meter(Model):
         if end == None:
             end = datetime.now()
 
-        for interval in self_intervals:
-            if interval.start_time >= start and interval.end_time <= end:
-                selected_intervals.append(interval)
+        for meter_interval in self_intervals:
+            if meter_interval.start_time >= start and meter_interval.end_time <= end:
+                selected_intervals.append(meter_interval)
 
         return len(selected_intervals)
 
@@ -79,9 +79,9 @@ class Meter(Model):
         '''Returns meter instance's rates as a list'''
 
         rates = []
-        for interval in self.intervals:
-            if interval.rate.description not in rates:
-                rates.append(interval.rate.description)
+        for meter_interval in self.meter_intervals:
+            if meter_interval.rate.description not in rates:
+                rates.append(meter_interval.rate.description)
         
         return rates
     
@@ -99,8 +99,8 @@ class Meter(Model):
         '''Returns all meter instances's intervals in a list'''
         
         intervals_list = []
-        for interval in self.intervals:
-            intervals_list.append(interval.interval_id)
+        for meter_interval in self.meter_intervals:
+            intervals_list.append(meter_interval.meter_interval_id)
         
         return intervals_list
 

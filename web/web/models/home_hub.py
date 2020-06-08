@@ -26,3 +26,6 @@ class HomeHub(Model):
     # Relationships
     meter = relationship('Meter', backref=db.backref('pvs'))
     home_hub = relationship('HomeHub', backref=db.backref('pvs'))
+
+    def __repr__(self):
+        return f'<HomeHub home_hub_id={self.home_hub_id} service_location_id={self.service_location_id} created_at={self.created_at}>'
