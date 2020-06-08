@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from sqlalchemy.types import TIMESTAMP
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow import fields
 
 from web.models.meter import Meter
 from web.models.home_hub import HomeHub
@@ -28,5 +29,40 @@ class Pv(Model):
     home_hub = relationship('HomeHub', backref=db.backref('pvs'))
     pv_intervals = relationship('PvInterval', backref=db.backref('pvs'))
 
+    def get_rates(self):
+        '''Returns pv instance's rates as a list'''
+
+        rates = []
+        for pv_interval in self.pv_intervals:
+            if pv_interval.rate.description not in rates:
+                rates.append(pv_interval.rate.description)
+        
+        return rates
+    
+    def get_all_pv_intervals(self):
+        '''Returns all pv instances's intervals in a list'''
+        
+        pv_intervals_list = []
+        for pv_interval in self.pv_intervals:
+            pv_intervals_list.append(pv_interval.pv_interval_id)
+        
+        return pv_intervals_list
+
     def __repr__(self):
         return f'<Pv pv_id={self.pv_id} home_hub_id={self.home_hub_id} created_at={self.created_at}>'
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
+
+class PvSchema(SQLAlchemyAutoSchema):
+    rates = fields.Method('get_rates', dump_only=True)
+
+    def get_rates(self, obj):
+        return obj.get_rates()
+        
+    class Meta:
+        model = Pv
+        include_relationships = True
+        load_instance = True
+        include_fk = True

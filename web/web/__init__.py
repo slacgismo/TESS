@@ -21,6 +21,7 @@ from web.api.v1.user import users_api_bp
 from web.api.v1.notification import notifications_api_bp
 from web.api.v1.group import group_api_bp
 from web.api.v1.service_location import service_location_api_bp
+from web.api.v1.pv import pv_api_bp
 
 
 def page_not_found(e):
@@ -72,5 +73,6 @@ def register_blueprints(app):
     app.register_blueprint(users_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(service_location_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(group_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(pv_api_bp, url_prefix='/api/v1/')
     
 app = create_app(DevelopmentConfig())
