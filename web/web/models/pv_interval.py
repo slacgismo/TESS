@@ -33,5 +33,18 @@ class PvInterval(Model):
     # Relationships
     rate = relationship('Rate', backref=db.backref('pv_intervals'))
 
+    @staticmethod
+    def get_interval_coverage(interval_id_list):
+        '''Takes in list of meter interval ids, 
+            returns list of tuples for start and end times in ISO8601 format'''
+
+        selected_intervals = PvInterval.query.filter(PvInterval.pv_interval_id.in_(interval_id_list)).all()
+        start_end_tuples_list = []
+
+        for pv_interval in selected_intervals:
+            start_end_tuples_list.append((pv_interval.start_time, pv_interval.end_time))
+
+        return start_end_tuples_list
+
     def __repr__(self):
         return f'<PvInterval pv_interval_id={self.pv_interval_id} pv_id={self.pv_id} end_time={self.end_time} e={self.e}>'

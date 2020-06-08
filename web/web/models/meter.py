@@ -151,7 +151,7 @@ class MeterSchema(SQLAlchemyAutoSchema):
 
     def get_interval_coverage(self, obj):
         coverage = self.context['coverage'] if 'coverage' in self.context else []
-        return Interval.get_interval_coverage(coverage)
+        return MeterInterval.get_interval_coverage(coverage)
 
     class Meta:
         model = Meter

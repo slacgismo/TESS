@@ -62,6 +62,31 @@ def retrieve_pv_info(pv_id):
         arw.add_errors({pv_id: 'No results found for the given pv.'})
         return arw.to_json(None, 400)
 
+    interval_coverage = request.args.get('interval_coverage')
+    interval_count_start = request.args.get('interval_count_start')
+    interval_count_end = request.args.get('interval_count_end')
+    
+    if not interval_coverage:
+        interval_coverage = pv.get_all_intervals()
+
+    if interval_count_start:
+        try:
+            interval_count_start = parser.parse(interval_count_start)
+        except (TypeError, ValueError):
+            arw.add_errors({'interval_count_start': 'Not an accepted format for interval count start'})
+            return arw.to_json()
+    
+    if interval_count_end:
+        try:
+            interval_count_end = parser.parse(interval_count_end) 
+        except (TypeError, ValueError):
+            arw.add_errors({'interval_count_end': 'Not an accepted format for interval count end'})
+            return arw.to_json()
+
+    pv_schema.context['start'] = interval_count_start
+    pv_schema.context['end'] = interval_count_end
+    pv_schema.context['coverage'] = interval_coverage
+
     results = pv_schema.dump(pv)
     return arw.to_json(results)
 

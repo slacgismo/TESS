@@ -3,7 +3,7 @@ from sqlalchemy.types import TIMESTAMP
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
 
-from web.models.meter import Meter
+from web.models.pv_interval import PvInterval
 from web.models.home_hub import HomeHub
 from web.database import (
     db,
@@ -29,6 +29,27 @@ class Pv(Model):
     home_hub = relationship('HomeHub', backref=db.backref('pvs'))
     pv_intervals = relationship('PvInterval', backref=db.backref('pvs'))
 
+    # Methods
+
+    def get_interval_count(self, start, end):
+        '''Takes in start and end ISO8601 times, 
+            returns the interval count (integer) between start / end times, inclusively'''
+        
+        self_intervals = self.pv_intervals
+        selected_intervals = []
+        
+        if start == None:
+            start = datetime.now() - timedelta(days=1)
+
+        if end == None:
+            end = datetime.now()
+
+        for pv_interval in self_intervals:
+            if pv_interval.start_time >= start and pv_interval.end_time <= end:
+                selected_intervals.append(pv_interval)
+
+        return len(selected_intervals)
+        
     def get_rates(self):
         '''Returns pv instance's rates as a list'''
 
@@ -57,10 +78,21 @@ class Pv(Model):
 
 class PvSchema(SQLAlchemyAutoSchema):
     rates = fields.Method('get_rates', dump_only=True)
+    interval_count = fields.Method('get_interval_count', dump_only=True)
+    interval_coverage = fields.Method('get_interval_coverage', dump_only=True)
 
     def get_rates(self, obj):
         return obj.get_rates()
-        
+    
+    def get_interval_count(self, obj):
+        start = self.context['start'] if 'start' in self.context else None
+        end = self.context['end'] if 'end' in self.context else None
+        return obj.get_interval_count(start, end)
+
+    def get_interval_coverage(self, obj):
+        coverage = self.context['coverage'] if 'coverage' in self.context else []
+        return PvInterval.get_interval_coverage(coverage)
+
     class Meta:
         model = Pv
         include_relationships = True
