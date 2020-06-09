@@ -3975,7 +3975,7 @@
 			}
 		},
 		"battery" : {
-			"object_size" : "1025",
+			"object_size" : "1000",
 			"trl" : "3",
 			"profiler.numobjs" : "12",
 			"profiler.clocks" : "0",
@@ -4262,22 +4262,22 @@
 				"access" : "PUBLIC",
 				"unit" : "pu"
 			},
-			"charging_type" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED"
-			},
-			"k" : {
+			"Kev" : {
 				"type" : "double",
 				"access" : "PUBLIC",
 				"flags" : "EXTENDED"
 			},
-			"est_departure" : {
+			"Kes" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED"
+			},
+			"tdep" : {
 				"type" : "timestamp",
 				"access" : "PUBLIC",
 				"flags" : "EXTENDED"
 			},
-			"top_up" : {
+			"DeltaE" : {
 				"type" : "double",
 				"access" : "PUBLIC",
 				"flags" : "EXTENDED"
@@ -14593,12 +14593,12 @@
 		"randomseed" : {
 			"type" : "int32",
 			"access" : "PUBLIC",
-			"value" : "232793429"
+			"value" : "25866885"
 		},
 		"randomstate" : {
 			"type" : "int32",
 			"access" : "PUBLIC",
-			"value" : "232793429"
+			"value" : "25866885"
 		},
 		"include" : {
 			"type" : "char1024",
@@ -17862,10 +17862,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "residential",
-			"k": "9.48685",
-			"est_departure": "2016-07-01 00:08:00 PDT",
-			"top_up": "0"
+			"Kev": "9.48685",
+			"Kes": "0",
+			"tdep": "2016-07-01 00:11:00 PDT",
+			"DeltaE": "0"
 		},
 		"PV_inverter_1" : {
 			"id" : "31",
@@ -18337,10 +18337,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "",
-			"k": "10",
-			"est_departure": "INIT",
-			"top_up": "0"
+			"Kev": "0",
+			"Kes": "10",
+			"tdep": "INIT",
+			"DeltaE": "0"
 		},
 		"meter_2" : {
 			"id" : "35",
@@ -18642,7 +18642,7 @@
 			"hvac_last_off": "2016-07-01 23:38:13 PDT",
 			"hvac_period_length": "29.2167 s",
 			"hvac_duty_cycle": "0.0895608",
-			"thermostat_control": "NONE",
+			"thermostat_control": "FULL",
 			"gas_enduses": "WATERHEATER|RANGE|DRYER",
 			"k": "2.10229",
 			"T_max": "72",
@@ -18961,10 +18961,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "residential",
-			"k": "8.91891",
-			"est_departure": "2016-07-01 00:42:00 PDT",
-			"top_up": "0"
+			"Kev": "8.91891",
+			"Kes": "0",
+			"tdep": "INIT",
+			"DeltaE": "0"
 		},
 		"PV_inverter_2" : {
 			"id" : "40",
@@ -19436,10 +19436,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "",
-			"k": "5",
-			"est_departure": "INIT",
-			"top_up": "0"
+			"Kev": "0",
+			"Kes": "5",
+			"tdep": "INIT",
+			"DeltaE": "0"
 		},
 		"xfrm_1B" : {
 			"id" : "44",
@@ -19892,7 +19892,7 @@
 			"hvac_last_off": "2016-07-01 23:50:08 PDT",
 			"hvac_period_length": "31.1 s",
 			"hvac_duty_cycle": "0.0894962",
-			"thermostat_control": "NONE",
+			"thermostat_control": "FULL",
 			"gas_enduses": "WATERHEATER|RANGE|DRYER",
 			"k": "3.84613",
 			"T_max": "72",
@@ -20211,10 +20211,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "residential",
-			"k": "6.56387",
-			"est_departure": "2016-07-01 00:27:00 PDT",
-			"top_up": "0"
+			"Kev": "6.56387",
+			"Kes": "0",
+			"tdep": "INIT",
+			"DeltaE": "0"
 		},
 		"PV_inverter_3" : {
 			"id" : "51",
@@ -20686,10 +20686,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "",
-			"k": "7",
-			"est_departure": "INIT",
-			"top_up": "0"
+			"Kev": "0",
+			"Kes": "7",
+			"tdep": "INIT",
+			"DeltaE": "0"
 		},
 		"meter_4" : {
 			"id" : "55",
@@ -20940,7 +20940,7 @@
 			"thermostat_mode": "AUTO",
 			"system_type": "NONE",
 			"auxiliary_strategy": "DEADBAND",
-			"system_mode": "OFF",
+			"system_mode": "COOL",
 			"last_system_mode": "COOL",
 			"heating_system_type": "HEAT_PUMP",
 			"cooling_system_type": "HEAT_PUMP",
@@ -20991,7 +20991,7 @@
 			"hvac_last_off": "2016-07-01 23:25:30 PDT",
 			"hvac_period_length": "36.15 s",
 			"hvac_duty_cycle": "0.0899032",
-			"thermostat_control": "NONE",
+			"thermostat_control": "FULL",
 			"gas_enduses": "WATERHEATER|RANGE|DRYER",
 			"k": "2.12439",
 			"T_max": "72",
@@ -21310,10 +21310,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "residential",
-			"k": "6.93008",
-			"est_departure": "2016-07-01 00:53:00 PDT",
-			"top_up": "0"
+			"Kev": "6.93008",
+			"Kes": "0",
+			"tdep": "INIT",
+			"DeltaE": "0"
 		},
 		"PV_inverter_4" : {
 			"id" : "60",
@@ -21785,10 +21785,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "",
-			"k": "9",
-			"est_departure": "INIT",
-			"top_up": "0"
+			"Kev": "0",
+			"Kes": "9",
+			"tdep": "INIT",
+			"DeltaE": "0"
 		},
 		"xfrm_1C" : {
 			"id" : "64",
@@ -22241,7 +22241,7 @@
 			"hvac_last_off": "2016-07-01 23:48:36 PDT",
 			"hvac_period_length": "37.3167 s",
 			"hvac_duty_cycle": "0.0794998",
-			"thermostat_control": "NONE",
+			"thermostat_control": "FULL",
 			"gas_enduses": "WATERHEATER|RANGE|DRYER",
 			"k": "2.66974",
 			"T_max": "72",
@@ -22560,10 +22560,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "residential",
-			"k": "7.7832",
-			"est_departure": "2016-07-01 00:12:00 PDT",
-			"top_up": "0"
+			"Kev": "7.7832",
+			"Kes": "0",
+			"tdep": "INIT",
+			"DeltaE": "0"
 		},
 		"PV_inverter_5" : {
 			"id" : "71",
@@ -23035,10 +23035,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "",
-			"k": "12",
-			"est_departure": "INIT",
-			"top_up": "0"
+			"Kev": "0",
+			"Kes": "12",
+			"tdep": "INIT",
+			"DeltaE": "0"
 		},
 		"meter_6" : {
 			"id" : "75",
@@ -23340,7 +23340,7 @@
 			"hvac_last_off": "2016-07-01 23:28:23 PDT",
 			"hvac_period_length": "36.0167 s",
 			"hvac_duty_cycle": "0.0916242",
-			"thermostat_control": "NONE",
+			"thermostat_control": "FULL",
 			"gas_enduses": "WATERHEATER|RANGE|DRYER",
 			"k": "3.02136",
 			"T_max": "72",
@@ -23659,10 +23659,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "residential",
-			"k": "6.15036",
-			"est_departure": "2016-07-01 00:35:00 PDT",
-			"top_up": "0"
+			"Kev": "6.15036",
+			"Kes": "0",
+			"tdep": "INIT",
+			"DeltaE": "0"
 		},
 		"PV_inverter_6" : {
 			"id" : "80",
@@ -24134,10 +24134,10 @@
 			"state_of_charge": "0.2 pu",
 			"battery_load": "0 W",
 			"reserve_state_of_charge": "0 pu",
-			"charging_type": "",
-			"k": "4",
-			"est_departure": "INIT",
-			"top_up": "0"
+			"Kev": "0",
+			"Kes": "4",
+			"tdep": "INIT",
+			"DeltaE": "0"
 		},
 		"rec_meter_load_P" : {
 			"id" : "84",

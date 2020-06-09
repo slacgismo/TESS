@@ -15,7 +15,7 @@ from HH_global import city, market_data, C, interval
 #These function descrbe the physical interface: read out of physical environment / API --> provide information / fill into DB
 
 ###############
-# GENERAL
+# GENERAL functions for interaction of GLD and py
 ###############
 
 #Initialization: Find relevant objects and appliances
@@ -94,25 +94,24 @@ def get_batteries(house_name,time):
 	i_max = float(battery_obj['I_Max'].split('+')[1])
 	u_max = float(battery_obj['rated_power'])/1000. #kVA
 	efficiency = float(battery_obj['round_trip_efficiency'])
-	k = float(battery_obj['k'])
+	Kes = float(battery_obj['Kes'])
 
 	#Save in long-term memory (in the db) - accessible for market code
-	parameter_string = '(timedate, soc_des, soc_min, SOC_max, i_max, u_max, efficiency, k)'
-	value_tuple = (time, soc_des, soc_min, SOC_max, i_max, u_max, efficiency, k,)
+	parameter_string = '(timedate, soc_des, soc_min, SOC_max, i_max, u_max, efficiency, Kes)'
+	value_tuple = (time, soc_des, soc_min, SOC_max, i_max, u_max, efficiency, Kes,)
 	myfct.set_values(battery_name+'_settings', parameter_string, value_tuple)
 
-#This connects to the ChargePoint chargers = a meter
+#This connects to the ChargePoint chargers = an inverter
 #No technical information is provided!!
-def get_chargers(house_name,time):
-
+def get_chargers(house_name,time):	
 	#Get charger object
 	CP_inv_name = 'EV_inverter'+house_name[5:]
 	CP_inv_obj = gridlabd.get_object(CP_inv_name)
 
 	#Save in long-term memory (in the db) - accessible for market code
-	charge_rate = float(CP_inv_obj['rated_power'])
-	parameter_string = '(timedate, charge_rate)'
-	value_tuple = (time, charge_rate,)
+	Qmax = float(CP_inv_obj['rated_power'])
+	parameter_string = '(timedate, Qmax, Qset)'
+	value_tuple = (time, Qmax, Qmax,) #assume that maximum is allowed
 	myfct.set_values('CP'+house_name[5:]+'_settings', parameter_string, value_tuple)
 
 def initialize_EVs(house_name,time):
@@ -124,28 +123,32 @@ def initialize_EVs(house_name,time):
 	except:
 		status = False
 	if status:
-		parameter_string = '(timedate, est_departure, battery_capacity, top_up)'
+		parameter_string = '(timedate, Kev, tdep, Emax, DeltaE)'
 		try:
-			est_departure = pandas.to_datetime(EV_obj['est_departure'])
+			Kev = float(EV_obj['Kev'])
+		except:
+			Kev = 1.0
+		try:
+			tdep = pandas.to_datetime(EV_obj['tdep'])
 		except:
 			#Assuming that departure is in the morning
 			t0 = pandas.to_datetime(time)
 			t0.hours = 0
-			est_departure = t0 + pandas.Timedelta(hours=0) + pandas.Timedelta(minutes=random.randint(0, 60*1))
-			gridlabd.set_value(EV_name,'est_departure',str(est_departure))
+			tdep = t0 + pandas.Timedelta(hours=0) + pandas.Timedelta(minutes=random.randint(0, 60*1))
+			gridlabd.set_value(EV_name,'tdep',str(tdep))
 		try:
-			battery_capacity = float(EV_obj['battery_capacity'])
+			Emax = float(EV_obj['battery_capacity'])
 		except:
-			battery_capacity = 1000.0 #Set very large
+			Emax = 1000.0 #Set very large
 		try:
-			top_up = float(EV_obj['top_up'])
+			DeltaE = float(EV_obj['DeltaE'])
 		except:
-			top_up = 100.0 #100% / full charge
-		if top_up == 0.0:
-			top_up = 100.0
+			DeltaE = 100.0 #100% / full charge
+		if DeltaE == 0.0:
+			DeltaE = 100.0
 
-		value_tuple = (time, str(est_departure), battery_capacity, top_up,)
-		myfct.set_values(EV_name+'_arrival', parameter_string, value_tuple)
+		value_tuple = (time, str(Kev), str(tdep), Emax, DeltaE,)
+		myfct.set_values(EV_name+'_state_in', parameter_string, value_tuple)
 	
 #Simulates arrival and disconnects EV upon departure - this function should be deleted in physical system
 #Therefore also no interaction with DB yet - that's in update_EV_state()
@@ -159,16 +162,23 @@ def simulate_EVs(house_name,dt_sim_time):
 		if online_t == 'OFFLINE':
 			arrival = numpy.random.choice([True,False],p=[10/60.,1. - 10/60.])
 			if arrival:
+				#Actual physical parameters
 				gridlabd.set_value(EV_name,'generator_status','ONLINE')
-				est_departure = dt_sim_time + pandas.Timedelta(hours=7) + pandas.Timedelta(minutes=random.randint(0, 60*1))
-				gridlabd.set_value(EV_name,'est_departure',str(est_departure))
-				top_up = numpy.random.choice(numpy.arange(5.,30.,5.),p=[1/5.]*5)
-				gridlabd.set_value(EV_name,'top_up',str(top_up))
+				soc = numpy.random.uniform(0.2,0.8)
+				gridlabd.set_value(EV_name,'state_of_charge',str(soc)) #Unknow in TESS
+
+				#Settings through User App
+				Kev = numpy.random.uniform(0.5,1.5)
+				gridlabd.set_value(EV_name,'Kev',str(Kev))
+				tdep = dt_sim_time + pandas.Timedelta(hours=7) + pandas.Timedelta(minutes=random.randint(0, 60*1))
+				gridlabd.set_value(EV_name,'tdep',str(tdep))
+				DeltaE = max(numpy.random.choice(numpy.arange(5.,30.,5.),p=[1/5.]*5),(1.-soc)*100.)
+				gridlabd.set_value(EV_name,'DeltaE',str(DeltaE))
 				gridlabd.set_value(CP_inv_name,'EV_connected',str(1))				
 	
 	if online_t == 'ONLINE':
 		#EV_obj = gridlabd.get_object(EV_name) #get new departure time
-		if pandas.to_datetime(EV_obj['est_departure']) < dt_sim_time:
+		if pandas.to_datetime(EV_obj['tdep']) < dt_sim_time:
 			gridlabd.set_value(EV_name,'generator_status','OFFLINE')
 			gridlabd.set_value(CP_inv_name,'EV_connected',str(-1))
 	#import pdb; pdb.set_trace()
@@ -221,13 +231,14 @@ def update_CP_state(CP_name,dt_sim_time):
 	#print(int(CP_obj['EV_connected']))
 	if int(CP_obj['EV_connected']) == 1: #This should be whatever signal which pushes the new that a car arrived/disconnected
 		#import pdb; pdb.set_trace()
-		est_departure = pandas.to_datetime(EV_obj['est_departure'])
-		battery_capacity = float(EV_obj['battery_capacity'])
-		top_up = float(EV_obj['top_up'])
+		Kev = float(EV_obj['Kev'])
+		tdep = pandas.to_datetime(EV_obj['tdep'])
+		Emax = float(EV_obj['battery_capacity'])
+		DeltaE = float(EV_obj['DeltaE'])
 		#Write to database
-		parameter_string = '(timedate, est_departure, battery_capacity, top_up)'
-		value_tuple = (str(dt_sim_time), str(est_departure), battery_capacity, top_up,)
-		myfct.set_values(EV_name+'_arrival', parameter_string, value_tuple)
+		parameter_string = '(timedate, Kev, tdep, Emax, DeltaE)'
+		value_tuple = (str(dt_sim_time), str(Kev), str(tdep), Emax, DeltaE,)
+		myfct.set_values(EV_name+'_state_in', parameter_string, value_tuple)
 		#Reset action pointer
 		gridlabd.set_value(CP_name,'EV_connected',str(0))
 	elif int(CP_obj['EV_connected']) == -1:

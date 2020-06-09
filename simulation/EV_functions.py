@@ -27,11 +27,71 @@ list_SOC = [30.,40.,50.,60.]
 list_u = [7.,10.,14.,20.]
 
 class EVCP:
-      def __init__(self,name,charge_rate=0.0):
-            self.name = name
+      def __init__(self,name,Qmax=0.0,Qset=0.0):
+            self.name = name #in GLD simulation
+            self.ID = name.split('_')[-1]
 
             #Configuration
-            self.charge_rate = charge_rate
+            self.Qmax = Qmax
+            self.Qset = Qset
+
+      #Only executed if new EV is connected
+      def checkin_newEV(self,df_evcp_state_in,connected):
+            self.connected = connected
+            self.charging = False
+            self.Kev = df_evcp_state_in['Kev'].iloc[0]
+            self.tdep = df_evcp_state_in['tdep'].iloc[0]
+            self.Emax = df_evcp_state_in['Emax'].iloc[0]
+            self.DeltaE = df_evcp_state_in['DeltaE'].iloc[0]
+            self.E = 0.0 #Energy charged since connected
+
+      #Execute every time an EV is connected
+      def update_state(self,time):
+            if time > self.tdep:
+                  ######### This should be verified with physical model!!!
+                  self.connected = False 
+                  return
+            if self.connected:
+                  self.trem = self.tdep - time
+                  if self.charging: #if it was allocated in the past market period
+                        self.E = self.E + self.Qset*interval/3600./self.Emax #update SOC
+                  self.charging =False
+
+      def bid(self,dt_sim_time,market,P_exp,P_dev):
+            treq = max((self.DeltaE - self.E),0.0)/100.*self.Emax/self.Qset #[h] Slightly changed from bidding fct Jupyter notebook
+            treq = pandas.Timedelta(seconds=treq*3600)
+            if self.trem > pandas.Timedelta(seconds=0):
+                  self.P_bid = P_exp + 3*self.Kev*P_dev*(2*treq/self.trem - 1.)
+                  self.Q_bid = self.Qset
+            else:
+                  self.P_bid = 0.0
+                  self.Q_bid = 0.0
+            if (self.Q_bid > 0.0):
+                  try:
+                        timestamp_arrival = market.send_supply_bid(dt_sim_time, float(self.P_bid), float(self.Q_bid), self.name) #Feedback: timestamp of arrival #C determined by market_operator
+                  except:
+                        import pdb; pdb.set_trace()
+            return
+
+      def dispatch(self,dt_sim_time,p_lem,alpha):
+            inverter = self.name
+            if (self.Q_bid > 0.0) and (self.P_bid > p_lem):
+                  gridlabd.set_value(inverter,'P_Out',str(-self.Q_bid*1000.))
+                  mode = 1.
+            elif (self.Q_bid > 0.0) and (self.P_bid == p_lem):
+                  print('This HVAC is marginal; no partial implementation yet: '+str(alpha))
+                  gridlabd.set_value(inverter,'P_Out',str(-self.Q_bid*1000.))
+                  mode = 1.
+            else:
+                  gridlabd.set_value(inverter,'P_Out',str(0.0))
+                  mode = 0.
+            parameter_string = '(timedate, P_bid, Q_bid, mode, DeltaE)' #DeltaE at beginning of period
+            value_tuple = (dt_sim_time, float(self.P_bid), float(self.Q_bid), float(mode), float(self.DeltaE),)
+            myfct.set_values('EV_'+self.ID+'_state_out', parameter_string, value_tuple)
+            self.P_bid = -100000.0
+            self.Q_bid = 0.0
+            return
+
 
 def get_CP(house,house_name):
       CP_name = 'CP'+house_name[5:]
@@ -43,10 +103,11 @@ def get_CP(house,house_name):
 
       #If house has a charger
       if len(df_CP_settings) > 0:
-            evcp = EVCP('EV_inverter'+house_name[5:])
+            evcp = EVCP('EV_inverter'+house_name[5:]) #Name in GLD simulation
             #import pdb; pdb.set_trace()
             #Configuration
-            evcp.charge_rate = df_CP_settings['charge_rate']
+            evcp.Qmax = df_CP_settings['Qmax'].iloc[-1]/1000. #[kW]
+            evcp.Qset = df_CP_settings['Qset'].iloc[-1]/1000. #[kW]
             house.EVCP = evcp
       return house
 

@@ -40,7 +40,8 @@ table_list += ['battery_1_settings','battery_1_state_in','battery_1_state_out','
 table_list += ['battery_3_settings','battery_3_state_in','battery_3_state_out','battery_4_settings','battery_4_state_in','battery_4_state_out']
 table_list += ['battery_5_settings','battery_5_state_in','battery_5_state_out','battery_6_settings','battery_6_state_in','battery_6_state_out']
 table_list += ['CP_1_settings','CP_2_settings','CP_3_settings','CP_4_settings','CP_5_settings','CP_6_settings']
-table_list += ['EV_1_arrival','EV_2_arrival','EV_3_arrival','EV_4_arrival','EV_5_arrival','EV_6_arrival']
+table_list += ['EV_1_state_in','EV_2_state_in','EV_3_state_in','EV_4_state_in','EV_5_state_in','EV_6_state_in']
+table_list += ['EV_1_state_out','EV_2_state_out','EV_3_state_out','EV_4_state_out','EV_5_state_out','EV_6_state_out']
 table_list += ['system_load','WS_supply','supply_bids','buy_bids','clearing_pq']
 
 ########
@@ -73,7 +74,7 @@ def on_init(t):
 		gldimport.get_PVs(house_name,start_time_str)
 		gldimport.get_batteries(house_name,start_time_str)
 		gldimport.get_chargers(house_name,start_time_str) #Gets charger inverters and maximum charging rates
-		gldimport.initialize_EVs(house_name,start_time_str) #Checks if EVs are connected
+		gldimport.initialize_EVs(house_name,start_time_str) #Checks if EVs are connected already and fills in state_in
 
 	#MARKET: Create house agents
 	global houses;

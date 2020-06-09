@@ -70,6 +70,11 @@ class House:
 		if self.battery:
 			df_batt_state_in = myfct.get_values_td(self.battery.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
 			self.battery.update_state(df_batt_state_in)
+		if self.EVCP:
+			df_evcp_state_in = myfct.get_values_td('EV_'+self.EVCP.ID+'_state_in', begin=dt_sim_time, end=dt_sim_time)
+			if len(df_evcp_state_in):
+				self.EVCP.checkin_newEV(df_evcp_state_in,connected=True)
+			self.EVCP.update_state(dt_sim_time)
 		return
 
 	#GUSTAVO: If the customer changes the settings through the App or at a device, that needs to be pushed here
@@ -97,6 +102,7 @@ class House:
 		self.HVAC.bid(dt_sim_time,market,P_exp,P_dev)
 		self.PV.bid(dt_sim_time,market,P_exp,P_dev)
 		self.battery.bid(dt_sim_time,market,P_exp,P_dev)
+		self.EVCP.bid(dt_sim_time,market,P_exp,P_dev)
 		return
 
 	def determine_dispatch(self,dt_sim_time):
@@ -107,6 +113,7 @@ class House:
 		self.HVAC.dispatch(dt_sim_time,p_lem,alpha)
 		self.PV.dispatch(dt_sim_time,p_lem,alpha)
 		self.battery.dispatch(dt_sim_time,p_lem,alpha)
+		self.EVCP.dispatch(dt_sim_time,p_lem,alpha)
 
 class HVAC:
 	def __init__(self,name,T_air=0.0,mode='OFF',k=0.0,T_max=None,cooling_setpoint=None,cooling_demand=None,T_min=None,heating_setpoint=None,heating_demand=None):

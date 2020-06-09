@@ -109,7 +109,7 @@ def get_battery(house,house_name):
             battery.i_max = df_battery_settings['i_max'].iloc[i]
             battery.u_max = df_battery_settings['u_max'].iloc[i]
             battery.efficiency = df_battery_settings['efficiency'].iloc[i]
-            battery.k = df_battery_settings['k'].iloc[i]
+            battery.k = df_battery_settings['Kes'].iloc[i]
             #batteries += [battery]
             house.battery = battery
       return house

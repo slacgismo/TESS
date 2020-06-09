@@ -17,7 +17,7 @@
 // CLOCK
 clock {
 	timezone "PST8PDT";
-	starttime "2016-07-01 12:00:00 PDT";
+	starttime "2016-07-01 00:00:00 PDT";
 	stoptime "2016-07-02 00:00:00 PDT";
 }
 
@@ -111,10 +111,10 @@ module residential {
 ////////////////////////////////////////////////////////
 // classes
 class battery {
-	char32 charging_type;
-	double k;
-	timestamp est_departure;
-	double top_up;
+	double Kev; //for EVs
+	double Kes; //for batteries
+	timestamp tdep;
+	double DeltaE;
 }
 class player {
 	double value;
@@ -1141,8 +1141,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "residential";
-	k "+9.48685";
+	Kev "+9.48685";
 }
 object generators.inverter {
 	parent "meter_1";
@@ -1372,8 +1371,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "";
-	k "+10";
+	Kes "+10";
 }
 object powerflow.triplex_meter {
 	parent "node_1A";
@@ -1720,8 +1718,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "residential";
-	k "+8.91891";
+	Kev "+8.91891";
 }
 object generators.inverter {
 	parent "meter_2";
@@ -1951,8 +1948,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "";
-	k "+5";
+	Kes "+5";
 }
 object powerflow.transformer {
 	parent "main_node_B";
@@ -2364,8 +2360,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "residential";
-	k "+6.56387";
+	Kev "+6.56387";
 }
 object generators.inverter {
 	parent "meter_3";
@@ -2595,8 +2590,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "";
-	k "+7";
+	Kes "+7";
 }
 object powerflow.triplex_meter {
 	parent "node_1B";
@@ -2949,8 +2943,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "residential";
-	k "+6.93008";
+	Kev "+6.93008";
 }
 object generators.inverter {
 	parent "meter_4";
@@ -3180,8 +3173,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "";
-	k "+9";
+	Kes "+9";
 }
 object powerflow.transformer {
 	parent "main_node_C";
@@ -3593,8 +3585,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "residential";
-	k "+7.7832";
+	Kev "+7.7832";
 }
 object generators.inverter {
 	parent "meter_5";
@@ -3824,8 +3815,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "";
-	k "+12";
+	Kes "+12";
 }
 object powerflow.triplex_meter {
 	parent "node_1C";
@@ -4170,8 +4160,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "residential";
-	k "+6.15036";
+	Kev "+6.15036";
 }
 object generators.inverter {
 	parent "meter_6";
@@ -4401,8 +4390,7 @@ object generators.battery {
 	battery_capacity "+7000 Wh";
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
-	charging_type "";
-	k "+4";
+	Kes "+4";
 }
 object tape.group_recorder {
 	name "rec_meter_load_P";
