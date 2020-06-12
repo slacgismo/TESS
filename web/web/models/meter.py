@@ -5,7 +5,7 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
 
 from web.models.utility import Utility
-from web.models.channel import Channel
+from web.models.channel import Channel, ChannelSchema
 from web.models.meter_interval import MeterInterval
 from web.models.service_location import ServiceLocation, ServiceLocationSchema
 from web.database import (
@@ -37,13 +37,16 @@ class Meter(Model):
     __tablename__ = 'meters'
 
     # Composite primary key
-    meter_id = Column(db.String(64), primary_key=True, nullable=False)
+    meter_id = Column(db.Integer, primary_key=True, nullable=False)
     utility_id = Column(db.Integer, db.ForeignKey('utilities.utility_id'), primary_key=True, nullable=False)
-    service_location_id = Column(db.String(64), db.ForeignKey('service_locations.service_location_id'), primary_key=True, nullable=False)
+    service_location_id = Column(db.Integer, db.ForeignKey('service_locations.service_location_id'), primary_key=True, nullable=False)
     
+    home_hub_id= Column(db.Integer, db.ForeignKey('home_hubs.home_hub_id'), nullable=False)
+    alternate_meter_id = Column(db.String(64), unique=True)
     feeder = Column(db.String(45), nullable=False) 
     substation = Column(db.String(45), nullable=False) 
     meter_type = Column(db.Enum(MeterType), nullable=False) 
+    
     is_active = Column(db.Boolean(False), nullable=False)
     is_archived = Column(db.Boolean(False), nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
@@ -87,12 +90,10 @@ class Meter(Model):
     
     def get_channels(self):
         '''Returns meter instance's channel settings as a list'''
-
-        channels = []
-        for channel in self.channels:
-            if channel.setting not in channels:
-                channels.append(channel.setting)
         
+        channels = Meter.query.\
+                        join(Meter.channels). \
+                        all()
         return channels
 
     def get_all_intervals(self):
@@ -103,6 +104,18 @@ class Meter(Model):
             intervals_list.append(meter_interval.meter_interval_id)
         
         return intervals_list
+
+    @classmethod
+    def get_pv_meters(cls):
+        '''Returns all meter that are pvs'''
+
+        pv_meters = cls.query.\
+                        join(cls.channels). \
+                        filter(Channel.channel_type == 'R'). \
+                        group_by(cls). \
+                        all()
+        
+        return pv_meters
 
     def __repr__(self):
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
@@ -116,7 +129,7 @@ class MeterSchema(SQLAlchemyAutoSchema):
     map_location = fields.Method('get_map_location', deserialize='load_map_location')
     postal_code = fields.Method('get_postal_code')
     rates = fields.Method('get_rates', dump_only=True)
-    channels = fields.Method('get_channels', dump_only=True)
+    channels = fields.Nested(ChannelSchema(only=('channel_id','setting', 'channel_type',)))
     interval_count = fields.Method('get_interval_count', dump_only=True)
     interval_coverage = fields.Method('get_interval_coverage', dump_only=True)
 
@@ -141,9 +154,6 @@ class MeterSchema(SQLAlchemyAutoSchema):
     def get_rates(self, obj):
         return obj.get_rates()
 
-    def get_channels(self, obj):
-        return obj.get_channels()
-
     def get_interval_count(self, obj):
         start = self.context['start'] if 'start' in self.context else None
         end = self.context['end'] if 'end' in self.context else None
@@ -155,6 +165,5 @@ class MeterSchema(SQLAlchemyAutoSchema):
 
     class Meta:
         model = Meter
-        include_relationships = True
         load_instance = True
         include_fk = True

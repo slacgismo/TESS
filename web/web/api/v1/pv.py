@@ -7,7 +7,7 @@ from web.models.rate import Rate
 from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.pv import Pv, PvSchema
-from web.models.pv_interval import PvInterval, Status
+from web.models.meter import Meter
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -37,7 +37,9 @@ def get_pvs():
         fields_to_filter_on = None
 
     pv_schema = PvSchema(only=fields_to_filter_on)
+
     pvs = Pv.query.all()
+
     results = pv_schema.dump(pvs, many=True)
 
     return arw.to_json(results)
@@ -67,7 +69,7 @@ def retrieve_pv_info(pv_id):
     interval_count_end = request.args.get('interval_count_end')
     
     if not interval_coverage:
-        interval_coverage = pv.get_all_intervals()
+        interval_coverage = pv.meter.get_all_intervals()
 
     if interval_count_start:
         try:
@@ -86,7 +88,6 @@ def retrieve_pv_info(pv_id):
     pv_schema.context['start'] = interval_count_start
     pv_schema.context['end'] = interval_count_end
     pv_schema.context['coverage'] = interval_coverage
-
     results = pv_schema.dump(pv)
     return arw.to_json(results)
 

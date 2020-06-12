@@ -3,6 +3,7 @@ from web.models.rate import Rate
 from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import ForeignKeyConstraint
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow import fields, ValidationError
 from web.database import (
     db,
     Model,
@@ -21,12 +22,13 @@ class MeterInterval(Model):
     __tablename__ = 'meter_intervals'
     
     meter_interval_id = Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
-    meter_id = Column(db.String(64), db.ForeignKey('meters.meter_id'), nullable=False)
+    meter_id = Column(db.Integer, db.ForeignKey('meters.meter_id'), nullable=False)
     rate_id = Column(db.Integer, db.ForeignKey('rates.rate_id'), nullable=False) 
     status = Column(db.Enum(Status), nullable=False)
     start_time = Column(TIMESTAMP, nullable=False)
     end_time = Column(TIMESTAMP, nullable=False)
-    value = Column(db.Float, nullable=False)
+    e = Column(db.Float, nullable=False)
+    qtmp = Column(db.Float, nullable=False)
     
     # many-to-one meter intervals per rate
     rate = relationship('Rate', backref=db.backref('meter_intervals'))
@@ -45,4 +47,26 @@ class MeterInterval(Model):
         return start_end_tuples_list
 
     def __repr__(self):
-        return f'<MeterInterval meter_interval_id={self.meter_interval_id} meter_id={self.meter_id} end_time={self.end_time} value={self.value}>'
+        return f'<MeterInterval meter_interval_id={self.meter_interval_id} meter_id={self.meter_id} end_time={self.end_time} e={self.e}>'
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
+
+class MeterIntervalSchema(SQLAlchemyAutoSchema):
+    status = fields.Method('get_status', deserialize='load_status')
+
+    
+    def get_status(self, obj):
+        return obj.status.value
+
+    def load_status(self, value):
+        status_enum = Status.check_value(value)
+        if not status_enum:
+            raise ValidationError(f'{value} is an invalid status input')
+        return status_enum
+
+    class Meta:
+        model = MeterInterval
+        load_instance = True
+        include_fk = True

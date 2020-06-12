@@ -17,7 +17,8 @@ from web.database import (
 class ServiceLocation(Model):
     __tablename__ = 'service_locations'
 
-    service_location_id = Column(db.String(64), primary_key=True, nullable=False)
+    service_location_id = Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
+    alternate_service_location_id = Column(db.String(64), unique=True)
     address_id = Column(db.Integer, db.ForeignKey('addresses.address_id'), nullable=False)
     map_location = Column(db.String(64), nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
@@ -39,6 +40,5 @@ class ServiceLocationSchema(SQLAlchemyAutoSchema):
 
     class Meta:
         model = ServiceLocation
-        include_relationships = True
         load_instance = True
         include_fk = True

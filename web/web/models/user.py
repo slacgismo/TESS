@@ -15,6 +15,7 @@ from web.database import (
     reference_col,
 )
 
+
 class User(UserMixin, Model):
 
     __tablename__ = 'users'
