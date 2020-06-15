@@ -54,11 +54,7 @@ class ConnectedComponentWrapper extends React.Component {
                             } />
                         </div>
                     </div>
-                    <SnackbarQueue
-                        messages={queue.messages}
-                        leading
-                        stacked
-                    />
+                    <SnackbarQueue messages={queue.messages} stacked />
                     {this.props.children}
                 </PersistGate>
             </Provider>

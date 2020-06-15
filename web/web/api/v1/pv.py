@@ -23,17 +23,14 @@ def get_pvs():
     '''
     arw = ApiResponseWrapper()
 
-    # get the list fields we want on the response
     fields_to_filter_on = request.args.getlist('fields')
 
-    # validate that they exist
     if len(fields_to_filter_on) > 0:
         for field in fields_to_filter_on:
             if field not in Pv.__table__.columns:
                 arw.add_errors({field: 'Invalid Pv field'})
                 return arw.to_json(None, 400)
     else:
-        # make sure we get everything if no fields are given
         fields_to_filter_on = None
 
     pv_schema = PvSchema(only=fields_to_filter_on)

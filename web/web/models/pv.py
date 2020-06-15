@@ -25,7 +25,10 @@ class Pv(Model):
     is_active = Column(db.Boolean(False), nullable=False)
     is_archived = Column(db.Boolean(False), nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(TIMESTAMP, 
+                        nullable=False, 
+                        default=datetime.utcnow, 
+                        onupdate=datetime.utcnow)
 
     # Relationships
     home_hub = relationship('HomeHub', backref=db.backref('pvs'))

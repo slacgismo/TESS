@@ -17,6 +17,7 @@ from web.database import (
     reference_col,
 )
 
+
 class MeterType(enum.Enum):
     RESIDENTIAL = 'Residential'
     COMMERCIAL = 'Commercial' 
@@ -25,11 +26,11 @@ class MeterType(enum.Enum):
     @staticmethod
     def check_value(str_value):
         '''Takes in string value, returns False if it isn't an accepted enum value, else returns enum type name.'''
- 
+
         for meter_type in MeterType:
             if meter_type.value == str_value:
                 return meter_type
-        
+
         return False
 
 
@@ -50,10 +51,14 @@ class Meter(Model):
     is_active = Column(db.Boolean(False), nullable=False)
     is_archived = Column(db.Boolean(False), nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(TIMESTAMP,
+                        nullable=False,
+                        default=datetime.utcnow,
+                        onupdate=datetime.utcnow)
 
     # Relationships
-    service_location = relationship('ServiceLocation', backref=db.backref('meters'))
+    service_location = relationship('ServiceLocation',
+                                    backref=db.backref('meters'))
     utility = relationship('Utility', backref=db.backref('meters'))
     channels = relationship('Channel', backref=db.backref('meters'))
     meter_intervals = relationship('MeterInterval', backref=db.backref('meters'))
@@ -65,7 +70,7 @@ class Meter(Model):
         
         self_intervals = self.meter_intervals
         selected_intervals = []
-        
+
         if start == None:
             start = datetime.now() - timedelta(days=1)
 
@@ -87,7 +92,7 @@ class Meter(Model):
                 rates.append(meter_interval.rate.description)
         
         return rates
-    
+
     def get_channels(self):
         '''Returns meter instance's channel settings as a list'''
         
@@ -98,7 +103,7 @@ class Meter(Model):
 
     def get_all_intervals(self):
         '''Returns all meter instances's intervals in a list'''
-        
+
         intervals_list = []
         for meter_interval in self.meter_intervals:
             intervals_list.append(meter_interval.meter_interval_id)
@@ -120,13 +125,16 @@ class Meter(Model):
     def __repr__(self):
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
 
+
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################
 
+
 class MeterSchema(SQLAlchemyAutoSchema):
     meter_type = fields.Method('get_meter_type', deserialize='load_meter_type')
-    map_location = fields.Method('get_map_location', deserialize='load_map_location')
+    map_location = fields.Method('get_map_location',
+                                 deserialize='load_map_location')
     postal_code = fields.Method('get_postal_code')
     rates = fields.Method('get_rates', dump_only=True)
     channels = fields.Nested(ChannelSchema(many=True), dump_only=True)
@@ -141,7 +149,7 @@ class MeterSchema(SQLAlchemyAutoSchema):
 
     def load_map_location(self, value):
         return
-    
+
     def get_meter_type(self, obj):
         return obj.meter_type.value
 

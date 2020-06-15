@@ -4,17 +4,19 @@ import * as action from './actions';
 import { connect } from 'react-redux';
 import { Button } from '@rmwc/button';
 import { TextField } from '@rmwc/textfield';
+import CreateAccount from './create_account';
 import { menuRoutes } from '../../static/js/config/routes';
 import ConnectedComponentWrapper from '../../static/js/base';
 import { queue } from '../../static/js/components/app_notification_queue';
 
+import '@rmwc/button/styles';
 import '@rmwc/textfield/styles';
-import '@material/button/dist/mdc.button.css';
 
 class Auth extends React.Component {
     state = {
         username: "",
-        password: ""
+        password: "",
+        userIsCreatingAccount: false
     }
 
     handleUsernameChange = (e) => {
@@ -34,6 +36,7 @@ class Auth extends React.Component {
                 title: <b>Username</b>,
                 body: 'Must be a valid email in the format: "someone@somewhere.com"',
                 dismissesOnAction: true,
+                timeout: -1,
                 actions: [{title: 'Dismiss'}]
             });
         }
@@ -46,6 +49,7 @@ class Auth extends React.Component {
                 title: <b>Password</b>,
                 body: 'Must be at least 8 characters long',
                 dismissesOnAction: true,
+                timeout: -1,
                 actions: [{title: 'Dismiss'}]
             })
         }
@@ -55,7 +59,21 @@ class Auth extends React.Component {
         }
     }
 
+    setUserCreateFlow = (isInCreateFlow) => {
+        this.setState({userIsCreatingAccount: isInCreateFlow})
+    }
+
     render() {
+        if(this.state.userIsCreatingAccount) {
+            return (
+                <div className="create-account-page-container">
+                    <div className="create-account-form-container">
+                        <CreateAccount setCreateFlow={this.setUserCreateFlow} />
+                    </div>
+                </div>
+            );
+        }
+
         return (
             <div className="login-page-container">
                 <div className="login-form-container">
@@ -76,9 +94,16 @@ class Auth extends React.Component {
                     <br />
                     <div>
                         <Button
-                            unelevated
+                            outlined
                             label="LOGIN"
                             onClick={this.handleLogin} />
+                    </div>
+                    <br />
+                    <div>
+                        <Button
+                            outlined
+                            label="SIGN UP"
+                            onClick={() => this.setUserCreateFlow(true)} />
                     </div>
                 </div>
             </div>

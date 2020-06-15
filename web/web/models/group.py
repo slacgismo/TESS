@@ -14,34 +14,45 @@ from web.database import (
     reference_col,
 )
 
+
 class Group(Model):
     __tablename__ = 'groups'
 
-    group_id = Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
+    group_id = Column(db.Integer,
+                      primary_key=True,
+                      autoincrement=True,
+                      nullable=False)
 
-    role_id = Column(db.Integer, db.ForeignKey('roles.role_id'), nullable=False)
+    role_id = Column(db.Integer,
+                     db.ForeignKey('roles.role_id'),
+                     nullable=False)
     user_id = Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     is_active = Column(db.Boolean(False), nullable=False)
     is_archived = Column(db.Boolean(False), nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(TIMESTAMP,
+                        nullable=False,
+                        default=datetime.utcnow,
+                        onupdate=datetime.utcnow)
 
     #Relationships
-    role = db.relationship('Role', backref=db.backref('groups', lazy='dynamic'))
-    user = db.relationship('User', backref=db.backref('groups', lazy='dynamic'))
+    role = db.relationship('Role',
+                           backref=db.backref('groups', lazy='dynamic'))
+    user = db.relationship('User',
+                           backref=db.backref('groups', lazy='dynamic'))
+
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################
 
+
 class GroupSchema(SQLAlchemyAutoSchema):
-    role = fields.Nested(RoleSchema(only=('name',)), dump_only=True)
-    user = fields.Nested(UserSchema(only=('email',)), dump_only=True)
+    role = fields.Nested(RoleSchema(only=('name', )), dump_only=True)
+    user = fields.Nested(UserSchema(only=('email', )), dump_only=True)
 
     class Meta:
         model = Group
         include_fk = True
         load_instance = True
-
-

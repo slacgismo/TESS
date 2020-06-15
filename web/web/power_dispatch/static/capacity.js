@@ -21,9 +21,12 @@ class Capacity extends React.Component {
         // so we fix that by having each component do it, 😔, this is 
         // not great since the component shouldn't care about the menu
         this.props.dispatch(selectMenuOption('power-dispatch-capacity'));
+        this.props.dispatch(action.getCapacitySystemLoadData());
+        this.props.dispatch(action.getResourcesData());
     }
 
     render() {
+        console.warn(this.props.resourcesData)
         return (
             <div className="power-dispatch-container">
                 <div className="power-dispatch-margin-fix">
@@ -31,6 +34,7 @@ class Capacity extends React.Component {
                         <div className="pd-chart-system-load">
                             <SystemLoadChart
                                 id="pd-capacity-system-load-chart"
+                                ds={this.props.systemLoadData}
                                 xTitle="Hours" 
                                 yTitle="MW" 
                                 chartTitle="System Load"
@@ -39,8 +43,10 @@ class Capacity extends React.Component {
                         <div className="pd-chart-resource">
                             <ResourcesChart
                                 id="pd-capacity-resources-chart"
-                                xTitle="Hours" 
-                                yTitle="MW" 
+                                xTitle="" 
+                                yTitle=""
+                                datasets={this.props.resourcesData.datasets}
+                                finalDataSet={this.props.resourcesData.groupedDataset}
                                 chartTitle="Resources in the System"
                                 chartSubtitle="" />
                         </div>
@@ -95,7 +101,7 @@ class Capacity extends React.Component {
                             <div>
                                 <h4>Alerts</h4>
                                 <div className="pd-form-row">
-                                    <div className="pd-form-element-label">Capacity Boundary</div>
+                                    <div className="pd-form-element-label">Capacity Bounds</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined />
                                     </div>
@@ -167,11 +173,15 @@ class Capacity extends React.Component {
     }
 }
 
-const ConnectedCapacity = connect(state => ({}))(Capacity);
+const ConnectedCapacity = connect(state => ({
+    systemLoadData: state.capacity.systemLoadData,
+    resourcesData: state.capacity.resourcesData
+}))(Capacity);
 
 const capacityElement = (
     <ConnectedComponentWrapper isVisible={true} pageTitle="CAPACITY">
         <ConnectedCapacity/>
     </ConnectedComponentWrapper>
 );
+
 ReactDOM.render(capacityElement, document.getElementById('master-container'));

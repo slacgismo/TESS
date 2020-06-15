@@ -14,21 +14,21 @@ class SystemLoadChart extends React.Component {
 
             // The data for our dataset
             data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                labels: this.props.ds ? this.props.ds.labels : [],
                 datasets: [
                     {
-                        label: 'My First dataset',
+                        label: 'DS 01',
                         fill: false,
                         backgroundColor: 'rgb(255, 99, 132)',
                         borderColor: 'rgb(255, 99, 132)',
-                        data: [0, 10, 5, 2, 20, 30, 45]
+                        data: this.props.ds ? this.props.ds.one : []
                     },
                     {
-                        label: 'My Second dataset',
+                        label: 'DS 02',
                         fill: false,
                         backgroundColor: 'rgb(55, 99, 255)',
                         borderColor: 'rgb(55, 99, 255)',
-                        data: [0, 50, 3, 20, 20, 20, 15]
+                        data: this.props.ds ? this.props.ds.two : []
                     }
                 ]
             },
@@ -39,7 +39,10 @@ class SystemLoadChart extends React.Component {
 				title: {
 					display: true,
 					text: this.props.chartTitle
-				},
+                },
+                legend: {
+                    display: false
+                },
 				tooltips: {
 					mode: 'index',
 					intersect: false,
@@ -50,6 +53,10 @@ class SystemLoadChart extends React.Component {
 				},
 				scales: {
 					xAxes: [{
+                        type: 'time',
+                        time: {
+                            unit: 'day'
+                        },
 						display: true,
 						scaleLabel: {
 							display: true,

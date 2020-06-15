@@ -50,7 +50,8 @@ ul, li {
 }
 
 /* LOGIN PAGE */
-.login-page-container {
+.login-page-container,
+.create-account-page-container {
     background: url('../img/bg.jpg') no-repeat center center fixed;
     background-size: cover;
     text-align: center;
@@ -67,16 +68,29 @@ ul, li {
     position: fixed;
     top: 0;
     left: 0;
-    padding-top: 200px;
 }
-
 .login-form-container {
+    height: 100%;
+    min-height: 1200px;
     width: 500px;
-    background-color: rgba(255, 255, 255, 0.8);
-    display: inline-block;
-    padding: 20px;
+    background-color: rgba(255, 255, 255, 1);
+    padding: 250px 0 0 0;
+    float: left;
+}
+.create-account-form-container {
+    height: 100%;
+    min-height: 1200px;
+    width: 500px;
+    background-color: rgba(255, 255, 255, 1);
+    padding: 50px 0;
+    float: left;
+    text-align: left;
+}
+.create-account-button-container {
+    padding: 0 10px;
 }
 .login-form-container input,
+.create-account-form-container input,
 .login-form-container button { 
     width: 400px;
 }

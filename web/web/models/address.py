@@ -10,10 +10,14 @@ from web.database import (
     reference_col,
 )
 
+
 class Address(Model):
     __tablename__ = 'addresses'
 
-    address_id = Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
+    address_id = Column(db.Integer,
+                        autoincrement=True,
+                        primary_key=True,
+                        nullable=False)
     address = Column(db.String(100), nullable=False)
     address2 = Column(db.String(64))
     district = Column(db.String(64))
@@ -22,14 +26,19 @@ class Address(Model):
     postal_code = Column(db.String(64), nullable=False)
     phone = Column(db.String(64))
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP, nullable=False,default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(TIMESTAMP,
+                        nullable=False,
+                        default=datetime.utcnow,
+                        onupdate=datetime.utcnow)
 
     def __repr__(self):
         return f'<Address address_id={self.address_id} address={self.address} postal_code={self.postal_code}>'
 
+
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################
+
 
 class AddressSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -37,4 +46,3 @@ class AddressSchema(SQLAlchemyAutoSchema):
         include_fk = True
         load_instance = True
         transient = True
-    
