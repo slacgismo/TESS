@@ -1,7 +1,6 @@
 from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-
 from web.database import (
     db,
     Model,

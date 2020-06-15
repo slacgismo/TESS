@@ -33,3 +33,4 @@ class ChannelSchema(SQLAlchemyAutoSchema):
         model = Channel
         load_instance = True
         include_fk = True
+        transient = True

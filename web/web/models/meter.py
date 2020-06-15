@@ -129,10 +129,10 @@ class MeterSchema(SQLAlchemyAutoSchema):
     map_location = fields.Method('get_map_location', deserialize='load_map_location')
     postal_code = fields.Method('get_postal_code')
     rates = fields.Method('get_rates', dump_only=True)
-    channels = fields.Nested(ChannelSchema(only=('channel_id','setting', 'channel_type',)))
+    channels = fields.Nested(ChannelSchema(many=True), dump_only=True)
     interval_count = fields.Method('get_interval_count', dump_only=True)
     interval_coverage = fields.Method('get_interval_coverage', dump_only=True)
-
+    
     def get_postal_code(self, obj):
         return obj.service_location.address.postal_code
 

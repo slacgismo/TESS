@@ -38,8 +38,8 @@ class User(UserMixin, Model):
     updated_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    utility = relationship('Utility', backref=db.backref('groups'))
-    address = relationship('Address', backref=db.backref('addresses'))
+    utility = relationship('Utility', backref=db.backref('users'))
+    address = relationship('Address', backref=db.backref('users'), uselist=False)
 
     # Methods
     def get_roles(self):

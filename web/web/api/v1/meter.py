@@ -22,21 +22,21 @@ meter_api_bp = Blueprint('meter_api_bp', __name__)
 
 @meter_api_bp.route('/meters/', methods=['GET'])
 def get_meter_ids():
-    """
+    '''
     Return all meter objects
     TODO: support query string filtering on props like is_active/is_archived
     TODO: decorator or Mixin for fields_to_filter_on!!!
-    """
+    '''
     arw = ApiResponseWrapper()
 
     # get the list fields we want on the response
-    fields_to_filter_on = request.args.getlist("fields")
+    fields_to_filter_on = request.args.getlist('fields')
 
     # validate that they exist
     if len(fields_to_filter_on) > 0:
         for field in fields_to_filter_on:
             if field not in Meter.__table__.columns:
-                arw.add_errors({field: "Invalid Meter field"})
+                arw.add_errors({field: 'Invalid Meter field'})
                 return arw.to_json(None, 400)
     else:
         # make sure we get everything if no fields are given
@@ -51,9 +51,9 @@ def get_meter_ids():
 
 @meter_api_bp.route('/meter/<int:meter_id>', methods=['GET'])
 def show_meter_info(meter_id):
-    """
+    '''
     Returns meter information as json object
-    """
+    '''
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema()
 
@@ -104,9 +104,9 @@ def show_meter_info(meter_id):
 
 @meter_api_bp.route('/meter/meta', methods=['GET'])
 def get_meter_schema():
-    """
+    '''
     Returns meter schema as json object
-    """
+    '''
     return jsonify(schema_data)
 
 
@@ -114,11 +114,11 @@ def get_meter_schema():
 def update_meter(meter_id):
     '''Updates meter in database'''
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema(exclude=('created_at',))
+    meter_schema = MeterSchema(exclude=['created_at'])
     modified_meter = request.get_json()
 
     try:
-        meter = Meter.query.filter_by(meter_id=meter_id).one()
+        Meter.query.filter_by(meter_id=meter_id).one()
         modified_meter = meter_schema.load(modified_meter, session=db.session)
         db.session.commit()
 
@@ -149,11 +149,9 @@ def add_meter():
     meter_json = request.get_json()
             
     try:
-        # sql alchemy and marshmallow seem to update instead of raise an
-        # integrity error...🤨
-        meter_id = meter_json["meter_id"] if "meter_id" in meter_json else None
-        service_id = meter_json["service_location_id"] if "service_location_id" in meter_json else None
-        utility_id = meter_json["utility_id"] if "utility_id" in meter_json else None
+        meter_id = meter_json['meter_id'] if 'meter_id' in meter_json else None
+        service_id = meter_json['service_location_id'] if 'service_location_id' in meter_json else None
+        utility_id = meter_json['utility_id'] if 'utility_id' in meter_json else None
         does_meter_exist = Meter.query.filter_by(
             meter_id=meter_id, 
             service_location_id=service_id, 
@@ -161,7 +159,7 @@ def add_meter():
         ).count() > 0
 
         if does_meter_exist:
-            raise IntegrityError("Meter already exists", None, None)
+            raise IntegrityError('Meter already exists', None, None)
 
         new_meter = meter_schema.load(meter_json, session=db.session)
         db.session.add(new_meter)
@@ -169,7 +167,7 @@ def add_meter():
 
     except IntegrityError:
         db.session.rollback()
-        arw.add_errors({"meter_id": "The given meter already exists."})
+        arw.add_errors({'meter_id': 'The given meter already exists.'})
         return arw.to_json(None, 400)
     
     except ValidationError as e:

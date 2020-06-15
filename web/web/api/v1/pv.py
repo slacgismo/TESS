@@ -54,7 +54,7 @@ def retrieve_pv_info(pv_id):
     pv_schema = PvSchema(exclude=('meter_id',))
 
     try:  
-        pv = Pv.query.filter_by(meter_id=pv_id).one()
+        pv = Pv.query.filter_by(pv_id=pv_id).one()
     
     except MultipleResultsFound:
         arw.add_errors({pv_id: 'Multiple results found for the given pv.'})
@@ -100,7 +100,7 @@ def update_pv(pv_id):
     modified_pv = request.get_json()
 
     try:
-        Pv.query.filter_by(meter_id=pv_id).one()
+        Pv.query.filter_by(pv_id=pv_id).one()
         modified_pv = pv_schema.load(modified_pv, session=db.session)
         db.session.commit()
 
