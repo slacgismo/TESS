@@ -26,11 +26,23 @@ class Group(Model):
     role_id = Column(db.Integer,
                      db.ForeignKey('roles.role_id'),
                      nullable=False)
-    user_id = Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    is_active = Column(db.Boolean(False), nullable=False)
-    is_archived = Column(db.Boolean(False), nullable=False)
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
+    user_id = Column(db.Integer, 
+                     db.ForeignKey('users.id'), 
+                     nullable=False)
+
+    is_active = Column(db.Boolean(), 
+                       default=False, 
+                       nullable=False)
+
+    is_archived = Column(db.Boolean(), 
+                         default=False, 
+                         nullable=False)
+
+    created_at = Column(TIMESTAMP, 
+                        nullable=False, 
+                        default=datetime.utcnow)
+                        
     updated_at = Column(TIMESTAMP,
                         nullable=False,
                         default=datetime.utcnow,

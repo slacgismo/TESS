@@ -17,15 +17,37 @@ from web.database import (
 class ServiceLocation(Model):
     __tablename__ = 'service_locations'
 
-    service_location_id = Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
-    alternate_service_location_id = Column(db.String(64), unique=True)
-    address_id = Column(db.Integer, db.ForeignKey('addresses.address_id'), nullable=False)
-    map_location = Column(db.String(64), nullable=False)
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP,
-                        nullable=False,
+    service_location_id = Column(db.Integer,
+                                 primary_key=True, 
+                                 autoincrement=True, 
+                                 nullable=False)
+
+    alternate_service_location_id = Column(db.String(64), 
+                                           unique=True)
+
+    address_id = Column(db.Integer,
+                        db.ForeignKey('addresses.address_id'),
+                        nullable=False)
+
+    map_location = Column(db.String(64),
+                          nullable=False)
+
+    is_active = Column(db.Boolean(), 
+                       default=False, 
+                       nullable=False)
+
+    is_archived = Column(db.Boolean(),
+                         default=False, 
+                         nullable=False)
+
+    created_at = Column(TIMESTAMP,
                         default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+                        nullable=False)
+
+    updated_at = Column(TIMESTAMP,
+                        default=datetime.utcnow,
+                        onupdate=datetime.utcnow,
+                        nullable=False)
 
     #one-to-one service location per address
     address = relationship('Address',
@@ -42,7 +64,8 @@ class ServiceLocation(Model):
 
 
 class ServiceLocationSchema(SQLAlchemyAutoSchema):
-    address = fields.Nested(AddressSchema(), dump_only=True)
+    address = fields.Nested(AddressSchema(),
+                            dump_only=True)
 
     class Meta:
         model = ServiceLocation

@@ -34,8 +34,10 @@ class Role(Model):
                      primary_key=True,
                      autoincrement=True,
                      nullable=False)
-    name = Column(db.Enum(RoleType), unique=True, nullable=False)
 
+    name = Column(db.Enum(RoleType), 
+                          unique=True, 
+                          nullable=False)
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
@@ -43,7 +45,8 @@ class Role(Model):
 
 
 class RoleSchema(SQLAlchemyAutoSchema):
-    name = fields.Method('get_role_name', deserialize='load_role_type')
+    name = fields.Method('get_role_name',
+                         deserialize='load_role_type')
 
     def get_role_name(self, obj):
         return obj.name.value

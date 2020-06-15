@@ -26,28 +26,51 @@ class User(UserMixin, Model):
                 nullable=False)
 
     # User email information
-    email = Column(db.String(255), nullable=False, unique=True)
+    email = Column(db.String(255),
+                   unique=True,
+                   nullable=False)
+
     email_confirmed_at = Column(TIMESTAMP)
 
     # User information
-    first_name = Column(db.String(64), nullable=False)
-    last_name = Column(db.String(64), nullable=False)
-    address_id = Column(db.Integer, db.ForeignKey('addresses.address_id'))
+    first_name = Column(db.String(64),
+                        nullable=False)
+
+    last_name = Column(db.String(64),
+                       nullable=False)
+
+    address_id = Column(db.Integer,
+                        db.ForeignKey('addresses.address_id'),
+                        nullable=False)
+
     utility_id = Column(db.Integer,
                         db.ForeignKey('utilities.utility_id'),
                         nullable=False)
 
-    is_active = Column(db.Boolean(), nullable=False)
-    is_archived = Column(db.Boolean(), nullable=False)
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP,
-                        nullable=False,
+    is_active = Column(db.Boolean(),
+                       default=False,
+                       nullable=False)
+
+    is_archived = Column(db.Boolean(), 
+                         default=False, 
+                         nullable=False)
+
+    created_at = Column(TIMESTAMP,
                         default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+                        nullable=False)
+
+    updated_at = Column(TIMESTAMP,
+                        default=datetime.utcnow,
+                        onupdate=datetime.utcnow,
+                        nullable=False)
 
     # Relationships
-    utility = relationship('Utility', backref=db.backref('users'))
-    address = relationship('Address', backref=db.backref('users'), uselist=False)
+    utility = relationship('Utility',
+                            backref=db.backref('users'))
+
+    address = relationship('Address',
+                            backref=db.backref('users'),
+                            uselist=False)
 
     # Methods
     def get_roles(self):
@@ -73,10 +96,16 @@ class User(UserMixin, Model):
 
 
 class UserSchema(SQLAlchemyAutoSchema):
-    roles = fields.Method('get_roles', dump_only=True)
-    postal_code = fields.Method('get_postal_code', dump_only=True)
-    address = fields.Nested(AddressSchema(), load_only=True)
+    roles = fields.Method('get_roles',
+                          dump_only=True)
 
+    postal_code = fields.Method('get_postal_code',
+                                dump_only=True)
+
+    address = fields.Nested(AddressSchema(),
+                            load_only=True)
+
+# Marshmallow methods
     def get_roles(self, obj):
         roles = obj.get_roles()
         result_roles = []

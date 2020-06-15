@@ -25,14 +25,20 @@ class Login(UserMixin, Model):
                      ondelete='CASCADE',
                      nullable=False)
 
-    username = Column(db.String(50), unique=True, nullable=False)
+    username = Column(db.String(50),
+                      unique=True, 
+                      nullable=False)
+
     password_hash = db.Column(db.String(128))
 
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP,
-                        nullable=False,
+    created_at = Column(TIMESTAMP, 
                         default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+                        nullable=False)
+
+    updated_at = Column(TIMESTAMP,
+                        default=datetime.utcnow,
+                        onupdate=datetime.utcnow,
+                        nullable=False)
 
     # Relationships
     user = relationship('User',

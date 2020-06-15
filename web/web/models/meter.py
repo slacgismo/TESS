@@ -37,31 +37,67 @@ class MeterType(enum.Enum):
 class Meter(Model):
     __tablename__ = 'meters'
 
-    # Composite primary key
-    meter_id = Column(db.Integer, primary_key=True, nullable=False)
-    utility_id = Column(db.Integer, db.ForeignKey('utilities.utility_id'), primary_key=True, nullable=False)
-    service_location_id = Column(db.Integer, db.ForeignKey('service_locations.service_location_id'), primary_key=True, nullable=False)
+    # Composite primary key: meter_id, utility_id, and service_location_id
+    meter_id = Column(db.Integer, 
+                      primary_key=True, 
+                      autoincrement=True,
+                      nullable=False)
+
+    utility_id = Column(db.Integer, 
+                        db.ForeignKey('utilities.utility_id'), 
+                        primary_key=True, 
+                        nullable=False)
+
+    service_location_id = Column(db.Integer, 
+                                 db.ForeignKey('service_locations.service_location_id'), 
+                                 primary_key=True, 
+                                 nullable=False)
     
-    home_hub_id= Column(db.Integer, db.ForeignKey('home_hubs.home_hub_id'), nullable=False)
-    alternate_meter_id = Column(db.String(64), unique=True)
-    feeder = Column(db.String(45), nullable=False) 
-    substation = Column(db.String(45), nullable=False) 
-    meter_type = Column(db.Enum(MeterType), nullable=False) 
+    home_hub_id= Column(db.Integer, 
+                        db.ForeignKey('home_hubs.home_hub_id'), 
+                        nullable=False)
+
+    alternate_meter_id = Column(db.String(64), 
+                                unique=True)
+
+    feeder = Column(db.String(45), 
+                    nullable=False)
+
+    substation = Column(db.String(45), 
+                        nullable=False) 
     
-    is_active = Column(db.Boolean(False), nullable=False)
-    is_archived = Column(db.Boolean(False), nullable=False)
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP,
-                        nullable=False,
+    meter_type = Column(db.Enum(MeterType), 
+                        nullable=False) 
+    
+    is_active = Column(db.Boolean(), 
+                       default=False, 
+                       nullable=False)
+
+    is_archived = Column(db.Boolean(), 
+                         default=False, 
+                         nullable=False)
+
+    created_at = Column(TIMESTAMP, 
                         default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+                        nullable=False)
+
+    updated_at = Column(TIMESTAMP,
+                        default=datetime.utcnow,
+                        onupdate=datetime.utcnow,
+                        nullable=False)
 
     # Relationships
     service_location = relationship('ServiceLocation',
                                     backref=db.backref('meters'))
-    utility = relationship('Utility', backref=db.backref('meters'))
-    channels = relationship('Channel', backref=db.backref('meters'))
-    meter_intervals = relationship('MeterInterval', backref=db.backref('meters'))
+
+    utility = relationship('Utility',
+                           backref=db.backref('meters'))
+
+    channels = relationship('Channel',
+                            backref=db.backref('meters'))
+
+    meter_intervals = relationship('MeterInterval',
+                                   backref=db.backref('meters'))
 
     # Methods
     def get_interval_count(self, start, end):
@@ -132,15 +168,27 @@ class Meter(Model):
 
 
 class MeterSchema(SQLAlchemyAutoSchema):
-    meter_type = fields.Method('get_meter_type', deserialize='load_meter_type')
+    meter_type = fields.Method('get_meter_type', 
+                               deserialize='load_meter_type')
+
     map_location = fields.Method('get_map_location',
                                  deserialize='load_map_location')
+
     postal_code = fields.Method('get_postal_code')
-    rates = fields.Method('get_rates', dump_only=True)
-    channels = fields.Nested(ChannelSchema(many=True), dump_only=True)
-    interval_count = fields.Method('get_interval_count', dump_only=True)
-    interval_coverage = fields.Method('get_interval_coverage', dump_only=True)
+
+    rates = fields.Method('get_rates', 
+                          dump_only=True)
     
+    channels = fields.Nested(ChannelSchema(many=True), 
+                             dump_only=True)
+
+    interval_count = fields.Method('get_interval_count', 
+                                   dump_only=True)
+
+    interval_coverage = fields.Method('get_interval_coverage', 
+                                      dump_only=True)
+
+    #Marshmallow methods
     def get_postal_code(self, obj):
         return obj.service_location.address.postal_code
 

@@ -11,7 +11,7 @@ from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.meter import Meter, MeterSchema, MeterType
 from web.models.service_location import ServiceLocation
-from web.models.meter_interval import MeterInterval, Status
+from web.models.meter_interval import MeterInterval
 from web.models.home_hub import HomeHub
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
