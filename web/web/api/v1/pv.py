@@ -18,19 +18,19 @@ pv_api_bp = Blueprint('pv_api_bp', __name__)
 
 @pv_api_bp.route('/pvs/', methods=['GET'])
 def get_pvs():
-    """
+    '''
     Return all pv objects
-    """
+    '''
     arw = ApiResponseWrapper()
 
     # get the list fields we want on the response
-    fields_to_filter_on = request.args.getlist("fields")
+    fields_to_filter_on = request.args.getlist('fields')
 
     # validate that they exist
     if len(fields_to_filter_on) > 0:
         for field in fields_to_filter_on:
             if field not in Pv.__table__.columns:
-                arw.add_errors({field: "Invalid Pv field"})
+                arw.add_errors({field: 'Invalid Pv field'})
                 return arw.to_json(None, 400)
     else:
         # make sure we get everything if no fields are given
@@ -45,13 +45,13 @@ def get_pvs():
     return arw.to_json(results)
 
 
-@pv_api_bp.route('/pv/<string:pv_id>', methods=['GET'])
+@pv_api_bp.route('/pv/<int:pv_id>', methods=['GET'])
 def retrieve_pv_info(pv_id):
     """
     Returns meter information as json object
     """
     arw = ApiResponseWrapper()
-    pv_schema = PvSchema()
+    pv_schema = PvSchema(exclude=('meter_id',))
 
     try:  
         pv = Pv.query.filter_by(meter_id=pv_id).one()
@@ -92,11 +92,11 @@ def retrieve_pv_info(pv_id):
     return arw.to_json(results)
 
 
-@pv_api_bp.route('/pv/<string:pv_id>', methods=['PUT'])
+@pv_api_bp.route('/pv/<int:pv_id>', methods=['PUT'])
 def update_pv(pv_id):
     '''Updates pv in database'''
     arw = ApiResponseWrapper()
-    pv_schema = PvSchema()
+    pv_schema = PvSchema(exclude=['created_at'])
     modified_pv = request.get_json()
 
     try:
@@ -125,19 +125,19 @@ def update_pv(pv_id):
 
 @pv_api_bp.route('/pv', methods=['POST'])
 def add_pv():
-    '''Add new pv to database'''
+    '''Adds new pv to database'''
     arw = ApiResponseWrapper()
     pv_schema = PvSchema()
     pv_json = request.get_json()
             
     try:
-        pv_id = pv_json["pv_id"] if "pv_id" in pv_json else None
+        pv_id = pv_json['pv_id'] if 'pv_id' in pv_json else None
         does_pv_exist = Pv.query.filter_by(
             pv_id=pv_id
         ).count() > 0
 
         if does_pv_exist:
-            raise IntegrityError("Pv already exists", None, None)
+            raise IntegrityError('Pv already exists', None, None)
 
         new_pv = pv_schema.load(pv_json, session=db.session)
         db.session.add(new_pv)
@@ -145,7 +145,7 @@ def add_pv():
 
     except IntegrityError:
         db.session.rollback()
-        arw.add_errors({"pv_id": "The given pv already exists."})
+        arw.add_errors({'pv_id': 'The given pv already exists.'})
         return arw.to_json(None, 400)
     
     except ValidationError as e:

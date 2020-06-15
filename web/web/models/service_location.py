@@ -35,7 +35,6 @@ class ServiceLocation(Model):
 ##########################
 
 class ServiceLocationSchema(SQLAlchemyAutoSchema):
-    postal_code = fields.Method('get_postal_code', dump_only=True)
     address = fields.Nested(AddressSchema(), dump_only=True)
 
     class Meta:

@@ -17,6 +17,13 @@ class Status(enum.Enum):
    VALID = 'valid'
    INVALID = 'invalid'
 
+   @staticmethod
+   def check_value(str_value):
+       '''Takes in string value, returns False if it isn't an accepted enum value, else returns enum type name.'''
+       for status_type in Status:
+           if status_type.value == str_value:
+               return status_type
+       return False
 
 class MeterInterval(Model):
     __tablename__ = 'meter_intervals'
@@ -29,6 +36,9 @@ class MeterInterval(Model):
     end_time = Column(TIMESTAMP, nullable=False)
     e = Column(db.Float, nullable=False)
     qtmp = Column(db.Float, nullable=False)
+    p_bid = Column(db.Float, default=0, nullable=False)
+    q_bid = Column(db.Float, default=0, nullable=False)
+    mode = Column(db.Boolean(create_constraint=True), default=0, nullable=False)
     
     # many-to-one meter intervals per rate
     rate = relationship('Rate', backref=db.backref('meter_intervals'))

@@ -20,7 +20,7 @@ class Pv(Model):
 
     pv_id = Column(db.Integer, autoincrement=True, primary_key=True, nullable=False)
     home_hub_id = Column(db.Integer, db.ForeignKey('home_hubs.home_hub_id'), nullable=False)
-    meter_id = Column(db.String(64), db.ForeignKey('meters.meter_id'), nullable=False)
+    meter_id = Column(db.Integer, db.ForeignKey('meters.meter_id'), nullable=False)
     q_rated = Column(db.Float, nullable=False)
     is_active = Column(db.Boolean(False), nullable=False)
     is_archived = Column(db.Boolean(False), nullable=False)
@@ -39,7 +39,7 @@ class Pv(Model):
 ##########################
 
 class PvSchema(SQLAlchemyAutoSchema):
-    meter = fields.Nested(MeterSchema(only=('meter_id',)), dump_only=True)
+    meter = fields.Nested(MeterSchema(), dump_only=True)
 
     class Meta:
         model = Pv

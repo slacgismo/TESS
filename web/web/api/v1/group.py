@@ -33,7 +33,7 @@ def get_group_ids():
     return arw.to_json(results)
 
 
-@group_api_bp.route('/group/<string:group_id>', methods=['GET'])
+@group_api_bp.route('/group/<int:group_id>', methods=['GET'])
 def show_group_info(group_id):
     '''
     Retrieve one group object
@@ -57,7 +57,7 @@ def show_group_info(group_id):
     return arw.to_json(results)
 
 
-@group_api_bp.route('/group/<string:group_id>', methods=['PUT'])
+@group_api_bp.route('/group/<int:group_id>', methods=['PUT'])
 def modify_group(group_id):
     '''
     Update one group object in database

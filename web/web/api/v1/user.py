@@ -37,7 +37,7 @@ def get_user_ids():
     return arw.to_json(results)
 
 
-@users_api_bp.route('/user/<string:user_id>', methods=['GET'])
+@users_api_bp.route('/user/<int:user_id>', methods=['GET'])
 def show_user_info(user_id):
     '''
     Retrieve one user object
@@ -61,7 +61,7 @@ def show_user_info(user_id):
     return arw.to_json(results)
 
 
-@users_api_bp.route('user/<string:user_id>', methods=['PUT'])
+@users_api_bp.route('user/<int:user_id>', methods=['PUT'])
 def modify_user(user_id):
     '''
     Update one user object in database

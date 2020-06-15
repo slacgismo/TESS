@@ -15,7 +15,7 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 meter_interval_api_bp = Blueprint('meter_interval_api_bp', __name__)
 
 
-@meter_interval_api_bp.route('/meterinterval/<string:meter_interval_id>', methods=['GET'])
+@meter_interval_api_bp.route('/meter_interval/<int:meter_interval_id>', methods=['GET'])
 def retrieve_meter_interval_info(meter_interval_id):
     '''
     Retrieves one meter interval as json object
@@ -39,7 +39,7 @@ def retrieve_meter_interval_info(meter_interval_id):
     return arw.to_json(results)
 
 
-@meter_interval_api_bp.route('/meterinterval/<string:meter_interval_id>', methods=['PUT'])
+@meter_interval_api_bp.route('/meter_interval/<int:meter_interval_id>', methods=['PUT'])
 def update_meter_interval(meter_interval_id):
     '''
     Updates meter interval in database
@@ -73,7 +73,7 @@ def update_meter_interval(meter_interval_id):
     return arw.to_json(results)
 
 
-@meter_interval_api_bp.route('/meterinterval', methods=['POST'])
+@meter_interval_api_bp.route('/meter_interval', methods=['POST'])
 def add_meter_interval():
     '''
     Adds new meter interval to database

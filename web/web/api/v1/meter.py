@@ -49,13 +49,13 @@ def get_meter_ids():
     return arw.to_json(results)
 
 
-@meter_api_bp.route('/meter/<string:meter_id>', methods=['GET'])
+@meter_api_bp.route('/meter/<int:meter_id>', methods=['GET'])
 def show_meter_info(meter_id):
     """
     Returns meter information as json object
     """
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema(exclude=['service_location'])
+    meter_schema = MeterSchema()
 
     try:  
         meter = Meter.query.filter_by(meter_id=meter_id).one()
@@ -110,11 +110,11 @@ def get_meter_schema():
     return jsonify(schema_data)
 
 
-@meter_api_bp.route('/meter/<string:meter_id>', methods=['PUT'])
+@meter_api_bp.route('/meter/<int:meter_id>', methods=['PUT'])
 def update_meter(meter_id):
     '''Updates meter in database'''
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema()
+    meter_schema = MeterSchema(exclude=('created_at',))
     modified_meter = request.get_json()
 
     try:
