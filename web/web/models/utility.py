@@ -30,9 +30,11 @@ class Utility(Model):
     def __repr__(self):
         return f'<Utility utility_id={self.utility_id} name={self.name}>'
 
+
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################
+
 
 class UtilitySchema(SQLAlchemyAutoSchema):
     class Meta:

@@ -116,16 +116,10 @@ def add_service_location():
     Add new service location object to database
     '''
     arw = ApiResponseWrapper()
-    service_location_schema = ServiceLocationSchema(
-        exclude=['created_at', 'updated_at'])
+    service_location_schema = ServiceLocationSchema(exclude=['service_location_id', 'created_at', 'updated_at'])
     new_service_location = request.get_json()
 
     try:
-        does_service_location_exist = ServiceLocation.query.filter_by(service_location_id=new_service_location['alternate_service_location_id']).count() > 0
-
-        if does_service_location_exist:
-            raise IntegrityError('Service location with alternate service location number already exists', None, None)
-        
         new_service_location = service_location_schema.load(new_service_location, session=db.session)
         db.session.add(new_service_location)
         db.session.commit()
@@ -139,5 +133,5 @@ def add_service_location():
         arw.add_errors(ve.messages)
         return arw.to_json(None, 400)
 
-    results = ServiceLocationSchema().dump(new_service_location, many=True)
+    results = ServiceLocationSchema().dump(new_service_location)
     return arw.to_json(results)

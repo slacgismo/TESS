@@ -55,6 +55,7 @@ class Channel(Model):
 ### MARSHMALLOW SCHEMA ###
 ##########################
 
+
 class ChannelSchema(SQLAlchemyAutoSchema):
     channel_type = fields.Method('get_channel_type', deserialize='load_channel_type')
     

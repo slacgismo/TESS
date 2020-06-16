@@ -80,25 +80,17 @@ def add_meter_interval():
     '''
 
     arw = ApiResponseWrapper()
-    meter_interval_schema = MeterIntervalSchema()
+    meter_interval_schema = MeterIntervalSchema(exclude=['meter_interval_id'])
     meter_interval_json = request.get_json()
             
     try:
-        meter_interval_id = meter_interval_json["meter_interval_id"] if "meter_interval_id" in meter_interval_json else None
-        does_meter_interval_exist = MeterInterval.query.filter_by(
-            meter_interval_id=meter_interval_id
-        ).count() > 0
-
-        if does_meter_interval_exist:
-            raise IntegrityError("Meter interval already exists", None, None)
-
         new_meter_interval = meter_interval_schema.load(meter_interval_json, session=db.session)
         db.session.add(new_meter_interval)
         db.session.commit()
 
     except IntegrityError:
         db.session.rollback()
-        arw.add_errors({"new_meter_interval_id": "The given meter interval already exists."})
+        arw.add_errors({'new_meter_interval_id': 'The given meter interval already exists.'})
         return arw.to_json(None, 400)
     
     except ValidationError as e:

@@ -24,11 +24,13 @@ class Pv(Model):
                     nullable=False)
 
     home_hub_id = Column(db.Integer, 
-                         db.ForeignKey('home_hubs.home_hub_id'), 
+                         db.ForeignKey('home_hubs.home_hub_id'),
+                         unique=True, 
                          nullable=False)
 
     meter_id = Column(db.Integer, 
-                      db.ForeignKey('meters.meter_id'), 
+                      db.ForeignKey('meters.meter_id'),
+                      unique=True,
                       nullable=False)
 
     q_rated = Column(db.Float, 
@@ -50,20 +52,23 @@ class Pv(Model):
                         nullable=False, 
                         default=datetime.utcnow, 
                         onupdate=datetime.utcnow)
-
-    # Relationships
-    home_hub = relationship('HomeHub',
-                            backref=db.backref('pvs'))
-    
-    meter = relationship('Meter',
-                         backref=db.backref('meters'))
-
     def __repr__(self):
         return f'<Pv pv_id={self.pv_id} home_hub_id={self.home_hub_id} created_at={self.created_at}>'
+
+# Relationships
+HomeHub.pv = relationship('Pv',
+                           backref=db.backref('home_hub'),
+                           uselist=False)
+    
+Meter.pv = relationship('Pv',
+                         backref=db.backref('meter'),
+                         uselist=False)
+
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################
+
 
 class PvSchema(SQLAlchemyAutoSchema):
     meter = fields.Nested(MeterSchema(),

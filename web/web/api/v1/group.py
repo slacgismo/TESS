@@ -108,15 +108,6 @@ def add_group():
     new_group = request.get_json()
 
     try:
-        user_id = new_group['user_id'] if 'user_id' in new_group else None
-        role_id = new_group['role_id'] if 'role_id' in new_group else None
-        does_group_exist = Group.query.filter_by(user_id=user_id,
-                                                 role_id=role_id).count() > 0
-
-        if does_group_exist:
-            raise IntegrityError(
-                'Group already exists with given role and user', None, None)
-
         new_group = group_schema.load(new_group, session=db.session)
         db.session.add(new_group)
         db.session.commit()

@@ -44,9 +44,9 @@ def get_pvs():
 
 @pv_api_bp.route('/pv/<int:pv_id>', methods=['GET'])
 def retrieve_pv_info(pv_id):
-    """
+    '''
     Returns meter information as json object
-    """
+    '''
     arw = ApiResponseWrapper()
     pv_schema = PvSchema(exclude=('meter_id',))
 
@@ -124,18 +124,10 @@ def update_pv(pv_id):
 def add_pv():
     '''Adds new pv to database'''
     arw = ApiResponseWrapper()
-    pv_schema = PvSchema()
+    pv_schema = PvSchema(exclude=['pv_id', 'created_at', 'updated_at'])
     pv_json = request.get_json()
             
     try:
-        pv_id = pv_json['pv_id'] if 'pv_id' in pv_json else None
-        does_pv_exist = Pv.query.filter_by(
-            pv_id=pv_id
-        ).count() > 0
-
-        if does_pv_exist:
-            raise IntegrityError('Pv already exists', None, None)
-
         new_pv = pv_schema.load(pv_json, session=db.session)
         db.session.add(new_pv)
         db.session.commit()

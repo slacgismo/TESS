@@ -39,6 +39,10 @@ class Role(Model):
                           unique=True, 
                           nullable=False)
 
+    def __repr__(self):
+        return f'<Role role_id={self.role_id} name={self.name}>'
+
+
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################

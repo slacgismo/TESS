@@ -5,6 +5,7 @@ from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.models.address import Address, AddressSchema
+from web.models.utility import Utility
 from web.models.role import Role, RoleType
 from web.database import (
     db,
@@ -41,6 +42,7 @@ class User(UserMixin, Model):
 
     address_id = Column(db.Integer,
                         db.ForeignKey('addresses.address_id'),
+                        unique=True,
                         nullable=False)
 
     utility_id = Column(db.Integer,
@@ -64,14 +66,6 @@ class User(UserMixin, Model):
                         onupdate=datetime.utcnow,
                         nullable=False)
 
-    # Relationships
-    utility = relationship('Utility',
-                            backref=db.backref('users'))
-
-    address = relationship('Address',
-                            backref=db.backref('users'),
-                            uselist=False)
-
     # Methods
     def get_roles(self):
         '''Returns list of user role objects'''
@@ -88,6 +82,17 @@ class User(UserMixin, Model):
             if group.role.name.value == role_name:
                 return True
         return False
+
+    def __repr__(self):
+        return f'<User user_id={self.id} email_id={self.email}>'
+
+# Relationships
+Utility.users = relationship('User',
+                            backref=db.backref('utility'))
+
+Address.user = relationship('User',
+                            backref=db.backref('address',
+                            uselist=False))
 
 
 ##########################

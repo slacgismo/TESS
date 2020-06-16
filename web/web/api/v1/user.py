@@ -108,22 +108,15 @@ def add_user():
     Add new user object to database
     '''
     arw = ApiResponseWrapper()
-    user_schema = UserSchema()
+    user_schema = UserSchema(exclude=['user_id', 'created_at', 'updated_at'])
     new_user = request.get_json()
 
     try:
-        does_user_exist = User.query.filter_by(
-            email=new_user['email']).count() > 0
-
-        if does_user_exist:
-            raise IntegrityError('Email already in use', None, None)
-
         new_user = user_schema.load(new_user, session=db.session)
-
         db.session.add(new_user)
         db.session.commit()
 
-    except IntegrityError as ie:
+    except IntegrityError:
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)

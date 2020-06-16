@@ -19,7 +19,6 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 meter_api_bp = Blueprint('meter_api_bp', __name__)
 
-
 @meter_api_bp.route('/meters/', methods=['GET'])
 def get_meter_ids():
     '''
@@ -145,22 +144,10 @@ def update_meter(meter_id):
 def add_meter():
     '''Add new meter to database'''
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema()
+    meter_schema = MeterSchema(exclude=['meter_id', 'created_at', 'updated_at'])
     meter_json = request.get_json()
             
     try:
-        meter_id = meter_json['meter_id'] if 'meter_id' in meter_json else None
-        service_id = meter_json['service_location_id'] if 'service_location_id' in meter_json else None
-        utility_id = meter_json['utility_id'] if 'utility_id' in meter_json else None
-        does_meter_exist = Meter.query.filter_by(
-            meter_id=meter_id, 
-            service_location_id=service_id, 
-            utility_id=utility_id
-        ).count() > 0
-
-        if does_meter_exist:
-            raise IntegrityError('Meter already exists', None, None)
-
         new_meter = meter_schema.load(meter_json, session=db.session)
         db.session.add(new_meter)
         db.session.commit()

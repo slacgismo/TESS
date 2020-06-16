@@ -27,6 +27,7 @@ class ServiceLocation(Model):
 
     address_id = Column(db.Integer,
                         db.ForeignKey('addresses.address_id'),
+                        unique=True,
                         nullable=False)
 
     map_location = Column(db.String(64),
@@ -48,14 +49,14 @@ class ServiceLocation(Model):
                         default=datetime.utcnow,
                         onupdate=datetime.utcnow,
                         nullable=False)
-
-    #one-to-one service location per address
-    address = relationship('Address',
-                           backref=db.backref('service_locations'),
-                           uselist=False)
-
+    
     def __repr__(self):
         return f'<ServiceLocation service_location_id={self.service_location_id} address_id={self.address_id}>'
+
+# Relationships
+Address.service_location = relationship('ServiceLocation',
+                                        backref=db.backref('address'),
+                                        uselist=False)
 
 
 ##########################

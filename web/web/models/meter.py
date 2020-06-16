@@ -53,7 +53,7 @@ class Meter(Model):
                                  primary_key=True, 
                                  nullable=False)
     
-    home_hub_id= Column(db.Integer, 
+    home_hub_id = Column(db.Integer, 
                         db.ForeignKey('home_hubs.home_hub_id'), 
                         nullable=False)
 
@@ -85,19 +85,6 @@ class Meter(Model):
                         default=datetime.utcnow,
                         onupdate=datetime.utcnow,
                         nullable=False)
-
-    # Relationships
-    service_location = relationship('ServiceLocation',
-                                    backref=db.backref('meters'))
-
-    utility = relationship('Utility',
-                           backref=db.backref('meters'))
-
-    channels = relationship('Channel',
-                            backref=db.backref('meters'))
-
-    meter_intervals = relationship('MeterInterval',
-                                   backref=db.backref('meters'))
 
     # Methods
     def get_interval_count(self, start, end):
@@ -146,20 +133,24 @@ class Meter(Model):
         
         return intervals_list
 
-    @classmethod
-    def get_pv_meters(cls):
-        '''Returns all meter that are pvs'''
-
-        pv_meters = cls.query.\
-                        join(cls.channels). \
-                        filter(Channel.channel_type == 'R'). \
-                        group_by(cls). \
-                        all()
-        
-        return pv_meters
-
     def __repr__(self):
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
+
+# Relationships
+
+    # Relationships declared on Meter
+    channels = relationship('Channel',
+                            backref=db.backref('meter'))
+    
+    meter_intervals = relationship('MeterInterval',
+                                   backref=db.backref('meter'))
+
+# Relationships declared on other tables
+ServiceLocation.meters = relationship('Meter',
+                                     backref=db.backref('service_location'))
+
+Utility.meters = relationship('Meter',
+                              backref=db.backref('utility'))
 
 
 ##########################

@@ -22,7 +22,9 @@ class HomeHub(Model):
 
     service_location_id = Column(db.Integer, 
                                  db.ForeignKey('service_locations.service_location_id'), 
+                                 unique=True,
                                  nullable=False)
+                                 
     is_active = Column(db.Boolean(), 
                        default=False, 
                        nullable=False)
@@ -39,12 +41,14 @@ class HomeHub(Model):
                         default=datetime.utcnow,
                         onupdate=datetime.utcnow,
                         nullable=False)
-
-    # Relationships
-    service_location = relationship('ServiceLocation', backref=db.backref('home_hubs'), uselist=False)
-
     def __repr__(self):
         return f'<HomeHub home_hub_id={self.home_hub_id} service_location_id={self.service_location_id} created_at={self.created_at}>'
+
+# Relationships
+ServiceLocation.home_hub = relationship('HomeHub',
+                                        backref=db.backref('service_location'),
+                                        uselist=False)
+
 
 ##########################
 ### MARSHMALLOW SCHEMA ###

@@ -56,10 +56,6 @@ class MeterInterval(Model):
     is_bid = Column(db.Boolean(), 
                     default=False, 
                     nullable=False)
-    
-    # many-to-one meter intervals per rate
-    rate = relationship('Rate', 
-                        backref=db.backref('meter_intervals'))
 
     @staticmethod
     def get_interval_coverage(interval_id_list):
@@ -77,9 +73,15 @@ class MeterInterval(Model):
     def __repr__(self):
         return f'<MeterInterval meter_interval_id={self.meter_interval_id} meter_id={self.meter_id} end_time={self.end_time} e={self.e}>'
 
+# Relationships
+Rate.meter_intervals = relationship('MeterInterval', 
+                                    backref=db.backref('rate'))
+
+
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################
+
 
 class MeterIntervalSchema(SQLAlchemyAutoSchema):
     class Meta:
