@@ -20,25 +20,29 @@ class Login(UserMixin, Model):
                       primary_key=True,
                       autoincrement=True,
                       nullable=False)
+
     user_id = Column(db.Integer,
                      db.ForeignKey('users.id'),
                      ondelete='CASCADE',
+                     unique=True,
                      nullable=False)
 
-    username = Column(db.String(50), unique=True, nullable=False)
+    username = Column(db.String(50),
+                      unique=True, 
+                      nullable=False)
+
     password_hash = db.Column(db.String(128))
 
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP,
-                        nullable=False,
+    created_at = Column(TIMESTAMP, 
                         default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+                        nullable=False)
 
-    # Relationships
-    user = relationship('User',
-                        uselist=False,
-                        foreign_keys=user_id,
-                        backref=db.backref('login'))
+    updated_at = Column(TIMESTAMP,
+                        default=datetime.utcnow,
+                        onupdate=datetime.utcnow,
+                        nullable=False)
+    def __repr__(self):
+        return f'<Login login_id={self.login_id} user_id={self.user_id} updated_at={self.updated_at}>'
 
     @property
     def password(self):
@@ -50,3 +54,9 @@ class Login(UserMixin, Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+# Relationships
+User.login = relationship('Login',
+                          backref=db.backref('user'),
+                          uselist=False)
+
