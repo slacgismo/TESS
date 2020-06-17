@@ -5,6 +5,7 @@ from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.models.address import Address, AddressSchema
+from web.models.utility import Utility
 from web.models.role import Role, RoleType
 from web.database import (
     db,
@@ -26,28 +27,44 @@ class User(UserMixin, Model):
                 nullable=False)
 
     # User email information
-    email = Column(db.String(255), nullable=False, unique=True)
+    email = Column(db.String(255),
+                   unique=True,
+                   nullable=False)
+
     email_confirmed_at = Column(TIMESTAMP)
 
     # User information
-    first_name = Column(db.String(64), nullable=False)
-    last_name = Column(db.String(64), nullable=False)
-    address_id = Column(db.Integer, db.ForeignKey('addresses.address_id'))
+    first_name = Column(db.String(64),
+                        nullable=False)
+
+    last_name = Column(db.String(64),
+                       nullable=False)
+
+    address_id = Column(db.Integer,
+                        db.ForeignKey('addresses.address_id'),
+                        unique=True,
+                        nullable=False)
+
     utility_id = Column(db.Integer,
                         db.ForeignKey('utilities.utility_id'),
                         nullable=False)
 
-    is_active = Column(db.Boolean(), nullable=False)
-    is_archived = Column(db.Boolean(), nullable=False)
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-    updated_at = Column(TIMESTAMP,
-                        nullable=False,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+    is_active = Column(db.Boolean(),
+                       default=False,
+                       nullable=False)
 
-    # Relationships
-    utility = relationship('Utility', backref=db.backref('groups'))
-    address = relationship('Address', backref=db.backref('addresses'))
+    is_archived = Column(db.Boolean(), 
+                         default=False, 
+                         nullable=False)
+
+    created_at = Column(TIMESTAMP,
+                        default=datetime.utcnow,
+                        nullable=False)
+
+    updated_at = Column(TIMESTAMP,
+                        default=datetime.utcnow,
+                        onupdate=datetime.utcnow,
+                        nullable=False)
 
     # Methods
     def get_roles(self):
@@ -66,6 +83,17 @@ class User(UserMixin, Model):
                 return True
         return False
 
+    def __repr__(self):
+        return f'<User user_id={self.id} email_id={self.email}>'
+
+# Relationships
+Utility.users = relationship('User',
+                            backref=db.backref('utility'))
+
+Address.user = relationship('User',
+                            backref=db.backref('address',
+                            uselist=False))
+
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
@@ -73,10 +101,16 @@ class User(UserMixin, Model):
 
 
 class UserSchema(SQLAlchemyAutoSchema):
-    roles = fields.Method('get_roles', dump_only=True)
-    postal_code = fields.Method('get_postal_code', dump_only=True)
-    address = fields.Nested(AddressSchema(), load_only=True)
+    roles = fields.Method('get_roles',
+                          dump_only=True)
 
+    postal_code = fields.Method('get_postal_code',
+                                dump_only=True)
+
+    address = fields.Nested(AddressSchema(),
+                            load_only=True)
+
+# Marshmallow methods
     def get_roles(self, obj):
         roles = obj.get_roles()
         result_roles = []

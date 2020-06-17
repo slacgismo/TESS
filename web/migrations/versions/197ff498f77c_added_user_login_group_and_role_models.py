@@ -25,8 +25,8 @@ def upgrade():
         sa.Column('first_name', sa.String(length=64), nullable=False),
         sa.Column('last_name', sa.String(length=64), nullable=False),
         sa.Column('address_id', sa.Integer(), nullable=True),
-        sa.Column('is_active', sa.Boolean(), nullable=False),
-        sa.Column('is_archived', sa.Boolean(), nullable=False),
+        sa.Column('is_active', sa.Boolean(), default=False, nullable=False),
+        sa.Column('is_archived', sa.Boolean(), default=False, nullable=False),
         sa.Column('created_at', sa.TIMESTAMP(), nullable=False),
         sa.Column('updated_at', sa.TIMESTAMP(), nullable=False),
         sa.ForeignKeyConstraint(
