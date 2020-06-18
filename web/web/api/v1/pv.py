@@ -18,6 +18,7 @@ def get_pvs():
     '''
     Returns all pv objects
     '''
+
     arw = ApiResponseWrapper()
 
     fields_to_filter_on = request.args.getlist('fields')
@@ -44,6 +45,7 @@ def retrieve_pv_info(pv_id):
     '''
     Returns meter information as json object
     '''
+
     arw = ApiResponseWrapper()
     pv_schema = PvSchema(exclude=('meter_id',))
 
@@ -88,7 +90,10 @@ def retrieve_pv_info(pv_id):
 
 @pv_api_bp.route('/pv/<int:pv_id>', methods=['PUT'])
 def update_pv(pv_id):
-    '''Updates pv in database'''
+    '''
+    Updates pv in database
+    '''
+
     arw = ApiResponseWrapper()
     pv_schema = PvSchema(exclude=['created_at'])
     modified_pv = request.get_json()
@@ -101,7 +106,7 @@ def update_pv(pv_id):
     except (MultipleResultsFound,NoResultFound):
         arw.add_errors('No result found or multiple results found')
     
-    except IntegrityError as ie:
+    except IntegrityError:
         db.session.rollback()
         arw.add_errors('Integrity error')
     
@@ -119,7 +124,10 @@ def update_pv(pv_id):
 
 @pv_api_bp.route('/pv', methods=['POST'])
 def add_pv():
-    '''Adds new pv to database'''
+    '''
+    Adds new pv to database
+    '''
+
     arw = ApiResponseWrapper()
     pv_schema = PvSchema(exclude=['pv_id', 'created_at', 'updated_at'])
     pv_json = request.get_json()

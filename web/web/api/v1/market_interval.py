@@ -22,7 +22,7 @@ def show_market_interval_info(market_interval_id):
     meter_schema = MarketIntervalSchema()
 
     try:  
-        market_interval = MarketInterval.query.filter_by(meter_id=market_interval_id).one()
+        market_interval = MarketInterval.query.filter_by(market_interval_id=market_interval_id).one()
     
     except MultipleResultsFound:
         arw.add_errors({market_interval_id: 'Multiple results found for the given market interval.'})
@@ -42,7 +42,7 @@ def update_market_interval(market_interval_id):
     '''
 
     arw = ApiResponseWrapper()
-    market_interval_schema = MarketIntervalSchema(exclude=['created_at'])
+    market_interval_schema = MarketIntervalSchema()
     modified_market_interval = request.get_json()
 
     try:

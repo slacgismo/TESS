@@ -84,15 +84,15 @@ class User(UserMixin, Model):
         return False
 
     def __repr__(self):
-        return f'<User user_id={self.id} email_id={self.email}>'
+        return f'<User id={self.id} email_id={self.email}>'
 
 # Relationships
 Utility.users = relationship('User',
                             backref=db.backref('utility'))
 
 Address.user = relationship('User',
-                            backref=db.backref('address',
-                            uselist=False))
+                            backref=db.backref('address'),
+                            uselist=False)
 
 
 ##########################

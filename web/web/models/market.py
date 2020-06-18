@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from sqlalchemy.types import TIMESTAMP
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.database import (
     db,
     Model,
@@ -23,20 +24,21 @@ class Market(Model):
     ts = Column(db.Integer,
                 nullable=False)
 
-    p_max=Column(db.Float,
+    p_max = Column(db.Float,
                  nullable=False)
     
-    is_active=Column(db.Boolean,
+    is_active = Column(db.Boolean,
                      default=False,
                      nullable=False)
 
-    is_archived=Column(db.Boolean,
+    is_archived = Column(db.Boolean,
                        default=False,
                        nullable=False)
 
     created_at = Column(TIMESTAMP, 
                         default=datetime.utcnow,
                         nullable=False)
+
     updated_at = Column(TIMESTAMP,
                         default=datetime.utcnow,
                         onupdate=datetime.utcnow,
@@ -44,3 +46,13 @@ class Market(Model):
 
     def __repr__(self):
         return f'<Market market_id={self.market_id} p_max={self.p_max} created_at={self.created_at}>'
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
+
+class MarketSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Market
+        load_instance = True
+        include_fk = True

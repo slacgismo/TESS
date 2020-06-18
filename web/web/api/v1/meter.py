@@ -85,7 +85,6 @@ def show_meter_info(meter_id):
 
     # PENDING PROPS TO ADD TO THE RESPONSE
     # 'authorization_uid': 'NOT YET CREATED', 
-    # 'user_id': 'NOT YET CREATED',  
     # 'exports': 'NOT YET CREATED'
 
     meter_schema.context['start'] = interval_count_start
@@ -123,7 +122,7 @@ def update_meter(meter_id):
     except (MultipleResultsFound,NoResultFound):
         arw.add_errors('No result found or multiple results found')
     
-    except IntegrityError as ie:
+    except IntegrityError:
         db.session.rollback()
         arw.add_errors('Integrity error')
     
@@ -144,7 +143,7 @@ def add_meter():
     '''
     Adds new meter to database
     '''
-    
+
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema(exclude=['meter_id', 'created_at', 'updated_at'])
     meter_json = request.get_json()

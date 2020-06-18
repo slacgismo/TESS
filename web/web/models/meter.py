@@ -179,6 +179,8 @@ class MeterSchema(SQLAlchemyAutoSchema):
     interval_coverage = fields.Method('get_interval_coverage', 
                                       dump_only=True)
 
+    user_id = fields.Method('get_user_id', 
+                             dump_only=True)
     #Marshmallow methods
     def get_postal_code(self, obj):
         return obj.service_location.address.postal_code
@@ -209,6 +211,10 @@ class MeterSchema(SQLAlchemyAutoSchema):
     def get_interval_coverage(self, obj):
         coverage = self.context['coverage'] if 'coverage' in self.context else []
         return MeterInterval.get_interval_coverage(coverage)
+
+    def get_user_id(self, obj):
+        user = obj.service_location.address.user
+        return user.id
 
     class Meta:
         model = Meter

@@ -55,7 +55,7 @@ def update_meter_interval(meter_interval_id):
     except (MultipleResultsFound,NoResultFound):
         arw.add_errors('No result found or multiple results found')
     
-    except IntegrityError as ie:
+    except IntegrityError:
         db.session.rollback()
         arw.add_errors('Integrity error')
     

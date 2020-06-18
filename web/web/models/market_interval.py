@@ -1,4 +1,5 @@
 from sqlalchemy.types import TIMESTAMP
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.database import (
     db,
     Model,
@@ -47,3 +48,14 @@ class MarketInterval(Model):
 
     def __repr__(self):
         return f'<MarketInterval market_interval_id={self.market_interval_id} market_id={self.market_id}>'
+    
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
+
+
+class MarketIntervalSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = MarketInterval
+        load_instance = True
+        include_fk = True
