@@ -6,10 +6,6 @@ from datetime import datetime
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
 from web.models.user import User, UserSchema
-from web.models.address import Address
-from web.models.utility import Utility
-from web.models.group import Group
-from web.models.role import Role, RoleType
 
 users_api_bp = Blueprint('users_api_bp', __name__)
 
@@ -17,7 +13,7 @@ users_api_bp = Blueprint('users_api_bp', __name__)
 @users_api_bp.route('/users', methods=['GET'])
 def get_user_ids():
     '''
-    Retrieve all user objects
+    Retrieves all user objects
     '''
     arw = ApiResponseWrapper()
 
@@ -41,7 +37,7 @@ def get_user_ids():
 @users_api_bp.route('/user/<int:user_id>', methods=['GET'])
 def show_user_info(user_id):
     '''
-    Retrieve one user object
+    Retrieves one user object
     '''
     arw = ApiResponseWrapper()
     user_schema = UserSchema(exclude=['address_id'])
@@ -66,7 +62,7 @@ def show_user_info(user_id):
 @users_api_bp.route('user/<int:user_id>', methods=['PUT'])
 def modify_user(user_id):
     '''
-    Update one user object in database
+    Updates one user object in database
     '''
     arw = ApiResponseWrapper()
     user_schema = UserSchema(
@@ -105,7 +101,7 @@ def modify_user(user_id):
 @users_api_bp.route('/user', methods=['POST'])
 def add_user():
     '''
-    Add new user object to database
+    Adds new user object to database
     '''
     arw = ApiResponseWrapper()
     user_schema = UserSchema(exclude=['user_id', 'created_at', 'updated_at'])

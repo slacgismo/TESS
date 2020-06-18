@@ -74,7 +74,7 @@ test_data = [
 @alerts_api_bp.route('/alerts', methods=['GET'])
 def get_alerts():
     """
-    Retrieve all alert objects
+    Retrieves all alert objects
     """
     arw = ApiResponseWrapper()
 

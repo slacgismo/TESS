@@ -12,8 +12,9 @@ home_hub_api_bp = Blueprint('home_hub_api_bp', __name__)
 @home_hub_api_bp.route('/home_hub', methods=['POST'])
 def add_home_hub():
     '''
-    Add new home hub object to database
+    Adds new home hub object to database
     '''
+    
     arw = ApiResponseWrapper()
     home_hub_schema = HomeHubSchema(
         exclude=['home_hub_id', 'created_at', 'updated_at'])

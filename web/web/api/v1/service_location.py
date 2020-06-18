@@ -12,7 +12,7 @@ service_location_api_bp = Blueprint('service_location_api_bp', __name__)
 @service_location_api_bp.route('/service_locations', methods=['GET'])
 def get_service_location_ids():
     '''
-    Retrieve all service location objects
+    Retrieves all service location objects
     '''
     arw = ApiResponseWrapper()
 
@@ -36,7 +36,7 @@ def get_service_location_ids():
 @service_location_api_bp.route('/service_location/<int:service_location_id>', methods=['GET'])
 def show_service_location_info(service_location_id):
     '''
-    Retrieve one service location object
+    Retrieves one service location object
     '''
     arw = ApiResponseWrapper()
     service_location_schema = ServiceLocationSchema(exclude=['address_id'])
@@ -67,7 +67,7 @@ def show_service_location_info(service_location_id):
 @service_location_api_bp.route('service_location/<int:service_location_id>', methods=['PUT'])
 def modify_service_location(service_location_id):
     '''
-    Update one service location object in database
+    Updates one service location object in database
     '''
     arw = ApiResponseWrapper()
     service_location_schema = ServiceLocationSchema(exclude=['created_at'])
@@ -113,7 +113,7 @@ def modify_service_location(service_location_id):
 @service_location_api_bp.route('/service_location', methods=['POST'])
 def add_service_location():
     '''
-    Add new service location object to database
+    Adds new service location object to database
     '''
     arw = ApiResponseWrapper()
     service_location_schema = ServiceLocationSchema(exclude=['service_location_id', 'created_at', 'updated_at'])

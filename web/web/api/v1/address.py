@@ -12,8 +12,9 @@ address_api_bp = Blueprint('address_api_bp', __name__)
 @address_api_bp.route('/address', methods=['POST'])
 def add_address():
     '''
-    Add new address object to database
+    Adds new address object to database
     '''
+
     arw = ApiResponseWrapper()
     address_schema = AddressSchema(exclude=['address_id', 'created_at', 'updated_at'])
     new_address = request.get_json()

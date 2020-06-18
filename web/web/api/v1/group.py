@@ -13,8 +13,9 @@ group_api_bp = Blueprint('group_api_bp', __name__)
 @group_api_bp.route('/groups', methods=['GET'])
 def get_group_ids():
     '''
-    Retrieve all group objects
+    Retrieves all group objects
     '''
+
     arw = ApiResponseWrapper()
 
     fields_to_filter_on = request.args.getlist('fields')
@@ -37,8 +38,9 @@ def get_group_ids():
 @group_api_bp.route('/group/<int:group_id>', methods=['GET'])
 def show_group_info(group_id):
     '''
-    Retrieve one group object
+    Retrieves one group object
     '''
+
     arw = ApiResponseWrapper()
     group_schema = GroupSchema()
 
@@ -62,8 +64,9 @@ def show_group_info(group_id):
 @group_api_bp.route('/group/<int:group_id>', methods=['PUT'])
 def modify_group(group_id):
     '''
-    Update one group object in database
+    Updates one group object in database
     '''
+
     arw = ApiResponseWrapper()
     group_schema = GroupSchema(exclude=['created_at', 'user', 'role'])
     modified_group = request.get_json()
@@ -100,8 +103,9 @@ def modify_group(group_id):
 @group_api_bp.route('/group', methods=['POST'])
 def add_group():
     '''
-    Add new group object to database
+    Adds new group object to database
     '''
+
     arw = ApiResponseWrapper()
     group_schema = GroupSchema(
         exclude=['created_at', 'user', 'role', 'group_id', 'updated_at'])

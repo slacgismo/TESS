@@ -2,8 +2,6 @@ import dateutil.parser as parser
 
 from web.database import db
 from marshmallow import ValidationError
-from web.models.home_hub import HomeHub
-from web.models.rate import Rate
 from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.meter_interval import MeterInterval, MeterIntervalSchema

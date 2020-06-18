@@ -2,17 +2,10 @@ import dateutil.parser as parser
 
 from web.database import db
 from marshmallow import ValidationError
-from web.models.utility import Utility
-from web.models.address import Address
-from web.models.channel import Channel
-from web.models.rate import Rate
 from web.api.v1.schema.meter import schema_data
 from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.meter import Meter, MeterSchema, MeterType
-from web.models.service_location import ServiceLocation
-from web.models.meter_interval import MeterInterval
-from web.models.home_hub import HomeHub
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
@@ -22,10 +15,11 @@ meter_api_bp = Blueprint('meter_api_bp', __name__)
 @meter_api_bp.route('/meters/', methods=['GET'])
 def get_meter_ids():
     '''
-    Return all meter objects
+    Returns all meter objects
     TODO: support query string filtering on props like is_active/is_archived
     TODO: decorator or Mixin for fields_to_filter_on!!!
     '''
+    
     arw = ApiResponseWrapper()
 
     # get the list fields we want on the response
@@ -53,6 +47,7 @@ def show_meter_info(meter_id):
     '''
     Returns meter information as json object
     '''
+
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema()
 
@@ -106,12 +101,16 @@ def get_meter_schema():
     '''
     Returns meter schema as json object
     '''
+
     return jsonify(schema_data)
 
 
 @meter_api_bp.route('/meter/<int:meter_id>', methods=['PUT'])
 def update_meter(meter_id):
-    '''Updates meter in database'''
+    '''
+    Updates meter in database
+    '''
+
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema(exclude=['created_at'])
     modified_meter = request.get_json()
@@ -142,7 +141,10 @@ def update_meter(meter_id):
 
 @meter_api_bp.route('/meter', methods=['POST'])
 def add_meter():
-    '''Add new meter to database'''
+    '''
+    Adds new meter to database
+    '''
+    
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema(exclude=['meter_id', 'created_at', 'updated_at'])
     meter_json = request.get_json()

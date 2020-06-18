@@ -2,12 +2,9 @@ import dateutil.parser as parser
 
 from web.database import db
 from marshmallow import ValidationError
-from web.models.home_hub import HomeHub
-from web.models.rate import Rate
 from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.pv import Pv, PvSchema
-from web.models.meter import Meter
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -19,7 +16,7 @@ pv_api_bp = Blueprint('pv_api_bp', __name__)
 @pv_api_bp.route('/pvs/', methods=['GET'])
 def get_pvs():
     '''
-    Return all pv objects
+    Returns all pv objects
     '''
     arw = ApiResponseWrapper()
 

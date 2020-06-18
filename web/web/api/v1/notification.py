@@ -96,7 +96,7 @@ test_data = [
 @notifications_api_bp.route('/notifications', methods=['GET'])
 def get_notifications():
     """
-    Retrieve all notification objects
+    Retrieves all notification objects
     """
     arw = ApiResponseWrapper()
 

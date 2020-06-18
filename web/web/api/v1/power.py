@@ -13,7 +13,7 @@ def getRandomNumber():
 @power_api_bp.route('/power/system_load/', methods=['GET'])
 def get_power_system_load():
     """
-    Retrieve Data for the System Load Chart
+    Retrieves Data for the System Load Chart
     """
     arw = ApiResponseWrapper()
 
