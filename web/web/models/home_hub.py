@@ -52,10 +52,8 @@ class HomeHub(Model):
 ServiceLocation.home_hub = relationship('HomeHub',
                                         backref=db.backref('service_location'),
                                         uselist=False)
-
 Market.home_hubs = relationship('HomeHub',
                                  backref=db.backref('market'))
-
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################

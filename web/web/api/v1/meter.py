@@ -121,14 +121,14 @@ def update_meter(meter_id):
 
     except (MultipleResultsFound,NoResultFound):
         arw.add_errors('No result found or multiple results found')
-    
-    except IntegrityError:
-        db.session.rollback()
-        arw.add_errors('Integrity error')
-    
+
     except ValidationError as ve:
         db.session.rollback()
         arw.add_errors(ve.messages)
+
+    except IntegrityError:
+        db.session.rollback()
+        arw.add_errors('Integrity error')
 
     if arw.has_errors():
         return arw.to_json(None, 400)
@@ -153,14 +153,15 @@ def add_meter():
         db.session.add(new_meter)
         db.session.commit()
 
+    except ValidationError as e:
+        db.session.rollback()
+        arw.add_errors(e.messages)
+        return arw.to_json(None, 400)
+
     except IntegrityError:
         db.session.rollback()
         arw.add_errors({'meter_id': 'The given meter already exists.'})
         return arw.to_json(None, 400)
-    
-    except ValidationError as e:
-        arw.add_errors(e.messages)
-        return arw.to_json(None, 400)
-    
+
     result = MeterSchema().dump(new_meter)
     return arw.to_json(result)

@@ -85,14 +85,14 @@ def modify_group(group_id):
         arw.add_errors({group_id: 'No results found for the given group id.'})
         return arw.to_json(None, 400)
 
-    except IntegrityError:
-        db.session.rollback()
-        arw.add_errors('Conflict while loading data')
-        return arw.to_json(None, 400)
-
     except ValidationError as ve:
         db.session.rollback()
         arw.add_errors(ve.messages)
+        return arw.to_json(None, 400)
+    
+    except IntegrityError:
+        db.session.rollback()
+        arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
 
     results = group_schema.dump(modified_group)
@@ -116,13 +116,14 @@ def add_group():
         db.session.add(new_group)
         db.session.commit()
 
+    except ValidationError as ve:
+        db.session.rollback()
+        arw.add_errors(ve.messages)
+        return arw.to_json(None, 400)
+
     except IntegrityError:
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
-        return arw.to_json(None, 400)
-
-    except ValidationError as ve:
-        arw.add_errors(ve.messages)
         return arw.to_json(None, 400)
 
     results = GroupSchema().dump(new_group)

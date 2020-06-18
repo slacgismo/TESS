@@ -94,14 +94,14 @@ def modify_service_location(service_location_id):
         })
         return arw.to_json(None, 400)
 
-    except IntegrityError:
-        db.session.rollback()
-        arw.add_errors('Conflict while loading data')
-        return arw.to_json(None, 400)
-
     except ValidationError as ve:
         db.session.rollback()
         arw.add_errors(ve.messages)
+        return arw.to_json(None, 400)
+
+    except IntegrityError:
+        db.session.rollback()
+        arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
 
     results = service_location_schema.dump(modified_service_location,
@@ -124,13 +124,14 @@ def add_service_location():
         db.session.add(new_service_location)
         db.session.commit()
 
+    except ValidationError as ve:
+        db.session.rollback()
+        arw.add_errors(ve.messages)
+        return arw.to_json(None, 400)
+
     except IntegrityError:
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
-        return arw.to_json(None, 400)
-
-    except ValidationError as ve:
-        arw.add_errors(ve.messages)
         return arw.to_json(None, 400)
 
     results = ServiceLocationSchema().dump(new_service_location)

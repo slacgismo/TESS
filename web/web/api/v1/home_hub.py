@@ -74,13 +74,13 @@ def update_home_hub(home_hub_id):
     except (MultipleResultsFound,NoResultFound):
         arw.add_errors('No result found or multiple results found')
     
-    except IntegrityError:
-        db.session.rollback()
-        arw.add_errors('Integrity error')
-    
     except ValidationError as ve:
         db.session.rollback()
         arw.add_errors(ve.messages)
+
+    except IntegrityError:
+        db.session.rollback()
+        arw.add_errors('Integrity error')
 
     if arw.has_errors():
         return arw.to_json(None, 400)
@@ -105,13 +105,14 @@ def add_home_hub():
         db.session.add(new_home_hub)
         db.session.commit()
 
+    except ValidationError as ve:
+        db.session.rollback()
+        arw.add_errors(ve.messages)
+        return arw.to_json(None, 400)
+
     except IntegrityError:
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
-        return arw.to_json(None, 400)
-
-    except ValidationError as ve:
-        arw.add_errors(ve.messages)
         return arw.to_json(None, 400)
 
     results = HomeHubSchema().dump(new_home_hub)

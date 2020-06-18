@@ -50,14 +50,14 @@ def update_market(market_id):
 
     except (MultipleResultsFound,NoResultFound):
         arw.add_errors('No result found or multiple results found')
-    
-    except IntegrityError:
-        db.session.rollback()
-        arw.add_errors('Integrity error')
-    
+
     except ValidationError as ve:
         db.session.rollback()
         arw.add_errors(ve.messages)
+
+    except IntegrityError:
+        db.session.rollback()
+        arw.add_errors('Integrity error')
 
     if arw.has_errors():
         return arw.to_json(None, 400)
@@ -80,14 +80,14 @@ def add_market():
         db.session.add(new_market)
         db.session.commit()
 
+    except ValidationError as e:
+        arw.add_errors(e.messages)
+        return arw.to_json(None, 400)
+
     except IntegrityError:
         db.session.rollback()
         arw.add_errors({'market_id': 'The given market already exists.'})
         return arw.to_json(None, 400)
-    
-    except ValidationError as e:
-        arw.add_errors(e.messages)
-        return arw.to_json(None, 400)
-    
+
     result = MarketSchema().dump(new_market)
     return arw.to_json(result)

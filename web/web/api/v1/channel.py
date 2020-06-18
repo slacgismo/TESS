@@ -2,7 +2,6 @@ from flask import request, jsonify, Blueprint
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
-
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
 from web.models.channel import Channel, ChannelSchema
@@ -24,13 +23,14 @@ def add_channel():
         db.session.add(new_channel)
         db.session.commit()
 
+    except ValidationError as ve:
+        db.session.rollback()
+        arw.add_errors(ve.messages)
+        return arw.to_json(None, 400)
+
     except IntegrityError:
         db.session.rollback()
         arw.add_errors('Conflict while loading data')
-        return arw.to_json(None, 400)
-
-    except ValidationError as ve:
-        arw.add_errors(ve.messages)
         return arw.to_json(None, 400)
 
     results = ChannelSchema().dump(new_channel)
