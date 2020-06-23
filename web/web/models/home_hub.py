@@ -3,7 +3,6 @@ from sqlalchemy.types import TIMESTAMP
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.models.service_location import ServiceLocation
-from web.models.market import Market
 from web.database import (
     db,
     Model,
@@ -52,8 +51,7 @@ class HomeHub(Model):
 ServiceLocation.home_hub = relationship('HomeHub',
                                         backref=db.backref('service_location'),
                                         uselist=False)
-Market.home_hubs = relationship('HomeHub',
-                                 backref=db.backref('market'))
+
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################
