@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('markets',
     sa.Column('market_id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('source', sa.Text(), nullable=False),
-    sa.Column('ts', sa.Integer(), nullable=False),
+    sa.Column('ts', sa.Float(), nullable=False),
     sa.Column('p_max', sa.Float(), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('is_archived', sa.Boolean(), nullable=False),

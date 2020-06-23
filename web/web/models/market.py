@@ -21,7 +21,7 @@ class Market(Model):
     source = Column(db.Text,
                     nullable=False)
 
-    ts = Column(db.Integer,
+    ts = Column(db.Float,
                 nullable=False)
 
     p_max = Column(db.Float,
