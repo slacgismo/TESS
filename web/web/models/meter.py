@@ -4,10 +4,8 @@ from sqlalchemy.types import TIMESTAMP
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
 
-from web.models.utility import Utility
 from web.models.channel import Channel, ChannelSchema
 from web.models.meter_interval import MeterInterval
-from web.models.service_location import ServiceLocation, ServiceLocationSchema
 from web.database import (
     db,
     Model,
@@ -136,21 +134,12 @@ class Meter(Model):
     def __repr__(self):
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
 
-# Relationships
-
-    # Relationships declared on Meter
+    # Relationships
     channels = relationship('Channel',
                             backref=db.backref('meter'))
     
     meter_intervals = relationship('MeterInterval',
                                    backref=db.backref('meter'))
-
-# Relationships declared on other tables
-ServiceLocation.meters = relationship('Meter',
-                                     backref=db.backref('service_location'))
-
-Utility.meters = relationship('Meter',
-                              backref=db.backref('utility'))
 
 
 ##########################
@@ -181,7 +170,8 @@ class MeterSchema(SQLAlchemyAutoSchema):
 
     user_id = fields.Method('get_user_id', 
                              dump_only=True)
-    #Marshmallow methods
+
+    # Marshmallow methods
     def get_postal_code(self, obj):
         return obj.service_location.address.postal_code
 

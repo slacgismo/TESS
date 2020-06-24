@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from sqlalchemy.types import TIMESTAMP
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
-from web.models.service_location import ServiceLocation
+from web.models.pv import Pv
 from web.database import (
     db,
     Model,
@@ -44,17 +44,20 @@ class HomeHub(Model):
                         default=datetime.utcnow,
                         onupdate=datetime.utcnow,
                         nullable=False)
+    
+    # Methods
     def __repr__(self):
         return f'<HomeHub home_hub_id={self.home_hub_id} service_location_id={self.service_location_id} created_at={self.created_at}>'
 
-# Relationships
-ServiceLocation.home_hub = relationship('HomeHub',
-                                        backref=db.backref('service_location'),
-                                        uselist=False)
+    # Relationships
+    pv = relationship('Pv',
+                      backref=db.backref('home_hub'),
+                      uselist=False)
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################
+
 
 class HomeHubSchema(SQLAlchemyAutoSchema):
     class Meta:

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from sqlalchemy.types import TIMESTAMP
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+
 from web.models.home_hub import HomeHub
 from web.database import (
     db,
@@ -45,17 +46,19 @@ class Market(Model):
                         onupdate=datetime.utcnow,
                         nullable=False)
 
+    # Methods
     def __repr__(self):
         return f'<Market market_id={self.market_id} p_max={self.p_max} created_at={self.created_at}>'
 
-#Relationships
+    # Relationships
+    home_hubs = relationship('HomeHub',
+                             backref=db.backref('market'))
 
-home_hubs = relationship('HomeHub',
-                         backref=db.backref('market'))
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################
+
 
 class MarketSchema(SQLAlchemyAutoSchema):
     class Meta:

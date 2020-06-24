@@ -1,9 +1,10 @@
 import enum
-from web.models.rate import Rate
 from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import ForeignKeyConstraint
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
+
+from web.models.rate import Rate
 from web.database import (
     db,
     Model,
@@ -70,13 +71,13 @@ class MeterInterval(Model):
 
         return start_end_tuples_list
 
+    # Methods
     def __repr__(self):
         return f'<MeterInterval meter_interval_id={self.meter_interval_id} meter_id={self.meter_id} end_time={self.end_time} e={self.e}>'
 
-# Relationships
+# Relationships on other tables
 Rate.meter_intervals = relationship('MeterInterval', 
                                     backref=db.backref('rate'))
-
 
 ##########################
 ### MARSHMALLOW SCHEMA ###

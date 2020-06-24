@@ -1,5 +1,7 @@
 from sqlalchemy.types import TIMESTAMP
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+
+from web.models.market import Market
 from web.database import (
     db,
     Model,
@@ -41,13 +43,15 @@ class MarketInterval(Model):
 
     end_time = Column(TIMESTAMP,
                       nullable=False)
-    
+
+    # Methods
+    def __repr__(self):
+        return f'<MarketInterval market_interval_id={self.market_interval_id} market_id={self.market_id}>'
+
     # Relationships
     market = relationship('Market',
                           backref=db.backref('market_intervals'))
 
-    def __repr__(self):
-        return f'<MarketInterval market_interval_id={self.market_interval_id} market_id={self.market_id}>'
     
 ##########################
 ### MARSHMALLOW SCHEMA ###

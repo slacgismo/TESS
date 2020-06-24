@@ -1,11 +1,11 @@
+from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
 from sqlalchemy.schema import UniqueConstraint
 from marshmallow import fields, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from datetime import datetime
+
 from web.models.role import Role, RoleSchema
 from web.models.user import User, UserSchema
-from web.models.utility import Utility
 from web.database import (
     db,
     Model,
@@ -55,10 +55,11 @@ class Group(Model):
     __table_args__ = (UniqueConstraint('role_id', 'user_id', name='_role_user_uc'),
                      )
 
+    # Methods
     def __repr__(self):
         return f'<Group group_id={self.group_id} role_id={self.role_id} user_id={self.user_id}>'
 
-# Relationships
+# Relationships on other tables
 Role.groups = db.relationship('Group',
                               backref=db.backref('role'))
 

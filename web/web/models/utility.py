@@ -1,5 +1,8 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sqlalchemy.types import TIMESTAMP
+
+from web.models.meter import Meter
+from web.models.user import User
 from web.database import (
     db,
     Model,
@@ -27,8 +30,16 @@ class Utility(Model):
     subscription_end = Column(TIMESTAMP,
                               nullable=False)
 
+    # Methods
     def __repr__(self):
         return f'<Utility utility_id={self.utility_id} name={self.name}>'
+
+    # Relationships
+    meters = relationship('Meter',
+                          backref=db.backref('utility'))
+
+    users = relationship('User',
+                         backref=db.backref('utility'))
 
 
 ##########################

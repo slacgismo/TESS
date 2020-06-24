@@ -1,5 +1,6 @@
 from sqlalchemy.types import TIMESTAMP
 from datetime import datetime
+
 from web.database import (
     db,
     Model,
@@ -20,5 +21,6 @@ class Rate(Model):
     description = Column(db.Text, 
                          nullable=False)
 
+    # Methods
     def __repr__(self):
         return f'<Rate rate_id={self.rate_id} description={self.description}>'
