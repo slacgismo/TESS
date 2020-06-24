@@ -24,15 +24,14 @@ def show_market_interval_info(market_interval_id):
     try:  
         market_interval = MarketInterval.query.filter_by(market_interval_id=market_interval_id).one()
     
-    except MultipleResultsFound:
-        arw.add_errors({market_interval_id: 'Multiple results found for the given market interval.'})
-        return arw.to_json()
-    
-    except NoResultFound:
-        arw.add_errors({market_interval_id: 'No results found for the given market interval.'})
-        return arw.to_json()
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
+
+    if arw.has_errors():
+        return arw.to_json(None, 400)
 
     results = meter_schema.dump(market_interval)
+
     return arw.to_json(results)
 
 @market_interval_api_bp.route('/market_interval/<int:market_interval_id>', methods=['PUT'])
