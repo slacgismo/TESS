@@ -49,9 +49,6 @@ class Alert(Model):
     description = Column(db.Text,
                          nullable=False)
 
-    lower_limit = Column(db.Float,
-                         nullable=False)
-    
     status = Column(db.Enum(Status),
                     nullable=False)
 
