@@ -24,3 +24,7 @@ class Rate(Model):
     # Methods
     def __repr__(self):
         return f'<Rate rate_id={self.rate_id} description={self.description}>'
+
+    # Relationships
+    meter_intervals = relationship('MeterInterval', 
+                                   backref=db.backref('rate'))

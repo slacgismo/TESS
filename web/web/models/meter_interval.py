@@ -75,9 +75,6 @@ class MeterInterval(Model):
     def __repr__(self):
         return f'<MeterInterval meter_interval_id={self.meter_interval_id} meter_id={self.meter_id} end_time={self.end_time} e={self.e}>'
 
-# Relationships on other tables
-Rate.meter_intervals = relationship('MeterInterval', 
-                                    backref=db.backref('rate'))
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
