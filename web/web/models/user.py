@@ -5,8 +5,7 @@ from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.models.address import Address, AddressSchema
-from web.models.utility import Utility
-from web.models.role import Role, RoleType
+from web.models.login import Login
 from web.database import (
     db,
     Model,
@@ -84,15 +83,17 @@ class User(UserMixin, Model):
         return False
 
     def __repr__(self):
-        return f'<User user_id={self.id} email_id={self.email}>'
+        return f'<User id={self.id} email_id={self.email}>'
 
-# Relationships
-Utility.users = relationship('User',
-                            backref=db.backref('utility'))
+    # Relationships
+    login = relationship('Login',
+                         backref=db.backref('user'),
+                         uselist=False)
 
+# Relationships on other tables
 Address.user = relationship('User',
-                            backref=db.backref('address',
-                            uselist=False))
+                            backref=db.backref('address'),
+                            uselist=False)
 
 
 ##########################

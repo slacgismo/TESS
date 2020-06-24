@@ -3,6 +3,8 @@ from sqlalchemy.types import TIMESTAMP
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
+from web.models.home_hub import HomeHub
+from web.models.meter import Meter
 from web.models.address import Address, AddressSchema
 from web.database import (
     db,
@@ -53,7 +55,14 @@ class ServiceLocation(Model):
     def __repr__(self):
         return f'<ServiceLocation service_location_id={self.service_location_id} address_id={self.address_id}>'
 
-# Relationships
+    # Relationships
+    home_hub = relationship('HomeHub',
+                             backref=db.backref('service_location'),
+                             uselist=False)
+    meters = relationship('Meter',
+                          backref=db.backref('service_location'))
+
+# Relationships on other tables
 Address.service_location = relationship('ServiceLocation',
                                         backref=db.backref('address'),
                                         uselist=False)
