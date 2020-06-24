@@ -56,6 +56,7 @@ def show_meter_info(meter_id):
     
     except (MultipleResultsFound,NoResultFound):
         arw.add_errors('No result found or multiple results found')
+        return arw.to_json(None, 400)
 
     interval_coverage = request.args.get('interval_coverage')
     interval_count_start = request.args.get('interval_count_start')
@@ -69,12 +70,14 @@ def show_meter_info(meter_id):
             interval_count_start = parser.parse(interval_count_start)
         except (TypeError, ValueError):
             arw.add_errors({'interval_count_start': 'Not an accepted format for interval count start'})
+            return arw.to_json(None, 400)
     
     if interval_count_end:
         try:
             interval_count_end = parser.parse(interval_count_end) 
         except (TypeError, ValueError):
             arw.add_errors({'interval_count_end': 'Not an accepted format for interval count end'})
+            return arw.to_json(None, 400)
 
     # PENDING PROPS TO ADD TO THE RESPONSE
     # 'authorization_uid': 'NOT YET CREATED', 
@@ -83,9 +86,6 @@ def show_meter_info(meter_id):
     meter_schema.context['start'] = interval_count_start
     meter_schema.context['end'] = interval_count_end
     meter_schema.context['coverage'] = interval_coverage
-
-    if arw.has_errors():
-        return arw.to_json(None, 400)
 
     results = meter_schema.dump(meter)
 
