@@ -42,8 +42,14 @@ class Notification(Model):
                         default=datetime.utcnow, 
                         onupdate=datetime.utcnow)
 
+    # Methods
     def __repr__(self):
         return f'<Notification notification_id={self.notification_id} description={self.description} utility_id={self.utility_id}>'
+
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
 
 
 class NotificationTypeSchema(Schema):

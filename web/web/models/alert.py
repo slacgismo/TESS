@@ -67,8 +67,14 @@ class Alert(Model):
                         default=datetime.utcnow, 
                         onupdate=datetime.utcnow)
 
+    # Methods
     def __repr__(self):
         return f'<Alert alert_id={self.alert_id} alert_type={self.alert_type} status={self.status}>'
+   
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
 
 
 class AlertSchema(Schema):

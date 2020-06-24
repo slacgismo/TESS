@@ -18,7 +18,6 @@ from web.database import (
 
 
 class User(UserMixin, Model):
-
     __tablename__ = 'users'
 
     id = Column(db.Integer,
