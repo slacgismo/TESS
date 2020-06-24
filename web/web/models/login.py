@@ -2,7 +2,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
 from flask_user import UserMixin
-from web.models.user import User
+
 from web.database import (
     db,
     Model,
@@ -23,7 +23,6 @@ class Login(UserMixin, Model):
 
     user_id = Column(db.Integer,
                      db.ForeignKey('users.id'),
-                     ondelete='CASCADE',
                      unique=True,
                      nullable=False)
 
@@ -41,6 +40,8 @@ class Login(UserMixin, Model):
                         default=datetime.utcnow,
                         onupdate=datetime.utcnow,
                         nullable=False)
+    
+    # Methods
     def __repr__(self):
         return f'<Login login_id={self.login_id} user_id={self.user_id} updated_at={self.updated_at}>'
 
@@ -54,9 +55,3 @@ class Login(UserMixin, Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-# Relationships
-User.login = relationship('Login',
-                          backref=db.backref('user'),
-                          uselist=False)
-

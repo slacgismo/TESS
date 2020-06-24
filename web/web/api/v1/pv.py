@@ -2,12 +2,9 @@ import dateutil.parser as parser
 
 from web.database import db
 from marshmallow import ValidationError
-from web.models.home_hub import HomeHub
-from web.models.rate import Rate
 from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.pv import Pv, PvSchema
-from web.models.meter import Meter
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -19,8 +16,9 @@ pv_api_bp = Blueprint('pv_api_bp', __name__)
 @pv_api_bp.route('/pvs/', methods=['GET'])
 def get_pvs():
     '''
-    Return all pv objects
+    Returns all pv objects
     '''
+
     arw = ApiResponseWrapper()
 
     fields_to_filter_on = request.args.getlist('fields')
@@ -47,18 +45,15 @@ def retrieve_pv_info(pv_id):
     '''
     Returns meter information as json object
     '''
+
     arw = ApiResponseWrapper()
     pv_schema = PvSchema(exclude=('meter_id',))
 
     try:  
         pv = Pv.query.filter_by(pv_id=pv_id).one()
     
-    except MultipleResultsFound:
-        arw.add_errors({pv_id: 'Multiple results found for the given pv.'})
-        return arw.to_json(None, 400)
-    
-    except NoResultFound:
-        arw.add_errors({pv_id: 'No results found for the given pv.'})
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
         return arw.to_json(None, 400)
 
     interval_coverage = request.args.get('interval_coverage')
@@ -73,25 +68,30 @@ def retrieve_pv_info(pv_id):
             interval_count_start = parser.parse(interval_count_start)
         except (TypeError, ValueError):
             arw.add_errors({'interval_count_start': 'Not an accepted format for interval count start'})
-            return arw.to_json()
+            return arw.to_json(None, 400)
     
     if interval_count_end:
         try:
             interval_count_end = parser.parse(interval_count_end) 
         except (TypeError, ValueError):
             arw.add_errors({'interval_count_end': 'Not an accepted format for interval count end'})
-            return arw.to_json()
+            return arw.to_json(None, 400)
 
     pv_schema.context['start'] = interval_count_start
     pv_schema.context['end'] = interval_count_end
     pv_schema.context['coverage'] = interval_coverage
+
     results = pv_schema.dump(pv)
+
     return arw.to_json(results)
 
 
 @pv_api_bp.route('/pv/<int:pv_id>', methods=['PUT'])
 def update_pv(pv_id):
-    '''Updates pv in database'''
+    '''
+    Updates pv in database
+    '''
+
     arw = ApiResponseWrapper()
     pv_schema = PvSchema(exclude=['created_at'])
     modified_pv = request.get_json()
@@ -103,16 +103,15 @@ def update_pv(pv_id):
 
     except (MultipleResultsFound,NoResultFound):
         arw.add_errors('No result found or multiple results found')
-    
-    except IntegrityError as ie:
-        db.session.rollback()
-        arw.add_errors('Integrity error')
-    
+
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
 
+    except IntegrityError:
+        arw.add_errors('Integrity error')
+
     if arw.has_errors():
+        db.session.rollback()
         return arw.to_json(None, 400)
 
     results = pv_schema.dump(modified_pv)
@@ -122,7 +121,10 @@ def update_pv(pv_id):
 
 @pv_api_bp.route('/pv', methods=['POST'])
 def add_pv():
-    '''Adds new pv to database'''
+    '''
+    Adds new pv to database
+    '''
+
     arw = ApiResponseWrapper()
     pv_schema = PvSchema(exclude=['pv_id', 'created_at', 'updated_at'])
     pv_json = request.get_json()
@@ -132,14 +134,16 @@ def add_pv():
         db.session.add(new_pv)
         db.session.commit()
 
+    except ValidationError as ve:
+        arw.add_errors(ve.messages)
+
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors({'pv_id': 'The given pv already exists.'})
-        return arw.to_json(None, 400)
-    
-    except ValidationError as e:
-        arw.add_errors(e.messages)
         return arw.to_json(None, 400)
     
     result = PvSchema().dump(new_pv)
+
     return arw.to_json(result)

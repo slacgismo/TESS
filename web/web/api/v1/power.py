@@ -12,9 +12,9 @@ def getRandomNumber():
 
 @power_api_bp.route('/power/system_load/', methods=['GET'])
 def get_power_system_load():
-    """
-    Retrieve Data for the System Load Chart
-    """
+    '''
+    Retrieves Data for the System Load Chart
+    '''
     arw = ApiResponseWrapper()
 
     is_capacity = request.args.get("is_capacity", "FALSE").upper() == "TRUE"
@@ -46,9 +46,9 @@ def get_power_system_load():
 
 @power_api_bp.route('/power/resources', methods=['GET'])
 def get_resources_load():
-    """
+    '''
     Retrieve Data for the Resources Chart
-    """
+    '''
     arw = ApiResponseWrapper()
     value_range = 3
     results = {

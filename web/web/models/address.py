@@ -1,6 +1,7 @@
 from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+
 from web.database import (
     db,
     Model,
@@ -45,7 +46,7 @@ class Address(Model):
                         nullable=False,
                         default=datetime.utcnow,
                         onupdate=datetime.utcnow)
-
+    # Methods
     def __repr__(self):
         return f'<Address address_id={self.address_id} address={self.address} postal_code={self.postal_code}>'
 

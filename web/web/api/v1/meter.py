@@ -2,17 +2,10 @@ import dateutil.parser as parser
 
 from web.database import db
 from marshmallow import ValidationError
-from web.models.utility import Utility
-from web.models.address import Address
-from web.models.channel import Channel
-from web.models.rate import Rate
 from web.api.v1.schema.meter import schema_data
 from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.meter import Meter, MeterSchema, MeterType
-from web.models.service_location import ServiceLocation
-from web.models.meter_interval import MeterInterval
-from web.models.home_hub import HomeHub
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
@@ -22,10 +15,11 @@ meter_api_bp = Blueprint('meter_api_bp', __name__)
 @meter_api_bp.route('/meters/', methods=['GET'])
 def get_meter_ids():
     '''
-    Return all meter objects
+    Returns all meter objects
     TODO: support query string filtering on props like is_active/is_archived
     TODO: decorator or Mixin for fields_to_filter_on!!!
     '''
+    
     arw = ApiResponseWrapper()
 
     # get the list fields we want on the response
@@ -53,19 +47,16 @@ def show_meter_info(meter_id):
     '''
     Returns meter information as json object
     '''
+
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema()
 
     try:  
         meter = Meter.query.filter_by(meter_id=meter_id).one()
     
-    except MultipleResultsFound:
-        arw.add_errors({meter_id: 'Multiple results found for the given meter.'})
-        return arw.to_json()
-    
-    except NoResultFound:
-        arw.add_errors({meter_id: 'No results found for the given meter.'})
-        return arw.to_json()
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
+        return arw.to_json(None, 400)
 
     interval_coverage = request.args.get('interval_coverage')
     interval_count_start = request.args.get('interval_count_start')
@@ -79,18 +70,17 @@ def show_meter_info(meter_id):
             interval_count_start = parser.parse(interval_count_start)
         except (TypeError, ValueError):
             arw.add_errors({'interval_count_start': 'Not an accepted format for interval count start'})
-            return arw.to_json()
+            return arw.to_json(None, 400)
     
     if interval_count_end:
         try:
             interval_count_end = parser.parse(interval_count_end) 
         except (TypeError, ValueError):
             arw.add_errors({'interval_count_end': 'Not an accepted format for interval count end'})
-            return arw.to_json()
+            return arw.to_json(None, 400)
 
     # PENDING PROPS TO ADD TO THE RESPONSE
     # 'authorization_uid': 'NOT YET CREATED', 
-    # 'user_id': 'NOT YET CREATED',  
     # 'exports': 'NOT YET CREATED'
 
     meter_schema.context['start'] = interval_count_start
@@ -98,6 +88,7 @@ def show_meter_info(meter_id):
     meter_schema.context['coverage'] = interval_coverage
 
     results = meter_schema.dump(meter)
+
     return arw.to_json(results)
 
 
@@ -106,12 +97,16 @@ def get_meter_schema():
     '''
     Returns meter schema as json object
     '''
+
     return jsonify(schema_data)
 
 
 @meter_api_bp.route('/meter/<int:meter_id>', methods=['PUT'])
 def update_meter(meter_id):
-    '''Updates meter in database'''
+    '''
+    Updates meter in database
+    '''
+
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema(exclude=['created_at'])
     modified_meter = request.get_json()
@@ -123,16 +118,15 @@ def update_meter(meter_id):
 
     except (MultipleResultsFound,NoResultFound):
         arw.add_errors('No result found or multiple results found')
-    
-    except IntegrityError as ie:
-        db.session.rollback()
-        arw.add_errors('Integrity error')
-    
+
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
 
+    except IntegrityError:
+        arw.add_errors('Integrity error')
+
     if arw.has_errors():
+        db.session.rollback()
         return arw.to_json(None, 400)
 
     results = meter_schema.dump(modified_meter)
@@ -142,7 +136,10 @@ def update_meter(meter_id):
 
 @meter_api_bp.route('/meter', methods=['POST'])
 def add_meter():
-    '''Add new meter to database'''
+    '''
+    Adds new meter to database
+    '''
+
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema(exclude=['meter_id', 'created_at', 'updated_at'])
     meter_json = request.get_json()
@@ -152,14 +149,16 @@ def add_meter():
         db.session.add(new_meter)
         db.session.commit()
 
+    except ValidationError as ve:
+        arw.add_errors(ve.messages)
+
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors({'meter_id': 'The given meter already exists.'})
         return arw.to_json(None, 400)
-    
-    except ValidationError as e:
-        arw.add_errors(e.messages)
-        return arw.to_json(None, 400)
-    
+
     result = MeterSchema().dump(new_meter)
+
     return arw.to_json(result)

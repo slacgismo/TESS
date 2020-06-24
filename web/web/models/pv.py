@@ -4,7 +4,6 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
 
 from web.models.meter import Meter, MeterSchema
-from web.models.home_hub import HomeHub
 from web.database import (
     db,
     Model,
@@ -55,11 +54,7 @@ class Pv(Model):
     def __repr__(self):
         return f'<Pv pv_id={self.pv_id} home_hub_id={self.home_hub_id} created_at={self.created_at}>'
 
-# Relationships
-HomeHub.pv = relationship('Pv',
-                           backref=db.backref('home_hub'),
-                           uselist=False)
-    
+# Relationships on other tables  
 Meter.pv = relationship('Pv',
                          backref=db.backref('meter'),
                          uselist=False)

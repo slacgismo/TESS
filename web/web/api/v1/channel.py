@@ -4,23 +4,23 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
-from web.models.address import Address, AddressSchema
+from web.models.channel import Channel, ChannelSchema
 
-address_api_bp = Blueprint('address_api_bp', __name__)
+channel_api_bp = Blueprint('channel_api_bp', __name__)
 
-@address_api_bp.route('/address', methods=['POST'])
-def add_address():
+@channel_api_bp.route('/channel', methods=['POST'])
+def add_channel():
     '''
-    Adds new address object to database
+    Adds new channel object to database
     '''
 
     arw = ApiResponseWrapper()
-    address_schema = AddressSchema(exclude=['address_id', 'created_at', 'updated_at'])
-    new_address = request.get_json()
+    channel_schema = ChannelSchema(exclude=['channel_id'])
+    new_channel = request.get_json()
 
     try:
-        new_address = address_schema.load(new_address, session=db.session)
-        db.session.add(new_address)
+        new_channel = channel_schema.load(new_channel, session=db.session)
+        db.session.add(new_channel)
         db.session.commit()
 
     except ValidationError as ve:
@@ -33,5 +33,6 @@ def add_address():
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = AddressSchema().dump(new_address)
+    results = ChannelSchema().dump(new_channel)
+    
     return arw.to_json(results)

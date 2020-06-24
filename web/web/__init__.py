@@ -26,6 +26,9 @@ from web.api.v1.pv import pv_api_bp
 from web.api.v1.meter_interval import meter_interval_api_bp
 from web.api.v1.address import address_api_bp
 from web.api.v1.home_hub import home_hub_api_bp
+from web.api.v1.market import market_api_bp
+from web.api.v1.market_interval import market_interval_api_bp
+from web.api.v1.channel import channel_api_bp
 
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -81,6 +84,9 @@ def register_blueprints(app):
     app.register_blueprint(pv_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(meter_interval_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(address_api_bp, url_prefix='/api/v1/')
-    app.register_blueprint(home_hub_api_bp, url_prefix="/api/v1/")
-
+    app.register_blueprint(home_hub_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(market_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(market_interval_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(channel_api_bp, url_prefix='/api/v1/')
+    
 app = create_app(DevelopmentConfig())

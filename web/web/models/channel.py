@@ -1,9 +1,10 @@
+import enum
+from datetime import datetime
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
-import enum
 from sqlalchemy import ForeignKeyConstraint
 from sqlalchemy.types import TIMESTAMP
-from datetime import datetime
+
 from web.database import (
     db,
     Model,
@@ -47,6 +48,7 @@ class Channel(Model):
     channel_type = Column(db.Enum(ChannelType), 
                           nullable=False)
     
+    # Methods
     def __repr__(self):
         return f'<Channel channel_id={self.channel_id} meter_id={self.meter_id} channel_type={self.channel_type}>'
     
