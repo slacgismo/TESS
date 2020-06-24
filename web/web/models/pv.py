@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields

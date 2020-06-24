@@ -1,21 +1,49 @@
+from datetime import datetime
 from marshmallow import Schema, fields
-#from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-# from sqlalchemy.types import TIMESTAMP
-# from web.database import (
-#     db,
-#     Model,
-#     Column,
-#     SurrogatePK,
-#     relationship,
-#     reference_col,
-# )
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from sqlalchemy.types import TIMESTAMP
+from web.database import (
+    db,
+    Model,
+    Column,
+    SurrogatePK,
+    relationship,
+    reference_col,
+)
 
 
-# class Notification(Model):
-#     __tablename__ = 'notification'
+class Notification(Model):
+    __tablename__ = 'notifications'
 
-#     def __repr__(self):
-#         return f'<Notification>'
+    notification_id = Column(db.Integer, 
+                    primary_key=True,
+                    autoincrement=True, 
+                    nullable=False)
+    
+    utility_id = Column(db.Integer,
+                      db.ForeignKey('utilities.utility_id'),  
+                      nullable=False)
+
+    description = Column(db.Text,  
+                         nullable=False)
+    
+    upper_limit = Column(db.Float,
+                         nullable=False)
+
+    lower_limit = Column(db.Float,
+                         nullable=False)
+    
+    created_at = Column(TIMESTAMP, 
+                        nullable=False, 
+                        default=datetime.utcnow)
+
+    updated_at = Column(TIMESTAMP, 
+                        nullable=False, 
+                        default=datetime.utcnow, 
+                        onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Notification notification_id={self.notification_id} description={self.description} utility_id={self.utility_id}>'
 
 
 class NotificationTypeSchema(Schema):
