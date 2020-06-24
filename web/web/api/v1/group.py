@@ -47,13 +47,10 @@ def show_group_info(group_id):
     try:
         group = Group.query.filter_by(group_id=group_id).one()
 
-    except MultipleResultsFound:
-        arw.add_errors(
-            {group_id: 'Multiple results found for the given group id.'})
-        return arw.to_json(None, 400)
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
 
-    except NoResultFound:
-        arw.add_errors({group_id: 'No results found for the given group id.'})
+    if arw.has_errors():
         return arw.to_json(None, 400)
 
     results = group_schema.dump(group)
@@ -76,23 +73,17 @@ def modify_group(group_id):
         modified_group = group_schema.load(modified_group, session=db.session)
         db.session.commit()
 
-    except MultipleResultsFound:
-        arw.add_errors(
-            {group_id: 'Multiple results found for the given group id.'})
-        return arw.to_json(None, 400)
-
-    except NoResultFound:
-        arw.add_errors({group_id: 'No results found for the given group id.'})
-        return arw.to_json(None, 400)
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
-        return arw.to_json(None, 400)
-    
+
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
 
     results = group_schema.dump(modified_group)
@@ -117,14 +108,15 @@ def add_group():
         db.session.commit()
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
-        return arw.to_json(None, 400)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
 
     results = GroupSchema().dump(new_group)
+    
     return arw.to_json(results)

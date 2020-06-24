@@ -54,13 +54,8 @@ def show_meter_info(meter_id):
     try:  
         meter = Meter.query.filter_by(meter_id=meter_id).one()
     
-    except MultipleResultsFound:
-        arw.add_errors({meter_id: 'Multiple results found for the given meter.'})
-        return arw.to_json()
-    
-    except NoResultFound:
-        arw.add_errors({meter_id: 'No results found for the given meter.'})
-        return arw.to_json()
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
 
     interval_coverage = request.args.get('interval_coverage')
     interval_count_start = request.args.get('interval_count_start')
@@ -74,14 +69,12 @@ def show_meter_info(meter_id):
             interval_count_start = parser.parse(interval_count_start)
         except (TypeError, ValueError):
             arw.add_errors({'interval_count_start': 'Not an accepted format for interval count start'})
-            return arw.to_json()
     
     if interval_count_end:
         try:
             interval_count_end = parser.parse(interval_count_end) 
         except (TypeError, ValueError):
             arw.add_errors({'interval_count_end': 'Not an accepted format for interval count end'})
-            return arw.to_json()
 
     # PENDING PROPS TO ADD TO THE RESPONSE
     # 'authorization_uid': 'NOT YET CREATED', 
@@ -91,7 +84,11 @@ def show_meter_info(meter_id):
     meter_schema.context['end'] = interval_count_end
     meter_schema.context['coverage'] = interval_coverage
 
+    if arw.has_errors():
+        return arw.to_json(None, 400)
+
     results = meter_schema.dump(meter)
+
     return arw.to_json(results)
 
 
@@ -123,14 +120,13 @@ def update_meter(meter_id):
         arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
 
     except IntegrityError:
-        db.session.rollback()
         arw.add_errors('Integrity error')
 
     if arw.has_errors():
+        db.session.rollback()
         return arw.to_json(None, 400)
 
     results = meter_schema.dump(modified_meter)
@@ -153,15 +149,16 @@ def add_meter():
         db.session.add(new_meter)
         db.session.commit()
 
-    except ValidationError as e:
-        db.session.rollback()
-        arw.add_errors(e.messages)
-        return arw.to_json(None, 400)
+    except ValidationError as ve:
+        arw.add_errors(ve.messages)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors({'meter_id': 'The given meter already exists.'})
         return arw.to_json(None, 400)
 
     result = MeterSchema().dump(new_meter)
+
     return arw.to_json(result)

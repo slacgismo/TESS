@@ -52,13 +52,8 @@ def retrieve_pv_info(pv_id):
     try:  
         pv = Pv.query.filter_by(pv_id=pv_id).one()
     
-    except MultipleResultsFound:
-        arw.add_errors({pv_id: 'Multiple results found for the given pv.'})
-        return arw.to_json(None, 400)
-    
-    except NoResultFound:
-        arw.add_errors({pv_id: 'No results found for the given pv.'})
-        return arw.to_json(None, 400)
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
 
     interval_coverage = request.args.get('interval_coverage')
     interval_count_start = request.args.get('interval_count_start')
@@ -72,19 +67,22 @@ def retrieve_pv_info(pv_id):
             interval_count_start = parser.parse(interval_count_start)
         except (TypeError, ValueError):
             arw.add_errors({'interval_count_start': 'Not an accepted format for interval count start'})
-            return arw.to_json()
     
     if interval_count_end:
         try:
             interval_count_end = parser.parse(interval_count_end) 
         except (TypeError, ValueError):
             arw.add_errors({'interval_count_end': 'Not an accepted format for interval count end'})
-            return arw.to_json()
 
     pv_schema.context['start'] = interval_count_start
     pv_schema.context['end'] = interval_count_end
     pv_schema.context['coverage'] = interval_coverage
+
+    if arw.has_errors():
+        return arw.to_json(None, 400)
+
     results = pv_schema.dump(pv)
+
     return arw.to_json(results)
 
 
@@ -107,14 +105,13 @@ def update_pv(pv_id):
         arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
 
     except IntegrityError:
-        db.session.rollback()
         arw.add_errors('Integrity error')
 
     if arw.has_errors():
+        db.session.rollback()
         return arw.to_json(None, 400)
 
     results = pv_schema.dump(modified_pv)
@@ -137,15 +134,16 @@ def add_pv():
         db.session.add(new_pv)
         db.session.commit()
 
-    except ValidationError as e:
-        db.session.rollback()
-        arw.add_errors(e.messages)
-        return arw.to_json(None, 400)
+    except ValidationError as ve:
+        arw.add_errors(ve.messages)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors({'pv_id': 'The given pv already exists.'})
         return arw.to_json(None, 400)
     
     result = PvSchema().dump(new_pv)
+
     return arw.to_json(result)

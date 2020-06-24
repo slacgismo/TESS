@@ -45,18 +45,10 @@ def show_service_location_info(service_location_id):
         service_location = ServiceLocation.query.filter_by(
             service_location_id=service_location_id).one()
 
-    except MultipleResultsFound:
-        arw.add_errors({
-            service_location_id:
-            'Multiple results found for the given service location id.'
-        })
-        return arw.to_json(None, 400)
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
 
-    except NoResultFound:
-        arw.add_errors({
-            service_location_id:
-            'No results found for the given service location id.'
-        })
+    if arw.has_errors():
         return arw.to_json(None, 400)
 
     results = service_location_schema.dump(service_location)
@@ -80,28 +72,17 @@ def modify_service_location(service_location_id):
             modified_service_location, session=db.session)
         db.session.commit()
 
-    except MultipleResultsFound:
-        arw.add_errors({
-            service_location_id:
-            'Multiple results found for the given service location id.'
-        })
-        return arw.to_json(None, 400)
-
-    except NoResultFound:
-        arw.add_errors({
-            service_location_id:
-            'No results found for the given service location id.'
-        })
-        return arw.to_json(None, 400)
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
-        return arw.to_json(None, 400)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
 
     results = service_location_schema.dump(modified_service_location,
@@ -125,14 +106,15 @@ def add_service_location():
         db.session.commit()
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
-        return arw.to_json(None, 400)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
 
     results = ServiceLocationSchema().dump(new_service_location)
+
     return arw.to_json(results)

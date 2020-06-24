@@ -25,15 +25,14 @@ def retrieve_meter_interval_info(meter_interval_id):
     try:  
         meter_interval = MeterInterval.query.filter_by(meter_interval_id=meter_interval_id).one()
     
-    except MultipleResultsFound:
-        arw.add_errors({meter_interval_id: 'Multiple results found for the given meter_interval.'})
-        return arw.to_json(None, 400)
-    
-    except NoResultFound:
-        arw.add_errors({meter_interval_id: 'No results found for the given meter_interval.'})
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
+
+    if arw.has_errors():
         return arw.to_json(None, 400)
 
     results = meter_interval_schema.dump(meter_interval)
+
     return arw.to_json(results)
 
 
@@ -56,14 +55,13 @@ def update_meter_interval(meter_interval_id):
         arw.add_errors('No result found or multiple results found')
     
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
 
     except IntegrityError:
-        db.session.rollback()
         arw.add_errors('Integrity error')
 
     if arw.has_errors():
+        db.session.rollback()
         return arw.to_json(None, 400)
 
     results = meter_interval_schema.dump(modified_meter_interval)
@@ -86,15 +84,16 @@ def add_meter_interval():
         db.session.add(new_meter_interval)
         db.session.commit()
 
-    except ValidationError as e:
-        db.session.rollback()
-        arw.add_errors(e.messages)
-        return arw.to_json(None, 400)
+    except ValidationError as ve:
+        arw.add_errors(ve.messages)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors({'new_meter_interval_id': 'The given meter interval already exists.'})
         return arw.to_json(None, 400)
     
     result = MeterIntervalSchema().dump(new_meter_interval)
+
     return arw.to_json(result)

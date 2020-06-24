@@ -45,13 +45,10 @@ def show_user_info(user_id):
     try:
         user = User.query.filter_by(id=user_id).one()
 
-    except MultipleResultsFound:
-        arw.add_errors(
-            {user_id: 'Multiple results found for the given user id.'})
-        return arw.to_json(None, 400)
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
 
-    except NoResultFound:
-        arw.add_errors({user_id: 'No results found for the given user id.'})
+    if arw.has_errors():
         return arw.to_json(None, 400)
 
     results = user_schema.dump(user)
@@ -64,6 +61,7 @@ def modify_user(user_id):
     '''
     Updates one user object in database
     '''
+
     arw = ApiResponseWrapper()
     user_schema = UserSchema(
         exclude=['email_confirmed_at', 'created_at'])
@@ -74,23 +72,17 @@ def modify_user(user_id):
         modified_user = user_schema.load(modified_user, session=db.session)
         db.session.commit()
 
-    except MultipleResultsFound:
-        arw.add_errors(
-            {user_id: 'Multiple results found for the given user id.'})
-        return arw.to_json(None, 400)
-
-    except NoResultFound:
-        arw.add_errors({user_id: 'No results found for the given user id.'})
-        return arw.to_json(None, 400)
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
-        return arw.to_json(None, 400)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
 
     results = user_schema.dump(modified_user)
@@ -113,13 +105,13 @@ def add_user():
         db.session.commit()
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
-        return arw.to_json(None, 400)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
 
     results = UserSchema().dump(new_user)

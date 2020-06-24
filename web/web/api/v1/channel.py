@@ -24,14 +24,15 @@ def add_channel():
         db.session.commit()
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
-        return arw.to_json(None, 400)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
 
     results = ChannelSchema().dump(new_channel)
+    
     return arw.to_json(results)

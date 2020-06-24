@@ -54,14 +54,13 @@ def update_market_interval(market_interval_id):
         arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
 
     except IntegrityError:
-        db.session.rollback()
         arw.add_errors('Integrity error')
 
     if arw.has_errors():
+        db.session.rollback()
         return arw.to_json(None, 400)
 
     results = market_interval_schema.dump(modified_market_interval)
@@ -84,15 +83,16 @@ def add_market_interval():
         db.session.add(new_market_interval)
         db.session.commit()
 
-    except ValidationError as e:
-        db.session.rollback()
-        arw.add_errors(e.messages)
-        return arw.to_json(None, 400)
+    except ValidationError as ve:
+        arw.add_errors(ve.messages)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors({'market_interval_id': 'The given market interval already exists.'})
         return arw.to_json(None, 400)
 
     result = MarketIntervalSchema().dump(new_market_interval)
+
     return arw.to_json(result)

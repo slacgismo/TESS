@@ -10,17 +10,18 @@ from web.models.home_hub import HomeHub, HomeHubSchema
 home_hub_api_bp = Blueprint('home_hub_api_bp', __name__)
 
 @home_hub_api_bp.route('/home_hubs', methods=['GET'])
-def get_service_location_ids():
+def get_home_hub_ids():
     '''
     Retrieves all home hub objects
     '''
+
     arw = ApiResponseWrapper()
 
     fields_to_filter_on = request.args.getlist('fields')
 
     if len(fields_to_filter_on) > 0:
         for field in fields_to_filter_on:
-            if field not in ServiceLocation.__table__.columns:
+            if field not in HomeHub.__table__.columns:
                 arw.add_errors({field: 'Invalid Home Hub field'})
                 return arw.to_json(None, 400)
     else:
@@ -37,19 +38,17 @@ def show_home_hub_info(home_hub_id):
     '''
     Retrieves one user object
     '''
+
     arw = ApiResponseWrapper()
     home_hub_schema = HomeHubSchema()
 
     try:
         home_hub = HomeHub.query.filter_by(home_hub_id=home_hub_id).one()
 
-    except MultipleResultsFound:
-        arw.add_errors(
-            {home_hub_id: 'Multiple results found for the given home hub id.'})
-        return arw.to_json(None, 400)
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
 
-    except NoResultFound:
-        arw.add_errors({home_hub_id: 'No results found for the given home hub id.'})
+    if arw.has_errors():
         return arw.to_json(None, 400)
 
     results = home_hub_schema.dump(home_hub)
@@ -75,14 +74,13 @@ def update_home_hub(home_hub_id):
         arw.add_errors('No result found or multiple results found')
     
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
 
     except IntegrityError:
-        db.session.rollback()
         arw.add_errors('Integrity error')
 
     if arw.has_errors():
+        db.session.rollback()
         return arw.to_json(None, 400)
 
     results = home_hub_schema.dump(modified_home_hub)
@@ -106,14 +104,15 @@ def add_home_hub():
         db.session.commit()
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
-        return arw.to_json(None, 400)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors('Conflict while loading data')
         return arw.to_json(None, 400)
 
     results = HomeHubSchema().dump(new_home_hub)
+
     return arw.to_json(results)

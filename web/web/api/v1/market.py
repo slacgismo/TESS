@@ -23,21 +23,22 @@ def show_market_info(market_id):
     try:  
         market = Market.query.filter_by(market_id=market_id).one()
     
-    except MultipleResultsFound:
-        arw.add_errors({market_id: 'Multiple results found for the given market.'})
-        return arw.to_json()
-    
-    except NoResultFound:
-        arw.add_errors({market_id: 'No results found for the given market.'})
-        return arw.to_json()
+    except (MultipleResultsFound,NoResultFound):
+        arw.add_errors('No result found or multiple results found')
+
+    if arw.has_errors():
+        return arw.to_json(None, 400)
 
     results = market_schema.dump(market)
+
     return arw.to_json(results)
 
 
 @market_api_bp.route('/market/<int:market_id>', methods=['PUT'])
 def update_market(market_id):
-    '''Updates market in database'''
+    '''
+    Updates market in database
+    '''
 
     arw = ApiResponseWrapper()
     market_schema = MarketSchema(exclude=['created_at'])
@@ -60,6 +61,7 @@ def update_market(market_id):
         arw.add_errors('Integrity error')
 
     if arw.has_errors():
+        db.session.rollback()
         return arw.to_json(None, 400)
 
     results = market_schema.dump(modified_market)
@@ -69,7 +71,9 @@ def update_market(market_id):
 
 @market_api_bp.route('/market', methods=['POST'])
 def add_market():
-    '''Adds new market to database'''
+    '''
+    Adds new market to database
+    '''
 
     arw = ApiResponseWrapper()
     market_schema = MarketSchema(exclude=['market_id', 'created_at'])
@@ -80,15 +84,16 @@ def add_market():
         db.session.add(new_market)
         db.session.commit()
 
-    except ValidationError as e:
-        db.session.rollback()
-        arw.add_errors(e.messages)
-        return arw.to_json(None, 400)
+    except ValidationError as ve:
+        arw.add_errors(ve.messages)
 
     except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
         db.session.rollback()
-        arw.add_errors({'market_id': 'The given market already exists.'})
         return arw.to_json(None, 400)
 
     result = MarketSchema().dump(new_market)
+
     return arw.to_json(result)
