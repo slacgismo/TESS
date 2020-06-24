@@ -81,6 +81,7 @@ def add_market():
         db.session.commit()
 
     except ValidationError as e:
+        db.session.rollback()
         arw.add_errors(e.messages)
         return arw.to_json(None, 400)
 
