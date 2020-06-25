@@ -1,3 +1,6 @@
+import os
+
+
 class Config(object):
     """Base config, uses staging database server."""
     DEBUG = True
@@ -7,19 +10,19 @@ class Config(object):
     DB_PASSWORD = ''
 
     @property
-    def SQLALCHEMY_DATABASE_URI(self):    
+    def SQLALCHEMY_DATABASE_URI(self):
         return f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_SERVER}/tess"
 
 
 class ProductionConfig(Config):
     """Uses production database server."""
-    DB_SERVER = ''
+    DB_SERVER = os.environ.get('DB_SERVER', None)
     DEBUG = False
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
-    DB_USER = "tess_user"
-    DB_PASSWORD = ""
+    DB_USER = os.environ.get('DB_USER', None)
+    DB_PASSWORD = os.environ.get('DB_PASSWORD', None)
 
 
 class DevelopmentConfig(Config):
