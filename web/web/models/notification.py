@@ -2,6 +2,9 @@ from datetime import datetime
 from marshmallow import Schema, fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sqlalchemy.types import TIMESTAMP
+
+from web.models.alert import Alert
+from web.models.user_notification import UserNotification
 from web.database import (
     db,
     Model,
@@ -45,6 +48,13 @@ class Notification(Model):
     # Methods
     def __repr__(self):
         return f'<Notification notification_id={self.notification_id} description={self.description} utility_id={self.utility_id}>'
+
+    # Relationship
+    user_notifications = relationship('UserNotification',
+                                      backref=db.backref('notification'))
+    
+    alerts = relationship('Alert', 
+                          backref=db.backref('notification'))
 
 
 ##########################

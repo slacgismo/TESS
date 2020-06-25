@@ -1,6 +1,8 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sqlalchemy.types import TIMESTAMP
 
+from web.models.alert import Alert
+from web.models.notification import Notification
 from web.models.meter import Meter
 from web.models.user import User
 from web.database import (
@@ -40,6 +42,12 @@ class Utility(Model):
 
     users = relationship('User',
                          backref=db.backref('utility'))
+
+    notifications = relationship('Notification',
+                                 backref=db.backref('utility'))
+
+    alerts = relationship('Alert',
+                          backref=db.backref('utility'))
 
 
 ##########################

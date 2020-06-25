@@ -36,7 +36,7 @@ class Alert(Model):
                         nullable=False)
     
     user_id = Column(db.Integer,
-                     db.ForeignKey('users.user_id'),  
+                     db.ForeignKey('users.id'),  
                      nullable=False)
 
     notification_id = Column(db.Integer,
