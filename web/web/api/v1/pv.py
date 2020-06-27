@@ -9,7 +9,6 @@ from web.models.pv import Pv, PvSchema
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
-
 pv_api_bp = Blueprint('pv_api_bp', __name__)
 
 
@@ -47,19 +46,19 @@ def retrieve_pv_info(pv_id):
     '''
 
     arw = ApiResponseWrapper()
-    pv_schema = PvSchema(exclude=('meter_id',))
+    pv_schema = PvSchema(exclude=('meter_id', ))
 
-    try:  
+    try:
         pv = Pv.query.filter_by(pv_id=pv_id).one()
-    
-    except (MultipleResultsFound,NoResultFound):
+
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
         return arw.to_json(None, 400)
 
     interval_coverage = request.args.get('interval_coverage')
     interval_count_start = request.args.get('interval_count_start')
     interval_count_end = request.args.get('interval_count_end')
-    
+
     if not interval_coverage:
         interval_coverage = pv.meter.get_all_intervals()
 
@@ -67,14 +66,20 @@ def retrieve_pv_info(pv_id):
         try:
             interval_count_start = parser.parse(interval_count_start)
         except (TypeError, ValueError):
-            arw.add_errors({'interval_count_start': 'Not an accepted format for interval count start'})
+            arw.add_errors({
+                'interval_count_start':
+                'Not an accepted format for interval count start'
+            })
             return arw.to_json(None, 400)
-    
+
     if interval_count_end:
         try:
-            interval_count_end = parser.parse(interval_count_end) 
+            interval_count_end = parser.parse(interval_count_end)
         except (TypeError, ValueError):
-            arw.add_errors({'interval_count_end': 'Not an accepted format for interval count end'})
+            arw.add_errors({
+                'interval_count_end':
+                'Not an accepted format for interval count end'
+            })
             return arw.to_json(None, 400)
 
     pv_schema.context['start'] = interval_count_start
@@ -101,7 +106,7 @@ def update_pv(pv_id):
         modified_pv = pv_schema.load(modified_pv, session=db.session)
         db.session.commit()
 
-    except (MultipleResultsFound,NoResultFound):
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
@@ -128,7 +133,7 @@ def add_pv():
     arw = ApiResponseWrapper()
     pv_schema = PvSchema(exclude=['pv_id', 'created_at', 'updated_at'])
     pv_json = request.get_json()
-            
+
     try:
         new_pv = pv_schema.load(pv_json, session=db.session)
         db.session.add(new_pv)
@@ -143,7 +148,7 @@ def add_pv():
     if arw.has_errors():
         db.session.rollback()
         return arw.to_json(None, 400)
-    
+
     result = PvSchema().dump(new_pv)
 
     return arw.to_json(result)

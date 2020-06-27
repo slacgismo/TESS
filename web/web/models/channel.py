@@ -14,6 +14,7 @@ from web.database import (
     reference_col,
 )
 
+
 class ChannelType(enum.Enum):
     #Two channel types: R for reverse, F for forward
     R = 'R'
@@ -29,29 +30,28 @@ class ChannelType(enum.Enum):
 
         return False
 
+
 class Channel(Model):
 
     __tablename__ = 'channels'
 
-    channel_id = Column(db.Integer, 
-                        autoincrement=True, 
-                        primary_key=True, 
+    channel_id = Column(db.Integer,
+                        autoincrement=True,
+                        primary_key=True,
                         nullable=False)
 
-    meter_id = Column(db.Integer,  
-                      db.ForeignKey('meters.meter_id'), 
+    meter_id = Column(db.Integer,
+                      db.ForeignKey('meters.meter_id'),
                       nullable=False)
 
-    setting = Column(db.Integer, 
-                     nullable=False) 
+    setting = Column(db.Integer, nullable=False)
 
-    channel_type = Column(db.Enum(ChannelType), 
-                          nullable=False)
-    
+    channel_type = Column(db.Enum(ChannelType), nullable=False)
+
     # Methods
     def __repr__(self):
         return f'<Channel channel_id={self.channel_id} meter_id={self.meter_id} channel_type={self.channel_type}>'
-    
+
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
@@ -59,8 +59,9 @@ class Channel(Model):
 
 
 class ChannelSchema(SQLAlchemyAutoSchema):
-    channel_type = fields.Method('get_channel_type', deserialize='load_channel_type')
-    
+    channel_type = fields.Method('get_channel_type',
+                                 deserialize='load_channel_type')
+
     def get_channel_type(self, obj):
         return obj.channel_type.value
 

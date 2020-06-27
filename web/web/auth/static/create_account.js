@@ -1,14 +1,10 @@
 import React from 'react';
 import * as action from './actions';
-import { ListDivider } from '@rmwc/list';
+import { Button } from '@rmwc/button';
 import { TextField } from '@rmwc/textfield';
-import { Typography } from '@rmwc/typography';
-import { Card, CardPrimaryAction, CardActions, CardActionButton } from '@rmwc/card';
 
-import '@rmwc/card/styles';
-import '@rmwc/list/styles';
+import '@rmwc/button/styles';
 import '@rmwc/textfield/styles';
-import '@rmwc/typography/styles';
 
 class CreateAccount extends React.PureComponent {
     state = {
@@ -20,68 +16,52 @@ class CreateAccount extends React.PureComponent {
 
     render() {
         return (
-            <Card outlined>
-                <Typography
-                    use="subtitle1"
-                    tag="div"
-                    style={{ padding: '0.5rem 1rem' }}>
-                    Create Account
-                </Typography>
-
-                <ListDivider />
-
-                <CardPrimaryAction>
-                    <div style={{ padding: '1rem' }}>
-                        <Typography use="headline5" tag="div">
-                            Email
-                        </Typography>
-                        <TextField placeholder="joe.smith@tess.com" />
+            <div className="login-page-container">
+                <div className="login-form-container">
+                    <div>
+                        <TextField
+                            onChange={(e) => this.handleUsernameChange(e)}
+                            outlined={true} 
+                            label="Email" />
                     </div>
-                </CardPrimaryAction>
-
-                <ListDivider />
-
-                <CardPrimaryAction>
-                    <div style={{ padding: '1rem' }}>
-                        <Typography use="headline5" tag="div">
-                            Password
-                        </Typography>
-                        <Typography use="body1" tag="p">
-                            Your password must be at least 8 characters long
-                        </Typography>
-                        <TextField type="password" placeholder="" />
+                    <br />
+                    <div>
+                        <TextField
+                            onChange={this.handlePasswordChange}
+                            outlined={true}
+                            type="password" 
+                            label="Password" />
                     </div>
-                </CardPrimaryAction>
-
-                <ListDivider />
-
-                <CardPrimaryAction>
-                    <div style={{ padding: '1rem' }}>
-                        <Typography use="headline5" tag="div">
-                            First Name
-                        </Typography>
-                        <TextField placeholder="Your First Name" />
+                    <br />
+                    <div>
+                        <TextField
+                            onChange={(e) => this.handleUsernameChange(e)}
+                            outlined={true} 
+                            label="First Name" />
                     </div>
-                </CardPrimaryAction>
-
-                <ListDivider />
-
-                <CardPrimaryAction>
-                    <div style={{ padding: '1rem' }}>
-                        <Typography use="headline5" tag="div">
-                            Last Name
-                        </Typography>
-                        <TextField placeholder="Your Last Name" />
+                    <br />
+                    <div>
+                        <TextField
+                            onChange={(e) => this.handleUsernameChange(e)}
+                            outlined={true} 
+                            label="Last Name" />
                     </div>
-                </CardPrimaryAction>
-
-                <ListDivider />
-
-                <CardActions fullBleed>
-                    <CardActionButton label=" Go Back" onClick={() => this.props.setCreateFlow(false)} />
-                    <CardActionButton label=" Create Account" />
-                </CardActions>
-            </Card>
+                    <br />
+                    <div>
+                        <Button
+                            outlined
+                            label="CREATE"
+                            onClick={this.handleLogin} />
+                    </div>
+                    <br />
+                    <div>
+                        <Button
+                            outlined
+                            label="GO BACK"
+                            onClick={() => this.props.setCreateFlow(false)} />
+                    </div>
+                </div>
+            </div>
         );
     }
 }

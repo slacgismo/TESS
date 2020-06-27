@@ -8,6 +8,7 @@ from web.models.address import Address, AddressSchema
 
 address_api_bp = Blueprint('address_api_bp', __name__)
 
+
 @address_api_bp.route('/address', methods=['POST'])
 def add_address():
     '''
@@ -15,7 +16,8 @@ def add_address():
     '''
 
     arw = ApiResponseWrapper()
-    address_schema = AddressSchema(exclude=['address_id', 'created_at', 'updated_at'])
+    address_schema = AddressSchema(
+        exclude=['address_id', 'created_at', 'updated_at'])
     new_address = request.get_json()
 
     try:

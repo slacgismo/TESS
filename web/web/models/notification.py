@@ -10,7 +10,6 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 #     reference_col,
 # )
 
-
 # class Notification(Model):
 #     __tablename__ = 'notification'
 

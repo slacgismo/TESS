@@ -47,7 +47,7 @@ def show_group_info(group_id):
     try:
         group = Group.query.filter_by(group_id=group_id).one()
 
-    except (MultipleResultsFound,NoResultFound):
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
 
     if arw.has_errors():
@@ -73,7 +73,7 @@ def modify_group(group_id):
         modified_group = group_schema.load(modified_group, session=db.session)
         db.session.commit()
 
-    except (MultipleResultsFound,NoResultFound):
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
@@ -118,5 +118,5 @@ def add_group():
         return arw.to_json(None, 400)
 
     results = GroupSchema().dump(new_group)
-    
+
     return arw.to_json(results)

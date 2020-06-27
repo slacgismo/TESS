@@ -20,32 +20,27 @@ class Address(Model):
                         primary_key=True,
                         nullable=False)
 
-    address = Column(db.String(100), 
-                     nullable=False)
+    address = Column(db.String(100), nullable=False)
 
     address2 = Column(db.String(64))
 
     district = Column(db.String(64))
 
-    city = Column(db.String(100), 
-                  nullable=False)
+    city = Column(db.String(100), nullable=False)
 
-    country = Column(db.String(100), 
-                     nullable=False)
+    country = Column(db.String(100), nullable=False)
 
-    postal_code = Column(db.String(64), 
-                         nullable=False)
+    postal_code = Column(db.String(64), nullable=False)
 
     phone = Column(db.String(64))
 
-    created_at = Column(TIMESTAMP, 
-                        nullable=False, 
-                        default=datetime.utcnow)
-                        
+    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
+
     updated_at = Column(TIMESTAMP,
                         nullable=False,
                         default=datetime.utcnow,
                         onupdate=datetime.utcnow)
+
     # Methods
     def __repr__(self):
         return f'<Address address_id={self.address_id} address={self.address} postal_code={self.postal_code}>'

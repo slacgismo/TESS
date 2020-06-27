@@ -17,7 +17,6 @@ from web.database import (
 
 
 class User(UserMixin, Model):
-
     __tablename__ = 'users'
 
     id = Column(db.Integer,
@@ -26,18 +25,14 @@ class User(UserMixin, Model):
                 nullable=False)
 
     # User email information
-    email = Column(db.String(255),
-                   unique=True,
-                   nullable=False)
+    email = Column(db.String(255), unique=True, nullable=False)
 
     email_confirmed_at = Column(TIMESTAMP)
 
     # User information
-    first_name = Column(db.String(64),
-                        nullable=False)
+    first_name = Column(db.String(64), nullable=False)
 
-    last_name = Column(db.String(64),
-                       nullable=False)
+    last_name = Column(db.String(64), nullable=False)
 
     address_id = Column(db.Integer,
                         db.ForeignKey('addresses.address_id'),
@@ -48,17 +43,11 @@ class User(UserMixin, Model):
                         db.ForeignKey('utilities.utility_id'),
                         nullable=False)
 
-    is_active = Column(db.Boolean(),
-                       default=False,
-                       nullable=False)
+    is_active = Column(db.Boolean(), default=False, nullable=False)
 
-    is_archived = Column(db.Boolean(), 
-                         default=False, 
-                         nullable=False)
+    is_archived = Column(db.Boolean(), default=False, nullable=False)
 
-    created_at = Column(TIMESTAMP,
-                        default=datetime.utcnow,
-                        nullable=False)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
 
     updated_at = Column(TIMESTAMP,
                         default=datetime.utcnow,
@@ -86,9 +75,8 @@ class User(UserMixin, Model):
         return f'<User id={self.id} email_id={self.email}>'
 
     # Relationships
-    login = relationship('Login',
-                         backref=db.backref('user'),
-                         uselist=False)
+    login = relationship('Login', backref=db.backref('user'), uselist=False)
+
 
 # Relationships on other tables
 Address.user = relationship('User',
@@ -96,22 +84,14 @@ Address.user = relationship('User',
                             uselist=False)
 
 
-##########################
-### MARSHMALLOW SCHEMA ###
-##########################
-
-
 class UserSchema(SQLAlchemyAutoSchema):
-    roles = fields.Method('get_roles',
-                          dump_only=True)
+    roles = fields.Method('get_roles', dump_only=True)
 
-    postal_code = fields.Method('get_postal_code',
-                                dump_only=True)
+    postal_code = fields.Method('get_postal_code', dump_only=True)
 
-    address = fields.Nested(AddressSchema(),
-                            load_only=True)
+    address = fields.Nested(AddressSchema(), load_only=True)
 
-# Marshmallow methods
+    # Marshmallow methods
     def get_roles(self, obj):
         roles = obj.get_roles()
         result_roles = []
