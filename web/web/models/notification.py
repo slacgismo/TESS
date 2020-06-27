@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields
-#from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 # from sqlalchemy.types import TIMESTAMP
 # from web.database import (
 #     db,
@@ -10,12 +10,11 @@ from marshmallow import Schema, fields
 #     reference_col,
 # )
 
-
 # class Notification(Model):
 #     __tablename__ = 'notification'
 
-#     def __repr__(self):
-#         return f'<Notification>'
+# def __repr__(self):
+#     return f'<Notification>'
 
 
 class NotificationTypeSchema(Schema):

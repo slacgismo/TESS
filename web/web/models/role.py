@@ -1,6 +1,7 @@
 import enum
 from marshmallow import fields, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+
 from web.database import (
     db,
     Model,
@@ -34,7 +35,12 @@ class Role(Model):
                      primary_key=True,
                      autoincrement=True,
                      nullable=False)
+
     name = Column(db.Enum(RoleType), unique=True, nullable=False)
+
+    # Methods
+    def __repr__(self):
+        return f'<Role role_id={self.role_id} name={self.name}>'
 
 
 ##########################

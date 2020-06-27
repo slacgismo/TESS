@@ -4,9 +4,10 @@ Flask-Bcrypt==0.7.1
 marshmallow==3.5.1
 flask-marshmallow==0.12.0
 Flask-Migrate==2.5.3
-Flask-SQLAlchemy==2.4.1
+Flask-SQLAlchemy==2.4.3
 marshmallow-sqlalchemy==0.22.3
 PyMySQL==0.9.3
 Flask-User==1.0.2.2
 email-validator==1.1.0
 yapf==0.30.0
+gunicorn==20.0.4

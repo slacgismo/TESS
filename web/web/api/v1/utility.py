@@ -7,9 +7,9 @@ utility_api_bp = Blueprint('utility_api_bp', __name__)
 
 @utility_api_bp.route('/utilities', methods=['GET'])
 def get_utilities():
-    """
-    Retrieve all utility objects
-    """
+    '''
+    Retrieves all utility objects
+    '''
     arw = ApiResponseWrapper()
 
     utilities = Utility.query.all()

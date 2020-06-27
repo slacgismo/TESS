@@ -64,6 +64,18 @@ flask run
 ... navigate to `localhost:5000`
 
 
+## Simulating a more production style application run:
+```bash
+# green unicorn is in the requirements.txt, so it should be installed already
+# if not, pip install gunicorn
+gunicorn web:app
+> Starting gunicorn 20.0.4
+> Listening at: http://127.0.0.1:8000 (30581)
+> Using worker: sync
+> Booting worker with pid: 30583
+# navigate to locahost:8000 and everything should work as normal
+```
+
 ----
 
 Some things worth noting and some resources

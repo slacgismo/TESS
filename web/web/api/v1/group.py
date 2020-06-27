@@ -13,8 +13,9 @@ group_api_bp = Blueprint('group_api_bp', __name__)
 @group_api_bp.route('/groups', methods=['GET'])
 def get_group_ids():
     '''
-    Retrieve all group objects
+    Retrieves all group objects
     '''
+
     arw = ApiResponseWrapper()
 
     fields_to_filter_on = request.args.getlist('fields')
@@ -34,24 +35,22 @@ def get_group_ids():
     return arw.to_json(results)
 
 
-@group_api_bp.route('/group/<string:group_id>', methods=['GET'])
+@group_api_bp.route('/group/<int:group_id>', methods=['GET'])
 def show_group_info(group_id):
     '''
-    Retrieve one group object
+    Retrieves one group object
     '''
+
     arw = ApiResponseWrapper()
     group_schema = GroupSchema()
 
     try:
         group = Group.query.filter_by(group_id=group_id).one()
 
-    except MultipleResultsFound:
-        arw.add_errors(
-            {group_id: 'Multiple results found for the given group id.'})
-        return arw.to_json(None, 400)
+    except (MultipleResultsFound, NoResultFound):
+        arw.add_errors('No result found or multiple results found')
 
-    except NoResultFound:
-        arw.add_errors({group_id: 'No results found for the given group id.'})
+    if arw.has_errors():
         return arw.to_json(None, 400)
 
     results = group_schema.dump(group)
@@ -59,11 +58,12 @@ def show_group_info(group_id):
     return arw.to_json(results)
 
 
-@group_api_bp.route('/group/<string:group_id>', methods=['PUT'])
+@group_api_bp.route('/group/<int:group_id>', methods=['PUT'])
 def modify_group(group_id):
     '''
-    Update one group object in database
+    Updates one group object in database
     '''
+
     arw = ApiResponseWrapper()
     group_schema = GroupSchema(exclude=['created_at', 'user', 'role'])
     modified_group = request.get_json()
@@ -73,23 +73,17 @@ def modify_group(group_id):
         modified_group = group_schema.load(modified_group, session=db.session)
         db.session.commit()
 
-    except MultipleResultsFound:
-        arw.add_errors(
-            {group_id: 'Multiple results found for the given group id.'})
-        return arw.to_json(None, 400)
-
-    except NoResultFound:
-        arw.add_errors({group_id: 'No results found for the given group id.'})
-        return arw.to_json(None, 400)
-
-    except IntegrityError:
-        db.session.rollback()
-        arw.add_errors('Conflict while loading data')
-        return arw.to_json(None, 400)
+    except (MultipleResultsFound, NoResultFound):
+        arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
-        db.session.rollback()
         arw.add_errors(ve.messages)
+
+    except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
+        db.session.rollback()
         return arw.to_json(None, 400)
 
     results = group_schema.dump(modified_group)
@@ -100,35 +94,29 @@ def modify_group(group_id):
 @group_api_bp.route('/group', methods=['POST'])
 def add_group():
     '''
-    Add new group object to database
+    Adds new group object to database
     '''
+
     arw = ApiResponseWrapper()
     group_schema = GroupSchema(
         exclude=['created_at', 'user', 'role', 'group_id', 'updated_at'])
     new_group = request.get_json()
 
     try:
-        user_id = new_group['user_id'] if 'user_id' in new_group else None
-        role_id = new_group['role_id'] if 'role_id' in new_group else None
-        does_group_exist = Group.query.filter_by(user_id=user_id,
-                                                 role_id=role_id).count() > 0
-
-        if does_group_exist:
-            raise IntegrityError(
-                'Group already exists with given role and user', None, None)
-
         new_group = group_schema.load(new_group, session=db.session)
         db.session.add(new_group)
         db.session.commit()
 
-    except IntegrityError:
-        db.session.rollback()
-        arw.add_errors('Conflict while loading data')
-        return arw.to_json(None, 400)
-
     except ValidationError as ve:
         arw.add_errors(ve.messages)
+
+    except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
+        db.session.rollback()
         return arw.to_json(None, 400)
 
     results = GroupSchema().dump(new_group)
+
     return arw.to_json(results)

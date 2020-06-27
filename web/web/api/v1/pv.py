@@ -2,57 +2,54 @@ import dateutil.parser as parser
 
 from web.database import db
 from marshmallow import ValidationError
-from web.api.v1.schema.meter import schema_data
 from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
-from web.models.meter import Meter, MeterSchema, MeterType
+from web.models.pv import Pv, PvSchema
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
-meter_api_bp = Blueprint('meter_api_bp', __name__)
+pv_api_bp = Blueprint('pv_api_bp', __name__)
 
 
-@meter_api_bp.route('/meters/', methods=['GET'])
-def get_meter_ids():
+@pv_api_bp.route('/pvs/', methods=['GET'])
+def get_pvs():
     '''
-    Returns all meter objects
-    TODO: support query string filtering on props like is_active/is_archived
-    TODO: decorator or Mixin for fields_to_filter_on!!!
+    Returns all pv objects
     '''
 
     arw = ApiResponseWrapper()
 
-    # get the list fields we want on the response
     fields_to_filter_on = request.args.getlist('fields')
 
-    # validate that they exist
     if len(fields_to_filter_on) > 0:
         for field in fields_to_filter_on:
-            if field not in Meter.__table__.columns:
-                arw.add_errors({field: 'Invalid Meter field'})
+            if field not in Pv.__table__.columns:
+                arw.add_errors({field: 'Invalid Pv field'})
                 return arw.to_json(None, 400)
     else:
-        # make sure we get everything if no fields are given
         fields_to_filter_on = None
 
-    meter_schema = MeterSchema(only=fields_to_filter_on)
-    meters = Meter.query.all()
-    results = meter_schema.dump(meters, many=True)
+    pv_schema = PvSchema(only=fields_to_filter_on)
+
+    pvs = Pv.query.all()
+
+    results = pv_schema.dump(pvs, many=True)
 
     return arw.to_json(results)
 
 
-@meter_api_bp.route('/meter/<int:meter_id>', methods=['GET'])
-def show_meter_info(meter_id):
+@pv_api_bp.route('/pv/<int:pv_id>', methods=['GET'])
+def retrieve_pv_info(pv_id):
     '''
     Returns meter information as json object
     '''
 
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema()
+    pv_schema = PvSchema(exclude=('meter_id', ))
 
     try:
-        meter = Meter.query.filter_by(meter_id=meter_id).one()
+        pv = Pv.query.filter_by(pv_id=pv_id).one()
 
     except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
@@ -63,7 +60,7 @@ def show_meter_info(meter_id):
     interval_count_end = request.args.get('interval_count_end')
 
     if not interval_coverage:
-        interval_coverage = meter.get_all_intervals()
+        interval_coverage = pv.meter.get_all_intervals()
 
     if interval_count_start:
         try:
@@ -85,41 +82,28 @@ def show_meter_info(meter_id):
             })
             return arw.to_json(None, 400)
 
-    # PENDING PROPS TO ADD TO THE RESPONSE
-    # 'authorization_uid': 'NOT YET CREATED',
-    # 'exports': 'NOT YET CREATED'
+    pv_schema.context['start'] = interval_count_start
+    pv_schema.context['end'] = interval_count_end
+    pv_schema.context['coverage'] = interval_coverage
 
-    meter_schema.context['start'] = interval_count_start
-    meter_schema.context['end'] = interval_count_end
-    meter_schema.context['coverage'] = interval_coverage
-
-    results = meter_schema.dump(meter)
+    results = pv_schema.dump(pv)
 
     return arw.to_json(results)
 
 
-@meter_api_bp.route('/meter/meta', methods=['GET'])
-def get_meter_schema():
+@pv_api_bp.route('/pv/<int:pv_id>', methods=['PUT'])
+def update_pv(pv_id):
     '''
-    Returns meter schema as json object
-    '''
-
-    return jsonify(schema_data)
-
-
-@meter_api_bp.route('/meter/<int:meter_id>', methods=['PUT'])
-def update_meter(meter_id):
-    '''
-    Updates meter in database
+    Updates pv in database
     '''
 
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema(exclude=['created_at'])
-    modified_meter = request.get_json()
+    pv_schema = PvSchema(exclude=['created_at'])
+    modified_pv = request.get_json()
 
     try:
-        Meter.query.filter_by(meter_id=meter_id).one()
-        modified_meter = meter_schema.load(modified_meter, session=db.session)
+        Pv.query.filter_by(pv_id=pv_id).one()
+        modified_pv = pv_schema.load(modified_pv, session=db.session)
         db.session.commit()
 
     except (MultipleResultsFound, NoResultFound):
@@ -135,25 +119,24 @@ def update_meter(meter_id):
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = meter_schema.dump(modified_meter)
+    results = pv_schema.dump(modified_pv)
 
     return arw.to_json(results)
 
 
-@meter_api_bp.route('/meter', methods=['POST'])
-def add_meter():
+@pv_api_bp.route('/pv', methods=['POST'])
+def add_pv():
     '''
-    Adds new meter to database
+    Adds new pv to database
     '''
 
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema(
-        exclude=['meter_id', 'created_at', 'updated_at'])
-    meter_json = request.get_json()
+    pv_schema = PvSchema(exclude=['pv_id', 'created_at', 'updated_at'])
+    pv_json = request.get_json()
 
     try:
-        new_meter = meter_schema.load(meter_json, session=db.session)
-        db.session.add(new_meter)
+        new_pv = pv_schema.load(pv_json, session=db.session)
+        db.session.add(new_pv)
         db.session.commit()
 
     except ValidationError as ve:
@@ -166,6 +149,6 @@ def add_meter():
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    result = MeterSchema().dump(new_meter)
+    result = PvSchema().dump(new_pv)
 
     return arw.to_json(result)

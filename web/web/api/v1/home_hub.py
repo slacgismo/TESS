@@ -2,48 +2,50 @@ from flask import request, jsonify, Blueprint
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
-from datetime import datetime
+
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
-from web.models.user import User, UserSchema
+from web.models.home_hub import HomeHub, HomeHubSchema
 
-users_api_bp = Blueprint('users_api_bp', __name__)
+home_hub_api_bp = Blueprint('home_hub_api_bp', __name__)
 
 
-@users_api_bp.route('/users', methods=['GET'])
-def get_user_ids():
+@home_hub_api_bp.route('/home_hubs', methods=['GET'])
+def get_home_hub_ids():
     '''
-    Retrieves all user objects
+    Retrieves all home hub objects
     '''
+
     arw = ApiResponseWrapper()
 
     fields_to_filter_on = request.args.getlist('fields')
 
     if len(fields_to_filter_on) > 0:
         for field in fields_to_filter_on:
-            if field not in User.__table__.columns:
-                arw.add_errors({field: 'Invalid User field'})
+            if field not in HomeHub.__table__.columns:
+                arw.add_errors({field: 'Invalid Home Hub field'})
                 return arw.to_json(None, 400)
     else:
         fields_to_filter_on = None
 
-    users = User.query.all()
-    user_schema = UserSchema(exclude=['address_id'], only=fields_to_filter_on)
-    results = user_schema.dump(users, many=True)
+    home_hubs = HomeHub.query.all()
+    home_hub_schema = HomeHubSchema(only=fields_to_filter_on)
+    results = home_hub_schema.dump(home_hubs, many=True)
 
     return arw.to_json(results)
 
 
-@users_api_bp.route('/user/<int:user_id>', methods=['GET'])
-def show_user_info(user_id):
+@home_hub_api_bp.route('/home_hub/<int:home_hub_id>', methods=['GET'])
+def show_home_hub_info(home_hub_id):
     '''
     Retrieves one user object
     '''
+
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(exclude=['address_id'])
+    home_hub_schema = HomeHubSchema()
 
     try:
-        user = User.query.filter_by(id=user_id).one()
+        home_hub = HomeHub.query.filter_by(home_hub_id=home_hub_id).one()
 
     except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
@@ -51,24 +53,25 @@ def show_user_info(user_id):
     if arw.has_errors():
         return arw.to_json(None, 400)
 
-    results = user_schema.dump(user)
+    results = home_hub_schema.dump(home_hub)
 
     return arw.to_json(results)
 
 
-@users_api_bp.route('user/<int:user_id>', methods=['PUT'])
-def modify_user(user_id):
+@home_hub_api_bp.route('/home_hub/<int:home_hub_id>', methods=['PUT'])
+def update_home_hub(home_hub_id):
     '''
-    Updates one user object in database
+    Updates home hub in database
     '''
 
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(exclude=['email_confirmed_at', 'created_at'])
-    modified_user = request.get_json()
+    home_hub_schema = HomeHubSchema(exclude=['created_at'])
+    modified_home_hub = request.get_json()
 
     try:
-        User.query.filter_by(id=user_id).one()
-        modified_user = user_schema.load(modified_user, session=db.session)
+        HomeHub.query.filter_by(home_hub_id=home_hub_id).one()
+        modified_home_hub = home_hub_schema.load(modified_home_hub,
+                                                 session=db.session)
         db.session.commit()
 
     except (MultipleResultsFound, NoResultFound):
@@ -84,23 +87,25 @@ def modify_user(user_id):
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = user_schema.dump(modified_user)
+    results = home_hub_schema.dump(modified_home_hub)
 
     return arw.to_json(results)
 
 
-@users_api_bp.route('/user', methods=['POST'])
-def add_user():
+@home_hub_api_bp.route('/home_hub', methods=['POST'])
+def add_home_hub():
     '''
-    Adds new user object to database
+    Adds new home hub object to database
     '''
+
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(exclude=['user_id', 'created_at', 'updated_at'])
-    new_user = request.get_json()
+    home_hub_schema = HomeHubSchema(
+        exclude=['home_hub_id', 'created_at', 'updated_at'])
+    new_home_hub = request.get_json()
 
     try:
-        new_user = user_schema.load(new_user, session=db.session)
-        db.session.add(new_user)
+        new_home_hub = home_hub_schema.load(new_home_hub, session=db.session)
+        db.session.add(new_home_hub)
         db.session.commit()
 
     except ValidationError as ve:
@@ -113,6 +118,6 @@ def add_user():
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = UserSchema().dump(new_user)
+    results = HomeHubSchema().dump(new_home_hub)
 
     return arw.to_json(results)
