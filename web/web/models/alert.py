@@ -23,6 +23,12 @@ class Status(enum.Enum):
     PENDING = 'pending'
     RESOLVED = 'resolved'
 
+class AssignedToOptions(enum.Enum):
+    OPERATOR_1 = 'operator 1'
+    OPERATOR_2 = 'operator 2'
+    FIELD_CREW = 'field crew'
+    AUTOMATED_SYSTEM = 'automated system'
+
 class Alert(Model):
     __tablename__ = 'alerts'
 
@@ -35,13 +41,9 @@ class Alert(Model):
                         db.ForeignKey('utilities.utility_id'), 
                         nullable=False)
     
-    user_id = Column(db.Integer,
-                     db.ForeignKey('users.id'),  
-                     nullable=False)
-
-    notification_id = Column(db.Integer,
-                             db.ForeignKey('notifications.notification_id'),
-                             nullable=False)
+    assigned_to = Column(db.Integer,
+                         db.Enum(AssignedToOptions),  
+                         nullable=False)
 
     alert_type = Column(db.Enum(AlertType),
                         nullable=False)
@@ -82,4 +84,3 @@ class AlertSchema(Schema):
     status = fields.Str()
     assigned_to = fields.Str()
     resolution = fields.Str()
-

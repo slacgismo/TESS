@@ -4,8 +4,6 @@ from sqlalchemy.types import TIMESTAMP
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
-from web.models.alert import Alert
-from web.models.user_notification import UserNotification
 from web.models.address import Address, AddressSchema
 from web.models.login import Login
 from web.database import (
@@ -90,12 +88,6 @@ class User(UserMixin, Model):
     login = relationship('Login',
                          backref=db.backref('user'),
                          uselist=False)
-
-    user_notifications = relationship('UserNotification',
-                                      backref=db.backref('user'))
-    
-    alerts = relationship('Alert', 
-                          backref=db.backref('user'))
 
 # Relationships on other tables
 Address.user = relationship('User',
