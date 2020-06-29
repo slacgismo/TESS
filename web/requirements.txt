@@ -11,3 +11,6 @@ Flask-User==1.0.2.2
 email-validator==1.1.0
 yapf==0.30.0
 gunicorn==20.0.4
+google-api-python-client==1.9.3
+google-auth-httplib2==0.0.3
+google-auth-oauthlib==0.4.1

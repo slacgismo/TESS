@@ -23,7 +23,7 @@ class NotificationSubscription(Model):
                       nullable=False)
 
     utility_notification_setting_id = Column(db.Integer,
-                                             db.ForeignKey('utility_notification_settngs.utility_notification_setting_id'),  
+                                             db.ForeignKey('utility_notification_settings.utility_notification_setting_id'),  
                                              nullable=False)
     
     email = Column(db.String(255),
@@ -44,4 +44,4 @@ class NotificationSubscription(Model):
 
     # Methods
     def __repr__(self):
-        return f'<NotificationSubscription notification_subscription_id={self.notification_subscription_id} utility={self.utility_id} utility_notification_setting_id={self.utility_notification_setting_id} email={self.email} is_activ={self.is_active}>'
+        return f'<NotificationSubscription notification_subscription_id={self.notification_subscription_id} utility={self.utility_id} utility_notification_setting_id={self.utility_notification_setting_id} email={self.email} is_active={self.is_active}>'

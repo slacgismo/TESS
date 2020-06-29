@@ -55,7 +55,7 @@ class Notifications extends React.Component {
         let refs = this.state.checkboxReferences;
         refs[id] = e.currentTarget.checked;
         this.setState({checkboxReferences: refs});
-        //this.props.dispatch(updateNotificationPreference(email, notificationType, event.currentTarget.checked));
+        this.props.dispatch(updateNotificationPreference(email, notificationType, event.currentTarget.checked));
     }
 
     handleRowDeleteChange = (e, id) => {

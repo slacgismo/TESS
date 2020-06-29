@@ -633,5 +633,5 @@ simulation/__pycache__/
 # ignoring the bundled file since regenerating this locally will change it everytime
 web/web/static/bundles/*
 
-#ignore client secrets for google email api
-web/web/email/client_secrets.json
+# ignore client secrets for google email api
+web/web/emails/credentials.json
