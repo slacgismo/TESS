@@ -13,16 +13,17 @@ from web.database import (
 )
 
 class NotificationType(enum.Enum):
-    YELLOW_ALARM_LOAD = 'Yellow Alarm (Load)'
-    RED_ALARM_LOAD = 'Red Alarm (Load)'
-    YELLOW_ALARM_PRICE = 'Yellow Alarm (Price)'
-    RED_ALARM_PRICE = 'Red Alarm (Price)'
-    PRICE_ALERTS = 'Price Alerts'
-    CAPACITY_BOUNDS = 'Capacity Bounds'
-    RESOURCE_DEPLETION = 'Resource Depletion'
-    TELECOMM_ALERTS = 'Telecomm Alerts'
+    YELLOW_ALARM_LOAD = 'Load Yellow'
+    RED_ALARM_LOAD = 'Load Red'
+    YELLOW_ALARM_PRICE = 'Price Yellow'
+    RED_ALARM_PRICE = 'Price Red'
+    PRICE_ALERTS = 'Price'
+    IMPORT_CAPACITY = 'Import Capacity'
+    EXPORT_CAPACITY = 'Export Capacity'
+    RESOURCE_DEPLETION = 'Resource'
+    TELECOMM_ALERTS = 'Telecomm'
 
-class UtilityNotificationSetting(Model):
+class UtilityConstraintSetting(Model):
     __tablename__ = 'utility_notification_setting'
 
     utility_notification_setting_id = Column(db.Integer, 
@@ -30,7 +31,7 @@ class UtilityNotificationSetting(Model):
                                              autoincrement=True, 
                                              nullable=False)
     
-    utility_id = Column(db.Integer,
+    utility_id = Column(db.Integer,  
                         db.ForeignKey('utilities.utility_id'),  
                         nullable=False)
 
@@ -52,6 +53,12 @@ class UtilityNotificationSetting(Model):
     # Unique constraint for utility_id and notification_type
     __table_args__ = (UniqueConstraint('utility_id', 'notification_type', name='_utility_notification_uc'),
                      )
+
+    notification_subscriptions = relationship('NotificationSubscription',
+                                             backref=db.backref('utility_notification_setting'))
+
+    notification_events = relationship('NotificationEvent',
+                                      backref=db.backref('utility_notification_setting'))
 
     # Methods
     def __repr__(self):
