@@ -30,42 +30,35 @@ class Group(Model):
                      nullable=False)
 
     user_id = Column(db.Integer,
-                     db.ForeignKey('users.id'), 
+                     db.ForeignKey('users.id'),
                      primary_key=True,
                      nullable=False)
 
-    is_active = Column(db.Boolean(), 
-                       default=False, 
-                       nullable=False)
+    is_active = Column(db.Boolean(), default=False, nullable=False)
 
-    is_archived = Column(db.Boolean(), 
-                         default=False, 
-                         nullable=False)
+    is_archived = Column(db.Boolean(), default=False, nullable=False)
 
-    created_at = Column(TIMESTAMP, 
-                        nullable=False, 
-                        default=datetime.utcnow)
-                        
+    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
+
     updated_at = Column(TIMESTAMP,
                         nullable=False,
                         default=datetime.utcnow,
                         onupdate=datetime.utcnow)
-    
+
     # Unique constraint for role_id and user_id
-    __table_args__ = (UniqueConstraint('role_id', 'user_id', name='_role_user_uc'),
-                     )
+    __table_args__ = (UniqueConstraint('role_id',
+                                       'user_id',
+                                       name='_role_user_uc'), )
 
     # Methods
     def __repr__(self):
         return f'<Group group_id={self.group_id} role_id={self.role_id} user_id={self.user_id}>'
 
+
 # Relationships on other tables
-Role.groups = db.relationship('Group',
-                              backref=db.backref('role'))
+Role.groups = db.relationship('Group', backref=db.backref('role'))
 
-User.groups = db.relationship('Group',
-                              backref=db.backref('user'))
-
+User.groups = db.relationship('Group', backref=db.backref('user'))
 
 ##########################
 ### MARSHMALLOW SCHEMA ###

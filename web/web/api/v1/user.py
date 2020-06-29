@@ -45,7 +45,7 @@ def show_user_info(user_id):
     try:
         user = User.query.filter_by(id=user_id).one()
 
-    except (MultipleResultsFound,NoResultFound):
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
 
     if arw.has_errors():
@@ -63,8 +63,7 @@ def modify_user(user_id):
     '''
 
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(
-        exclude=['email_confirmed_at', 'created_at'])
+    user_schema = UserSchema(exclude=['email_confirmed_at', 'created_at'])
     modified_user = request.get_json()
 
     try:
@@ -72,7 +71,7 @@ def modify_user(user_id):
         modified_user = user_schema.load(modified_user, session=db.session)
         db.session.commit()
 
-    except (MultipleResultsFound,NoResultFound):
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:

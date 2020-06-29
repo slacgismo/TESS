@@ -9,8 +9,8 @@ from web.models.meter import Meter, MeterSchema, MeterType
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
-
 meter_api_bp = Blueprint('meter_api_bp', __name__)
+
 
 @meter_api_bp.route('/meters/', methods=['GET'])
 def get_meter_ids():
@@ -19,7 +19,7 @@ def get_meter_ids():
     TODO: support query string filtering on props like is_active/is_archived
     TODO: decorator or Mixin for fields_to_filter_on!!!
     '''
-    
+
     arw = ApiResponseWrapper()
 
     # get the list fields we want on the response
@@ -51,17 +51,17 @@ def show_meter_info(meter_id):
     arw = ApiResponseWrapper()
     meter_schema = MeterSchema()
 
-    try:  
+    try:
         meter = Meter.query.filter_by(meter_id=meter_id).one()
-    
-    except (MultipleResultsFound,NoResultFound):
+
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
         return arw.to_json(None, 400)
 
     interval_coverage = request.args.get('interval_coverage')
     interval_count_start = request.args.get('interval_count_start')
     interval_count_end = request.args.get('interval_count_end')
-    
+
     if not interval_coverage:
         interval_coverage = meter.get_all_intervals()
 
@@ -69,18 +69,24 @@ def show_meter_info(meter_id):
         try:
             interval_count_start = parser.parse(interval_count_start)
         except (TypeError, ValueError):
-            arw.add_errors({'interval_count_start': 'Not an accepted format for interval count start'})
+            arw.add_errors({
+                'interval_count_start':
+                'Not an accepted format for interval count start'
+            })
             return arw.to_json(None, 400)
-    
+
     if interval_count_end:
         try:
-            interval_count_end = parser.parse(interval_count_end) 
+            interval_count_end = parser.parse(interval_count_end)
         except (TypeError, ValueError):
-            arw.add_errors({'interval_count_end': 'Not an accepted format for interval count end'})
+            arw.add_errors({
+                'interval_count_end':
+                'Not an accepted format for interval count end'
+            })
             return arw.to_json(None, 400)
 
     # PENDING PROPS TO ADD TO THE RESPONSE
-    # 'authorization_uid': 'NOT YET CREATED', 
+    # 'authorization_uid': 'NOT YET CREATED',
     # 'exports': 'NOT YET CREATED'
 
     meter_schema.context['start'] = interval_count_start
@@ -116,7 +122,7 @@ def update_meter(meter_id):
         modified_meter = meter_schema.load(modified_meter, session=db.session)
         db.session.commit()
 
-    except (MultipleResultsFound,NoResultFound):
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
@@ -141,9 +147,10 @@ def add_meter():
     '''
 
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema(exclude=['meter_id', 'created_at', 'updated_at'])
+    meter_schema = MeterSchema(
+        exclude=['meter_id', 'created_at', 'updated_at'])
     meter_json = request.get_json()
-            
+
     try:
         new_meter = meter_schema.load(meter_json, session=db.session)
         db.session.add(new_meter)

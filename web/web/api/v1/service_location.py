@@ -9,6 +9,7 @@ from web.models.service_location import ServiceLocation, ServiceLocationSchema
 
 service_location_api_bp = Blueprint('service_location_api_bp', __name__)
 
+
 @service_location_api_bp.route('/service_locations', methods=['GET'])
 def get_service_location_ids():
     '''
@@ -27,13 +28,15 @@ def get_service_location_ids():
         fields_to_filter_on = None
 
     service_locations = ServiceLocation.query.all()
-    service_location_schema = ServiceLocationSchema(exclude=['address_id'], only=fields_to_filter_on)
+    service_location_schema = ServiceLocationSchema(exclude=['address_id'],
+                                                    only=fields_to_filter_on)
     results = service_location_schema.dump(service_locations, many=True)
 
     return arw.to_json(results)
 
 
-@service_location_api_bp.route('/service_location/<int:service_location_id>', methods=['GET'])
+@service_location_api_bp.route('/service_location/<int:service_location_id>',
+                               methods=['GET'])
 def show_service_location_info(service_location_id):
     '''
     Retrieves one service location object
@@ -45,7 +48,7 @@ def show_service_location_info(service_location_id):
         service_location = ServiceLocation.query.filter_by(
             service_location_id=service_location_id).one()
 
-    except (MultipleResultsFound,NoResultFound):
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
 
     if arw.has_errors():
@@ -56,7 +59,8 @@ def show_service_location_info(service_location_id):
     return arw.to_json(results)
 
 
-@service_location_api_bp.route('service_location/<int:service_location_id>', methods=['PUT'])
+@service_location_api_bp.route('service_location/<int:service_location_id>',
+                               methods=['PUT'])
 def modify_service_location(service_location_id):
     '''
     Updates one service location object in database
@@ -72,7 +76,7 @@ def modify_service_location(service_location_id):
             modified_service_location, session=db.session)
         db.session.commit()
 
-    except (MultipleResultsFound,NoResultFound):
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
@@ -97,11 +101,13 @@ def add_service_location():
     Adds new service location object to database
     '''
     arw = ApiResponseWrapper()
-    service_location_schema = ServiceLocationSchema(exclude=['service_location_id', 'created_at', 'updated_at'])
+    service_location_schema = ServiceLocationSchema(
+        exclude=['service_location_id', 'created_at', 'updated_at'])
     new_service_location = request.get_json()
 
     try:
-        new_service_location = service_location_schema.load(new_service_location, session=db.session)
+        new_service_location = service_location_schema.load(
+            new_service_location, session=db.session)
         db.session.add(new_service_location)
         db.session.commit()
 

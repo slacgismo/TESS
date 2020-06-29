@@ -9,6 +9,7 @@ from web.models.home_hub import HomeHub, HomeHubSchema
 
 home_hub_api_bp = Blueprint('home_hub_api_bp', __name__)
 
+
 @home_hub_api_bp.route('/home_hubs', methods=['GET'])
 def get_home_hub_ids():
     '''
@@ -33,6 +34,7 @@ def get_home_hub_ids():
 
     return arw.to_json(results)
 
+
 @home_hub_api_bp.route('/home_hub/<int:home_hub_id>', methods=['GET'])
 def show_home_hub_info(home_hub_id):
     '''
@@ -45,7 +47,7 @@ def show_home_hub_info(home_hub_id):
     try:
         home_hub = HomeHub.query.filter_by(home_hub_id=home_hub_id).one()
 
-    except (MultipleResultsFound,NoResultFound):
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
 
     if arw.has_errors():
@@ -54,6 +56,7 @@ def show_home_hub_info(home_hub_id):
     results = home_hub_schema.dump(home_hub)
 
     return arw.to_json(results)
+
 
 @home_hub_api_bp.route('/home_hub/<int:home_hub_id>', methods=['PUT'])
 def update_home_hub(home_hub_id):
@@ -67,12 +70,13 @@ def update_home_hub(home_hub_id):
 
     try:
         HomeHub.query.filter_by(home_hub_id=home_hub_id).one()
-        modified_home_hub = home_hub_schema.load(modified_home_hub, session=db.session)
+        modified_home_hub = home_hub_schema.load(modified_home_hub,
+                                                 session=db.session)
         db.session.commit()
 
-    except (MultipleResultsFound,NoResultFound):
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
-    
+
     except ValidationError as ve:
         arw.add_errors(ve.messages)
 
@@ -87,12 +91,13 @@ def update_home_hub(home_hub_id):
 
     return arw.to_json(results)
 
+
 @home_hub_api_bp.route('/home_hub', methods=['POST'])
 def add_home_hub():
     '''
     Adds new home hub object to database
     '''
-    
+
     arw = ApiResponseWrapper()
     home_hub_schema = HomeHubSchema(
         exclude=['home_hub_id', 'created_at', 'updated_at'])

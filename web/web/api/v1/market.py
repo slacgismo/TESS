@@ -8,7 +8,6 @@ from web.models.market import Market, MarketSchema
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
-
 market_api_bp = Blueprint('market_api_bp', __name__)
 
 
@@ -20,10 +19,10 @@ def show_market_info(market_id):
     arw = ApiResponseWrapper()
     market_schema = MarketSchema()
 
-    try:  
+    try:
         market = Market.query.filter_by(market_id=market_id).one()
-    
-    except (MultipleResultsFound,NoResultFound):
+
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
 
     if arw.has_errors():
@@ -46,10 +45,11 @@ def update_market(market_id):
 
     try:
         Market.query.filter_by(market_id=market_id).one()
-        modified_market = market_schema.load(modified_market, session=db.session)
+        modified_market = market_schema.load(modified_market,
+                                             session=db.session)
         db.session.commit()
 
-    except (MultipleResultsFound,NoResultFound):
+    except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
 
     except ValidationError as ve:
@@ -78,7 +78,7 @@ def add_market():
     arw = ApiResponseWrapper()
     market_schema = MarketSchema(exclude=['market_id', 'created_at'])
     market_json = request.get_json()
-            
+
     try:
         new_market = market_schema.load(market_json, session=db.session)
         db.session.add(new_market)

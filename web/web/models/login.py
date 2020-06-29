@@ -26,21 +26,17 @@ class Login(UserMixin, Model):
                      unique=True,
                      nullable=False)
 
-    username = Column(db.String(50),
-                      unique=True, 
-                      nullable=False)
+    username = Column(db.String(50), unique=True, nullable=False)
 
     password_hash = db.Column(db.String(128))
 
-    created_at = Column(TIMESTAMP, 
-                        default=datetime.utcnow,
-                        nullable=False)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
 
     updated_at = Column(TIMESTAMP,
                         default=datetime.utcnow,
                         onupdate=datetime.utcnow,
                         nullable=False)
-    
+
     # Methods
     def __repr__(self):
         return f'<Login login_id={self.login_id} user_id={self.user_id} updated_at={self.updated_at}>'
