@@ -29,7 +29,7 @@ def get_alerts():
         fields_to_filter_on = None
 
     alerts = Alert.query.all()
-    alert_schema = AlertSchema(only=fields_to_filter_on, exclude=['alert_id', 'context_id', 'context'])
+    alert_schema = AlertSchema(only=fields_to_filter_on, exclude=['context_id', 'context'])
     results = alert_schema.dump(alerts, many=True)
 
     return arw.to_json(results)

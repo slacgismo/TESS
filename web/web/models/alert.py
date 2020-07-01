@@ -1,9 +1,9 @@
 import enum
-from sqlalchemy import event
-from datetime import datetime
+from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import event, text, func
 from marshmallow import fields, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from sqlalchemy.types import TIMESTAMP
+
 from web.emails.send_emails import send_email
 from web.models.notification import Notification
 from web.models.alert_type import AlertType
@@ -72,8 +72,8 @@ class Alert(Model):
                       nullable=False)
     
     alert_type_id = Column(db.Integer, 
-                        db.ForeignKey('alert_types.alert_type_id'), 
-                        nullable=False)
+                           db.ForeignKey('alert_types.alert_type_id'), 
+                           nullable=False)
     
     assigned_to = Column(db.Enum(AssignedToOptions),  
                          nullable=False)
@@ -93,14 +93,13 @@ class Alert(Model):
     resolution = Column(db.Text,
                         nullable=False)
     
-    created_at = Column(TIMESTAMP, 
-                        nullable=False, 
-                        default=datetime.utcnow)
-
     updated_at = Column(TIMESTAMP, 
-                        nullable=False, 
-                        default=datetime.utcnow, 
-                        onupdate=datetime.utcnow)
+                        nullable=False,
+                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+
+    created_at = Column(TIMESTAMP,
+                        nullable=False,
+                        server_default=func.now())
 
     # Methods
     def __repr__(self):

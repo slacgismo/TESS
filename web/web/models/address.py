@@ -1,5 +1,5 @@
-from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.database import (
@@ -20,26 +20,31 @@ class Address(Model):
                         primary_key=True,
                         nullable=False)
 
-    address = Column(db.String(100), nullable=False)
+    address = Column(db.String(100),
+                     nullable=False)
 
     address2 = Column(db.String(64))
 
     district = Column(db.String(64))
 
-    city = Column(db.String(100), nullable=False)
+    city = Column(db.String(100),
+                  nullable=False)
 
-    country = Column(db.String(100), nullable=False)
+    country = Column(db.String(100),
+                     nullable=False)
 
-    postal_code = Column(db.String(64), nullable=False)
+    postal_code = Column(db.String(64),
+                         nullable=False)
 
     phone = Column(db.String(64))
 
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
-
-    updated_at = Column(TIMESTAMP,
+    updated_at = Column(TIMESTAMP, 
                         nullable=False,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+
+    created_at = Column(TIMESTAMP,
+                        nullable=False,
+                        server_default=func.now())
 
     # Methods
     def __repr__(self):

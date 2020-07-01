@@ -1,6 +1,5 @@
-from datetime import datetime
 from itertools import chain
-from sqlalchemy import func
+from sqlalchemy import text, func
 from sqlalchemy.sql import label
 from sqlalchemy.types import TIMESTAMP
 from sqlalchemy.schema import UniqueConstraint
@@ -39,14 +38,13 @@ class Notification(Model):
                         db.ForeignKey('users.id'),
                         nullable=False)
 
+    updated_at = Column(TIMESTAMP, 
+                        nullable=False,
+                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+
     created_at = Column(TIMESTAMP,
                         nullable=False,
-                        default=datetime.utcnow)
-    
-    updated_at = Column(TIMESTAMP, 
-                        nullable=False, 
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+                        server_default=func.now())
 
     # Unique constraint for alert_type_id and email
     __table_args__ = (UniqueConstraint('alert_type_id', 'email', name='_alert_type_id_email_uc'),
@@ -72,7 +70,7 @@ class Notification(Model):
                                                 .group_by(cls.email) \
                                                 .all()
 
-        #unpack tuple to flattened list of ids
+        # unpack tuple to flattened list of ids
         notification_ids = list(chain(*notification_ids_grouped_by_email)) 
 
         return notification_ids

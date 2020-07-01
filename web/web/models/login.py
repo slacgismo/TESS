@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
 from flask_user import UserMixin
 
 from web.database import (
@@ -26,16 +26,19 @@ class Login(UserMixin, Model):
                      unique=True,
                      nullable=False)
 
-    username = Column(db.String(50), unique=True, nullable=False)
+    username = Column(db.String(50),
+                      unique=True,
+                      nullable=False)
 
     password_hash = db.Column(db.String(128))
 
-    created_at = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
+    updated_at = Column(TIMESTAMP, 
+                        nullable=False,
+                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    updated_at = Column(TIMESTAMP,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow,
-                        nullable=False)
+    created_at = Column(TIMESTAMP,
+                        nullable=False,
+                        server_default=func.now())
 
     # Methods
     def __repr__(self):

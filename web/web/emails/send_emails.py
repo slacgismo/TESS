@@ -12,7 +12,7 @@ def send_email(subject, message, bcc):
   '''Simple SMTP set up with gmail'''
 
   # Simple set up for basic working email functionality
-  # TODO: styling email, implementing OAuth/Gmail API
+  # TODO: styling email, switch to implementing OAuth/Gmail API
 
   try:
     server = smtplib.SMTP('smtp.gmail.com:587')

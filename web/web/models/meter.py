@@ -1,6 +1,7 @@
 import enum
 from datetime import datetime, timedelta
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
 
@@ -46,34 +47,42 @@ class Meter(Model):
                         primary_key=True,
                         nullable=False)
 
-    service_location_id = Column(
-        db.Integer,
-        db.ForeignKey('service_locations.service_location_id'),
-        primary_key=True,
-        nullable=False)
+    service_location_id = Column(db.Integer,
+                                 db.ForeignKey('service_locations.service_location_id'),
+                                 primary_key=True,
+                                 nullable=False)
 
     home_hub_id = Column(db.Integer,
                          db.ForeignKey('home_hubs.home_hub_id'),
                          nullable=False)
 
-    alternate_meter_id = Column(db.String(64), unique=True)
+    alternate_meter_id = Column(db.String(64),
+                                unique=True)
 
-    feeder = Column(db.String(45), nullable=False)
+    feeder = Column(db.String(45),
+                    nullable=False)
 
-    substation = Column(db.String(45), nullable=False)
-
-    meter_type = Column(db.Enum(MeterType), nullable=False)
-
-    is_active = Column(db.Boolean(), default=False, nullable=False)
-
-    is_archived = Column(db.Boolean(), default=False, nullable=False)
-
-    created_at = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
-
-    updated_at = Column(TIMESTAMP,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow,
+    substation = Column(db.String(45),
                         nullable=False)
+
+    meter_type = Column(db.Enum(MeterType),
+                        nullable=False)
+
+    is_active = Column(db.Boolean(), 
+                       default=False, 
+                       nullable=False)
+
+    is_archived = Column(db.Boolean(),
+                         default=False, 
+                         nullable=False)
+
+    updated_at = Column(TIMESTAMP, 
+                        nullable=False,
+                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+
+    created_at = Column(TIMESTAMP,
+                        nullable=False,
+                        server_default=func.now())
 
     # Methods
     def get_interval_count(self, start, end):
@@ -126,7 +135,8 @@ class Meter(Model):
         return f'<Meter meter_id={self.meter_id} is_active={self.is_active}>'
 
     # Relationships
-    channels = relationship('Channel', backref=db.backref('meter'))
+    channels = relationship('Channel',
+                            backref=db.backref('meter'))
 
     meter_intervals = relationship('MeterInterval',
                                    backref=db.backref('meter'))

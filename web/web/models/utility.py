@@ -37,12 +37,14 @@ class Utility(Model):
         return f'<Utility utility_id={self.utility_id} name={self.name}>'
 
     # Relationships
-    meters = relationship('Meter', backref=db.backref('utility'))
+    meters = relationship('Meter',
+                          backref=db.backref('utility'))
 
-    users = relationship('User', backref=db.backref('utility'))
+    users = relationship('User',
+                         backref=db.backref('utility'))
 
     alert_types = relationship('AlertType',
-                          backref=db.backref('utility'))
+                               backref=db.backref('utility'))
 
 
 ##########################

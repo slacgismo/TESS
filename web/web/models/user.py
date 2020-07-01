@@ -1,6 +1,6 @@
-from datetime import datetime
 from flask_user import UserMixin
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
@@ -26,12 +26,15 @@ class User(UserMixin, Model):
                 nullable=False)
 
     # User email information
-    email = Column(db.String(255), unique=True, nullable=False)
+    email = Column(db.String(255), 
+                   unique=True, 
+                   nullable=False)
 
     email_confirmed_at = Column(TIMESTAMP)
 
     # User information
-    first_name = Column(db.String(64), nullable=False)
+    first_name = Column(db.String(64),
+                        nullable=False)
 
     last_name = Column(db.String(64), nullable=False)
 
@@ -44,16 +47,21 @@ class User(UserMixin, Model):
                         db.ForeignKey('utilities.utility_id'),
                         nullable=False)
 
-    is_active = Column(db.Boolean(), default=False, nullable=False)
+    is_active = Column(db.Boolean(),
+                       default=False,
+                       nullable=False)
 
-    is_archived = Column(db.Boolean(), default=False, nullable=False)
-
-    created_at = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
+    is_archived = Column(db.Boolean(),
+                         default=False,
+                         nullable=False)
 
     updated_at = Column(TIMESTAMP,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow,
-                        nullable=False)
+                        nullable=False,
+                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+
+    created_at = Column(TIMESTAMP,
+                        nullable=False,
+                        server_default=func.now())
 
     # Methods
     def get_roles(self):
@@ -76,9 +84,12 @@ class User(UserMixin, Model):
         return f'<User id={self.id} email_id={self.email}>'
 
     # Relationships
-    login = relationship('Login', backref=db.backref('user'), uselist=False)
+    login = relationship('Login',
+                         backref=db.backref('user'),
+                         uselist=False)
 
-    notifications = relationship('Notification', backref=db.backref('user'))
+    notifications = relationship('Notification', 
+                                 backref=db.backref('user'))
 
 # Relationships on other tables
 Address.user = relationship('User',

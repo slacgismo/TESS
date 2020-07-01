@@ -1,7 +1,7 @@
 import enum
-from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
 from sqlalchemy.schema import UniqueConstraint
+from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
 
@@ -55,14 +55,13 @@ class AlertType(Model):
     limit = Column(db.Float,
                    nullable=False)
 
+    updated_at = Column(TIMESTAMP, 
+                        nullable=False,
+                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+
     created_at = Column(TIMESTAMP,
                         nullable=False,
-                        default=datetime.utcnow)
-    
-    updated_at = Column(TIMESTAMP, 
-                        nullable=False, 
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+                        server_default=func.now())
 
     # Unique constraint for utility_id and name
     __table_args__ = (UniqueConstraint('utility_id', 'name', name='_utility_name_uc'),

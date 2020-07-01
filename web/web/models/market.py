@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.models.home_hub import HomeHub
@@ -21,29 +21,38 @@ class Market(Model):
                        autoincrement=True,
                        nullable=False)
 
-    source = Column(db.Text, nullable=False)
+    source = Column(db.Text,
+                    nullable=False)
 
-    ts = Column(db.Float, nullable=False)
+    ts = Column(db.Float,
+                nullable=False)
 
-    p_max = Column(db.Float, nullable=False)
+    p_max = Column(db.Float,
+                   nullable=False)
 
-    is_active = Column(db.Boolean, default=False, nullable=False)
+    is_active = Column(db.Boolean,
+                       default=False,
+                       nullable=False)
 
-    is_archived = Column(db.Boolean, default=False, nullable=False)
+    is_archived = Column(db.Boolean, 
+                         default=False,
+                         nullable=False)
 
-    created_at = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
+    updated_at = Column(TIMESTAMP, 
+                        nullable=False,
+                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    updated_at = Column(TIMESTAMP,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow,
-                        nullable=False)
+    created_at = Column(TIMESTAMP,
+                        nullable=False,
+                        server_default=func.now())
 
     # Methods
     def __repr__(self):
         return f'<Market market_id={self.market_id} p_max={self.p_max} created_at={self.created_at}>'
 
     # Relationships
-    home_hubs = relationship('HomeHub', backref=db.backref('market'))
+    home_hubs = relationship('HomeHub',
+                             backref=db.backref('market'))
 
 
 ##########################
