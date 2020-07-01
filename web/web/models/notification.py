@@ -84,6 +84,8 @@ class Notification(Model):
 
 
 class NotificationSchema(SQLAlchemyAutoSchema):
+    # NOTE: pk field to fit in with current test data implementation,
+    # however this set up is not an accurate representation of notification pks
     pk = fields.Function(lambda obj: obj.notification_id)
     notifications = fields.Method('get_notifications')
 
