@@ -26,19 +26,16 @@ class Login(UserMixin, Model):
                      unique=True,
                      nullable=False)
 
-    username = Column(db.String(50),
-                      unique=True,
-                      nullable=False)
+    username = Column(db.String(50), unique=True, nullable=False)
 
     password_hash = db.Column(db.String(128))
 
-    updated_at = Column(TIMESTAMP, 
-                        nullable=False,
-                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    created_at = Column(TIMESTAMP,
-                        nullable=False,
-                        server_default=func.now())
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
     # Methods
     def __repr__(self):

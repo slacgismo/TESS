@@ -9,6 +9,7 @@ from .response_wrapper import ApiResponseWrapper
 
 alert_types_api_bp = Blueprint('alert_types_api_bp', __name__)
 
+
 @alert_types_api_bp.route('/alert_types', methods=['GET'])
 def get_alert_types():
     '''
@@ -32,6 +33,7 @@ def get_alert_types():
 
     return arw.to_json(results)
 
+
 @alert_types_api_bp.route('/alert_type/<int:alert_type_id>', methods=['PUT'])
 def update_alert_type(alert_type_id):
     '''
@@ -44,7 +46,7 @@ def update_alert_type(alert_type_id):
     try:
         AlertType.query.filter_by(alert_type_id=alert_type_id).one()
         modified_alert_type = alert_type_schema.load(modified_alert_type,
-                                                 session=db.session)
+                                                     session=db.session)
         db.session.commit()
 
     except (MultipleResultsFound, NoResultFound):
@@ -64,6 +66,7 @@ def update_alert_type(alert_type_id):
 
     return arw.to_json(results)
 
+
 @alert_types_api_bp.route('/alert_type', methods=['POST'])
 def add_alert_type():
     '''
@@ -75,8 +78,8 @@ def add_alert_type():
     new_alert_type = request.get_json()
 
     try:
-        new_alert_type = alert_type_schema.load(
-            new_alert_type, session=db.session)
+        new_alert_type = alert_type_schema.load(new_alert_type,
+                                                session=db.session)
         db.session.add(new_alert_type)
         db.session.commit()
 

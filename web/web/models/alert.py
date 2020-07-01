@@ -16,6 +16,7 @@ from web.database import (
     reference_col,
 )
 
+
 class Status(enum.Enum):
     OPEN = 'open'
     PENDING = 'pending'
@@ -30,6 +31,7 @@ class Status(enum.Enum):
                 return status
 
         return False
+
 
 class AssignedToOptions(enum.Enum):
     OPERATOR_1 = 'operator 1'
@@ -47,6 +49,7 @@ class AssignedToOptions(enum.Enum):
 
         return False
 
+
 class ContextType(enum.Enum):
     TRANSFORMER = 'Transformer'
     FEEDER = 'Feeder'
@@ -63,43 +66,37 @@ class ContextType(enum.Enum):
 
         return False
 
+
 class Alert(Model):
     __tablename__ = 'alerts'
 
-    alert_id = Column(db.Integer, 
+    alert_id = Column(db.Integer,
                       primary_key=True,
-                      autoincrement=True, 
+                      autoincrement=True,
                       nullable=False)
-    
-    alert_type_id = Column(db.Integer, 
-                           db.ForeignKey('alert_types.alert_type_id'), 
+
+    alert_type_id = Column(db.Integer,
+                           db.ForeignKey('alert_types.alert_type_id'),
                            nullable=False)
-    
-    assigned_to = Column(db.Enum(AssignedToOptions),  
-                         nullable=False)
 
-    description = Column(db.Text,
-                         nullable=False)
+    assigned_to = Column(db.Enum(AssignedToOptions), nullable=False)
 
-    status = Column(db.Enum(Status),
-                    nullable=False)
+    description = Column(db.Text, nullable=False)
 
-    context = Column(db.Enum(ContextType),
-                     nullable=False)
+    status = Column(db.Enum(Status), nullable=False)
 
-    context_id = Column(db.String(64),
-                        nullable=False)
+    context = Column(db.Enum(ContextType), nullable=False)
 
-    resolution = Column(db.Text,
-                        nullable=False)
-    
-    updated_at = Column(TIMESTAMP, 
-                        nullable=False,
-                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+    context_id = Column(db.String(64), nullable=False)
 
-    created_at = Column(TIMESTAMP,
-                        nullable=False,
-                        server_default=func.now())
+    resolution = Column(db.Text, nullable=False)
+
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
     # Methods
     def __repr__(self):
@@ -113,24 +110,25 @@ class Alert(Model):
                 or self.alert_type.name.value == 'Load Yellow' \
                     or self.alert_type.name.value == 'Load Red':
             return 'Capacity bounds'
-        
+
         if self.alert_type.name.value == 'Price Yellow' \
             or self.alert_type.name.value == 'Price Red' \
                 or self.alert_type.name.value == 'Price':
             return 'Price alerts'
-        
+
         if self.alert_type.name.value == 'Telecomm':
             return 'Telecomm alerts'
-        
+
         if self.alert_type.name.value == 'Resource':
             return 'Resource depletion'
-        
+
         if self.alert_type.name.value == 'Peak Event':
             return 'Peak event'
 
+
 # Relationship declared on other table (dependency on table import for event listener)
-AlertType.alerts = relationship('Alert',
-                                 backref=db.backref('alert_type'))
+AlertType.alerts = relationship('Alert', backref=db.backref('alert_type'))
+
 
 # Event listener for email notifications
 @event.listens_for(Alert, 'after_insert')
@@ -176,7 +174,7 @@ def after_insert(mapper, connection, target):
         message = f'TESS System alert: {target.context} {target.context_id} is above {target.alert_type.limit} kW import capacity at {target.created_at}.'
 
     elif target.alert_type.name.value == 'Export Capacity':
-         message = f'TESS System alert: {target.context} {target.context_id} is above {target.alert_type.limit} kW export capacity at {target.created_at}.'
+        message = f'TESS System alert: {target.context} {target.context_id} is above {target.alert_type.limit} kW export capacity at {target.created_at}.'
 
     # Sends BCC emails to active notifications
     receiving_emails = [notification.email for notification in notifications]
@@ -189,7 +187,8 @@ def after_insert(mapper, connection, target):
 
 
 class AlertSchema(SQLAlchemyAutoSchema):
-    assigned_to = fields.Method('get_assigned_to', deserialize='load_assigned_to')
+    assigned_to = fields.Method('get_assigned_to',
+                                deserialize='load_assigned_to')
     alert_type = fields.Method('get_alert_type', dump_only=True)
     date = fields.Method('get_date_format', dump_only=True)
     time = fields.Method('get_time_format', dump_only=True)
@@ -201,7 +200,7 @@ class AlertSchema(SQLAlchemyAutoSchema):
 
     def get_date_format(self, obj):
         return str(obj.created_at.date())
-    
+
     def get_time_format(self, obj):
         return str(obj.created_at.time())
 

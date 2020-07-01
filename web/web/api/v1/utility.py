@@ -21,6 +21,7 @@ def get_utilities():
 
     return arw.to_json(results)
 
+
 @utility_api_bp.route('/utility', methods=['POST'])
 def add_utility():
     '''

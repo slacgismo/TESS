@@ -21,38 +21,29 @@ class Market(Model):
                        autoincrement=True,
                        nullable=False)
 
-    source = Column(db.Text,
-                    nullable=False)
+    source = Column(db.Text, nullable=False)
 
-    ts = Column(db.Float,
-                nullable=False)
+    ts = Column(db.Float, nullable=False)
 
-    p_max = Column(db.Float,
-                   nullable=False)
+    p_max = Column(db.Float, nullable=False)
 
-    is_active = Column(db.Boolean,
-                       default=False,
-                       nullable=False)
+    is_active = Column(db.Boolean, default=False, nullable=False)
 
-    is_archived = Column(db.Boolean, 
-                         default=False,
-                         nullable=False)
+    is_archived = Column(db.Boolean, default=False, nullable=False)
 
-    updated_at = Column(TIMESTAMP, 
-                        nullable=False,
-                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    created_at = Column(TIMESTAMP,
-                        nullable=False,
-                        server_default=func.now())
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
     # Methods
     def __repr__(self):
         return f'<Market market_id={self.market_id} p_max={self.p_max} created_at={self.created_at}>'
 
     # Relationships
-    home_hubs = relationship('HomeHub',
-                             backref=db.backref('market'))
+    home_hubs = relationship('HomeHub', backref=db.backref('market'))
 
 
 ##########################

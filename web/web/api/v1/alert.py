@@ -9,6 +9,7 @@ from web.models.alert import Alert, AlertSchema
 
 alerts_api_bp = Blueprint('alerts_api_bp', __name__)
 
+
 @alerts_api_bp.route('/alerts', methods=['GET'])
 def get_alerts():
     '''
@@ -29,10 +30,12 @@ def get_alerts():
         fields_to_filter_on = None
 
     alerts = Alert.query.all()
-    alert_schema = AlertSchema(only=fields_to_filter_on, exclude=['context_id', 'context'])
+    alert_schema = AlertSchema(only=fields_to_filter_on,
+                               exclude=['context_id', 'context'])
     results = alert_schema.dump(alerts, many=True)
 
     return arw.to_json(results)
+
 
 @alerts_api_bp.route('/alert/<int:alert_id>', methods=['PUT'])
 def update_alert(alert_id):
@@ -45,8 +48,7 @@ def update_alert(alert_id):
 
     try:
         Alert.query.filter_by(alert_id=alert_id).one()
-        modified_alert = alert_schema.load(modified_alert,
-                                           session=db.session)
+        modified_alert = alert_schema.load(modified_alert, session=db.session)
         db.session.commit()
 
     except (MultipleResultsFound, NoResultFound):
@@ -66,6 +68,7 @@ def update_alert(alert_id):
 
     return arw.to_json(results)
 
+
 @alerts_api_bp.route('/alert', methods=['POST'])
 def add_alert():
     '''
@@ -77,8 +80,7 @@ def add_alert():
     new_alert = request.get_json()
 
     try:
-        new_alert = alert_schema.load(
-            new_alert, session=db.session)
+        new_alert = alert_schema.load(new_alert, session=db.session)
         db.session.add(new_alert)
         db.session.commit()
 
@@ -92,6 +94,7 @@ def add_alert():
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = AlertSchema(exclude=['alert_id', 'context', 'context_id']).dump(new_alert)
-    
+    results = AlertSchema(
+        exclude=['alert_id', 'context', 'context_id']).dump(new_alert)
+
     return arw.to_json(results)

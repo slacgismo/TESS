@@ -36,9 +36,7 @@ class Role(Model):
                      autoincrement=True,
                      nullable=False)
 
-    name = Column(db.Enum(RoleType), 
-                  unique=True, 
-                  nullable=False)
+    name = Column(db.Enum(RoleType), unique=True, nullable=False)
 
     # Methods
     def __repr__(self):

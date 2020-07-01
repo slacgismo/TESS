@@ -15,40 +15,36 @@ from web.database import (
     reference_col,
 )
 
+
 class Notification(Model):
     __tablename__ = 'notifications'
 
-    notification_id = Column(db.Integer, 
+    notification_id = Column(db.Integer,
                              primary_key=True,
-                             autoincrement=True, 
+                             autoincrement=True,
                              nullable=False)
-    
+
     alert_type_id = Column(db.Integer,
-                           db.ForeignKey('alert_types.alert_type_id'),  
+                           db.ForeignKey('alert_types.alert_type_id'),
                            nullable=False)
 
-    email = Column(db.String(255),
-                   nullable=False)
+    email = Column(db.String(255), nullable=False)
 
-    is_active = Column(db.Boolean,
-                       default=False,
-                       nullable=False)
+    is_active = Column(db.Boolean, default=False, nullable=False)
 
-    created_by = Column(db.Integer,
-                        db.ForeignKey('users.id'),
-                        nullable=False)
+    created_by = Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    updated_at = Column(TIMESTAMP, 
-                        nullable=False,
-                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    created_at = Column(TIMESTAMP,
-                        nullable=False,
-                        server_default=func.now())
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
     # Unique constraint for alert_type_id and email
-    __table_args__ = (UniqueConstraint('alert_type_id', 'email', name='_alert_type_id_email_uc'),
-                     )
+    __table_args__ = (UniqueConstraint('alert_type_id',
+                                       'email',
+                                       name='_alert_type_id_email_uc'), )
 
     # Methods
     def __repr__(self):
@@ -56,8 +52,9 @@ class Notification(Model):
 
     def get_all_notifications_per_email(self):
         '''Returns list of all notifications with same email'''
-        
-        notifications_per_email = Notification.query.filter_by(email=self.email).all()
+
+        notifications_per_email = Notification.query.filter_by(
+            email=self.email).all()
         return notifications_per_email
 
     @classmethod
@@ -71,10 +68,10 @@ class Notification(Model):
                                                 .all()
 
         # unpack tuple to flattened list of ids
-        notification_ids = list(chain(*notification_ids_grouped_by_email)) 
+        notification_ids = list(chain(*notification_ids_grouped_by_email))
 
         return notification_ids
-    
+
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
@@ -92,9 +89,11 @@ class NotificationSchema(SQLAlchemyAutoSchema):
         notification_list = []
 
         for notification in notifications:
-            notification_info = {"notification_type": str(notification.alert_type.name.name),
-                                 "label": notification.alert_type.name.value,
-                                 "is_active": notification.is_active}
+            notification_info = {
+                "notification_type": str(notification.alert_type.name.name),
+                "label": notification.alert_type.name.value,
+                "is_active": notification.is_active
+            }
             notification_list.append(notification_info)
         return notification_list
 

@@ -28,33 +28,23 @@ class MeterInterval(Model):
                      db.ForeignKey('rates.rate_id'),
                      nullable=False)
 
-    start_time = Column(TIMESTAMP, 
-                        nullable=False)
+    start_time = Column(TIMESTAMP, nullable=False)
 
-    end_time = Column(TIMESTAMP,
-                      nullable=False)
+    end_time = Column(TIMESTAMP, nullable=False)
 
-    e = Column(db.Float, 
-               nullable=False)
+    e = Column(db.Float, nullable=False)
 
-    qmtp = Column(db.Float, 
-                  nullable=False)
+    qmtp = Column(db.Float, nullable=False)
 
-    p_bid = Column(db.Float, 
-                   default=0,
-                   nullable=False)
+    p_bid = Column(db.Float, default=0, nullable=False)
 
-    q_bid = Column(db.Float,
-                   default=0,
-                   nullable=False)
+    q_bid = Column(db.Float, default=0, nullable=False)
 
     mode = Column(db.Boolean(create_constraint=True),
                   default=0,
                   nullable=False)
 
-    is_bid = Column(db.Boolean(),
-                    default=False,
-                    nullable=False)
+    is_bid = Column(db.Boolean(), default=False, nullable=False)
 
     @staticmethod
     def get_interval_coverage(interval_id_list):

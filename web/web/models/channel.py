@@ -41,11 +41,9 @@ class Channel(Model):
                       db.ForeignKey('meters.meter_id'),
                       nullable=False)
 
-    setting = Column(db.Integer,
-                     nullable=False)
+    setting = Column(db.Integer, nullable=False)
 
-    channel_type = Column(db.Enum(ChannelType),
-                          nullable=False)
+    channel_type = Column(db.Enum(ChannelType), nullable=False)
 
     # Methods
     def __repr__(self):

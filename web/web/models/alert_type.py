@@ -15,6 +15,7 @@ from web.database import (
     reference_col,
 )
 
+
 class AlertName(enum.Enum):
     YELLOW_ALARM_LOAD = 'Load Yellow'
     RED_ALARM_LOAD = 'Load Red'
@@ -37,35 +38,34 @@ class AlertName(enum.Enum):
 
         return False
 
+
 class AlertType(Model):
     __tablename__ = 'alert_types'
 
-    alert_type_id = Column(db.Integer, 
+    alert_type_id = Column(db.Integer,
                            primary_key=True,
-                           autoincrement=True, 
+                           autoincrement=True,
                            nullable=False)
-    
-    utility_id = Column(db.Integer,  
-                        db.ForeignKey('utilities.utility_id'),  
+
+    utility_id = Column(db.Integer,
+                        db.ForeignKey('utilities.utility_id'),
                         nullable=False)
 
-    name = Column(db.Enum(AlertName),
-                          nullable=False)
-    
-    limit = Column(db.Float,
-                   nullable=False)
+    name = Column(db.Enum(AlertName), nullable=False)
 
-    updated_at = Column(TIMESTAMP, 
-                        nullable=False,
-                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+    limit = Column(db.Float, nullable=False)
 
-    created_at = Column(TIMESTAMP,
-                        nullable=False,
-                        server_default=func.now())
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
     # Unique constraint for utility_id and name
-    __table_args__ = (UniqueConstraint('utility_id', 'name', name='_utility_name_uc'),
-                     )
+    __table_args__ = (UniqueConstraint('utility_id',
+                                       'name',
+                                       name='_utility_name_uc'), )
 
     # Relationships
     notifications = relationship('Notification',
@@ -75,9 +75,12 @@ class AlertType(Model):
     def __repr__(self):
         return f'<AlertType alert_type_id={self.alert_type_id} utility_id={self.utility_id} name={self.name}>'
 
+
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################
+
+
 class AlertTypeSchema(SQLAlchemyAutoSchema):
     name = fields.Method('get_alert_name', deserialize='load_alert_name')
 

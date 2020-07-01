@@ -8,12 +8,13 @@ from .response_wrapper import ApiResponseWrapper
 
 notifications_api_bp = Blueprint('notifications_api_bp', __name__)
 
+
 @notifications_api_bp.route('/notifications', methods=['GET'])
 def get_notifications():
     '''
     Retrieves all notification objects
     '''
-    # TO DO: filter by utility, so only notifications for that utility appear
+    # TODO: filter by utility, so only notifications for that utility appear
 
     arw = ApiResponseWrapper()
 
@@ -34,17 +35,17 @@ def get_notifications():
                                 .in_(notification_ids)) \
                                 .all()
 
-    notification_schema = NotificationSchema(only=fields_to_filter_on, 
-                                             exclude=['created_by', 
-                                                      'alert_type_id', 
-                                                      'created_at', 
-                                                      'updated_at', 
-                                                      'notification_id', 
-                                                      'is_active'])
+    notification_schema = NotificationSchema(only=fields_to_filter_on,
+                                             exclude=[
+                                                 'created_by', 'alert_type_id',
+                                                 'created_at', 'updated_at',
+                                                 'notification_id', 'is_active'
+                                             ])
 
     results = notification_schema.dump(notifications, many=True)
 
     return arw.to_json(results)
+
 
 @notifications_api_bp.route('/notification', methods=['PUT'])
 def modify_notification():
@@ -52,12 +53,13 @@ def modify_notification():
     Updates one notification object in database
     '''
     arw = ApiResponseWrapper()
-    notification_schema = NotificationSchema(exclude=['alert_type_id', 'created_at'])
+    notification_schema = NotificationSchema(
+        exclude=['alert_type_id', 'created_at'])
     modified_notification = request.get_json()
 
     try:
-        modified_notification = notification_schema.load(
-            modified_notification, session=db.session)
+        modified_notification = notification_schema.load(modified_notification,
+                                                         session=db.session)
         db.session.commit()
 
     except ValidationError as ve:
@@ -70,8 +72,7 @@ def modify_notification():
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = notification_schema.dump(modified_notification,
-                                           many=True)
+    results = notification_schema.dump(modified_notification, many=True)
 
     return arw.to_json(results)
 
@@ -82,13 +83,14 @@ def add_notification():
     Adds new notification object to database
     '''
     arw = ApiResponseWrapper()
-    notification_schema = NotificationSchema(
-        exclude=['notification_id', 'pk', 'notifications', 'created_at', 'updated_at'])
+    notification_schema = NotificationSchema(exclude=[
+        'notification_id', 'pk', 'notifications', 'created_at', 'updated_at'
+    ])
     new_notification = request.get_json()
 
     try:
-        new_notification = notification_schema.load(
-            new_notification, session=db.session)
+        new_notification = notification_schema.load(new_notification,
+                                                    session=db.session)
         db.session.add(new_notification)
         db.session.commit()
 

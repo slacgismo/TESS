@@ -34,21 +34,16 @@ class Group(Model):
                      primary_key=True,
                      nullable=False)
 
-    is_active = Column(db.Boolean(),
-                       default=False,
-                       nullable=False)
+    is_active = Column(db.Boolean(), default=False, nullable=False)
 
-    is_archived = Column(db.Boolean(), 
-                         default=False,
-                         nullable=False)
+    is_archived = Column(db.Boolean(), default=False, nullable=False)
 
-    updated_at = Column(TIMESTAMP, 
-                        nullable=False,
-                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    created_at = Column(TIMESTAMP,
-                        nullable=False,
-                        server_default=func.now())
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
     # Unique constraint for role_id and user_id
     __table_args__ = (UniqueConstraint('role_id',
@@ -61,11 +56,9 @@ class Group(Model):
 
 
 # Relationships on other tables
-Role.groups = db.relationship('Group',
-                              backref=db.backref('role'))
+Role.groups = db.relationship('Group', backref=db.backref('role'))
 
-User.groups = db.relationship('Group', 
-                              backref=db.backref('user'))
+User.groups = db.relationship('Group', backref=db.backref('user'))
 
 ##########################
 ### MARSHMALLOW SCHEMA ###

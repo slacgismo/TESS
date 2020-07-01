@@ -24,32 +24,25 @@ class ServiceLocation(Model):
                                  autoincrement=True,
                                  nullable=False)
 
-    alternate_service_location_id = Column(db.String(64), 
-                                           unique=True)
+    alternate_service_location_id = Column(db.String(64), unique=True)
 
     address_id = Column(db.Integer,
                         db.ForeignKey('addresses.address_id'),
                         unique=True,
                         nullable=False)
 
-    map_location = Column(db.String(64), 
-                          nullable=False)
+    map_location = Column(db.String(64), nullable=False)
 
-    is_active = Column(db.Boolean(), 
-                       default=False, 
-                       nullable=False)
+    is_active = Column(db.Boolean(), default=False, nullable=False)
 
-    is_archived = Column(db.Boolean(), 
-                         default=False, 
-                         nullable=False)
+    is_archived = Column(db.Boolean(), default=False, nullable=False)
 
-    updated_at = Column(TIMESTAMP, 
-                        nullable=False,
-                        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    created_at = Column(TIMESTAMP,
-                        nullable=False,
-                        server_default=func.now())
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
     def __repr__(self):
         return f'<ServiceLocation service_location_id={self.service_location_id} address_id={self.address_id}>'
@@ -59,8 +52,7 @@ class ServiceLocation(Model):
                             backref=db.backref('service_location'),
                             uselist=False)
 
-    meters = relationship('Meter',
-                          backref=db.backref('service_location'))
+    meters = relationship('Meter', backref=db.backref('service_location'))
 
 
 # Relationships on other tables
