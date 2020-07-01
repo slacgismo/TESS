@@ -91,7 +91,7 @@ def add_alert():
     if arw.has_errors():
         db.session.rollback()
         return arw.to_json(None, 400)
-
+    print(new_alert)
     results = AlertSchema(exclude=['alert_id', 'context', 'context_id']).dump(new_alert)
-
+    print(results)
     return arw.to_json(results)

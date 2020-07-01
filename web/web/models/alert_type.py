@@ -6,7 +6,6 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
 
 from web.models.notification import Notification
-from web.models.alert import Alert
 from web.database import (
     db,
     Model,
@@ -72,9 +71,6 @@ class AlertType(Model):
     # Relationships
     notifications = relationship('Notification',
                                  backref=db.backref('alert_type'))
-
-    alerts = relationship('Alert',
-                          backref=db.backref('alert_type'))
 
     # Methods
     def __repr__(self):

@@ -635,3 +635,4 @@ web/web/static/bundles/*
 
 # ignore client secrets for google email api
 web/web/emails/credentials.json
+web/web/emails/config.py

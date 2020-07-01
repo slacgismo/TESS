@@ -1,9 +1,12 @@
 import enum
+from sqlalchemy import event
 from datetime import datetime
 from marshmallow import fields, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sqlalchemy.types import TIMESTAMP
-
+from web.emails.send_emails import send_email
+from web.models.notification import Notification
+from web.models.alert_type import AlertType
 from web.database import (
     db,
     Model,
@@ -125,6 +128,60 @@ class Alert(Model):
         
         if self.alert_type.name.value == 'Peak Event':
             return 'Peak event'
+
+# Relationship declared on other table (dependency on table import for event listener)
+AlertType.alerts = relationship('Alert',
+                                 backref=db.backref('alert_type'))
+
+# Event listener for email notifications
+@event.listens_for(Alert, 'after_insert')
+def after_insert(mapper, connection, target):
+    '''Sends email after a new alert event is inserted into database'''
+
+    # Query all notifications that are active for the alert type
+    notifications = Notification.query \
+                                .filter(Notification.alert_type_id==target.alert_type_id, Notification.is_active==True) \
+                                .all()
+
+    # Checks if there are no notifications for early exit
+    if notifications == []:
+        return None
+
+    # Since after_insert event is triggered before relationships are configured, alert_type relationship needs to be declared
+    alert_type = AlertType.query \
+                          .filter_by(alert_type_id=target.alert_type_id) \
+                          .first()
+    target.alert_type = alert_type
+
+    subject = 'TESS notification'
+
+    # Create appropriate notification message
+    if target.alert_type.name.value == 'Resource':
+        message = 'TESS is showing "battery" resource depleted.'
+
+    elif target.alert_type.name.value == 'Telecomm':
+        message = 'TESS is observing a telecomm alert.'
+
+    elif target.alert_type.name.value == 'Price':
+        message = f'TESS is observing a price alert at ${target.alert_type.limit}/MW.'
+
+    elif target.alert_type.name.value == 'Load Yellow' \
+        or target.alert_type.name.value == 'Load Red':
+        message = f'TESS {target.alert_type.name.value} alert: {target.context} {target.context_id} is above {target.alert_type.limit}% capacity at {target.created_at}.'
+
+    elif target.alert_type.name.value == 'Price Yellow' \
+        or target.alert_type.name.value == 'Price Red':
+        message = f'TESS {target.alert_type.name.value} alert: {target.context} {target.context_id} is above {target.alert_type.limit}% of the alert price at {target.created_at}.'
+
+    elif target.alert_type.name.value == 'Import Capacity':
+        message = f'TESS System alert: {target.context} {target.context_id} is above {target.alert_type.limit} kW import capacity at {target.created_at}.'
+
+    elif target.alert_type.name.value == 'Export Capacity':
+         message = f'TESS System alert: {target.context} {target.context_id} is above {target.alert_type.limit} kW export capacity at {target.created_at}.'
+
+    # Sends BCC emails to active notifications
+    receiving_emails = [notification.email for notification in notifications]
+    send_email(subject, message, receiving_emails)
 
 
 ##########################
