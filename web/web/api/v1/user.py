@@ -95,7 +95,7 @@ def add_user():
     Adds new user object to database
     '''
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(exclude=['user_id', 'created_at', 'updated_at'])
+    user_schema = UserSchema(exclude=['id', 'created_at', 'updated_at'])
     new_user = request.get_json()
 
     try:

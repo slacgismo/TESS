@@ -2,7 +2,7 @@ from flask import Blueprint, request
 from web.database import db
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
-from web.models.utility_notification_setting import UtilityNotificationSetting, UtilityNotificationSettingSchema, NotificationSubscription, NotificationSubscriptionSchema
+from web.models.notification import Notification, NotificationSchema
 from .response_wrapper import ApiResponseWrapper
 
 notifications_api_bp = Blueprint('notifications_api_bp', __name__)
@@ -238,26 +238,45 @@ notifications_api_bp = Blueprint('notifications_api_bp', __name__)
 # }]
 
 @notifications_api_bp.route('/notifications', methods=['GET'])
-def get_notification_subscriptions():
-    """
-    Retrieves all notification subscription objects
-    """
+def get_notifications():
+    '''
+    Retrieves all notification objects
+    '''
+    
+    notifications = Notification.query.all()
+# "pk": ,
+#     "email":
+#     "six@tess.com",
+#     "notifications": [{
+#         "notification_type": "YELLOW_ALARM_LOAD",
+#         "label": "Yellow Alarm (Load)",
+#         "is_active": True
+#     },
     arw = ApiResponseWrapper()
 
-    notification_schema = NotificationSubscriptionSchema()
-    notifications = NotificationSubscription.query.all()
+    fields_to_filter_on = request.args.getlist('fields')
+
+    if len(fields_to_filter_on) > 0:
+        for field in fields_to_filter_on:
+            if field not in Notification.__table__.columns:
+                arw.add_errors({field: 'Invalid Notification field'})
+                return arw.to_json(None, 400)
+    else:
+        fields_to_filter_on = None
+
+    notifications = Notification.query.all()
+    notification_schema = NotificationSchema(only=fields_to_filter_on)
     results = notification_schema.dump(notifications, many=True)
 
     return arw.to_json(results)
 
-
-@notifications_api_bp.route('/notifications', methods=['PUT'])
-def modify_notifications():
+@notifications_api_bp.route('/notification', methods=['PUT'])
+def modify_notification():
     '''
     Updates one notification object in database
     '''
     arw = ApiResponseWrapper()
-    notification_schema = NotificationSubscriptionSchema(exclude=['utility_id', 'utility_notification_setting_id', 'created_at'])
+    notification_schema = NotificationSchema(exclude=['alert_type_id', 'created_at'])
     modified_notification = request.get_json()
 
     try:
@@ -281,14 +300,14 @@ def modify_notifications():
     return arw.to_json(results)
 
 
-@notifications_api_bp.route('/notifications', methods=['POST'])
-def add_notifications():
+@notifications_api_bp.route('/notification', methods=['POST'])
+def add_notification():
     '''
     Adds new notification object to database
     '''
     arw = ApiResponseWrapper()
-    notification_schema = NotificationSubscriptionSchema(
-        exclude=['notification_subscription_id', 'created_at', 'updated_at'])
+    notification_schema = NotificationSchema(
+        exclude=['notification_id', 'created_at', 'updated_at'])
     new_notification = request.get_json()
 
     try:
@@ -307,36 +326,6 @@ def add_notifications():
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = NotificationSubscriptionSchema().dump(new_notification)
-
-    return arw.to_json(results)
-
-@notifications_api_bp.route('/utility_notifications', methods=['POST'])
-def add_service_location():
-    '''
-    Adds new service location object to database
-    '''
-    arw = ApiResponseWrapper()
-    notification_schema = UtilityNotificationSettingSchema(
-        exclude=['utility_notification_setting_id', 'created_at', 'updated_at'])
-    new_utility_notification = request.get_json()
-
-    try:
-        new_utility_notification = notification_schema.load(
-            new_utility_notification, session=db.session)
-        db.session.add(new_utility_notification)
-        db.session.commit()
-
-    except ValidationError as ve:
-        arw.add_errors(ve.messages)
-
-    except IntegrityError:
-        arw.add_errors('Integrity error')
-
-    if arw.has_errors():
-        db.session.rollback()
-        return arw.to_json(None, 400)
-
-    results = UtilityNotificationSettingSchema().dump(new_utility_notification)
+    results = NotificationSchema().dump(new_notification)
 
     return arw.to_json(results)
