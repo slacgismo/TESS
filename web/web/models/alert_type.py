@@ -83,7 +83,6 @@ class AlertType(Model):
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################
-
 class AlertTypeSchema(SQLAlchemyAutoSchema):
     name = fields.Method('get_alert_name', deserialize='load_alert_name')
 
