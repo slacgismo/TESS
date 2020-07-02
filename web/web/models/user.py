@@ -7,6 +7,7 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.models.notification import Notification
 from web.models.address import Address, AddressSchema
 from web.models.login import Login
+from web.models.alert import Alert
 from web.database import (
     db,
     Model,
@@ -79,6 +80,8 @@ class User(UserMixin, Model):
     login = relationship('Login', backref=db.backref('user'), uselist=False)
 
     notifications = relationship('Notification', backref=db.backref('user'))
+
+    alerts = relationship('Alert', backref=db.backref('user'))
 
 
 # Relationships on other tables

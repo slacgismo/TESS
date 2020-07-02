@@ -33,23 +33,6 @@ class Status(enum.Enum):
         return False
 
 
-class AssignedToOptions(enum.Enum):
-    OPERATOR_1 = 'operator 1'
-    OPERATOR_2 = 'operator 2'
-    FIELD_CREW = 'field crew'
-    AUTOMATED_SYSTEM = 'automated system'
-
-    @staticmethod
-    def check_value(str_value):
-        '''Takes in string value, returns False if it isn't an accepted enum value, else returns enum type.'''
-
-        for assigned_to_option in AssignedToOptions:
-            if assigned_to_option.value == str_value:
-                return assigned_to_option
-
-        return False
-
-
 class ContextType(enum.Enum):
     TRANSFORMER = 'Transformer'
     FEEDER = 'Feeder'
@@ -79,7 +62,9 @@ class Alert(Model):
                            db.ForeignKey('alert_types.alert_type_id'),
                            nullable=False)
 
-    assigned_to = Column(db.Enum(AssignedToOptions), nullable=False)
+    assigned_to = Column(db.String(255),
+                         db.ForeignKey('users.email'),
+                         nullable=False)
 
     description = Column(db.Text, nullable=False)
 
@@ -187,8 +172,6 @@ def after_insert(mapper, connection, target):
 
 
 class AlertSchema(SQLAlchemyAutoSchema):
-    assigned_to = fields.Method('get_assigned_to',
-                                deserialize='load_assigned_to')
     alert_type = fields.Method('get_alert_type', dump_only=True)
     date = fields.Method('get_date_format', dump_only=True)
     time = fields.Method('get_time_format', dump_only=True)
@@ -203,15 +186,6 @@ class AlertSchema(SQLAlchemyAutoSchema):
 
     def get_time_format(self, obj):
         return str(obj.created_at.time())
-
-    def get_assigned_to(self, obj):
-        return obj.assigned_to.value
-
-    def load_assigned_to(self, value):
-        assigned_to_enum = AssignedToOptions.check_value(value)
-        if not assigned_to_enum:
-            raise ValidationError(f'{value} is an invalid Assigned To Option')
-        return assigned_to_enum
 
     def get_status(self, obj):
         return obj.status.value
