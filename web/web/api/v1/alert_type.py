@@ -40,7 +40,7 @@ def update_alert_type(alert_type_id):
     Updates alert type in database
     '''
     arw = ApiResponseWrapper()
-    alert_type_schema = AlertTypeSchema(exclude=['created_at'])
+    alert_type_schema = AlertTypeSchema(exclude=['created_at', 'updated_at'])
     modified_alert_type = request.get_json()
 
     try:

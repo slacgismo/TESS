@@ -5,6 +5,7 @@ from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
 
+from web.models.alert import Alert
 from web.models.notification import Notification
 from web.database import (
     db,
@@ -60,7 +61,7 @@ class AlertType(Model):
         nullable=False,
         server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     # Unique constraint for utility_id and name
     __table_args__ = (UniqueConstraint('utility_id',
@@ -70,6 +71,9 @@ class AlertType(Model):
     # Relationships
     notifications = relationship('Notification',
                                  backref=db.backref('alert_type'))
+
+    # Relationship declared on other table (dependency on table import for event listener)
+    alerts = relationship('Alert', backref=db.backref('alert_type'))
 
     # Methods
     def __repr__(self):

@@ -65,7 +65,7 @@ def modify_group(group_id):
     '''
 
     arw = ApiResponseWrapper()
-    group_schema = GroupSchema(exclude=['created_at', 'user', 'role'])
+    group_schema = GroupSchema(exclude=['created_at', 'user', 'role', 'updated_at'])
     modified_group = request.get_json()
 
     try:

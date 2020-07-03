@@ -54,7 +54,7 @@ def modify_notification():
     '''
     arw = ApiResponseWrapper()
     notification_schema = NotificationSchema(
-        exclude=['alert_type_id', 'created_at'])
+        exclude=['alert_type_id', 'created_at', 'updated_at'])
     modified_notification = request.get_json()
 
     try:

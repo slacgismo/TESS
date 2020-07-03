@@ -5,7 +5,6 @@ from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.models.notification import Notification
-from web.models.address import Address, AddressSchema
 from web.models.login import Login
 from web.models.alert import Alert
 from web.database import (
@@ -54,7 +53,7 @@ class User(UserMixin, Model):
         nullable=False,
         server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     # Methods
     def get_roles(self):
@@ -84,18 +83,14 @@ class User(UserMixin, Model):
     alerts = relationship('Alert', backref=db.backref('user'))
 
 
-# Relationships on other tables
-Address.user = relationship('User',
-                            backref=db.backref('address'),
-                            uselist=False)
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
 
 
 class UserSchema(SQLAlchemyAutoSchema):
     roles = fields.Method('get_roles', dump_only=True)
-
     postal_code = fields.Method('get_postal_code', dump_only=True)
-
-    address = fields.Nested(AddressSchema(), load_only=True)
 
     # Marshmallow methods
     def get_roles(self, obj):
@@ -103,9 +98,11 @@ class UserSchema(SQLAlchemyAutoSchema):
         result_roles = []
         for role in roles:
             result_roles.append(role.name.value)
+            print(role.name.value)
         return result_roles
 
     def get_postal_code(self, obj):
+        print(obj.address)
         address = {
             'postal code': obj.address.postal_code,
             'country': obj.address.country
@@ -116,4 +113,3 @@ class UserSchema(SQLAlchemyAutoSchema):
         model = User
         include_fk = True
         load_instance = True
-        transient = True

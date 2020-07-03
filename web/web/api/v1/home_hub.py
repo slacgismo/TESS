@@ -65,7 +65,7 @@ def update_home_hub(home_hub_id):
     '''
 
     arw = ApiResponseWrapper()
-    home_hub_schema = HomeHubSchema(exclude=['created_at'])
+    home_hub_schema = HomeHubSchema(exclude=['created_at', 'updated_at'])
     modified_home_hub = request.get_json()
 
     try:

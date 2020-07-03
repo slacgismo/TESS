@@ -43,7 +43,7 @@ def update_alert(alert_id):
     Updates alert in database
     '''
     arw = ApiResponseWrapper()
-    alert_schema = AlertSchema(exclude=['created_at'])
+    alert_schema = AlertSchema(exclude=['created_at', 'updated_at'])
     modified_alert = request.get_json()
 
     try:

@@ -74,7 +74,7 @@ class Meter(Model):
         nullable=False,
         server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     # Methods
     def get_interval_count(self, start, end):

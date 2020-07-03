@@ -43,7 +43,7 @@ class Pv(Model):
         nullable=False,
         server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     def __repr__(self):
         return f'<Pv pv_id={self.pv_id} home_hub_id={self.home_hub_id} created_at={self.created_at}>'

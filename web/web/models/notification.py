@@ -39,7 +39,7 @@ class Notification(Model):
         nullable=False,
         server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     # Unique constraint for alert_type_id and email
     __table_args__ = (UniqueConstraint('alert_type_id',
@@ -71,7 +71,6 @@ class Notification(Model):
         notification_ids = list(chain(*notification_ids_grouped_by_email))
 
         return notification_ids
-
 
 ##########################
 ### MARSHMALLOW SCHEMA ###

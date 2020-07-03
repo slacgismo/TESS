@@ -114,7 +114,7 @@ def update_meter(meter_id):
     '''
 
     arw = ApiResponseWrapper()
-    meter_schema = MeterSchema(exclude=['created_at'])
+    meter_schema = MeterSchema(exclude=['created_at', 'updated_at'])
     modified_meter = request.get_json()
 
     try:

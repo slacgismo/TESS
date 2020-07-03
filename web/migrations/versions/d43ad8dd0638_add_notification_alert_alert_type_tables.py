@@ -24,7 +24,7 @@ def upgrade():
     sa.Column('name', sa.Enum('YELLOW_ALARM_LOAD', 'RED_ALARM_LOAD', 'YELLOW_ALARM_PRICE', 'RED_ALARM_PRICE', 'PRICE_ALERT', 'IMPORT_CAPACITY', 'EXPORT_CAPACITY', 'RESOURCE_DEPLETION', 'TELECOMM_ALERT', 'PEAK_EVENT', name='alertname'), nullable=False),
     sa.Column('limit', sa.Float(), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'), nullable=False),
-    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.func.now(), nullable=True),
     sa.ForeignKeyConstraint(['utility_id'], ['utilities.utility_id'], ),
     sa.PrimaryKeyConstraint('alert_type_id'),
     sa.UniqueConstraint('utility_id', 'name', name='_utility_name_uc')
@@ -39,7 +39,7 @@ def upgrade():
     sa.Column('context_id', sa.String(length=64), nullable=False),
     sa.Column('resolution', sa.Text(), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'), nullable=False),
-    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.func.now(), nullable=True),
     sa.ForeignKeyConstraint(['alert_type_id'], ['alert_types.alert_type_id'], ),
     sa.ForeignKeyConstraint(['assigned_to'], ['users.email'], ),
     sa.PrimaryKeyConstraint('alert_id')
@@ -51,60 +51,66 @@ def upgrade():
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_by', sa.Integer(), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'), nullable=False),
-    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.func.now(), nullable=True),
     sa.ForeignKeyConstraint(['alert_type_id'], ['alert_types.alert_type_id'], ),
     sa.ForeignKeyConstraint(['created_by'], ['users.id'], ),
     sa.PrimaryKeyConstraint('notification_id'),
     sa.UniqueConstraint('alert_type_id', 'email', name='_alert_type_id_email_uc')
     )
-    op.create_unique_constraint(None, 'utilities', ['name'])
+    op.create_unique_constraint('uniq_name_utility', 'utilities', ['name'])
     op.drop_column('addresses', 'created_at')
     op.drop_column('addresses', 'updated_at')
     op.add_column('addresses',
         sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
     op.add_column('addresses',
-        sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()))
+        sa.Column('created_at', sa.TIMESTAMP, nullable=True, server_default=sa.func.now()))
     op.drop_column('groups', 'created_at')
     op.drop_column('groups', 'updated_at')
     op.add_column('groups',
         sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
     op.add_column('groups',
-        sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()))
+        sa.Column('created_at', sa.TIMESTAMP, nullable=True, server_default=sa.func.now()))
     op.drop_column('home_hubs', 'created_at')
     op.drop_column('home_hubs', 'updated_at')
     op.add_column('home_hubs',
         sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
     op.add_column('home_hubs',
-        sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()))
+        sa.Column('created_at', sa.TIMESTAMP, nullable=True, server_default=sa.func.now()))
     op.drop_column('logins', 'created_at')
     op.drop_column('logins', 'updated_at')
     op.add_column('logins',
         sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
     op.add_column('logins',
-        sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()))
+        sa.Column('created_at', sa.TIMESTAMP, nullable=True, server_default=sa.func.now()))
     op.drop_column('meters', 'created_at')
     op.drop_column('meters', 'updated_at')
     op.add_column('meters',
         sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
     op.add_column('meters',
-        sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()))
+        sa.Column('created_at', sa.TIMESTAMP, nullable=True, server_default=sa.func.now()))
     op.drop_column('pvs', 'created_at')
     op.drop_column('pvs', 'updated_at')
     op.add_column('pvs',
         sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
     op.add_column('pvs',
-        sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()))
+        sa.Column('created_at', sa.TIMESTAMP, nullable=True, server_default=sa.func.now()))
     op.drop_column('service_locations', 'created_at')
     op.drop_column('service_locations', 'updated_at')
     op.add_column('service_locations',
         sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
     op.add_column('service_locations',
-        sa.Column('created_at', sa.TIMESTAMP, nullable=False, server_default=sa.func.now()))
+        sa.Column('created_at', sa.TIMESTAMP, nullable=True, server_default=sa.func.now()))
+    op.drop_column('users', 'created_at')
+    op.drop_column('users', 'updated_at')
+    op.add_column('users',
+        sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
+    op.add_column('users',
+        sa.Column('created_at', sa.TIMESTAMP, nullable=True, server_default=sa.func.now()))
     # ### end Alembic commands ###
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
-    op.drop_constraint(None, 'utilities', type_='unique')
+    op.drop_constraint('uniq_name_utility', 'utilities', type_='unique')
     op.drop_table('notifications')
     op.drop_table('alerts')
     op.drop_table('alert_types')
@@ -149,5 +155,11 @@ def downgrade():
     op.add_column('service_locations', 
         sa.Column('created_at', sa.TIMESTAMP, nullable=False))
     op.add_column('service_locations', 
+        sa.Column('updated_at', sa.TIMESTAMP, nullable=False))
+    op.drop_column('users', 'created_at')
+    op.drop_column('users', 'updated_at')
+    op.add_column('users', 
+        sa.Column('created_at', sa.TIMESTAMP, nullable=False))
+    op.add_column('users', 
         sa.Column('updated_at', sa.TIMESTAMP, nullable=False))
     # ### end Alembic commands ###
