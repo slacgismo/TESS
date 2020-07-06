@@ -72,7 +72,6 @@ class AlertType(Model):
     notifications = relationship('Notification',
                                  backref=db.backref('alert_type'))
 
-    # Relationship declared on other table (dependency on table import for event listener)
     alerts = relationship('Alert', backref=db.backref('alert_type'))
 
     # Methods

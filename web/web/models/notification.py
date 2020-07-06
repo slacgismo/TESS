@@ -72,6 +72,7 @@ class Notification(Model):
 
         return notification_ids
 
+
 ##########################
 ### MARSHMALLOW SCHEMA ###
 ##########################

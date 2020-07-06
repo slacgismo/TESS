@@ -111,7 +111,7 @@ class Alert(Model):
 
     def create_alert_notification_message(self):
         '''Returns tuple of subject, notification message for alert'''
-        
+
         subject = 'TESS notification'
 
         # Create appropriate notification message
@@ -126,19 +126,20 @@ class Alert(Model):
 
         elif self.alert_type.name.value == 'Load Yellow' \
             or self.alert_type.name.value == 'Load Red':
-            message = f'TESS {self.alert_type.name.value} alert: {self.context} {self.context_id} is above {self.alert_type.limit}% capacity at {self.created_at}.'
+            message = f'TESS {self.alert_type.name.value} alert: {self.context.value} {self.context_id} is above {self.alert_type.limit}% capacity at {self.created_at}.'
 
         elif self.alert_type.name.value == 'Price Yellow' \
             or self.alert_type.name.value == 'Price Red':
-            message = f'TESS {self.alert_type.name.value} alert: {self.context} {self.context_id} is above {self.alert_type.limit}% of the alert price at {self.created_at}.'
+            message = f'TESS {self.alert_type.name.value} alert: {self.context.value} {self.context_id} is above {self.alert_type.limit}% of the alert price at {self.created_at}.'
 
         elif self.alert_type.name.value == 'Import Capacity':
-            message = f'TESS System alert: {self.context} {self.context_id} is above {self.alert_type.limit} kW import capacity at {self.created_at}.'
+            message = f'TESS System alert: {self.context.value} {self.context_id} is above {self.alert_type.limit} kW import capacity at {self.created_at}.'
 
         elif self.alert_type.name.value == 'Export Capacity':
-            message = f'TESS System alert: {self.context} {self.context_id} is above {self.alert_type.limit} kW export capacity at {self.created_at}.'
+            message = f'TESS System alert: {self.context.value} {self.context_id} is above {self.alert_type.limit} kW export capacity at {self.created_at}.'
 
         return (subject, message)
+
 
 @event.listens_for(Alert, 'after_insert')
 def after_insert(mapper, connection, target):
@@ -146,23 +147,21 @@ def after_insert(mapper, connection, target):
 
     # Query all notifications that are active for the alert type
     notifications = Notification.query \
-                                .filter(Notification.alert_type_id==target.alert_type_id, Notification.is_active==True) \
-                                .all()
+        .filter(Notification.alert_type_id==target.alert_type_id, Notification.is_active==True) \
+            .all()
 
     # Checks if there are no notifications for early exit
     if len(notifications) == 0:
         return None
 
-    alert = Alert \
-        .query \
-            .filter_by(alert_id=target.alert_id) \
-                .first()
+    alert = Alert.query \
+        .filter_by(alert_id=target.alert_id) \
+            .first()
 
     subject, message = alert.create_alert_notification_message()
 
     #Sends BCC emails to active notifications
     receiving_emails = [notification.email for notification in notifications]
-
     send_email(subject, message, receiving_emails)
 
 
