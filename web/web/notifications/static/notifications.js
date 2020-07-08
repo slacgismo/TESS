@@ -28,14 +28,12 @@ const defaultHeaders = [
 
 class Notifications extends React.Component {
     constructor(props) {
-        console.log("HERE")
         super(props);
         this.state = {
             checkboxReferences: {},
             inputValueReferences: {},
             selectedRowIdsToDelete: []
         };
-        console.log("HERE")
     }
 
     componentDidMount() {
@@ -45,7 +43,6 @@ class Notifications extends React.Component {
         // not great since the component shouldn't care about the menu
         this.props.dispatch(selectMenuOption('notifications'));
         this.props.dispatch(action.getNotifications());
-        console.log("1", action.getNotifications)
     }
 
     handleEmailChange = (e, id) => {
@@ -55,12 +52,10 @@ class Notifications extends React.Component {
     }
 
     handleNotificationChange = (e, id, email, notificationType) => {
-        console.log("2", email)
-        console.log("3", notificationType)
         let refs = this.state.checkboxReferences;
         refs[id] = e.currentTarget.checked;
         this.setState({checkboxReferences: refs});
-        this.props.dispatch(updateNotificationPreference(email, notificationType, event.currentTarget.checked));
+        //this.props.dispatch(updateNotificationPreference(email, notificationType, event.currentTarget.checked));
     }
 
     handleRowDeleteChange = (e, id) => {
@@ -88,7 +83,6 @@ class Notifications extends React.Component {
         const headers = this.props.notificationEntries.length 
             ? this.props.notificationEntries[0]["notifications"]
             : defaultHeaders
-        console.log("5", headers)
         return (
             <DT.DataTableHead>
                 <DT.DataTableRow>
@@ -96,7 +90,6 @@ class Notifications extends React.Component {
                     <DT.DataTableHeadCell>Email</DT.DataTableHeadCell>
                     {
                         headers.map(item => {
-                            console.log("6", item)
                             return (
                                 <DT.DataTableHeadCell>{item.label}</DT.DataTableHeadCell>
                             );
@@ -108,9 +101,7 @@ class Notifications extends React.Component {
     }
 
     getBody = () => {
-        console.log("7", this.props.not)
         const dataTableBody = this.props.notificationEntries.map((item, index) => {
-            console.log("8", item.pk)
             const rowId = item.pk
             const emailValue = this.state.inputValueReferences[rowId] === ""
                 ? this.state.inputValueReferences[rowId]
@@ -132,7 +123,6 @@ class Notifications extends React.Component {
                     </DT.DataTableCell>
                     {
                         item.notifications.map(notificationItem => {
-                            console.log("4", item.notifications)
                             const id = index.toString() + notificationItem.notification_type;
                             let checkboxSelection = notificationItem.is_active;
                             if(this.state.checkboxReferences[id] !== undefined && this.state.checkboxReferences[id] !== null) {
@@ -175,7 +165,6 @@ class Notifications extends React.Component {
     }
 
     render() {
-        console.log("HERE")
         return (
             <div>
                 <div className="notification-action-bar-container">
