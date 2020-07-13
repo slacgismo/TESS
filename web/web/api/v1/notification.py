@@ -2,7 +2,10 @@ from flask import Blueprint, request
 from web.database import db
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
-
+from sqlalchemy import text, func
+from sqlalchemy.sql import label
+from itertools import groupby
+from operator import attrgetter
 from web.models.notification import Notification, NotificationSchema
 from .response_wrapper import ApiResponseWrapper
 
@@ -28,22 +31,43 @@ def get_notifications():
     else:
         fields_to_filter_on = None
 
-    notification_ids = Notification.get_one_notification_id_per_email()
+    notifications = Notification.query.all()
+    # notifications = db.session.query(Notification.email.distinct().label("email"))
+    # notification_ids = Notification.get_one_notification_id_per_email()
 
-    notifications = Notification.query \
-                                .filter(Notification.notification_id \
-                                .in_(notification_ids)) \
-                                .all()
+    # notifications = Notification.query \
+    #                             .filter(Notification.notification_id \
+    #                             .in_(notification_ids)) \
+    #                             .all()
 
+    # notification_ids_grouped_by_email = Notification.query \
+    #     .order_by(Notification.email) \
+    #         .all()
+    
+    # notification_ids_grouped_by_email = Notification.query. \
+    #     with_entities(Notification.email, func.group_concat(Notification.notification_id, Notification.alert_type_id, Notification.is_active))/
+    #            .group_by(Notification.email)
+
+    print(notifications)
     notification_schema = NotificationSchema(only=fields_to_filter_on,
                                              exclude=[
                                                  'created_by', 'alert_type_id',
-                                                 'created_at', 'updated_at',
-                                                 'notification_id', 'is_active'
+                                                 'created_at', 'updated_at'
                                              ])
 
+    print(notification_schema)
+    # notification_schema = NotificationSchema(only=fields_to_filter_on,
+    #                                          exclude=[
+    #                                              'created_by', 'alert_type_id',
+    #                                              'created_at', 'updated_at',
+    #                                              'notification_id', 'is_active'
+    #                                          ])
     results = notification_schema.dump(notifications, many=True)
 
+    # results_list = results["data"]
+    # results["data"] = [list(g) for k, g in groupby(results_list, attrgetter('email'))]
+
+    print(results)
     return arw.to_json(results)
 
 
@@ -83,9 +107,7 @@ def add_notification():
     Adds new notification object to database
     '''
     arw = ApiResponseWrapper()
-    notification_schema = NotificationSchema(exclude=[
-        'notification_id', 'pk', 'notifications', 'created_at', 'updated_at'
-    ])
+    notification_schema = NotificationSchema(exclude=[ 'created_at', 'updated_at'])
     new_notification = request.get_json()
 
     try:

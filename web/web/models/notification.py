@@ -57,21 +57,6 @@ class Notification(Model):
             email=self.email).all()
         return notifications_per_email
 
-    @classmethod
-    def get_one_notification_id_per_email(cls):
-        '''Returns list of one notification id per unique email'''
-
-        # group by emails, with the minimum notification id in order to eliminate repeating email rows on frontend
-        notification_ids_grouped_by_email = cls.query \
-                                                .with_entities(label('notification_id', func.min(cls.notification_id))) \
-                                                .group_by(cls.email) \
-                                                .all()
-
-        # unpack tuple to flattened list of ids
-        notification_ids = list(chain(*notification_ids_grouped_by_email))
-
-        return notification_ids
-
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
@@ -79,23 +64,38 @@ class Notification(Model):
 
 
 class NotificationSchema(SQLAlchemyAutoSchema):
+    pk = fields.Method('get_id')
+    notification_type = fields.Method('get_notification_type')
+    label = fields.Method('get_label')
+    # notifications = fields.Method('get_notifications')
+
+    def get_notification_type(self, obj):
+        return str(obj.alert_type.name.name)
+    
+    def get_label(self, obj):
+        return obj.alert_type.name.value
+    
+    def get_id(self, obj):
+        return obj.notification_id
+
     # NOTE: pk field to fit in with current test data implementation,
     # however this set up is not an accurate representation of notification pks
-    pk = fields.Function(lambda obj: obj.notification_id)
-    notifications = fields.Method('get_notifications')
+    # pk = fields.Function(lambda obj: obj.notification_id)
+    # email = fields.Function(lambda obj: obj.email)
+    # notifications = fields.Method('get_notifications')
 
-    def get_notifications(self, obj):
-        notifications = obj.get_all_notifications_per_email()
-        notification_list = []
+    # def get_notifications(self, obj):
+    #     notifications = obj.get_all_notifications_per_email()
+    #     notification_list = []
 
-        for notification in notifications:
-            notification_info = {
-                "notification_type": str(notification.alert_type.name.name),
-                "label": notification.alert_type.name.value,
-                "is_active": notification.is_active
-            }
-            notification_list.append(notification_info)
-        return notification_list
+    #     for notification in notifications:
+    #         notification_info = {
+    #             "notification_type": str(notification.alert_type.name.name),
+    #             "label": notification.alert_type.name.value,
+    #             "is_active": notification.is_active
+    #         }
+    #         notification_list.append(notification_info)
+    #     return notification_list
 
     class Meta:
         model = Notification
