@@ -1,14 +1,16 @@
 import { api } from '../../static/js/network_client';
 
-const groupBy = (array, key) => {
-    return array.reduce((result, currentValue) => {
-      (result[currentValue[key]] = result[currentValue[key]] || []).push(
-        currentValue
-      );
-      return result;
-    }, {}); 
-  };
+const groupBy = (array, key) =>
+  array.reduce((result, { [key]: k, ...rest }) => {
+    (result[k] = result[k] || []).push(rest);
+    return result;
+  }, {});
 
+const groupDataBy = (array, key) =>
+  Object.entries(groupBy(array, key)).map(([email, notifications]) => ({
+    email,
+    notifications
+  }));
 
 function updateFetchedNotifications(data) {
     return {
@@ -27,8 +29,8 @@ export function addNewNotificationRow(rowTemplate) {
 export function getNotifications() {
     return dispatch => {
         api.get('notifications', (response) => {
-            const groupedByEmail = groupBy(response.results.data, "email");
-            dispatch(updateFetchedNotifications(groupedByEmail));
+            const convertedRes = groupDataBy(response.results.data, 'email');
+            dispatch(updateFetchedNotifications(convertedRes));
         }, (error) => {
             console.warn(error);
         })

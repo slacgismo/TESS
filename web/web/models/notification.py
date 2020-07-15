@@ -50,13 +50,6 @@ class Notification(Model):
     def __repr__(self):
         return f'<Notification notification_id={self.notification_id} alert_type_id={self.alert_type_id} is_active={self.is_active}>'
 
-    def get_all_notifications_per_email(self):
-        '''Returns list of all notifications with same email'''
-
-        notifications_per_email = Notification.query.filter_by(
-            email=self.email).all()
-        return notifications_per_email
-
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
@@ -67,7 +60,6 @@ class NotificationSchema(SQLAlchemyAutoSchema):
     pk = fields.Method('get_id')
     notification_type = fields.Method('get_notification_type')
     label = fields.Method('get_label')
-    # notifications = fields.Method('get_notifications')
 
     def get_notification_type(self, obj):
         return str(obj.alert_type.name.name)
@@ -77,25 +69,6 @@ class NotificationSchema(SQLAlchemyAutoSchema):
     
     def get_id(self, obj):
         return obj.notification_id
-
-    # NOTE: pk field to fit in with current test data implementation,
-    # however this set up is not an accurate representation of notification pks
-    # pk = fields.Function(lambda obj: obj.notification_id)
-    # email = fields.Function(lambda obj: obj.email)
-    # notifications = fields.Method('get_notifications')
-
-    # def get_notifications(self, obj):
-    #     notifications = obj.get_all_notifications_per_email()
-    #     notification_list = []
-
-    #     for notification in notifications:
-    #         notification_info = {
-    #             "notification_type": str(notification.alert_type.name.name),
-    #             "label": notification.alert_type.name.value,
-    #             "is_active": notification.is_active
-    #         }
-    #         notification_list.append(notification_info)
-    #     return notification_list
 
     class Meta:
         model = Notification
