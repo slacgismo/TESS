@@ -63,10 +63,10 @@ class NotificationSchema(SQLAlchemyAutoSchema):
 
     def get_notification_type(self, obj):
         return str(obj.alert_type.name.name)
-    
+
     def get_label(self, obj):
         return obj.alert_type.name.value
-    
+
     def get_id(self, obj):
         return obj.notification_id
 

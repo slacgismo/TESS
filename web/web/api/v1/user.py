@@ -63,7 +63,10 @@ def modify_user(user_id):
     '''
 
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(exclude=['updated_at', 'email_confirmed_at', 'created_at', 'roles', 'postal_code'])
+    user_schema = UserSchema(exclude=[
+        'updated_at', 'email_confirmed_at', 'created_at', 'roles',
+        'postal_code'
+    ])
     modified_user = request.get_json()
 
     try:

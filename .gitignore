@@ -632,6 +632,3 @@ simulation/__pycache__/
 
 # ignoring the bundled file since regenerating this locally will change it everytime
 web/web/static/bundles/*
-
-# ignore email credentials for email set up
-web/web/emails/config.py

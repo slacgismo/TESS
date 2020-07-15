@@ -42,8 +42,7 @@ def add_role():
     '''
 
     arw = ApiResponseWrapper()
-    role_schema = RoleSchema(
-        exclude=['role_id'])
+    role_schema = RoleSchema(exclude=['role_id'])
     new_role = request.get_json()
 
     try:

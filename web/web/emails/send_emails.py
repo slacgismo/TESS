@@ -1,17 +1,22 @@
 import smtplib
-import web.emails.config as config
+from dotenv import load_dotenv
+load_dotenv()
+
+import os
 from email.mime.text import MIMEText
 
-smtplib
+EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
+PASSWORD = os.getenv('PASSWORD')
+
 server = smtplib.SMTP('smtp.gmail.com:587')
 server.ehlo()
 server.starttls()
-server.login(config.EMAIL_ADDRESS, config.PASSWORD)
 
 
 def send_email(subject, message, bcc):
     '''Simple SMTP set up with gmail'''
 
+    print("hello")
     # Simple set up for basic working email functionality
     # TODO: styling email, switch to implementing OAuth/Gmail API
 
@@ -19,14 +24,14 @@ def send_email(subject, message, bcc):
         server = smtplib.SMTP('smtp.gmail.com:587')
 
         msg = MIMEText(message)
-        msg['From'] = config.EMAIL_ADDRESS
+        msg['From'] = EMAIL_ADDRESS
         msg['Subject'] = subject
 
         server.ehlo()
         server.starttls()
-        server.login(config.EMAIL_ADDRESS, config.PASSWORD)
+        server.login(EMAIL_ADDRESS, PASSWORD)
 
-        server.sendmail(config.EMAIL_ADDRESS, bcc, msg.as_string())
+        server.sendmail(EMAIL_ADDRESS, bcc, msg.as_string())
         server.quit()
 
     except:

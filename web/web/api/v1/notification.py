@@ -33,14 +33,13 @@ def get_notifications():
 
     notifications = Notification.query.all()
 
-    notification_schema = NotificationSchema(only=fields_to_filter_on,
-                                             exclude=[
-                                                 'created_by', 'alert_type_id',
-                                                 'created_at', 'updated_at'
-                                             ])
+    notification_schema = NotificationSchema(
+        only=fields_to_filter_on,
+        exclude=['created_by', 'alert_type_id', 'created_at', 'updated_at'])
 
     results = notification_schema.dump(notifications, many=True)
     return arw.to_json(results)
+
 
 @notifications_api_bp.route('/notification', methods=['PUT'])
 def modify_notification():
@@ -78,7 +77,8 @@ def add_notification():
     Adds new notification object to database
     '''
     arw = ApiResponseWrapper()
-    notification_schema = NotificationSchema(exclude=[ 'created_at', 'updated_at'])
+    notification_schema = NotificationSchema(
+        exclude=['created_at', 'updated_at'])
     new_notification = request.get_json()
 
     try:

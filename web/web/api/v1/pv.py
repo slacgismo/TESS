@@ -153,4 +153,3 @@ def add_pv():
     result = PvSchema().dump(new_pv)
 
     return arw.to_json(result)
-
