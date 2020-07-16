@@ -147,7 +147,7 @@ class Notifications extends React.Component {
 
     addNewRow = () => {
         let notifications = [];
-        if(!this.props.notificationEntries.length) {
+        if(!this.props.alertTypeEntries.length) {
             notifications = defaultHeaders;
         } else {
             // use the first entry in notification entries as the template, since there may
