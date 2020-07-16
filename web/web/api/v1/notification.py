@@ -8,6 +8,7 @@ from itertools import groupby
 from operator import attrgetter
 from web.models.notification import Notification, NotificationSchema
 from .response_wrapper import ApiResponseWrapper
+from web.models.alert_type import AlertType, AlertTypeSchema
 
 notifications_api_bp = Blueprint('notifications_api_bp', __name__)
 
@@ -38,6 +39,7 @@ def get_notifications():
         exclude=['created_by', 'alert_type_id', 'created_at', 'updated_at'])
 
     results = notification_schema.dump(notifications, many=True)
+
     return arw.to_json(results)
 
 

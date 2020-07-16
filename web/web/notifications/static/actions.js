@@ -38,3 +38,20 @@ export function getNotifications() {
         })
     }
 }
+
+function updateFetchedAlertTypes(data) {
+  return {
+      type: 'UPDATE_FETCHED_ALERT_TYPES',
+      data
+  }
+}
+
+export function getAlertTypes() {
+  return dispatch => {
+    api.get('alert_types', (response) => {
+        dispatch(updateFetchedAlertTypes(response.results.data));
+    }, (error) => {
+        console.warn(error)
+    })
+  }
+}

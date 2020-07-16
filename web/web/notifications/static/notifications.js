@@ -43,6 +43,7 @@ class Notifications extends React.Component {
         // not great since the component shouldn't care about the menu
         this.props.dispatch(selectMenuOption('notifications'));
         this.props.dispatch(action.getNotifications());
+        this.props.dispatch(action.getAlertTypes())
     }
 
     handleEmailChange = (e, id) => {
@@ -80,8 +81,8 @@ class Notifications extends React.Component {
     }
 
     getHeader = () => {
-        const headers = this.props.notificationEntries.length 
-            ? this.props.notificationEntries[0]["notifications"]
+        const headers = this.props.alertTypeEntries.length 
+            ? this.props.alertTypeEntries
             : defaultHeaders
         return (
             <DT.DataTableHead>
@@ -91,7 +92,7 @@ class Notifications extends React.Component {
                     {
                         headers.map(item => {
                             return (
-                                <DT.DataTableHeadCell>{item.label}</DT.DataTableHeadCell>
+                                <DT.DataTableHeadCell>{item.name}</DT.DataTableHeadCell>
                             );
                         })
                     }
@@ -200,7 +201,8 @@ class Notifications extends React.Component {
 }
 
 const ConnectedNotifications = connect(state => ({
-    notificationEntries: state.notifications.notificationEntries
+    notificationEntries: state.notifications.notificationEntries,
+    alertTypeEntries: state.notifications.alertTypeEntries
 }))(Notifications);
 
 const notificationsElement = (
