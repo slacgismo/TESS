@@ -16,7 +16,6 @@ server.starttls()
 def send_email(subject, message, bcc):
     '''Simple SMTP set up with gmail'''
 
-    print("hello")
     # Simple set up for basic working email functionality
     # TODO: styling email, switch to implementing OAuth/Gmail API
 
@@ -35,4 +34,4 @@ def send_email(subject, message, bcc):
         server.quit()
 
     except:
-        print("email failed to send")
+        print('email failed to send')

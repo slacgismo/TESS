@@ -112,9 +112,8 @@ def update_pv(pv_id):
     except ValidationError as ve:
         arw.add_errors(ve.messages)
 
-    except IntegrityError as ie:
-        print(ie)
-        arw.add_errors({'Integrity error': ie})
+    except IntegrityError:
+        arw.add_errors('Integrity error')
 
     if arw.has_errors():
         db.session.rollback()

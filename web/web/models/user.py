@@ -98,11 +98,9 @@ class UserSchema(SQLAlchemyAutoSchema):
         result_roles = []
         for role in roles:
             result_roles.append(role.name.value)
-            print(role.name.value)
         return result_roles
 
     def get_postal_code(self, obj):
-        print(obj.address)
         address = {
             'postal code': obj.address.postal_code,
             'country': obj.address.country
