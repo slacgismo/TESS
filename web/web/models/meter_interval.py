@@ -1,8 +1,5 @@
-import enum
 from sqlalchemy.types import TIMESTAMP
-from sqlalchemy import ForeignKeyConstraint
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from marshmallow import fields, ValidationError
 
 from web.models.rate import Rate
 from web.database import (

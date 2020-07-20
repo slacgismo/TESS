@@ -1,5 +1,6 @@
 from flask import jsonify
 
+
 class ApiResponseWrapper(object):
     """
     A super simple API response wrapper.
@@ -43,7 +44,7 @@ class ApiResponseWrapper(object):
                 "data": []
             }
         }
-    
+
     def has_errors(self):
         return len(self.response["errors"]) != 0
 
@@ -52,12 +53,14 @@ class ApiResponseWrapper(object):
         Allow users to append a value or an array of values
         No validation for None at this time...
         """
-        self.response["errors"] = self.response["errors"] + (errors if isinstance(errors, list) else [errors])
+        self.response["errors"] = self.response["errors"] + (
+            errors if isinstance(errors, list) else [errors])
 
-    def to_json(self, data=[], status_code=200, headers=None):        
+    def to_json(self, data=[], status_code=200, headers=None):
         if len(self.response["errors"]) > 0:
             return jsonify(self.response), status_code, headers
 
-        self.response["results"]["count"] = len(data) if isinstance(data, list) else 1
+        self.response["results"]["count"] = len(data) if isinstance(
+            data, list) else 1
         self.response["results"]["data"] = data
         return jsonify(self.response), status_code, headers

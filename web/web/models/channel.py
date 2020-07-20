@@ -1,9 +1,6 @@
 import enum
-from datetime import datetime
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
-from sqlalchemy import ForeignKeyConstraint
-from sqlalchemy.types import TIMESTAMP
 
 from web.database import (
     db,

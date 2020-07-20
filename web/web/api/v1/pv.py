@@ -46,7 +46,7 @@ def retrieve_pv_info(pv_id):
     '''
 
     arw = ApiResponseWrapper()
-    pv_schema = PvSchema(exclude=('meter_id', ))
+    pv_schema = PvSchema(exclude=['meter_id'])
 
     try:
         pv = Pv.query.filter_by(pv_id=pv_id).one()
@@ -98,7 +98,7 @@ def update_pv(pv_id):
     '''
 
     arw = ApiResponseWrapper()
-    pv_schema = PvSchema(exclude=['created_at'])
+    pv_schema = PvSchema(exclude=['created_at', 'updated_at'])
     modified_pv = request.get_json()
 
     try:

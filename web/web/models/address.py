@@ -1,7 +1,8 @@
-from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
+from web.models.user import User
 from web.database import (
     db,
     Model,
@@ -34,16 +35,19 @@ class Address(Model):
 
     phone = Column(db.String(64))
 
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    updated_at = Column(TIMESTAMP,
-                        nullable=False,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     # Methods
     def __repr__(self):
         return f'<Address address_id={self.address_id} address={self.address} postal_code={self.postal_code}>'
+
+    # Relationships on other tables
+    user = relationship('User', backref=db.backref('address'), uselist=False)
 
 
 ##########################

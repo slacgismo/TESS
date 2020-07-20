@@ -1,5 +1,6 @@
 const initialState = {
-    notificationEntries: []
+    notificationEntries: [],
+    alertTypeEntries: []
 }
 
 export default function notifications(state = initialState, action) {
@@ -10,6 +11,9 @@ export default function notifications(state = initialState, action) {
         case 'ADD_NEW_NOTIFICATION_ROW':
             state.notificationEntries.unshift(action.rowTemplate);
             return { ...state, notificationEntries: state.notificationEntries.slice(0) };
+
+        case 'UPDATE_FETCHED_ALERT_TYPES':
+            return { ...state, alertTypeEntries: action.data };
 
         default:
             return state;

@@ -1,6 +1,7 @@
 import enum
 from datetime import datetime, timedelta
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
 
@@ -68,12 +69,12 @@ class Meter(Model):
 
     is_archived = Column(db.Boolean(), default=False, nullable=False)
 
-    created_at = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    updated_at = Column(TIMESTAMP,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow,
-                        nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     # Methods
     def get_interval_count(self, start, end):

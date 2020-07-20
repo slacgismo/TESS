@@ -1,7 +1,7 @@
-from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
 from sqlalchemy.schema import UniqueConstraint
-from marshmallow import fields, ValidationError
+from sqlalchemy import text, func
+from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.models.role import Role, RoleSchema
@@ -38,12 +38,12 @@ class Group(Model):
 
     is_archived = Column(db.Boolean(), default=False, nullable=False)
 
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    updated_at = Column(TIMESTAMP,
-                        nullable=False,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     # Unique constraint for role_id and user_id
     __table_args__ = (UniqueConstraint('role_id',

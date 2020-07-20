@@ -1,5 +1,5 @@
-from datetime import datetime
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
@@ -37,12 +37,12 @@ class ServiceLocation(Model):
 
     is_archived = Column(db.Boolean(), default=False, nullable=False)
 
-    created_at = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    updated_at = Column(TIMESTAMP,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow,
-                        nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     def __repr__(self):
         return f'<ServiceLocation service_location_id={self.service_location_id} address_id={self.address_id}>'
@@ -51,6 +51,7 @@ class ServiceLocation(Model):
     home_hub = relationship('HomeHub',
                             backref=db.backref('service_location'),
                             uselist=False)
+
     meters = relationship('Meter', backref=db.backref('service_location'))
 
 

@@ -11,3 +11,4 @@ Flask-User==1.0.2.2
 email-validator==1.1.0
 yapf==0.30.0
 gunicorn==20.0.4
+python-dotenv==0.14.0

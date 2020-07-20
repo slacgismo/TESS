@@ -63,7 +63,10 @@ def modify_user(user_id):
     '''
 
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(exclude=['email_confirmed_at', 'created_at'])
+    user_schema = UserSchema(exclude=[
+        'updated_at', 'email_confirmed_at', 'created_at', 'roles',
+        'postal_code'
+    ])
     modified_user = request.get_json()
 
     try:
@@ -95,7 +98,7 @@ def add_user():
     Adds new user object to database
     '''
     arw = ApiResponseWrapper()
-    user_schema = UserSchema(exclude=['user_id', 'created_at', 'updated_at'])
+    user_schema = UserSchema(exclude=['id', 'created_at', 'updated_at'])
     new_user = request.get_json()
 
     try:

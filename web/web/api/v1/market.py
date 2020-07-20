@@ -40,7 +40,7 @@ def update_market(market_id):
     '''
 
     arw = ApiResponseWrapper()
-    market_schema = MarketSchema(exclude=['created_at'])
+    market_schema = MarketSchema(exclude=['created_at', 'updated_at'])
     modified_market = request.get_json()
 
     try:

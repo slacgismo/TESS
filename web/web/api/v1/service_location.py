@@ -66,7 +66,8 @@ def modify_service_location(service_location_id):
     Updates one service location object in database
     '''
     arw = ApiResponseWrapper()
-    service_location_schema = ServiceLocationSchema(exclude=['created_at'])
+    service_location_schema = ServiceLocationSchema(
+        exclude=['created_at', 'updated_at'])
     modified_service_location = request.get_json()
 
     try:

@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.models.pv import Pv
@@ -26,6 +26,7 @@ class HomeHub(Model):
         db.ForeignKey('service_locations.service_location_id'),
         unique=True,
         nullable=False)
+
     market_id = Column(db.Integer,
                        db.ForeignKey('markets.market_id'),
                        nullable=False)
@@ -34,12 +35,12 @@ class HomeHub(Model):
 
     is_archived = Column(db.Boolean(), default=False, nullable=False)
 
-    created_at = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    updated_at = Column(TIMESTAMP,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow,
-                        nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     # Methods
     def __repr__(self):

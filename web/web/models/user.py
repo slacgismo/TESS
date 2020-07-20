@@ -1,11 +1,12 @@
-from datetime import datetime
 from flask_user import UserMixin
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
-from web.models.address import Address, AddressSchema
+from web.models.notification import Notification
 from web.models.login import Login
+from web.models.alert import Alert
 from web.database import (
     db,
     Model,
@@ -47,12 +48,12 @@ class User(UserMixin, Model):
 
     is_archived = Column(db.Boolean(), default=False, nullable=False)
 
-    created_at = Column(TIMESTAMP, default=datetime.utcnow, nullable=False)
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    updated_at = Column(TIMESTAMP,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow,
-                        nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     # Methods
     def get_roles(self):
@@ -77,19 +78,19 @@ class User(UserMixin, Model):
     # Relationships
     login = relationship('Login', backref=db.backref('user'), uselist=False)
 
+    notifications = relationship('Notification', backref=db.backref('user'))
 
-# Relationships on other tables
-Address.user = relationship('User',
-                            backref=db.backref('address'),
-                            uselist=False)
+    alerts = relationship('Alert', backref=db.backref('user'))
+
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
 
 
 class UserSchema(SQLAlchemyAutoSchema):
     roles = fields.Method('get_roles', dump_only=True)
-
     postal_code = fields.Method('get_postal_code', dump_only=True)
-
-    address = fields.Nested(AddressSchema(), load_only=True)
 
     # Marshmallow methods
     def get_roles(self, obj):
@@ -110,4 +111,3 @@ class UserSchema(SQLAlchemyAutoSchema):
         model = User
         include_fk = True
         load_instance = True
-        transient = True

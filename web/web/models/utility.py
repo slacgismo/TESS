@@ -1,6 +1,7 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sqlalchemy.types import TIMESTAMP
 
+from web.models.alert_type import AlertType
 from web.models.meter import Meter
 from web.models.user import User
 from web.database import (
@@ -21,7 +22,7 @@ class Utility(Model):
                         autoincrement=True,
                         nullable=False)
 
-    name = Column(db.String(64), nullable=False)
+    name = Column(db.String(64), unique=True, nullable=False)
 
     subscription_start = Column(TIMESTAMP, nullable=False)
 
@@ -35,6 +36,8 @@ class Utility(Model):
     meters = relationship('Meter', backref=db.backref('utility'))
 
     users = relationship('User', backref=db.backref('utility'))
+
+    alert_types = relationship('AlertType', backref=db.backref('utility'))
 
 
 ##########################

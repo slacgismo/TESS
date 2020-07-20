@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
 from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
 
@@ -38,12 +38,12 @@ class Pv(Model):
 
     is_archived = Column(db.Boolean(), default=False, nullable=False)
 
-    created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
 
-    updated_at = Column(TIMESTAMP,
-                        nullable=False,
-                        default=datetime.utcnow,
-                        onupdate=datetime.utcnow)
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     def __repr__(self):
         return f'<Pv pv_id={self.pv_id} home_hub_id={self.home_hub_id} created_at={self.created_at}>'
