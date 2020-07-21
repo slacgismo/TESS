@@ -34,6 +34,7 @@ from web.api.v1.channel import channel_api_bp
 from web.api.v1.alert_type import alert_types_api_bp
 from web.api.v1.role import role_api_bp
 
+
 def page_not_found(e):
     return render_template('404.html'), 404
 
@@ -94,6 +95,7 @@ def register_blueprints(app):
     app.register_blueprint(channel_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(alert_types_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(role_api_bp, url_prefix='/api/v1/')
+
 
 if os.environ.get('FLASK_ENV', 'development') == 'production':
     config = ProductionConfig()
