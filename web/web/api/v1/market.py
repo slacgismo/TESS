@@ -76,7 +76,7 @@ def add_market():
     '''
 
     arw = ApiResponseWrapper()
-    market_schema = MarketSchema(exclude=['market_id', 'created_at'])
+    market_schema = MarketSchema(exclude=['market_id', 'created_at', 'updated_at'])
     market_json = request.get_json()
 
     try:

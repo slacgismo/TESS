@@ -82,6 +82,12 @@ def upgrade():
         sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
     op.add_column('logins',
         sa.Column('created_at', sa.TIMESTAMP, nullable=True, server_default=sa.func.now()))
+    op.drop_column('markets', 'created_at')
+    op.drop_column('markets', 'updated_at')
+    op.add_column('markets',
+        sa.Column('updated_at', sa.TIMESTAMP, nullable=False, server_default=sa.text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')))
+    op.add_column('markets',
+        sa.Column('created_at', sa.TIMESTAMP, nullable=True, server_default=sa.func.now()))
     op.drop_column('meters', 'created_at')
     op.drop_column('meters', 'updated_at')
     op.add_column('meters',
@@ -137,6 +143,12 @@ def downgrade():
     op.add_column('logins', 
         sa.Column('created_at', sa.TIMESTAMP, nullable=False))
     op.add_column('logins', 
+        sa.Column('updated_at', sa.TIMESTAMP, nullable=False))
+    op.drop_column('markets', 'created_at')
+    op.drop_column('markets', 'updated_at')
+    op.add_column('markets', 
+        sa.Column('created_at', sa.TIMESTAMP, nullable=False))
+    op.add_column('markets', 
         sa.Column('updated_at', sa.TIMESTAMP, nullable=False))
     op.drop_column('meters', 'created_at')
     op.drop_column('meters', 'updated_at')
