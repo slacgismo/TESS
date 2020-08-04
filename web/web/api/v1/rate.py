@@ -4,7 +4,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
-from web.models.rate import Rate, RateSchema
+from web.models.rate import Rate
+from web.models.meter_interval import RateSchema
 
 rate_api_bp = Blueprint('rate_api_bp', __name__)
 

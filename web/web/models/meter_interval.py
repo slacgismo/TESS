@@ -76,3 +76,14 @@ class MeterIntervalSchema(SQLAlchemyAutoSchema):
         model = MeterInterval
         load_instance = True
         include_fk = True
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
+
+
+class RateSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Rate
+        load_instance = True
+        include_fk = True
