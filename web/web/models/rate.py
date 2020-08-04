@@ -1,3 +1,4 @@
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from web.database import (
     db,
     Model,
@@ -24,3 +25,15 @@ class Rate(Model):
 
     # Relationships
     meter_intervals = relationship('MeterInterval', backref=db.backref('rate'))
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
+
+
+class RateSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Rate
+        include_fk = True
+        load_instance = True
+        transient = True

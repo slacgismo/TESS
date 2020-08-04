@@ -12,7 +12,7 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 meter_api_bp = Blueprint('meter_api_bp', __name__)
 
 
-@meter_api_bp.route('/meters/', methods=['GET'])
+@meter_api_bp.route('/meters', methods=['GET'])
 def get_meter_ids():
     '''
     Returns all meter objects

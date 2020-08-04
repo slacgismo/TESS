@@ -12,7 +12,7 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 pv_api_bp = Blueprint('pv_api_bp', __name__)
 
 
-@pv_api_bp.route('/pvs/', methods=['GET'])
+@pv_api_bp.route('/pvs', methods=['GET'])
 def get_pvs():
     '''
     Returns all pv objects
