@@ -52,7 +52,7 @@ def modify_rate(rate_id):
     Updates one rate object in database
     '''
     arw = ApiResponseWrapper()
-    rate_schema = RateSchema(exclude=['rate_id'])
+    rate_schema = RateSchema()
     modified_rate = request.get_json()
 
     try:
@@ -69,7 +69,7 @@ def modify_rate(rate_id):
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = rate_schema.dump(modified_rate, many=True)
+    results = rate_schema.dump(modified_rate)
 
     return arw.to_json(results)
 

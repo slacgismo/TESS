@@ -52,7 +52,7 @@ def modify_address():
     Updates one address object in database
     '''
     arw = ApiResponseWrapper()
-    address_schema = AddressSchema(exclude=['address_id'])
+    address_schema = AddressSchema()
     modified_address = request.get_json()
 
     try:

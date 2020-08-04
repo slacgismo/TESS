@@ -51,7 +51,7 @@ def modify_utility():
     Updates one utility object in database
     '''
     arw = ApiResponseWrapper()
-    utility_schema = UtilitySchema(exclude=['utility_id'])
+    utility_schema = UtilitySchema()
     modified_utility = request.get_json()
 
     try:
