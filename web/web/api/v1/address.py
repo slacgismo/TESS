@@ -47,7 +47,7 @@ def show_address_info(address_id):
 
 
 @address_api_bp.route('/address/<int:address_id>', methods=['PUT'])
-def modify_address():
+def modify_address(address_id):
     '''
     Updates one address object in database
     '''
@@ -70,7 +70,7 @@ def modify_address():
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = address_schema.dump(modified_address, many=True)
+    results = address_schema.dump(modified_address)
 
     return arw.to_json(results)
 

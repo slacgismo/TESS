@@ -90,8 +90,7 @@ def modify_service_location(service_location_id):
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = service_location_schema.dump(modified_service_location,
-                                           many=True)
+    results = service_location_schema.dump(modified_service_location)
 
     return arw.to_json(results)
 

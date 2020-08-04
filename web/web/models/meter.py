@@ -189,8 +189,9 @@ class MeterSchema(SQLAlchemyAutoSchema):
         return MeterInterval.get_interval_coverage(coverage)
 
     def get_user_id(self, obj):
-        user = obj.service_location.address.user
-        return user.id
+        if obj.service_location.address.user:
+            return obj.service_location.address.user
+        return
 
     class Meta:
         model = Meter

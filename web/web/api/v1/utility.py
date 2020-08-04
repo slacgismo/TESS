@@ -46,7 +46,7 @@ def show_utility_info(utility_id):
 
 
 @utility_api_bp.route('/utility/<int:utility_id>', methods=['PUT'])
-def modify_utility():
+def modify_utility(utility_id):
     '''
     Updates one utility object in database
     '''
@@ -69,7 +69,7 @@ def modify_utility():
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = utility_schema.dump(modified_utility, many=True)
+    results = utility_schema.dump(modified_utility)
 
     return arw.to_json(results)
 
