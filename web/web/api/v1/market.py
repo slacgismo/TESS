@@ -11,6 +11,33 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 market_api_bp = Blueprint('market_api_bp', __name__)
 
 
+@market_api_bp.route('/markets', methods=['GET'])
+def get_markets():
+    '''
+    Returns all market objects
+    '''
+
+    arw = ApiResponseWrapper()
+
+    fields_to_filter_on = request.args.getlist('fields')
+
+    if len(fields_to_filter_on) > 0:
+        for field in fields_to_filter_on:
+            if field not in Market.__table__.columns:
+                arw.add_errors({field: 'Invalid Market field'})
+                return arw.to_json(None, 400)
+    else:
+        fields_to_filter_on = None
+
+    market_schema = MarketSchema(only=fields_to_filter_on)
+
+    markets = Market.query.all()
+
+    results = market_schema.dump(markets, many=True)
+
+    return arw.to_json(results)
+
+
 @market_api_bp.route('/market/<int:market_id>', methods=['GET'])
 def show_market_info(market_id):
     '''

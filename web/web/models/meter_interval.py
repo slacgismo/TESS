@@ -76,3 +76,12 @@ class MeterIntervalSchema(SQLAlchemyAutoSchema):
         model = MeterInterval
         load_instance = True
         include_fk = True
+
+# marshmallow errors out if RateSchema is declared on models/rate.py
+# requires meter_interval to be initialized before RateSchema is declared
+
+class RateSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Rate
+        load_instance = True
+        include_fk = True
