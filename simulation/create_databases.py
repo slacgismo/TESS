@@ -136,7 +136,7 @@ for h in range(1,no_houses+1):
 
 #WS supplier
 try:
-    mycursor.execute('CREATE TABLE WS_supply (timedate TIMESTAMP PRIMARY KEY, WS_price FLOAT)')
+    mycursor.execute('CREATE TABLE WS_supply (timedate TIMESTAMP PRIMARY KEY, source VARCHAR(255), p_max FLOAT, is_active BOOLEAN, is_archived BOOLEAN, created_at TIMESTAMP, updated_at TIMESTAMP)')
 except Exception as e:
     print('13')
     print('Error: ', e)
@@ -144,6 +144,12 @@ except Exception as e:
 
 
 #market operator
+try:
+    mycursor.execute('CREATE TABLE market (market_id TIMESTAMP PRIMARY KEY, C FLOAT, slack_load FLOAT)')
+except Exception as e:
+    print('13')
+    print('Error: ', e)
+
 try:
     mycursor.execute('CREATE TABLE system_load (timedate TIMESTAMP PRIMARY KEY, C FLOAT, slack_load FLOAT)')
 except Exception as e:

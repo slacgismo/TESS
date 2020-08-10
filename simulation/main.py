@@ -1,6 +1,8 @@
 import gridlabd
 import pandas
 import time
+import requests
+print('Requests imported')
 
 ###USER input
 ind = 1

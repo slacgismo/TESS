@@ -30,6 +30,7 @@ from HH_global import flexible_houses, C, p_max, interval, prec, start_time_str
 def create_agent_house(house_name):
 	#Create agent
 	house = House(house_name)
+	import pdb; pdb.set_trace()
 	df_house_settings = myfct.get_values_td(house_name + '_settings')
 
 	#Create HVAC

@@ -270,6 +270,8 @@ public/
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+simulation/mysql_functions.py
+simulation/modify_databases.py
 
 # Gradle
 .idea/**/gradle.xml

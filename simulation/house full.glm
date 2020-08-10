@@ -59,6 +59,31 @@ object triplex_meter:..${COUNT} {
 		};
 	}; 
 	object inverter {
+		name `EV_inverter_{SEQ_CUSTID}`;
+		generator_status ONLINE;
+		inverter_type FOUR_QUADRANT;
+		four_quadrant_control_mode CONSTANT_PQ;
+		rated_power 3000.0;
+		inverter_efficiency 0.95;
+		object battery {
+			name `EV_{SEQ_CUSTID}`;
+			use_internal_battery_model TRUE;
+			battery_type LI_ION;
+			power_factor 1.0;
+			V_Max 260;
+			I_Max 15;
+			power_type DC;
+			battery_capacity 7000;
+			base_efficiency 0.95;
+			state_of_charge 0.2;
+			generator_mode SUPPLY_DRIVEN;
+			charging_type residential;
+			k random.uniform(5,10);
+			est_departure None;
+			top_on 100.0;
+		};
+	};
+	object inverter {
 		name `PV_inverter_{SEQ_CUSTID}`;
 		phases BS;
 		generator_status ONLINE;
@@ -80,6 +105,29 @@ object triplex_meter:..${COUNT} {
 			orientation FIXED_AXIS;
 			SOLAR_TILT_MODEL SOLPOS;
 			SOLAR_POWER_MODEL FLATPLATE;
+		};
+	};	
+	object inverter {
+		name `Bat_inverter_{SEQ_CUSTID}`;
+		generator_status ONLINE;
+		inverter_type FOUR_QUADRANT;
+		four_quadrant_control_mode CONSTANT_PQ;
+		rated_power 3000.0;
+		inverter_efficiency 0.95;
+		Q_Out 0;
+		object battery {
+			name `Battery_{SEQ_CUSTID}`;
+			use_internal_battery_model TRUE;
+			battery_type LI_ION;
+			power_factor 1.0;
+			V_Max 260;
+			I_Max 15;
+			E_Max 7000;
+			power_type DC;
+			battery_capacity 7000;
+			base_efficiency 0.95;
+			state_of_charge 0.2;
+			generator_mode SUPPLY_DRIVEN;
 		};
 	};
 }

@@ -38,6 +38,9 @@ clock {
 #define SOLAR=on
 
 #set randomseed=5 
+
+module gridlabd_functions;
+
 ///////////////////////////////////////////////////////
 //
 // WEATHER
@@ -313,10 +316,10 @@ object group_recorder {
 	interval 60;
 }
 
-object group_recorder {
-	name rec_batt_soc;
-	group "class=battery";
-	property state_of_charge;
-	file TESS/TESS_BC/battery_SOC.csv;
-	interval 60;
-}
+//object group_recorder {
+//	name rec_batt_soc;
+//	group "class=battery";
+//	property state_of_charge;
+//	file TESS/TESS_BC/battery_SOC.csv;
+//	interval 60;
+//}

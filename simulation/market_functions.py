@@ -24,6 +24,10 @@ from HH_global import results_folder, C, p_max, interval, city, prec, ref_price,
 import mysql_functions as myfct
 import time
 
+import requests
+from HH_global import db_address, user_name, pw
+market_id = 1
+
 class MarketOperator:
     def __init__(self,interval,Pmax):
         self.interval = interval
@@ -135,8 +139,9 @@ class Market :
         Qd = self.Qd #in kW
         alpha = 1.0 #self.alpha #partial clearing/tie break
 
-        parameters = '(timedate, operating_mode, capacity, unresp_load, p_cleared, q_cleared, tie_break)'
-        myfct.set_values('clearing_pq', parameters, (dt_sim_time, 'normal', float(C), 0.0, float(Pd), float(Qd), float(alpha)))
+        import pdb; pdb.set_trace()
+        data = {'market_id':market_id,'p_exp':0.0,'p_dev':0.0,'p_clear':Pd,'q_clear':Qd,'alpha':alpha,'start_time':dt_sim_time,'end_time':(dt_sim_time+pd.Timedelta(seconds=interval))}
+        requests.post(db_address+'market_interval',json=data,auth=(user_name,pw))
         return 
 
     # Returns bid position in S array, 'message' if error

@@ -1,6 +1,4 @@
-#This is only for the minimum viable product (PV)
-import requests
-import gldimport_api_MVP as gldimport
+import gldimport
 import os
 import random
 import pandas
@@ -11,25 +9,40 @@ from datetime import timedelta
 from dateutil import parser
 import time
 
+import mysql_functions as myfct
+
 import HH_functions as HHfct
-# from HH_functions import House
+from HH_functions import House
 
-# import market_functions as Mfct
-# from market_functions import Market
-# from market_functions import MarketOperator
+import market_functions as Mfct
+from market_functions import Market
+from market_functions import MarketOperator
 
-# import supply_functions as Sfcts
-# from supply_functions import WSSupplier
+import supply_functions as Sfcts
+from supply_functions import WSSupplier
 
 #import battery_functions as Bfct
 #import EV_functions as EVfct
 #import PV_functions as PVfct
 
-from HH_global import db_address, user_name, pw
+
 from HH_global import results_folder, flexible_houses, C, p_max, market_data, which_price, city, month
 from HH_global import interval, prec, price_intervals, allocation_rule, unresp_factor, load_forecast
 from HH_global import FIXED_TARIFF, include_SO, EV_data, start_time_str
 
+table_list = ['house_1_settings','house_1_state_in','house_1_state_out','house_2_settings','house_2_state_in','house_2_state_out']
+table_list += ['house_3_settings','house_3_state_in','house_3_state_out','house_4_settings','house_4_state_in','house_4_state_out']
+table_list += ['house_5_settings','house_5_state_in','house_5_state_out','house_6_settings','house_6_state_in','house_6_state_out']
+table_list += ['PV_1_settings','PV_1_state_in','PV_1_state_out','PV_2_settings','PV_2_state_in','PV_2_state_out']
+table_list += ['PV_3_settings','PV_3_state_in','PV_3_state_out','PV_4_settings','PV_4_state_in','PV_4_state_out']
+table_list += ['PV_5_settings','PV_5_state_in','PV_5_state_out','PV_6_settings','PV_6_state_in','PV_6_state_out']
+table_list += ['battery_1_settings','battery_1_state_in','battery_1_state_out','battery_2_settings','battery_2_state_in','battery_2_state_out']
+table_list += ['battery_3_settings','battery_3_state_in','battery_3_state_out','battery_4_settings','battery_4_state_in','battery_4_state_out']
+table_list += ['battery_5_settings','battery_5_state_in','battery_5_state_out','battery_6_settings','battery_6_state_in','battery_6_state_out']
+table_list += ['CP_1_settings','CP_2_settings','CP_3_settings','CP_4_settings','CP_5_settings','CP_6_settings']
+table_list += ['EV_1_state_in','EV_2_state_in','EV_3_state_in','EV_4_state_in','EV_5_state_in','EV_6_state_in']
+table_list += ['EV_1_state_out','EV_2_state_out','EV_3_state_out','EV_4_state_out','EV_5_state_out','EV_6_state_out']
+table_list += ['system_load','WS_supply','supply_bids','buy_bids','clearing_pq']
 
 ########
 #To Do
@@ -45,12 +58,13 @@ def on_init(t):
 	t0 = time.time()
 
 	#Empty databases
-	#myfct.clear_databases(table_list)
-
-	#Create market table
-	#import pdb; pdb.set_trace()
-	#requests.get(db_address+'meters',auth=(user_name,pw))
-	#print(market.json()['results']['data'])
+	myfct.clear_databases(table_list)
+	try:
+		os.remove(results_folder + '/df_supply_bids.csv')
+		os.remove(results_folder + '/df_demand_bids.csv')
+		os.remove(results_folder + '/df_prices.csv')
+	except:
+		pass
 
 	#PHYSICS: Find objects and fill local DB with relevant settings
 	#import pdb; pdb.set_trace()
@@ -58,6 +72,9 @@ def on_init(t):
 	for house_name in houses_names:
 		gldimport.get_houseobjects(house_name,start_time_str)
 		gldimport.get_PVs(house_name,start_time_str)
+		gldimport.get_batteries(house_name,start_time_str)
+		gldimport.get_chargers(house_name,start_time_str) #Gets charger inverters and maximum charging rates
+		gldimport.initialize_EVs(house_name,start_time_str) #Checks if EVs are connected already and fills in state_in
 
 	#MARKET: Create house agents
 	global houses;
@@ -76,9 +93,9 @@ def on_init(t):
 	print('Initialize finished after '+str(time.time()-t0))
 	return True
 
-# def init(t):
-# 	print('Objective-specific Init')
-# 	return True
+def init(t):
+	print('Objective-specific Init')
+	return True
 
 #Global precommit
 #Should be mostly moved to market precommit
@@ -161,53 +178,53 @@ def on_precommit(t):
 
 		return t
 
-# def on_term(t):
-# 	print('Simulation ended, saving results')
-# 	saving_results()
+def on_term(t):
+	print('Simulation ended, saving results')
+	saving_results()
 
-# 	global t0;
-# 	t1 = time.time()
-# 	print('Time needed (min):')
-# 	print((t1-t0)/60)
-# 	return None
+	global t0;
+	t1 = time.time()
+	print('Time needed (min):')
+	print((t1-t0)/60)
+	return None
 
-# def save_databases(timestamp=None):
-# 	#mycursor.execute('SHOW TABLES')
-# 	#table_list = mycursor.fetchall()  
-# 	mydb, mycursor = myfct.connect()
-# 	for table_name in table_list:
-# 		query = 'SELECT * FROM '+table_name
-# 		df = pandas.read_sql(query, con=mydb)
-# 		df.to_csv(results_folder+'/'+table_name+'_'+str(timestamp)+'.csv')
+def save_databases(timestamp=None):
+	#mycursor.execute('SHOW TABLES')
+	#table_list = mycursor.fetchall()  
+	mydb, mycursor = myfct.connect()
+	for table_name in table_list:
+		query = 'SELECT * FROM '+table_name
+		df = pandas.read_sql(query, con=mydb)
+		df.to_csv(results_folder+'/'+table_name+'_'+str(timestamp)+'.csv')
 
-# 	print('Databases saved')
-# 	return
+	print('Databases saved')
+	return
 
-# def saving_results():
-# 	#Saving globals
-# 	file = 'HH_global.py'
-# 	new_file = results_folder+'/HH_global.py'
-# 	glm = open(file,'r') 
-# 	new_glm = open(new_file,'w') 
-# 	j = 0
-# 	for line in glm:
-# 	    new_glm.write(line)
-# 	glm.close()
-# 	new_glm.close()
+def saving_results():
+	#Saving globals
+	file = 'HH_global.py'
+	new_file = results_folder+'/HH_global.py'
+	glm = open(file,'r') 
+	new_glm = open(new_file,'w') 
+	j = 0
+	for line in glm:
+	    new_glm.write(line)
+	glm.close()
+	new_glm.close()
 
-# 	#Saving mysql databases
-# 	save_databases()
-# 	myfct.clear_databases(table_list) #empty up database
+	#Saving mysql databases
+	save_databases()
+	myfct.clear_databases(table_list) #empty up database
 
-# 	#Do evaluations
-# 	return
+	#Do evaluations
+	return
 
-# #Object-specific precommit
-# def precommit(obj,t) :
-# 	print(t)
-# 	tt =  int(300*((t/300)+1))
-# 	print('Market precommit')
-# 	print(tt)
-# 	return gridlabd.NEVER #t #True #tt 
+#Object-specific precommit
+def precommit(obj,t) :
+	print(t)
+	tt =  int(300*((t/300)+1))
+	print('Market precommit')
+	print(tt)
+	return gridlabd.NEVER #t #True #tt 
 
 
