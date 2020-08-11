@@ -21,6 +21,8 @@ def get_meter_intervals():
     arw = ApiResponseWrapper()
 
     fields_to_filter_on = request.args.getlist('fields')
+    start_time = request.args.get('start_time', None)
+    end_time = request.args.get('end_time', None)
 
     if len(fields_to_filter_on) > 0:
         for field in fields_to_filter_on:
@@ -32,7 +34,20 @@ def get_meter_intervals():
 
     meter_interval_schema = MeterIntervalSchema(only=fields_to_filter_on)
 
-    mi = MeterInterval.query.all()
+    mi = MeterInterval.query.filter()
+
+    try:
+        if start_time:
+            start_time = parser.parse(start_time)
+            mi = mi.filter(MeterInterval.start_time >= start_time)
+        if end_time:
+            end_time = parser.parse(end_time)
+            mi = mi.filter(MeterInterval.end_time <= end_time)
+    except parser.ParserError as pe:
+        arw.add_errors(
+            'Could not parse the date time value. Please provide a valid format.'
+        )
+        return arw.to_json(None, 400)
 
     results = meter_interval_schema.dump(mi, many=True)
 
