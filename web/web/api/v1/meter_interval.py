@@ -12,6 +12,33 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 meter_interval_api_bp = Blueprint('meter_interval_api_bp', __name__)
 
 
+@meter_interval_api_bp.route('/meter_intervals', methods=['GET'])
+def get_meter_intervals():
+    '''
+    Returns meter intervals
+    '''
+
+    arw = ApiResponseWrapper()
+
+    fields_to_filter_on = request.args.getlist('fields')
+
+    if len(fields_to_filter_on) > 0:
+        for field in fields_to_filter_on:
+            if field not in MeterInterval.__table__.columns:
+                arw.add_errors({field: 'Invalid Meter Interval field'})
+                return arw.to_json(None, 400)
+    else:
+        fields_to_filter_on = None
+
+    meter_interval_schema = MeterIntervalSchema(only=fields_to_filter_on)
+
+    mi = MeterInterval.query.all()
+
+    results = meter_interval_schema.dump(mi, many=True)
+
+    return arw.to_json(results)
+
+
 @meter_interval_api_bp.route('/meter_interval/<int:meter_interval_id>',
                              methods=['GET'])
 def retrieve_meter_interval_info(meter_interval_id):
