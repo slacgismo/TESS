@@ -11,6 +11,33 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 market_interval_api_bp = Blueprint('market_interval_api_bp', __name__)
 
 
+@market_interval_api_bp.route('/market_intervals', methods=['GET'])
+def get_market_intervals():
+    '''
+    Returns market intervals
+    '''
+
+    arw = ApiResponseWrapper()
+
+    fields_to_filter_on = request.args.getlist('fields')
+
+    if len(fields_to_filter_on) > 0:
+        for field in fields_to_filter_on:
+            if field not in MarketInterval.__table__.columns:
+                arw.add_errors({field: 'Invalid Market Interval field'})
+                return arw.to_json(None, 400)
+    else:
+        fields_to_filter_on = None
+
+    market_interval_schema = MarketIntervalSchema(only=fields_to_filter_on)
+
+    mi = MarketInterval.query.all()
+
+    results = market_interval_schema.dump(mi, many=True)
+
+    return arw.to_json(results)
+
+
 @market_interval_api_bp.route('/market_interval/<int:market_interval_id>',
                               methods=['GET'])
 def show_market_interval_info(market_interval_id):
