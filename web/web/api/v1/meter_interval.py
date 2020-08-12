@@ -23,6 +23,7 @@ def get_meter_intervals():
     fields_to_filter_on = request.args.getlist('fields')
     start_time = request.args.get('start_time', None)
     end_time = request.args.get('end_time', None)
+    meter_id = request.args.get('meter_id', None)
 
     if len(fields_to_filter_on) > 0:
         for field in fields_to_filter_on:
@@ -40,13 +41,24 @@ def get_meter_intervals():
         if start_time:
             start_time = parser.parse(start_time)
             mi = mi.filter(MeterInterval.start_time >= start_time)
+
         if end_time:
             end_time = parser.parse(end_time)
             mi = mi.filter(MeterInterval.end_time <= end_time)
+
+        if meter_id:
+            meter_id = int(meter_id)
+            mi = mi.filter(MeterInterval.meter_id == meter_id)
+
     except parser.ParserError as pe:
         arw.add_errors(
             'Could not parse the date time value. Please provide a valid format.'
         )
+        return arw.to_json(None, 400)
+
+    except ValueError as ve:
+        arw.add_errors(
+            'Could not parse the meter id. It should be an integer.')
         return arw.to_json(None, 400)
 
     results = meter_interval_schema.dump(mi, many=True)
