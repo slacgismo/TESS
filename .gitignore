@@ -275,6 +275,7 @@ simulation/modify_databases.py
 simulation_N/credentials.py
 simulation_N/glm_generation_SanDiego/players_*
 simulation_N/glm_generation_SanDiego/players_*/
+simulation_N/TESS/
 
 # Gradle
 .idea/**/gradle.xml
