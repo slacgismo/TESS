@@ -272,6 +272,9 @@ public/
 .idea/**/dbnavigator.xml
 simulation/mysql_functions.py
 simulation/modify_databases.py
+simulation_N/credentials.py
+simulation_N/glm_generation_SanDiego/players_*
+simulation_N/glm_generation_SanDiego/players_*/
 
 # Gradle
 .idea/**/gradle.xml
