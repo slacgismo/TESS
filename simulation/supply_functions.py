@@ -5,7 +5,7 @@ import sys
 import pandas
 
 import market_functions as Mfct
-import mysql_functions as myfct
+#import mysql_functions as myfct
 
 class WSSupplier:
 
@@ -22,7 +22,7 @@ class WSSupplier:
 	#Supply function
 	#This should include the whole supply curve, not only WS energy
 	def bid_supply(self,dt_sim_time,market):
-		p_bid = float(myfct.get_values_td('WS_supply', begin=dt_sim_time, end=dt_sim_time)['WS_price'].iloc[0])
+		p_bid = requests.get(db_address+'WS_supply')['results']['data']
 		timestamp_arrival = market.send_supply_bid(dt_sim_time, p_bid, -1.0, 'WS_supply') #Feedback: timestamp of arrival #C determined by market_operator
 		return
 

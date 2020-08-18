@@ -21,11 +21,11 @@ from datetime import timedelta
 import gridlabd
 import pandas
 from HH_global import results_folder, C, p_max, interval, city, prec, ref_price, price_intervals, load_forecast, unresp_factor, month, which_price, EV_data
-import mysql_functions as myfct
+#import mysql_functions as myfct
 import time
 
 import requests
-from HH_global import db_address, user_name, pw
+from HH_global import db_address #, user_name, pw
 market_id = 1
 
 class MarketOperator:

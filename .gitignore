@@ -636,6 +636,7 @@ simulation/TESS/
 simulation/TESS_mysql/
 simulation/__pycache__/
 simulation/output
+credentials.py
 
 # ignoring the bundled file since regenerating this locally will change it everytime
 web/web/static/bundles/*

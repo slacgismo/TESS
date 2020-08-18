@@ -14,22 +14,24 @@ import time
 import HH_functions as HHfct
 # from HH_functions import House
 
-# import market_functions as Mfct
-# from market_functions import Market
-# from market_functions import MarketOperator
+import market_functions as Mfct
+from market_functions import Market
+from market_functions import MarketOperator
 
-# import supply_functions as Sfcts
-# from supply_functions import WSSupplier
+import supply_functions as Sfcts
+from supply_functions import WSSupplier
 
 #import battery_functions as Bfct
 #import EV_functions as EVfct
 #import PV_functions as PVfct
 
-from HH_global import db_address, user_name, pw
+from HH_global import db_address #, user_name, pw
 from HH_global import results_folder, flexible_houses, C, p_max, market_data, which_price, city, month
 from HH_global import interval, prec, price_intervals, allocation_rule, unresp_factor, load_forecast
 from HH_global import FIXED_TARIFF, include_SO, EV_data, start_time_str
 
+#True if physical model is simulated by GLD
+gld_simulation = True
 
 ########
 #To Do
@@ -53,17 +55,20 @@ def on_init(t):
 	#print(market.json()['results']['data'])
 
 	#PHYSICS: Find objects and fill local DB with relevant settings
-	#import pdb; pdb.set_trace()
-	houses_names = gldimport.find_objects('class=house')
-	for house_name in houses_names:
-		gldimport.get_houseobjects(house_name,start_time_str)
-		gldimport.get_PVs(house_name,start_time_str)
+	# houses_names = gldimport.find_objects('class=house')
+	# for house_name in houses_names:
+	# 	gldimport.get_houseobjects(house_name,start_time_str)
+	# 	gldimport.get_PVs(house_name,start_time_str)
+	hh_list = requests.get(db_address+'home_hubs').json()['results']['data']
+	hh_ids = []
+	for hh in hh_list:
+		hh_ids += [hh['home_hub_id']]
 
 	#MARKET: Create house agents
 	global houses;
 	houses = []
-	for house_name in houses_names:
-		houses += [HHfct.create_agent_house(house_name)]
+	for hh_id in hh_ids:
+		houses += [HHfct.create_agent_house(hh_id)]
 
 	#Create WS supplier
 	global retailer;
@@ -71,7 +76,7 @@ def on_init(t):
 
 	#Create market operator
 	global LEM_operator;
-	LEM_operator = MarketOperator(interval,p_max)
+	LEM_operator = MarketOperator(interval,p_max) #Does that need to be updated based on DB?
 
 	print('Initialize finished after '+str(time.time()-t0))
 	return True
@@ -97,28 +102,34 @@ def on_precommit(t):
 		#Imitates physical process of arrival
 		############
 
-		global houses;
-		#Simulates arrival and disconnects EV upon departure - this function should be deleted in physical system
-		for house in houses:
-			gldimport.simulate_EVs(house.name,dt_sim_time)
+		# global houses;
+		# #Simulates arrival and disconnects EV upon departure - this function should be deleted in physical system
+		# for house in houses:
+		# 	gldimport.simulate_EVs(house.name,dt_sim_time)
 
 		############
-		#Get external information and information through APIs: HEILA --> market
+		# Physical info
 		############
 
-		for house in houses:
-			#gldimport.update_settings() #If user changes settings in API, this should be called
-			gldimport.update_house_state(house.name,dt_sim_time)
-			if house.PV:
-				gldimport.update_PV_state(house.PV.name,dt_sim_time)
-			if house.battery:
-				gldimport.update_battery_state(house.battery.name,dt_sim_time)
-			if house.EVCP:
-				gldimport.update_CP_state(house.EVCP.name,dt_sim_time)
-		
-		global retailer;
-		gldimport.get_slackload(dt_sim_time)
-		gldimport.get_WSprice(dt_sim_time)
+		# GLD --> DB
+		if gld_simulation:
+			# Houses / Load
+			for house in houses:
+				#gldimport.update_settings() #If user changes settings in API, this should be called
+				if house.HVAC:
+					gldimport.update_house_state(house.name,dt_sim_time) #For HVAC systems
+				if house.PV:
+					gldimport.update_PV_state(house.PV,dt_sim_time)
+				if house.battery:
+					gldimport.update_battery_state(house.battery.name,dt_sim_time)
+				if house.EVCP:
+					gldimport.update_CP_state(house.EVCP.name,dt_sim_time)
+			# System
+			gldimport.get_slackload(dt_sim_time) # --> TABLE substation
+			gldimport.get_WSprice(dt_sim_time) # --> TABLE HCE_supply
+		# Real-world implementation --> DB
+		else:
+			import sys; sys.exit('Not implemented yet')
 
 		############
 		#Market side / no phycial APIs involved
@@ -126,7 +137,7 @@ def on_precommit(t):
 
 		#Get air temperature, determine mode
 		for house in houses:
-			#Reads in information and updates python objects (house + appliances)
+			#Reads in information from DB and updates python objects (house + appliances)
 			house.update_state(dt_sim_time)
 
 		#Market Operator creates market for t

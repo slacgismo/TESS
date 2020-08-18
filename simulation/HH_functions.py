@@ -8,9 +8,10 @@ import gridlabd_functions
 #from gridlabd_functions import p_max # ???????????????
 #import mysql_functions
 #from HH_global import *
+import requests
 
-import battery_functions as Bfct
-import EV_functions as EVfct
+#import battery_functions as Bfct
+#import EV_functions as EVfct
 import PV_functions as PVfct
 
 import datetime
@@ -18,44 +19,43 @@ import numpy as np
 import pandas
 from dateutil import parser
 from datetime import timedelta
-from HH_global import results_folder
+from HH_global import results_folder, db_address
 
-import mysql_functions as myfct
+#import mysql_functions as myfct
 
 """NEW FUNCTIONS / MYSQL DATABASE AVAILABLE"""
 
 #HVAC
 from HH_global import flexible_houses, C, p_max, interval, prec, start_time_str
 
-def create_agent_house(house_name):
+def create_agent_house(hh_id,flex_HVAC=False):
 	#Create agent
-	house = House(house_name)
-	import pdb; pdb.set_trace()
-	df_house_settings = myfct.get_values_td(house_name + '_settings')
+	house = House(hh_id)
 
 	#Create HVAC
-	hvac = HVAC(house_name)
-	hvac.k = df_house_settings['k'].iloc[-1]
-	hvac.T_max = df_house_settings['T_max'].iloc[-1]
-	hvac.cooling_setpoint = df_house_settings['cooling_setpoint'].iloc[-1]
-	hvac.T_min = df_house_settings['T_min'].iloc[-1]
-	hvac.heating_setpoint = df_house_settings['heating_setpoint'].iloc[-1]
-	hvac.T_des = (df_house_settings['heating_setpoint'].iloc[-1] + df_house_settings['cooling_setpoint'].iloc[-1])/2. #Default
-	house.HVAC = hvac
+	if flex_HVAC:
+		hvac = HVAC(house_name)
+		hvac.k = df_house_settings['k'].iloc[-1]
+		hvac.T_max = df_house_settings['T_max'].iloc[-1]
+		hvac.cooling_setpoint = df_house_settings['cooling_setpoint'].iloc[-1]
+		hvac.T_min = df_house_settings['T_min'].iloc[-1]
+		hvac.heating_setpoint = df_house_settings['heating_setpoint'].iloc[-1]
+		hvac.T_des = (df_house_settings['heating_setpoint'].iloc[-1] + df_house_settings['cooling_setpoint'].iloc[-1])/2. #Default
+		house.HVAC = hvac
 	#Other variables are related to continuously changing state and updated by update state: T_air, mode, cooling_demand, heating_demand
 
 	#Create and assign battery object if exists
-	house = PVfct.get_PV(house,house_name)
-	house = Bfct.get_battery(house,house_name)
-	house = EVfct.get_CP(house,house_name)
+	house = PVfct.get_PV(house,hh_id) # get PV table and checks if PV is associated with HH id
+	# house = Bfct.get_battery(house,house_name)
+	# house = EVfct.get_CP(house,house_name)
 
 	return house
 
 
 class House:
-	def __init__(self,name):
+	def __init__(self,hh_id):
 		#Str
-		self.name = name
+		self.hh_id = hh_id
 		#Objects
 		self.HVAC = None
 		self.PV = None
@@ -63,11 +63,13 @@ class House:
 		self.EVCP = None
 
 	def update_state(self,dt_sim_time):
-		df_state_in = myfct.get_values_td(self.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
-		self.HVAC.update_state(df_state_in)
+		if self.HVAC:
+			df_state_in = myfct.get_values_td(self.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
+			self.HVAC.update_state(df_state_in)
 		if self.PV:
-			df_PV_state_in = myfct.get_values_td(self.PV.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
-			self.PV.update_state(df_PV_state_in)
+			import pdb; pdb.set_trace()
+			pv_interval = requests.get(db_address+'/meter_interval/'+str(self.name)).json()['results']['data']
+			self.PV.update_state(pv_interval)
 		if self.battery:
 			df_batt_state_in = myfct.get_values_td(self.battery.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
 			self.battery.update_state(df_batt_state_in)

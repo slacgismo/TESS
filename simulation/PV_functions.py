@@ -15,7 +15,9 @@ import pandas
 from dateutil import parser
 from datetime import timedelta
 
-import mysql_functions as myfct
+import requests
+from HH_global import db_address
+#import mysql_functions as myfct
 
 """NEW FUNCTIONS / MYSQL DATABASE AVAILABLE"""
 
@@ -23,8 +25,9 @@ import mysql_functions as myfct
 from HH_global import flexible_houses, C, p_max, interval, prec, load_forecast, city, month
 
 class PV:
-      def __init__(self, name, Q_rated):
-            self.name = name
+      def __init__(self, pv_id, meter, Q_rated):
+            self.id = pv_id
+            self.meter = meter
             self.Q_rated = Q_rated
             self.Qmtp = 0.0 #Last measured power
             self.E = 0.0 #Energy in past 15min
@@ -32,9 +35,9 @@ class PV:
             self.Q_bid = 0.0
             self.mode = 1
 
-      def update_state(self,df_PV_state_in):
-            self.Qmtp = float(df_PV_state_in['Qmtp'].iloc[0])
-            self.E = float(df_PV_state_in['E'].iloc[0])
+      def update_state(self,pv_interval):
+            self.Qmtp = pv_interval['qmtp']
+            self.E = pv_interval['e']
 
 
       def bid(self,dt_sim_time,market,P_exp,P_dev):
@@ -58,17 +61,14 @@ class PV:
             self.Q_bid = 0.0
 
 
-def get_PV(house,house_name):
-      PV_name = 'PV'+house_name[5:]
-      try:
-            df_PV_settings = myfct.get_values_td(PV_name + '_settings')
-      except:
-            df_PV_settings = pandas.DataFrame()
-
-      #If house has a PV
-      for ind in df_PV_settings.index:
-            pv = PV('PV'+house_name[5:],df_PV_settings['Q_rated'].loc[ind])
-            house.PV = pv
+def get_PV(house,hh_id):
+      pvs = requests.get(db_address+'pvs').json()['results']['data']
+      for pv in pvs:
+            if pv['home_hub_id'] == hh_id:
+                  pv = PV(pv['pv_id'],pv['meter_id'],pv['q_rated'])
+                  house.PV = pv
+                  return house
+      print('No PV installed by hh '+str(hh_id))
       return house
 
 

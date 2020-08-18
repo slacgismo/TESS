@@ -10,7 +10,7 @@ import gridlabd
 
 import requests
 
-from HH_global import city, market_data, C, interval, ip_address
+from HH_global import city, market_data, C, interval, db_address #, ip_address
 
 #These function descrbe the physical interface: read out of physical environment / API --> provide information / fill into DB
 
@@ -47,11 +47,13 @@ def get(obj):
 
 #Get house characteristics and write to DB
 
+#Not needed in deployment - gets entered by utility into db
 def get_houseobjects(house_name,time):
 	#Get information from physical representation
 	house_obj = gridlabd.get_object(house_name)
 	return
 
+#Not needed in deployment - gets entered by utility into db
 def get_PVs(house_name,time):
 	#import pdb; pdb.set_trace()
 	PV_name = 'PV'+house_name[5:]
@@ -190,18 +192,16 @@ def update_house_state(house_name,dt_sim_time):
 	myfct.set_values(house_name+'_state_in', parameter_string, value_tuple)
 	return
 
-def update_PV_state(PV_name,dt_sim_time):
+def update_PV_state(PV,dt_sim_time):
 	#Get information from physical representation
-	PV_obj = gridlabd.get_object(PV_name)
+	PV_obj = gridlabd.get_object('PV_'+str(PV.id))
 
 	Qmtp = float(PV_obj['P_Out'][1:].split('+')[0])/1000. #kW
 	E = Qmtp/(3600./interval)
 
-	#Save in long-term memory (in the db) - accessible for market code
-	parameter_string = '(timedate, E, Qmtp)' #timedate TIMESTAMP PRIMARY KEY, 
-	value_tuple = (dt_sim_time, E, Qmtp,)
-	myfct.set_values(PV_name+'_state_in', parameter_string, value_tuple)
-
+	#Post state to TESS DB (simulation time)
+	data = {'rate_id':1,'meter_id':PV.meter,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(minutes=5)),'e':E,'qmtp':Qmtp,'p_bid':0,'q_bid':0,'is_bid':True}
+	requests.post(db_address+'meter_interval',json=data) #with dummy bid
 
 def update_CP_state(CP_name,dt_sim_time):
 	#Check if EV is there
@@ -270,10 +270,12 @@ def dispatch_PV(PV_name,dt_sim_time):
 
 #Get supply specifications
 
-def get_slackload(dt_sim_time): #GUSTAVO: this information comes from HCE systems
+def get_slackload(dt_sim_time):
 	load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'])/1000. #measured_real_power in [W]
 	#C - can also come from HCE setting
-	myfct.set_values('system_load', '(timedate, C, slack_load)', (dt_sim_time, C, load_SLACK,))
+	print('Add new db table: substation')
+	#data = {dt_sim_time, C, load_SLACK}
+	#requests.post(db_address+'',json=data)
 	return
 
 ###############
@@ -286,7 +288,9 @@ def get_WSprice(dt_sim_time):
 	df_WS = pandas.read_csv('glm_generation_'+city+'/'+market_data,parse_dates=[-1],index_col=[0])
 	df_WS = pandas.DataFrame(index=pandas.to_datetime(df_WS.index.astype(str)),columns=df_WS.columns,data=df_WS.values.astype(float))
 	p_WS = float(df_WS['RT'].loc[dt_sim_time]) 
-	myfct.set_values('WS_supply', '(timedate, WS_price)', (dt_sim_time, p_WS,))
+	print('Add new db table: HCE supply')
+	#data = {dt_sim_time, C, load_SLACK}
+	#requests.post(db_address+'',json=data)
 	return
 
 ###############

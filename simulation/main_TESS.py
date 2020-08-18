@@ -4,7 +4,7 @@ import time
 import requests
 
 from HH_global import start_time_str, end_time_str
-from HH_global import db_address, user_name, pw
+from HH_global import db_address #, user_name, pw
 
 #First simulation
 if False:
