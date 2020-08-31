@@ -55,7 +55,7 @@ class Meter(Model):
                          db.ForeignKey('home_hubs.home_hub_id'),
                          nullable=False)
     transformer_id = Column(db.Integer,
-                            db.ForeignKey('transformers.transformer_id'),
+                            db.ForeignKey(Transformer.transformer_id),
                             nullable=True)
     alternate_meter_id = Column(db.String(64), unique=True)
     feeder = Column(db.String(45), nullable=False)
