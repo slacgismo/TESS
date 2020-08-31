@@ -7,6 +7,7 @@ from marshmallow import fields, ValidationError
 
 from web.models.channel import Channel, ChannelSchema
 from web.models.meter_interval import MeterInterval
+from web.models.transformer import Transformer
 from web.database import (
     db,
     Model,
@@ -41,32 +42,26 @@ class Meter(Model):
                       primary_key=True,
                       autoincrement=True,
                       nullable=False)
-
     utility_id = Column(db.Integer,
                         db.ForeignKey('utilities.utility_id'),
                         primary_key=True,
                         nullable=False)
-
     service_location_id = Column(
         db.Integer,
         db.ForeignKey('service_locations.service_location_id'),
         primary_key=True,
         nullable=False)
-
     home_hub_id = Column(db.Integer,
                          db.ForeignKey('home_hubs.home_hub_id'),
                          nullable=False)
-
+    transformer_id = Column(db.Integer,
+                            db.ForeignKey('transformers.transformer_id'),
+                            nullable=True)
     alternate_meter_id = Column(db.String(64), unique=True)
-
     feeder = Column(db.String(45), nullable=False)
-
     substation = Column(db.String(45), nullable=False)
-
     meter_type = Column(db.Enum(MeterType), nullable=False)
-
     is_active = Column(db.Boolean(), default=False, nullable=False)
-
     is_archived = Column(db.Boolean(), default=False, nullable=False)
 
     updated_at = Column(
@@ -140,20 +135,13 @@ class Meter(Model):
 
 class MeterSchema(SQLAlchemyAutoSchema):
     meter_type = fields.Method('get_meter_type', deserialize='load_meter_type')
-
     map_location = fields.Method('get_map_location',
                                  deserialize='load_map_location')
-
     postal_code = fields.Method('get_postal_code')
-
     rates = fields.Method('get_rates', dump_only=True)
-
     channels = fields.Nested(ChannelSchema(many=True), dump_only=True)
-
     interval_count = fields.Method('get_interval_count', dump_only=True)
-
     interval_coverage = fields.Method('get_interval_coverage', dump_only=True)
-
     user_id = fields.Method('get_user_id', dump_only=True)
 
     # Marshmallow methods
