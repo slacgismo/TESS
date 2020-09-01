@@ -4,6 +4,8 @@ from flask import Flask, render_template
 from web.config import *
 from web.extensions import db, bcrypt, migrate, ma
 
+from web.models import hce_bids, transformer
+
 # FRONT-END TEMPLATE BP ROUTES
 from web.auth.auth import auth_bp
 from web.alerts.alerts import alerts_bp

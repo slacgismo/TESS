@@ -1,11 +1,14 @@
 from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from web.models.market import Market
+
 from web.database import (
     db,
     Model,
     Column,
+    SurrogatePK,
+    relationship,
+    reference_col,
 )
 
 
@@ -22,7 +25,7 @@ class HceBids(Model):
     is_supply = Column(db.Boolean(), default=True, nullable=False)
     comment = Column(db.String(512), nullable=False)
     market_id = Column(db.Integer,
-                       db.ForeignKey(Market.market_id),
+                       db.ForeignKey('markets.market_id'),
                        nullable=False)
     updated_at = Column(
         TIMESTAMP,

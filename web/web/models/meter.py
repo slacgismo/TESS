@@ -7,7 +7,6 @@ from marshmallow import fields, ValidationError
 
 from web.models.channel import Channel, ChannelSchema
 from web.models.meter_interval import MeterInterval
-from web.models.transformer import Transformer
 from web.database import (
     db,
     Model,
@@ -55,7 +54,7 @@ class Meter(Model):
                          db.ForeignKey('home_hubs.home_hub_id'),
                          nullable=False)
     transformer_id = Column(db.Integer,
-                            db.ForeignKey(Transformer.transformer_id),
+                            db.ForeignKey('transformers.transformer_id'),
                             nullable=True)
     alternate_meter_id = Column(db.String(64), unique=True)
     feeder = Column(db.String(45), nullable=False)
