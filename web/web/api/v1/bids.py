@@ -27,9 +27,11 @@ def get_bids():
 
         if is_supply.lower() == 'false':
             # get the hce bids only
+            pass
 
         if is_supply.lower() == 'true':
             # get the meter interval and hce bids
+            pass
 
         # otherwise, just get both
 
