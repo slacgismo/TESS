@@ -2,11 +2,11 @@ from web.database import db
 import dateutil.parser as parser
 from flask import request, Blueprint
 from marshmallow import ValidationError
-from web.models.hce_bids import HceBids
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 from .response_wrapper import ApiResponseWrapper
-from web.models.meter_interval import MeterInterval
+from web.models.hce_bids import HceBids, HceBidsSchema
+from web.models.meter_interval import MeterInterval, MeterIntervalSchema
 
 bids_api_bp = Blueprint('bids_api_bp', __name__)
 
@@ -18,19 +18,35 @@ def get_bids():
     '''
     arw = ApiResponseWrapper()
     start_time = request.args.get('start_time', None)
-    is_supply = request.args.get('is_supply', "")
+    is_supply = request.args.get('is_supply', '')
 
     try:
         results = []
         if start_time:
             start_time = parser.parse(start_time)
 
-        # if is_supply is True or None, then we get meter_interval and hce_bids,
-        # otherwise we only get hce_bids
+        hb_schema = HceBidsSchema()
+        hb = HceBids.query.filter()
 
-        if is_supply.lower() != 'false':
+        if is_supply.lower() == 'false':
+            hb = hb.filter(HceBids.is_supply.is_(False))
+            if start_time:
+                hb = hb.filter(HceBids.start_time >= start_time)
+            results.append(hb_schema.dump(hb, many=True))
+
+        elif is_supply.lower() == 'true':
             # get the meter_intervals as well
-            pass
+            hb = hb.filter(HceBids.is_supply.is_(True))
+            mi_schema = MeterIntervalSchema()
+            mi = MeterInterval.query.filter()
+            if start_time:
+                hb = hb.filter(HceBids.start_time >= start_time)
+                mi = mi.filter(MeterInterval.start_time >= start_time)
+            results.append(hb_schema.dump(hb, many=True))
+            results.append(mi_schema.dump(mi, many=True))
+
+        else:
+            arw.add_errors('is_supply query param is required')
 
     except parser.ParserError as pe:
         arw.add_errors(
