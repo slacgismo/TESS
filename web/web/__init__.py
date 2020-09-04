@@ -109,3 +109,9 @@ else:
     config = DevelopmentConfig()
 
 app = create_app(config)
+
+# IF YOU NEED TO SEED YOUR DB WITH SOME TEST DATA,
+# UNCOMMENT BELOW THIS LINE AND RUN THE APP. DELETE LATER!!
+# from web.seed_data import seed
+# with app.app_context():
+#     seed()

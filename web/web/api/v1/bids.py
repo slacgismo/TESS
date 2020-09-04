@@ -18,22 +18,19 @@ def get_bids():
     '''
     arw = ApiResponseWrapper()
     start_time = request.args.get('start_time', None)
-    is_supply = request.args.get('is_supply', None)
+    is_supply = request.args.get('is_supply', "")
 
     try:
         results = []
         if start_time:
             start_time = parser.parse(start_time)
 
-        if is_supply.lower() == 'false':
-            # get the hce bids only
-            pass
+        # if is_supply is True or None, then we get meter_interval and hce_bids,
+        # otherwise we only get hce_bids
 
-        if is_supply.lower() == 'true':
-            # get the meter interval and hce bids
+        if is_supply.lower() != 'false':
+            # get the meter_intervals as well
             pass
-
-        # otherwise, just get both
 
     except parser.ParserError as pe:
         arw.add_errors(
