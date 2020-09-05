@@ -1,0 +1,41 @@
+module model;
+module tape
+{
+    csv_header_type NAME;
+}
+filter integrate(z,${TS}s) = 1/(z-1)
+
+class system
+{
+    int64 t0;
+    double inertia[s];
+    double damping[pu];
+    double regulation[MW];
+    double supply[MW];
+    double demand[MW];
+    double ramp[MW/h];
+    double frequency[Hz];
+    double Kp;
+    double Ki;
+    double Kd;
+    double intfreq;
+}
+
+class market
+{
+    double interval[s];
+    double price[$/MWh];
+    double quantity[MW];
+}
+
+class battery
+{
+    double capacity[MWh];
+    double rating[MW];
+    double energy[MWh];
+    double power[MW];
+    double ramp[MW/h];
+    double setpoint[MWh];
+    double power_ask[$/MWh];
+    double power_offer[$/MWh];
+}

@@ -1,0 +1,39 @@
+// TESS static system with frequency regulation 
+// response to 100MW loss of generation
+
+#define MODELNAME=system
+#define TS=3 // discrete system model timestep
+
+clock 
+{
+    timezone "MST+7MDT";
+    starttime "2020-01-01 00:00:00 MST";
+    stoptime "2020-01-01 00:05:00 MST";
+}
+
+#include "model.glm"
+
+object system
+{
+    name "system";
+    inertia 10 s;
+    damping 1 pu;
+    regulation 0 MW;
+    frequency 60 Hz;
+    supply 19900 MW;
+    demand 20000 MW;
+    ramp 0 MW/h;
+    Kp 0.02;
+    Ki ($Kp/30);
+    Kd ($Kp/10);
+    object recorder
+    {
+        file "csv/${MODELNAME}.csv";
+        interval -1;
+        property "frequency,supply,demand,ramp,regulation";
+        flush 30;
+    };
+    on_init python:model.system_init;
+    on_sync python:model.system_update;
+}
+
