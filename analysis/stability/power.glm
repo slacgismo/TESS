@@ -1,0 +1,21 @@
+// TESS system response to 100MW loss of generation
+
+#include "system.glm"
+
+object market
+{
+    name "power";
+    interval 5 min;
+    price 0 $/MWh;
+    quantity 0 MW;
+    object recorder
+    {
+        file "csv/${MODELNAME}_market.csv";
+        interval -1;
+        property "price,quantity";
+    };
+    on_init python:model.power_init;
+    //on_precommit python:${MODELNAME}.market_close;
+    //on_commit python:${MODELNAME}.market_open;
+}
+

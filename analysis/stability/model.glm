@@ -8,6 +8,8 @@ class system
     double regulation[MW];
     double supply[MW];
     double demand[MW];
+    randomvar noise[MW];
+    double drift[MW];
     double ramp[MW/h];
     double frequency[Hz];
     double Kp;

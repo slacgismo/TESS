@@ -18,7 +18,9 @@ object system
     frequency 60 Hz;
     supply 19900 MW;
     demand 20000 MW;
-    ramp 0 MW/h;
+    ramp ${RAMP:-0 MW/h};
+    noise "type:normal(0,${NOISE:-0}); refresh:3s";
+    drift integrate(noise);
     Kp 0.02;
     Ki ($Kp/30);
     Kd ($Kp/10);
@@ -26,9 +28,8 @@ object system
     {
         file "csv/${MODELNAME}.csv";
         interval -1;
-        property "frequency,supply,demand,ramp,regulation";
+        property "frequency,supply,demand,ramp,regulation,drift";
         flush 30;
     };
     on_init python:model.system_init;
-    on_sync python:model.system_update;
 }

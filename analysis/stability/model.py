@@ -6,6 +6,7 @@ import gridlabd
 
 ask = {}
 offer = {}
+system = None
 
 def get_double(obj,name):
     return float(gridlabd.get_value(obj,name).split()[0])
@@ -20,7 +21,14 @@ def set_int(obj,name,value):
     return gridlabd.set_value(obj,name,f'{value:d}')
 
 def system_init(obj,t1):
-    set_int(obj,'t0',t1)
+    global system
+    system = obj
+    set_int(system,'t0',t1)
+    return 0
+
+def power_init(obj,t1):
+    global power
+    power = obj
     return 0
 
 def system_update(obj,t1):
@@ -33,13 +41,14 @@ def system_update(obj,t1):
         demand = float(data['demand'].split()[0])
         regulation = float(data['regulation'].split()[0])
         ramp = float(data['ramp'].split()[0])
+        drift = float(data['noise'].split()[0])
         if ramp != 0:
             supply += ramp/3600*dt
             set_double(obj,'supply',supply)
         frequency = float(data['frequency'].split()[0])
         inertia = float(data['inertia'].split()[0])
         damping = float(data['damping'].split()[0])
-        df = (supply+regulation-demand) * exp(-damping/inertia*dt)/1000
+        df = (supply+regulation-demand+drift) * exp(-damping/inertia*dt)/1000
         Kp = float(data['Kp'])
         Ki = float(data['Ki'])
         Kd = float(data['Kd'])
@@ -54,6 +63,18 @@ def system_update(obj,t1):
     ts = int(gridlabd.get_global("TS"))
     t2 = (t1/ts+1)*ts;
     return int(t2);
+
+def on_init(t1):
+    return True
+
+def on_precommit(t1):
+    return gridlabd.NEVER
+
+def on_commit(t1):
+    return gridlabd.NEVER
+
+def on_sync(t1):
+    return system_update(system,t1)
 
 def on_term(t):
     modelname = gridlabd.get_global("MODELNAME")

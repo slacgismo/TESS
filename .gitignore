@@ -634,3 +634,4 @@ simulation/__pycache__/
 web/web/static/bundles/*
 csv/
 png/
+analysis/stability/gridlabd.json
