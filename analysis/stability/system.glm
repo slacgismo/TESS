@@ -1,14 +1,10 @@
-// TESS static system with frequency regulation 
-// response to 100MW loss of generation
-
-#define MODELNAME=system
-#define TS=3 // discrete system model timestep
+// TESS system response to 100MW loss of generation
 
 clock 
 {
     timezone "MST+7MDT";
     starttime "2020-01-01 00:00:00 MST";
-    stoptime "2020-01-01 00:05:00 MST";
+    stoptime "2020-01-02 00:00:00 MST";
 }
 
 #include "model.glm"
@@ -36,4 +32,3 @@ object system
     on_init python:model.system_init;
     on_sync python:model.system_update;
 }
-

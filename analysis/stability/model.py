@@ -11,7 +11,6 @@ def get_double(obj,name):
     return float(gridlabd.get_value(obj,name).split()[0])
 
 def set_double(obj,name,value):
-    print(f'{obj}.{name} <- {value:.10f}')
     return gridlabd.set_value(obj,name,f'{value:.10f}')
 
 def get_int(obj,name):
@@ -47,7 +46,6 @@ def system_update(obj,t1):
         frequency += df
         err = 60-frequency
         intfreq = float(data['intfreq']) + (err+df/2)*dt
-        print(f'intfreq({t1}) = {intfreq}')
         set_double(obj,'intfreq',intfreq)
         set_double(obj,'frequency',frequency)
         regulation = (Kp*err + Ki*intfreq + Kd*df/dt)*supply
@@ -59,20 +57,21 @@ def system_update(obj,t1):
 
 def on_term(t):
     modelname = gridlabd.get_global("MODELNAME")
-    data = read_csv(f'csv/{modelname}.csv')
-
-    figure(figsize=(12,5))
+    data = read_csv(f'csv/{modelname}.csv',nrows=100)
     ts = float(gridlabd.get_global("TS"))
-    plot(data.index*ts,data.frequency)
-    xlabel(f'Time (ts={ts} s)')
-    ylabel(f'Frequency (Hz)')
-    grid()
-    savefig(f'png/{modelname}-frequency.png')
 
-    figure(figsize=(12,5))
-    ts = float(gridlabd.get_global("TS"))
-    plot(data.index*ts,data.regulation)
-    xlabel(f'Time (ts={ts} s)')
-    ylabel(f'Regulation (MW)')
-    grid()
-    savefig(f'png/{modelname}-regulation.png')
+    fig, ax = subplots(1,2,figsize=(12,5))
+    ax[0].plot(data.index*ts,data.frequency)
+    ax[0].set_xlabel(f'Time (ts={ts} s)')
+    ax[0].set_ylabel(f'Frequency (Hz)')
+    ax[0].set_title(f'Frequency response')
+    ax[0].grid()
+
+    ax[1].plot(data.index*ts,data.regulation)
+    ax[1].set_xlabel(f'Time (ts={ts} s)')
+    ax[1].set_ylabel(f'Regulation (MW)')
+    ax[1].set_title(f'Regulation response')
+    ax[1].grid()
+    
+    fig.suptitle(modelname.title().replace('_',' '),fontsize=14,fontweight='bold')
+    fig.savefig(f'png/{modelname}.png')

@@ -1,9 +1,4 @@
-module model;
-module tape
-{
-    csv_header_type NAME;
-}
-filter integrate(z,${TS}s) = 1/(z-1)
+// TESS Stability Analysis base model
 
 class system
 {
