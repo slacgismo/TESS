@@ -48,7 +48,9 @@ def system_update(obj,t1):
         frequency = float(data['frequency'].split()[0])
         inertia = float(data['inertia'].split()[0])
         damping = float(data['damping'].split()[0])
-        df = (supply+regulation-demand+drift) * exp(-damping/inertia*dt)/1000
+        edt = exp(-damping/inertia*dt)
+        df = (supply+regulation-demand+drift) / 1000 * edt
+        df += ramp / 1000 * (-damping/inertia) * edt
         Kp = float(data['Kp'])
         Ki = float(data['Ki'])
         Kd = float(data['Kd'])
