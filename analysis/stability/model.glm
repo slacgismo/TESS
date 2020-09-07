@@ -1,5 +1,9 @@
 // TESS Stability Analysis base model
 
+#set MODELNAME=${FILENAME modelname}
+
+module model;
+
 class system
 {
     int64 t0;
@@ -8,22 +12,52 @@ class system
     double regulation[MW];
     double supply[MW];
     double demand[MW];
+    double ramp[MW/h];
     randomvar noise[MW];
     double drift[MW];
-    double ramp[MW/h];
     double frequency[Hz];
     double Kp;
     double Ki;
     double Kd;
     double intfreq;
+    randomvar power_price[$/MW/h];
+    double power_supply[MW];
+    double power_demand[MW];
+    randomvar energy_price[$/MW/h^2];
+    double energy_supply[MWh];
+    double energy_demand[MWh];
+    randomvar ramp_price[$/MW];
+    double ramp_supply[MW/h];
+    double ramp_demand[MW/h];
 }
 
-class market
+class power_market
 {
     double interval[s];
-    double price[$/MWh];
+    double price[$/MW/h];
     double quantity[MW];
+    double pricecap[$/MW/h];
+    double margin[pu];
 }
+
+class energy_market
+{
+    double interval[s];
+    double price[$/MW/h^2];
+    double quantity[MWh];
+    double pricecap[$/MW/h^2];
+    double margin[pu];
+}
+
+class ramp_market
+{
+    double interval[s];
+    double price[$/MW];
+    double quantity[MW/h];
+    double pricecap[$/MW];
+    double margin[pu];
+}
+
 
 class battery
 {

@@ -2,11 +2,13 @@ from datetime import *
 from math import *
 from pandas import *
 from matplotlib.pyplot import *
+from auction import auction
 import gridlabd
 
 ask = {}
 offer = {}
 system = None
+market = {}
 
 def get_double(obj,name):
     return float(gridlabd.get_value(obj,name).split()[0])
@@ -26,10 +28,34 @@ def system_init(obj,t1):
     set_int(system,'t0',t1)
     return 0
 
-def power_init(obj,t1):
-    global power
-    power = obj
+def market_init(obj,t1):
+    global market
+    data = gridlabd.get_object(obj)
+    pricecap = float(data['pricecap'].split()[0])
+    info = gridlabd.get_class(data['class'])
+    price_unit = info['price']['unit']
+    quantity_unit = info['quantity']['unit']
+    market[obj] = auction(price_unit = price_unit,
+                          quantity_unit = quantity_unit,
+                          price_cap = pricecap,
+                          verbose = False)
     return 0
+
+def market_sync(mkt,t1):
+    result = mkt.clear()
+    return result
+
+def system_bid(obj,t1):
+    global market
+    system = gridlabd.get_object(obj)
+    for name, auction in market.items():
+        supply = float(system[f'{name}_supply'].split()[0])
+        demand = float(system[f'{name}_demand'].split()[0])
+        price = float(system[f'{name}_price'].split()[0])
+        if supply != 0:
+            market[name].add_order(quantity=supply, price=price)
+        if demand != 0:
+            market[name].add_order(quantity=demand, price=auction.config['price_cap'])
 
 def system_update(obj,t1):
     t0 = get_int(obj,'t0')
@@ -49,7 +75,8 @@ def system_update(obj,t1):
         inertia = float(data['inertia'].split()[0])
         damping = float(data['damping'].split()[0])
         edt = exp(-damping/inertia*dt)
-        df = (supply+regulation-demand+drift) / 1000 * edt
+        power = supply+regulation-demand+drift
+        df = power / 1000 * edt
         df += ramp / 1000 * (-damping/inertia) * edt
         Kp = float(data['Kp'])
         Ki = float(data['Ki'])
@@ -61,22 +88,51 @@ def system_update(obj,t1):
         set_double(obj,'frequency',frequency)
         regulation = (Kp*err + Ki*intfreq + Kd*df/dt)*supply
         set_double(obj,'regulation',regulation)
+        set_double(obj,'power_supply',supply+regulation)
+        set_double(obj,'power_demand',demand+drift)
         set_int(obj,'t0',t1)
     ts = int(gridlabd.get_global("TS"))
     t2 = (t1/ts+1)*ts;
     return int(t2);
 
 def on_init(t1):
+    global market
+    system_init('system',t1)
+    for name in ['energy','power','ramp']:
+        try:
+            obj = gridlabd.get_object(name)
+        except:
+            continue
+        market_init(name,t1)
+        market_sync(market[name],t1)
     return True
 
 def on_precommit(t1):
+    global market
+    for auction in market.values():
+        auction.reset()
+    system_bid('system',t1)
+    for name, auction in market.items():
+        result = auction.clear()
+        price = result['price']
+        quantity = result['quantity']
+        margin = result['margin']
+        if price != None:
+            set_double(name,'price',price)
+        if quantity != None:
+            set_double(name,'quantity',quantity)
+        if margin != None:
+            set_double(name,'margin',margin)
+        else:
+            gridlabd.warning(f'{name} failed to clear (result={result})')
     return gridlabd.NEVER
 
 def on_commit(t1):
     return gridlabd.NEVER
 
 def on_sync(t1):
-    return system_update(system,t1)
+    t2 = system_update(system,t1)
+    return t2
 
 def on_term(t):
     modelname = gridlabd.get_global("MODELNAME")

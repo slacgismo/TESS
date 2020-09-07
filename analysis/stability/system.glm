@@ -19,17 +19,70 @@ object system
     supply 19900 MW;
     demand 20000 MW;
     ramp ${RAMP:-0 MW/h};
-    noise "type:normal(0,${NOISE:-0}); refresh:3s";
+    noise "type:normal(0,${NOISE:-0}); refresh:3;";
     drift integrate(noise);
     Kp 0.02;
     Ki ($Kp/30);
     Kd ($Kp/10);
+    power_price "type:normal(${POWER_AVG},${POWER_STD}); refresh:300; min:-100; max:1000;";
+    energy_price "type:normal(${ENERGY_AVG},${ENERGY_STD}); refresh:3600; min:-100; max:1000;";
+    ramp_price "type:normal(${RAMP_AVG},${RAMP_STD}); refresh:30; min:-100; max:1000;";
     object recorder
     {
         file "csv/${MODELNAME}.csv";
         interval -1;
-        property "frequency,supply,demand,ramp,regulation,drift";
+        property "frequency,supply,demand,regulation,drift,ramp,power_price,power_supply,power_demand,energy_price,energy_supply,energy_demand,ramp_price,ramp_supply,ramp_demand";
         flush 30;
     };
-    on_init python:model.system_init;
 }
+
+#if ${POWER_MARKET:-no}==yes
+object power_market
+{
+    name "power";
+    interval 5 min;
+    price 0 $/MW/h;
+    quantity 0 MW;
+    pricecap 10000 $/MW/h;
+    object recorder
+    {
+        file "csv/market_power.csv";
+        interval -1;
+        property "price,quantity,margin";
+    };
+}
+#endif
+
+#if ${ENERGY_MARKET:-no}==yes
+object energy_market
+{
+    name "energy";
+    interval 60 min;
+    price 0 $/MWh/h;
+    quantity 0 MWh;
+    pricecap 10000 $/MW/h^2;
+    object recorder
+    {
+        file "csv/market_energy.csv";
+        interval -1;
+        property "price,quantity,margin";
+    };
+}
+#endif
+
+#if ${RAMP_MARKET:-no}==yes
+object ramp_market
+{
+    name "ramp";
+    interval 30 s;
+    price 0 $/MW;
+    quantity 0 MW/h;
+    pricecap 10000 $/MW;
+    object recorder
+    {
+        file "csv/market_ramp.csv";
+        interval -1;
+        property "price,quantity,margin";
+    };
+}
+#endif

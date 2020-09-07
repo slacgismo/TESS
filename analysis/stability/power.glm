@@ -1,21 +1,20 @@
 // TESS system response to 100MW loss of generation
 
+#set suppress_repeat_messages=FALSE
+
+#define NOISE=1
+#define RAMP=0
+
+#define POWER_MARKET=yes
+#define POWER_AVG=50
+#define POWER_STD=10
+
+#define ENERGY_MARKET=no
+#define ENERGY_AVG=50
+#define ENERGY_STD=10
+
+#define RAMP_MARKET=no
+#define RAMP_AVG=0
+#define RAMP_STD=10
+
 #include "system.glm"
-
-object market
-{
-    name "power";
-    interval 5 min;
-    price 0 $/MWh;
-    quantity 0 MW;
-    object recorder
-    {
-        file "csv/${MODELNAME}_market.csv";
-        interval -1;
-        property "price,quantity";
-    };
-    on_init python:model.power_init;
-    //on_precommit python:${MODELNAME}.market_close;
-    //on_commit python:${MODELNAME}.market_open;
-}
-
