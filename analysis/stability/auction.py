@@ -94,6 +94,7 @@ class auction:
     version = 1.0
 
     default_config = {
+        "opentime" : None,
         "price_cap" : 10000.0,
         "price_floor" : 0.0,
         "price_unit" : "$/MWh",
@@ -104,6 +105,7 @@ class auction:
 
     def __init__(self,**kwargs):
         self.config = self.default_config
+        self.config['opentime'] = datetime.datetime.now()
         for key,value in kwargs.items():
             self.config[key] = value
         self.reset()
@@ -303,7 +305,7 @@ class auction:
         plt.grid()
         if title:
             if title == 'auto':
-                title = f"Auction {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\nClears {self.quantity} {self.config['quantity_unit']} at {self.price} {self.config['price_unit']} with a {self.margin} margin"
+                title = f"Auction {self.config['opentime'].strftime('%Y-%m-%d %H:%M:%S')}\nClears {self.quantity} {self.config['quantity_unit']} at {self.price} {self.config['price_unit']} with a {self.margin} margin"
             plt.title(title)
         if filename:
             plt.savefig(filename)

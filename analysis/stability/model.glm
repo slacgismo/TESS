@@ -1,63 +1,85 @@
 // TESS Stability Analysis base model
 
-#set MODELNAME=${FILENAME modelname}
-
-module model;
-
 class system
 {
-    int64 t0;
-    double inertia[s];
-    double damping[pu];
-    double regulation[MW];
-    double supply[MW];
-    double demand[MW];
-    double ramp[MW/h];
-    randomvar noise[MW];
-    double drift[MW];
-    double frequency[Hz];
-    double Kp;
-    double Ki;
-    double Kd;
-    double intfreq;
-    randomvar power_price[$/MW/h];
-    double power_supply[MW];
-    double power_demand[MW];
-    randomvar energy_price[$/MW/h^2];
-    double energy_supply[MWh];
-    double energy_demand[MWh];
-    randomvar ramp_price[$/MW];
-    double ramp_supply[MW/h];
-    double ramp_demand[MW/h];
+    int64 t0; // time of last dynamic update
+    double inertia[s]; // dynamic inertia constant (M)
+    double damping[pu]; // dynamic model damping coefficient (D)
+    double regulation[MW]; // regulation response (u)
+    double supply[MW]; // scheduled generation
+    double demand[MW]; // scheduled load
+    double ramp[MW/h]; // scheduled ramp rate
+    randomvar noise[MW]; // load noise disturbance (normally distributed)
+    double drift[MW]; // load drift (integral of noise)
+    double frequency[Hz]; // system frequency
+    double Kp; // system frequency proportional control coefficient
+    double Ki; // system frequency integral control coefficient
+    double Kd; // system frequency derivative control coefficient
+    double intfreq; // system frequency integral error
+    randomvar power_price[$/MW/h]; // market power price
+    double power_supply[MW]; // market power supply
+    double power_demand[MW]; // market power demand
+    randomvar energy_price[$/MW/h^2]; // market energy price
+    double energy_supply[MWh]; // market energy supply
+    double energy_demand[MWh]; // market energy demand
+    randomvar ramp_price[$/MW]; // market ramp price
+    double ramp_supply[MW/h]; // market ramp supply
+    double ramp_demand[MW/h]; // market ramp demand
+}
+
+class feeder
+{
+    int64 t0; // time of last dynamic update
+    double capacity[MW]; // feeder capacity limit
+    double unresponsive_load[MW]; // feeder unresponsive load
+    double responsive_load[MW]; // feeder responsive load
+    double active_load[MW]; // feeder active load
+    double cost[$]; // feeder cumulative cost (payments to system)
+    double revenue[$]; // feeder cumulative revenue (payments from loads)
+    double total[$]; // feeder total net cost (revenue)
 }
 
 class power_market
 {
-    double interval[s];
-    double price[$/MW/h];
-    double quantity[MW];
-    double pricecap[$/MW/h];
-    double margin[pu];
+    double interval[s]; // auction clear interval
+    double price[$/MW/h]; // last auction price
+    double quantity[MW]; // last auction quantity
+    double pricecap[$/MW/h]; // last price cap
+    double margin[pu]; // last clearing margin
 }
 
 class energy_market
 {
-    double interval[s];
-    double price[$/MW/h^2];
-    double quantity[MWh];
-    double pricecap[$/MW/h^2];
-    double margin[pu];
+    double interval[s]; // auction clear interval
+    double price[$/MW/h^2]; // last auction price
+    double quantity[MWh]; // last auction quantity
+    double pricecap[$/MW/h^2]; // last price cap
+    double margin[pu]; // last clearing margin
 }
 
 class ramp_market
 {
-    double interval[s];
-    double price[$/MW];
-    double quantity[MW/h];
-    double pricecap[$/MW];
-    double margin[pu];
+    double interval[s]; // auction clear interval
+    double price[$/MW]; // last auction price
+    double quantity[MW/h]; // last auction quantity
+    double pricecap[$/MW]; // last price cap
+    double margin[pu]; // last clearing margin
 }
 
+class photovoltaic
+{
+
+}
+
+class hvac
+{
+
+}
+
+class hotwater
+{
+
+}
 
 class battery
 {
@@ -69,4 +91,9 @@ class battery
     double setpoint[MWh];
     double power_ask[$/MWh];
     double power_offer[$/MWh];
+}
+
+class vehicle
+{
+
 }

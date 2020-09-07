@@ -1,5 +1,5 @@
 // TESS system response to 100MW loss of generation under +100MW/h ramp
 
 #define NOISE=1
-#define RAMP=100
+
 #include "system.glm"

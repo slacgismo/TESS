@@ -1,10 +1,12 @@
 // TESS system response to 100MW loss of generation
 
+module model;
+
 clock 
 {
     timezone "MST+7MDT";
     starttime "2020-01-01 00:00:00 MST";
-    stoptime "2020-01-02 00:00:00 MST";
+    stoptime "2020-01-01 01:00:00 MST";
 }
 
 #include "model.glm"
@@ -16,7 +18,7 @@ object system
     damping 1 pu;
     regulation 0 MW;
     frequency 60 Hz;
-    supply 19900 MW;
+    supply 19950 MW;
     demand 20000 MW;
     ramp ${RAMP:-0 MW/h};
     noise "type:normal(0,${NOISE:-0}); refresh:3;";
@@ -24,15 +26,31 @@ object system
     Kp 0.02;
     Ki ($Kp/30);
     Kd ($Kp/10);
-    power_price "type:normal(${POWER_AVG},${POWER_STD}); refresh:300; min:-100; max:1000;";
-    energy_price "type:normal(${ENERGY_AVG},${ENERGY_STD}); refresh:3600; min:-100; max:1000;";
-    ramp_price "type:normal(${RAMP_AVG},${RAMP_STD}); refresh:30; min:-100; max:1000;";
+    power_price "type:normal(${POWER_AVG:-0},${POWER_STD:-0}); refresh:300; min:-100; max:1000;";
+    energy_price "type:normal(${ENERGY_AVG:-0},${ENERGY_STD:-0}); refresh:3600; min:-100; max:1000;";
+    ramp_price "type:normal(${RAMP_AVG:-0},${RAMP_STD:-0}); refresh:30; min:-100; max:1000;";
     object recorder
     {
-        file "csv/${MODELNAME}.csv";
+        file "csv/system.csv";
         interval -1;
         property "frequency,supply,demand,regulation,drift,ramp,power_price,power_supply,power_demand,energy_price,energy_supply,energy_demand,ramp_price,ramp_supply,ramp_demand";
         flush 30;
+    };
+}
+
+object feeder
+{
+    name "feeder";
+    parent "system";
+    capacity "20 MW";
+    unresponsive_load "10 MW";
+    responsive_load "0 MW";
+    active_load "10 MW";
+    object recorder
+    {
+        file "csv/feeder.csv";
+        interval -1;
+        property "capacity,unresponsive_load,responsive_load,active_load,cost,revenue,total";
     };
 }
 
@@ -40,13 +58,14 @@ object system
 object power_market
 {
     name "power";
+    parent "feeder";
     interval 5 min;
     price 0 $/MW/h;
     quantity 0 MW;
     pricecap 10000 $/MW/h;
     object recorder
     {
-        file "csv/market_power.csv";
+        file "csv/power.csv";
         interval -1;
         property "price,quantity,margin";
     };
@@ -57,13 +76,14 @@ object power_market
 object energy_market
 {
     name "energy";
+    parent "feeder";
     interval 60 min;
     price 0 $/MWh/h;
     quantity 0 MWh;
     pricecap 10000 $/MW/h^2;
     object recorder
     {
-        file "csv/market_energy.csv";
+        file "csv/energy.csv";
         interval -1;
         property "price,quantity,margin";
     };
@@ -74,13 +94,14 @@ object energy_market
 object ramp_market
 {
     name "ramp";
+    parent "feeder";
     interval 30 s;
     price 0 $/MW;
     quantity 0 MW/h;
     pricecap 10000 $/MW;
     object recorder
     {
-        file "csv/market_ramp.csv";
+        file "csv/ramp.csv";
         interval -1;
         property "price,quantity,margin";
     };
