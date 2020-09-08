@@ -633,6 +633,4 @@ simulation/__pycache__/
 # ignoring the bundled file since regenerating this locally will change it everytime
 web/web/static/bundles/*
 csv/
-regulation/
-retail/
 analysis/stability/gridlabd.json
