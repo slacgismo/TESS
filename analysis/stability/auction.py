@@ -43,6 +43,11 @@ import sys
 import os
 import datetime
 
+price_rounding = 4
+quantity_rounding = 4
+price_resolution = 1e-4
+quantity_resolution = 1e-4
+
 """Polyline intersection solver"""
 def line_intersection(line1, line2):
     dx = (line1[0][0] - line1[1][0], line2[0][0] - line2[1][0])
@@ -51,32 +56,47 @@ def line_intersection(line1, line2):
     def det(a, b):
         return a[0] * b[1] - a[1] * b[0]
 
-    div = det(dx, dy)
-    if div == 0:
-        # TODO: special case for segment intersection
-        return None
-
-    d = (det(*line1), det(*line2))
-    x = det(d, dx) / div
-    y = det(d, dy) / div
-
     def is_inside(point,line):
         x0 = min(line[0][0],line[1][0])
         x1 = max(line[0][0],line[1][0])
         y0 = min(line[0][1],line[1][1])
         y1 = max(line[0][1],line[1][1])
-        # print((x0,x1),(y0,y1))
-        yes = (x0 <= point[0] and point[0] <= x1 and y0 <= point[1] and point[1] <= y1)
-        # print(f"is_inside(point={point},line={line}) -> {yes}")
+        yes = ( x0 <= point[0] + quantity_resolution 
+            and point[0] <= x1 + quantity_resolution 
+            and y0 <= point[1] + price_resolution 
+            and point[1] <= y1 + price_resolution )
         return yes
 
+    div = det(dx, dy)
+    if div == 0:
+        p00 = line1[0]
+        p01 = line1[1]
+        p10 = line2[0]
+        p11 = line2[1]
+        if is_inside(p00,line2):
+            p0 = p00
+        elif is_inside(p01,line2):
+            p0 = p01
+        else:
+            return None
+        if is_inside(p10,line1):
+            p1 = p10
+        elif is_inside(p11,line1):
+            p1 = p11
+        else:
+            return None
+        return sorted([p0,p1])
+
+    d = (det(*line1), det(*line2))
+    x = det(d, dx) / div
+    y = det(d, dy) / div
+
     if is_inside((x,y),line1) and is_inside((x,y),line2):
-        return (x,y)
+        return [(round(x,quantity_rounding),round(y,price_rounding))]
     else:
         return None
 
 def intersection(poly1, poly2):
-
     result = [];
     for i, A in enumerate(poly1[:-1]):
         B = poly1[i + 1]
@@ -86,7 +106,7 @@ def intersection(poly1, poly2):
 
             E = line_intersection((A, B), (C, D))
             if E and E not in result:
-                result.append(E)
+                result.extend(E)
     return result
 
 class auction:
@@ -191,6 +211,9 @@ class auction:
 
         # accumulate quantities
         def cumulative(curve,fill=None):
+            def add(result,pt):
+                if not pt in result:
+                    result.append(pt)
             q0 = 0.0
             if fill == 'buy':
                 p0 = self.config["price_cap"]
@@ -201,16 +224,16 @@ class auction:
             result = [(q0,p0)]
             for order in curve:
                 if order[1] != p0: # new vertex needed
-                    result.append((q0,p0))
+                    add(result,(q0,p0))
                     p0 = order[1]
-                    result.append((q0,p0))
+                    add(result,(q0,p0))
                 q0 += order[0]
             if result[-1] != (q0,p0):
-                result.append((q0,p0))
+                add(result,(q0,p0))
             if fill == 'sell' and result[-1][1] != self.config["price_cap"]:
-                result.append((q0,self.config["price_cap"]))
+                add(result,(q0,self.config["price_cap"]))
             elif fill == 'buy' and result[-1][1] != self.config["price_floor"]:
-                result.append((q0,self.config["price_floor"]))
+                add(result,(q0,self.config["price_floor"]))
             return result
         self.buy = cumulative(buy_order,fill='buy')
         self.sell = cumulative(sell_order,fill='sell')
@@ -224,7 +247,10 @@ class auction:
             # resolve ambiguous clearing conditions
             if len(result) > 1 : # more than one clearing point found
                 self.quantity = max([x[0] for x in result])
-                self.price = sum([x[1] for x in result])/len(result)
+                if self.quantity > 0:
+                    self.price = sum([x[1] for x in result])/len(result)
+                else:
+                    self.price = min([x[1] for x in result])
             else: # single clearing point found
                 self.quantity = result[0][0]
                 self.price = result[0][1]
@@ -239,7 +265,10 @@ class auction:
                             if n > 1:
                                 num -= curve[n-2][0]
                                 den -= curve[n-2][0]
-                            return num/den
+                            if den != 0:
+                                return num/den
+                            else:
+                                return None
                     return None
                 self.margin = find_margin(self.buy)
                 if self.margin == None:

@@ -51,9 +51,9 @@ def market_init(obj,t1):
     market[obj] = auction(price_unit = price_unit,
                           quantity_unit = quantity_unit,
                           price_cap = pricecap,
-                          verbose = True,
+                          verbose = False,
                           opentime = datetime.fromtimestamp(t1))
-    return 0
+    return market[obj]
 
 def feeder_bid(t1):
     global market
@@ -131,10 +131,10 @@ def on_init(t1):
 
 def on_precommit(t1):
     global market
-    for name, auction in market.items():
+    for name in market.keys():
         interval = get_double(name,'interval')
         if t1 % interval == 0:
-            auction.reset()
+            auction = market_init(name,t1)
             feeder_bid(t1)
             result = auction.clear()
             if auction.config['verbose']:
@@ -144,12 +144,14 @@ def on_precommit(t1):
             margin = result['margin']
             if price != None:
                 set_double(name,'price',price)
+            else:
+                gridlabd.warning(f'{name} failed to clear (result={result}), price unchanged')
             if quantity != None:
                 set_double(name,'quantity',quantity)
             if margin != None:
                 set_double(name,'margin',margin)
             else:
-                gridlabd.warning(f'{name} failed to clear (result={result})')
+                set_double(name,'margin',0.0)
     return gridlabd.NEVER
 
 def on_commit(t1):
