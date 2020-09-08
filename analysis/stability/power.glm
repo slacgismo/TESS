@@ -1,5 +1,6 @@
 // TESS system response to 100MW loss of generation
 
+#define STOPTIME="2020-01-02 00:00:00 MST"
 #define NOISE=1
 #define RAMP=0
 
