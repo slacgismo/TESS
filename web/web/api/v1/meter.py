@@ -103,7 +103,6 @@ def get_meter_schema():
     '''
     Returns meter schema as json object
     '''
-
     return jsonify(schema_data)
 
 
