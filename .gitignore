@@ -633,5 +633,6 @@ simulation/__pycache__/
 # ignoring the bundled file since regenerating this locally will change it everytime
 web/web/static/bundles/*
 
-# ignoring config files from rpi folder
-rpi/config.py
+# ignoring config files from edge_devices folder
+edge_devices/config.py
+edge_devices/certs/
