@@ -1,0 +1,19 @@
+// TESS system response to 100MW loss of generation
+
+#define STOPTIME="2020-01-02 00:00:00 MST"
+#define NOISE=1
+#define RAMP=0
+
+#define POWER_MARKET=yes
+#define POWER_AVG=50
+#define POWER_STD=10
+
+#define ENERGY_MARKET=yes
+#define ENERGY_AVG=50
+#define ENERGY_STD=10
+
+#define RAMP_MARKET=yes
+#define RAMP_AVG=0
+#define RAMP_STD=10
+
+#include "system.glm"

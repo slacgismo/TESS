@@ -9,6 +9,7 @@ class system
     double supply[MW]; // scheduled generation
     double demand[MW]; // scheduled load
     double ramp[MW/h]; // scheduled ramp rate
+    double reserve[MWh]; // scheduled reserve requirement
     randomvar noise[MW]; // load noise disturbance (normally distributed)
     double drift[MW]; // load drift (integral of noise)
     double frequency[Hz]; // system frequency
@@ -42,10 +43,13 @@ class feeder
 class power_market
 {
     double interval[s]; // auction clear interval
+    double expected_avg[$/MW/h]; // expected average of power price
+    double expected_std[$/MW/h]; // expected standard deviation of power price 
     double price[$/MW/h]; // last auction price
     double quantity[MW]; // last auction quantity
     double pricecap[$/MW/h]; // last price cap
     double margin[pu]; // last clearing margin
+    char1024 verbose; // verbose output file (TRUE for terminal output)
 }
 
 class energy_market
@@ -55,6 +59,7 @@ class energy_market
     double quantity[MWh]; // last auction quantity
     double pricecap[$/MW/h^2]; // last price cap
     double margin[pu]; // last clearing margin
+    char1024 verbose; // verbose output file (TRUE for terminal output)
 }
 
 class ramp_market
@@ -64,6 +69,22 @@ class ramp_market
     double quantity[MW/h]; // last auction quantity
     double pricecap[$/MW]; // last price cap
     double margin[pu]; // last clearing margin
+    char1024 verbose; // verbose output file (TRUE for terminal output)
+}
+
+class battery
+{
+    int64 t0; // time of last dynamic update
+    double capacity[MWh]; // total energy capacity of battery
+    double rating[MW]; // power rating of battery
+    double energy[MWh]; // current energy stored in battery
+    double power[MW]; // current power input (output is negative) 
+    double ramp[MW/h]; // current ramp rate setting of battery
+    double capital_cost[$/MWh]; // power price deadband (offer-ask)
+    double setpoint[MWh]; // battery desired charge level
+    double comfort; // battery charge comfort
+    double buy_price[$/MWh]; // current asking (buy) price for power
+    double sell_price[$/MWh]; // current offer (sell) price for power
 }
 
 class photovoltaic
@@ -79,18 +100,6 @@ class hvac
 class hotwater
 {
 
-}
-
-class battery
-{
-    double capacity[MWh];
-    double rating[MW];
-    double energy[MWh];
-    double power[MW];
-    double ramp[MW/h];
-    double setpoint[MWh];
-    double power_ask[$/MWh];
-    double power_offer[$/MWh];
 }
 
 class vehicle

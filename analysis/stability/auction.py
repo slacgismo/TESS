@@ -128,12 +128,19 @@ class auction:
         self.config['opentime'] = datetime.datetime.now()
         for key,value in kwargs.items():
             self.config[key] = value
+        self.id = 0
         self.reset()
         self.verbose(self.config)
 
     def verbose(self,msg):
         if self.config["verbose"]:
-            print(f"auction: {msg}")
+            if type(self.config["verbose"]) is bool:
+                print(f"{self}: {msg}")
+            elif type(self.config["verbose"]) is str:
+                self.config["verbose"] = open(self.config["verbose"],"w")
+            else:
+                self.config["verbose"].write(msg)
+                self.config["verbose"].write('\n')
 
     def add_order(self,quantity,price):
         """Add an order to the auction"""
@@ -199,6 +206,7 @@ class auction:
         self.price = None
         self.quantity = None
         self.margin = None
+        self.id += 1
 
     def clear(self):
         """Clear the market (meaning solve it)"""
@@ -206,6 +214,7 @@ class auction:
         # sort orders by price
         buy_order = sorted(self.demand, key = lambda x: x[1],reverse=True)
         sell_order = sorted(self.supply, key = lambda x: x[1])
+        self.verbose(f"market_id={self.id}")
         self.verbose(f"buy_order={buy_order}")
         self.verbose(f"sell_order={sell_order}")
 

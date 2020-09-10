@@ -49,7 +49,7 @@ object feeder
     object recorder
     {
         file "csv/feeder.csv";
-        interval -1;
+        interval 5 min;
         property "capacity,unresponsive_load,responsive_load,active_load,cost,revenue,total";
     };
 }
@@ -60,15 +60,18 @@ object power_market
     name "power";
     parent "feeder";
     interval 5 min;
+    pricecap 200 $/MW/h;
+    expected_avg ${POWER_AVG:-0} $/MW/h;
+    expected_std ${POWER_STD:-0} $/MW/h;
     price 0 $/MW/h;
     quantity 0 MW;
-    pricecap 10000 $/MW/h;
     object recorder
     {
         file "csv/power.csv";
-        interval -1;
+        interval 5 min;
         property "price,quantity,margin";
     };
+    verbose "False";
 }
 #endif
 
@@ -77,14 +80,16 @@ object energy_market
 {
     name "energy";
     parent "feeder";
-    interval 60 min;
+    interval 1 hr;
+    pricecap 10000 $/MW/h^2;
+    expected_avg ${ENERGY_AVG:-0} $/MW/h^2;
+    expected_std ${ENERGY_STD:-0} $/MW/h^2;
     price 0 $/MWh/h;
     quantity 0 MWh;
-    pricecap 10000 $/MW/h^2;
     object recorder
     {
         file "csv/energy.csv";
-        interval -1;
+        interval 1 hr;
         property "price,quantity,margin";
     };
 }
@@ -96,14 +101,28 @@ object ramp_market
     name "ramp";
     parent "feeder";
     interval 30 s;
+    pricecap 10000 $/MW;
+    expected_avg ${RAMP_AVG:-0} $/MW;
+    expected_std ${RAMP_STD:-0} $/MW;
     price 0 $/MW;
     quantity 0 MW/h;
-    pricecap 10000 $/MW;
     object recorder
     {
         file "csv/ramp.csv";
-        interval -1;
+        interval 30 s;
         property "price,quantity,margin";
     };
 }
 #endif
+
+object battery
+{
+    parent "feeder";
+    capacity 10 kWh;
+    rating 10 kW;
+    energy random.triangle(2,8) kWh;
+    setpoint 5 kWh;
+    comfort 1.0;
+    capital_cost 1.0 $/kWh;
+    on_init python:model.battery_init;
+}
