@@ -1,0 +1,3 @@
+// this file is used if local.glm is not found
+#define TIMEZONE=${TIMEZONE:-US/CA/Los Angeles}
+#define WEATHER=${WEATHER:-722540TYA.tmy3}

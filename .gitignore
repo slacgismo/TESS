@@ -625,6 +625,10 @@ lint/tmp/
 #mysql db connection
 models/secrets.sh
 
+#confidential data
+simulation/data/
+simulation_N/data/
+
 selftest/
 
 # ignoring the bundled file since regenerating this locally will change it everytime
