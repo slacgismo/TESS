@@ -629,6 +629,10 @@ models/secrets.sh
 simulation/data/
 simulation_N/data/
 
+#results
+TESS/
+TESS_mysql/
+
 selftest/
 
 # ignoring the bundled file since regenerating this locally will change it everytime
