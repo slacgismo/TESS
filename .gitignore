@@ -626,12 +626,18 @@ lint/tmp/
 models/secrets.sh
 
 #confidential data
+credentials.py
 simulation/data/
-simulation_N/data/
+simulation_N/data_test/
+
+#large data
+simulation_N/glm_generation_SanDiego/
 
 #results
-TESS/
-TESS_mysql/
+simulation/TESS/
+simulation/TESS_mysql/
+simulation_N/TESS/
+simulation_N/old/
 
 selftest/
 
