@@ -1,0 +1,87 @@
+class house {
+	double k;
+	double T_max;
+	double T_min;
+}
+
+class battery {
+	char32 charging_type;
+	double k;
+	char32 est_departure;
+	double top_on;
+}
+
+object transformer {
+	name xfrm_${LOADID}${PHASE};
+	to node_${LOADID}${PHASE};
+	phases ${PHASE}S;
+	from main_node_${PHASE};
+	configuration xfmr_config_${PHASE};
+}
+
+object triplex_node {
+	name node_${LOADID}${PHASE};
+	phases ${PHASE}S;
+	nominal_voltage 120;
+}
+
+object triplex_meter:..${COUNT} { 
+	name `meter_{SEQ_CUSTID:INC}`;
+	//price 0.2;
+	parent node_${LOADID}${PHASE};
+	phases ${PHASE}S;
+	nominal_voltage 120;
+	object house { 
+		name `house_{SEQ_CUSTID}`;
+		groupid group_houses;
+		floor_area random.triangle(1000,1500);
+		//thermostat_control NONE;
+		cooling_setpoint 76 degF;
+		heating_setpoint 65 degF;
+		T_min 60 degF;
+		T_max 72 degF;
+		//k random.uniform(2.,4.);
+		hvac_power_factor 0.75;
+		cooling_system_type HEAT_PUMP;	
+		gas_enduses "WATERHEATER|RANGE|DRYER";
+		thermal_integrity_level GOOD;
+		object ZIPload {
+			name `zip_GLD_{SEQ_CUSTID}`;
+			power_fraction 0.5;
+			impedance_fraction 0.5;
+			current_fraction 0.0;
+			power_pf 0.9;
+			current_pf 0.9;
+			impedance_pf 0.9;
+			heat_fraction 0.0;
+			base_power player_${SEQ_CUSTID}.value;
+			//base_power `player_{SEQ_CUSTID}`.value;
+			//base_power player_1.value;
+		};
+	}; 
+	object inverter {
+		name `PV_inverter_{SEQ_CUSTID}`;
+		phases BS;
+		generator_status ONLINE;
+		inverter_type FOUR_QUADRANT;
+		four_quadrant_control_mode CONSTANT_PF;
+		generator_mode SUPPLY_DRIVEN;
+		rated_power 0;
+		inverter_efficiency 0.95;
+		object solar {
+			name `PV_{SEQ_CUSTID}`;
+			phases BS;
+			generator_status ONLINE;
+			generator_mode SUPPLY_DRIVEN;
+			panel_type SINGLE_CRYSTAL_SILICON;
+			area random.uniform(150,250) ft^2;
+			tilt_angle 45.0;
+			efficiency 0.135;
+			orientation_azimuth 0;
+			orientation FIXED_AXIS;
+			SOLAR_TILT_MODEL SOLPOS;
+			SOLAR_POWER_MODEL FLATPLATE;
+		};
+	};
+}
+
