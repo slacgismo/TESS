@@ -48,7 +48,7 @@
 
 #set randomseed=5 
 
-//module gridlabd_functions;
+module gridlabd_functions_test;
 
 ///////////////////////////////////////////////////////
 //
