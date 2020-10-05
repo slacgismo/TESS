@@ -632,6 +632,7 @@ simulation_N/data_test/
 
 #large data
 simulation_N/glm_generation_SanDiego/
+simulation/gridlabd.tarz
 
 #results
 simulation/TESS/

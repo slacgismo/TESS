@@ -16,22 +16,22 @@ from HH_global import db_address #, user_name, pw
 
 #Rewrite players to today's day
 
-import os
-player_path = 'glm_generation_Austin/players_Austin'
-players = os.listdir(player_path)
-for player in players:
-	if '.player' in player:
-		original_player = open(player_path + ' copy/' + player, "r")
-		#player = open(player_path + '/' + player, "w+").close()
-		player = open(player_path + '/' + player, "w+")
-		first_line = True
-		for line in original_player:
-			if first_line:
-				new_line = str(date.today()) + ' 00:00:00,' + line.split(',')[1]
-				player.write(new_line)
-				first_line = False
-			else:
-				player.write(line)
+# import os
+# player_path = 'glm_generation_Austin/players_Austin'
+# players = os.listdir(player_path)
+# for player in players:
+# 	if '.player' in player:
+# 		original_player = open(player_path + ' copy/' + player, "r")
+# 		#player = open(player_path + '/' + player, "w+").close()
+# 		player = open(player_path + '/' + player, "w+")
+# 		first_line = True
+# 		for line in original_player:
+# 			if first_line:
+# 				new_line = str(date.today()) + ' 00:00:00,' + line.split(',')[1]
+# 				player.write(new_line)
+# 				first_line = False
+# 			else:
+# 				player.write(line)
 
 #Re-write glm model to today's date
 
@@ -110,5 +110,5 @@ if False:
 #import pdb; pdb.set_trace()
 
 gridlabd.command('model_RT.glm')
-gridlabd.command('-D')
-gridlabd.command('run_realtime=TRUE') # CHECK - locks in clock with real-time
+#gridlabd.command('-D')
+#gridlabd.command('run_realtime=TRUE') # CHECK - locks in clock with real-time
