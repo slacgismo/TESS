@@ -1,37 +1,28 @@
-import smtplib
-from dotenv import load_dotenv
-load_dotenv()
 
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 import os
-from email.mime.text import MIMEText
 
-EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
-PASSWORD = os.getenv('PASSWORD')
-
-server = smtplib.SMTP('smtp.gmail.com:587')
-server.ehlo()
-server.starttls()
 
 
 def send_email(subject, message, bcc):
-    '''Simple SMTP set up with gmail'''
+    '''sendgrid email setup'''
 
-    # Simple set up for basic working email functionality
-    # TODO: styling email, switch to implementing OAuth/Gmail API
-
+    email_address = os.getenv('EMAIL_ADDRESS')
+    password = os.getenv('PASSWORD')
+ 
+    message = Mail(
+        from_email=email_address,
+        to_emails=bcc,
+        subject=message['subject'],
+        html_content='<strong>and easy to do anywhere, even with Python</strong>')
+    
     try:
-        server = smtplib.SMTP('smtp.gmail.com:587')
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
 
-        msg = MIMEText(message)
-        msg['From'] = EMAIL_ADDRESS
-        msg['Subject'] = subject
-
-        server.ehlo()
-        server.starttls()
-        server.login(EMAIL_ADDRESS, PASSWORD)
-
-        server.sendmail(EMAIL_ADDRESS, bcc, msg.as_string())
-        server.quit()
-
-    except:
-        print('email failed to send')
+    except Exception as e:
+        print(e.message)
