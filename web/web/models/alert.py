@@ -3,7 +3,7 @@ from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import event, text, func
 from marshmallow import fields, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-
+from sendgrid.helpers.mail import Bcc
 from web.emails.send_emails import send_email
 from web.models.notification import Notification
 from web.database import (
@@ -110,9 +110,7 @@ class Alert(Model):
             return 'Peak event'
 
     def create_alert_notification_message(self):
-        '''Returns tuple of subject, notification message for alert'''
-
-        subject = 'TESS notification'
+        '''Returns tuple of alert type name and notification message for alert'''
 
         # Create appropriate notification message
         if self.alert_type.name.value == 'Resource':
@@ -138,7 +136,7 @@ class Alert(Model):
         elif self.alert_type.name.value == 'Export Capacity':
             message = f'TESS System alert: {self.context.value} {self.context_id} is above {self.alert_type.limit} kW export capacity at {self.created_at}.'
 
-        return (subject, message)
+        return (self.alert_type.name.value, message)
 
 
 @event.listens_for(Alert, 'after_insert')
@@ -158,11 +156,11 @@ def after_insert(mapper, connection, target):
         .filter_by(alert_id=target.alert_id) \
             .first()
 
-    subject, message = alert.create_alert_notification_message()
+    alert_type_name, message = alert.create_alert_notification_message()
 
     #Sends BCC emails to active notifications
     receiving_emails = [notification.email for notification in notifications]
-    send_email(subject, message, receiving_emails)
+    send_email(alert_type_name, message, receiving_emails)
 
 
 ##########################

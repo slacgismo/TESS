@@ -1,28 +1,28 @@
-
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from sendgrid.helpers.mail import Mail, Personalization, Email
 import os
 
-
-
-def send_email(subject, message, bcc):
+def send_email(alert_type, notification_message, email_addresses):
     '''sendgrid email setup'''
 
-    email_address = os.getenv('EMAIL_ADDRESS')
-    password = os.getenv('PASSWORD')
- 
     message = Mail(
-        from_email=email_address,
-        to_emails=bcc,
-        subject=message['subject'],
-        html_content='<strong>and easy to do anywhere, even with Python</strong>')
-    
+        from_email=os.getenv('EMAIL_ADDRESS'),
+        to_emails=email_addresses
+        )
+
+    message.dynamic_template_data = {
+        "subject": "TESS Notification: " + alert_type + " alert",
+        "notification_message": notification_message
+    }
+
+    message.template_id = os.environ.get('SENDGRID_NOTIFICATION_TEMPLATE_ID')
+
     try:
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-        response = sg.send(message)
+        sendgrid_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sendgrid_client.send(message)
         print(response.status_code)
         print(response.body)
         print(response.headers)
 
     except Exception as e:
-        print(e.message)
+        print(e)
