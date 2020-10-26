@@ -26,7 +26,7 @@ Some of the research questions the project seeks to address include the followin
 |[/vendor](../master/vendor)         | 3rd party dependencies            |
 
 ### Contributing
-Please read [CONTRIBUTING.md](../master/docs/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](../docs/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ### Versioning
 We use [SemVer](https://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/slacgismo/TESS/tags).
@@ -39,6 +39,7 @@ We use [SemVer](https://semver.org/) for versioning. For the versions available,
 * Marie-Louise Arlt - [Github](https://github.com/mlamlamla)
 * Mayank Malik - [Github](https://github.com/malikmayank)
 * Wan-Lin Hu - [Github](https://github.com/honeymilktea)
+* Derin Serbetcioglu - [GitHub](https://github.com/derins)
 
 ### Acknowledgements
 TESS is funded by the U.S. Department of Energy Office of Electricity. For more information contact Chris Irwin at christopher.irwin@hq.doe.gov.
