@@ -11,6 +11,7 @@ from web.models.meter import Meter, MeterType
 from web.models.transformer import Transformer
 from web.models.meter_interval import MeterInterval
 from web.models.market_interval import MarketInterval
+from web.models.transformer_interval import TransformerInterval
 from web.models.service_location import ServiceLocation
 
 
@@ -162,3 +163,18 @@ def seed():
     except exc.IntegrityError:
         db.session.rollback()
         print('hce bids already exists')
+
+    try:
+        tri = TransformerInterval(
+            transformer_interval_id=1,
+            transformer_id=1,
+            import_capacity=1.0,
+            export_capacity=1.0,
+            q=1.0,
+            start_time=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            end_time=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(tri)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('transformer interval already exists')
