@@ -38,7 +38,7 @@ class TransformerInterval(Model):
 
     # Methods
     def __repr__(self):
-        return f'<transformerInterval transformer_interval_id={self.transformer_interval_id} transformer_id={self.transformer_id}>'
+        return f'<TransformerInterval transformer_interval_id={self.transformer_interval_id} transformer_id={self.transformer_id}>'
 
     # Relationships
     transformer = relationship('Transformer', backref=db.backref('transformer_intervals'))
