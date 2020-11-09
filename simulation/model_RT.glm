@@ -48,7 +48,7 @@
 
 #set randomseed=5 
 
-module gridlabd_functions_test;
+module gridlabd_functions;
 
 ///////////////////////////////////////////////////////
 //
@@ -65,7 +65,6 @@ object climate {
 //#else
 //#error WEATHER is not specified in ${CONFIGFILE}
 //#endif // exist WEATHER
-
 
 #ifdef SOLAR
 module generators;
@@ -121,8 +120,8 @@ object meter {
 	object recorder {
 		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
 		property measured_real_power, measured_reactive_power; 
-		file TESS/TESS_BC/load_node_149.csv;
-		interval 1s;
+		file TESS/TESS_API/load_node_149.csv;
+		interval 1min;
 	};
 }
 
@@ -271,47 +270,63 @@ object group_recorder {
 	name rec_meter_load_P;
 	group "class=triplex_meter";
 	property measured_real_power; 
-	file TESS/TESS_BC/meter_load_P.csv;
-	interval 1s;
+	file TESS/TESS_API/meter_load_P.csv;
+	interval 1min;
 }
 
-//object group_recorder {
-//	name rec_meter_load_Q;
-//	group "class=triplex_meter";
-//	property measured_reactive_power; 
-//	file TESS/TESS_BC/meter_load_Q.csv;
-//	interval 60;
-//}
+object group_recorder {
+	name rec_meter_load_Q;
+	group "class=triplex_meter";
+	property measured_reactive_power; 
+	file TESS/TESS_API/meter_load_Q.csv;
+	interval 60;
+}
 
-//object group_recorder {
-//	name rec_T;
-//	group "class=house";
-//	property air_temperature;
-//	file TESS/TESS_BC/T_all.csv;
-//	interval 60;
-//}
+object group_recorder {
+	name rec_T;
+	group "class=house";
+	property air_temperature;
+	file TESS/TESS_API/T_all.csv;
+	interval 60;
+}
+
+object group_recorder {
+	name rec_T_m;
+	group "class=house";
+	property mass_temperature;
+	file TESS/TESS_API/Tm_all.csv;
+	interval 60;
+}
 
 //object group_recorder {
 //	name rec_batt_soc;
 //	group "class=battery";
 //	property state_of_charge;
-//	file TESS/TESS_BC/battery_SOC.csv;
+//	file TESS/TESS_API/battery_SOC.csv;
 //	interval 60;
 //}
 
-//object group_recorder {
-//	name rec_hvac_load;
-//	group "class=house";
-//	property hvac_load;
-//	file TESS/TESS_BC/hvac_load_all.csv;
-//	interval 60;
-//}
+object group_recorder {
+	name rec_toal_load;
+	group "class=house";
+	property total_load;
+	file TESS/TESS_API/total_load_all.csv;
+	interval 60;
+}
+
+object group_recorder {
+	name rec_hvac_load;
+	group "class=house";
+	property hvac_load;
+	file TESS/TESS_API/hvac_load_all.csv;
+	interval 60;
+}
 
 object group_recorder {
 	name rec_pv_infeed;
 	group "class=inverter";
 	property P_Out;
-	file total_P_Out.csv;
-	interval 1s;
+	file TESS/TESS_API/total_P_Out.csv;
+	interval 1min;
 }
 

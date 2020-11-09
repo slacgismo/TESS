@@ -291,6 +291,12 @@ def get_systemstate(dt_sim_time):
 	df.at[dt_sim_time,'current_load'] = load_SLACK
 	db_transformer_meter = db_transformer_meter.append(df)
 	db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
+
+	# Put into HCEBids
+	#import pdb; pdb.set_trace()
+	#data = {'p_bid':0.0,'q_bid':available_capacity,'is_supply': True,'comment':'WS_supply','market_id': 1}
+	#requests.post(db_address+'hce_bids',json=data)
+	#requests.get(db_address+'hce_bids')
 	return
 
 ###############

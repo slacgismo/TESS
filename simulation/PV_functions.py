@@ -48,10 +48,17 @@ class PV:
                   self.Q_bid = self.Q_rated
             if (self.Q_bid > 0.0):
                   #Send and receive directly
-                  market.sell(q_bid,p_bid,gen_name=self.name)
+                  market.sell(self.Q_bid ,self.P_bid,gen_name=self.id)
                   #Send and receive with delay (in RT deployment)
                   #timestamp_arrival = market.send_supply_bid(dt_sim_time, float(self.P_bid), float(self.Q_bid), self.name) #Feedback: timestamp of arrival #C determined by market_operator
             self.alpha = 1.0
+            #Post state to TESS DB (simulation time) - should have an alpha_t
+            #import pdb; pdb.set_trace()
+            print('Jon is working on a better method for updating the last meter_interval')
+            last_meter_id = requests.get(db_address+'bids/?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][1][self.meter-1]['meter_interval_id']
+            data = {'meter_interval_id': last_meter_id,'rate_id':1,'meter_id':self.meter,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(minutes=5)),'e':self.E,'qmtp':self.Qmtp,'p_bid':self.P_bid,'q_bid':self.Q_bid,'is_bid':True}
+            requests.put(db_address+'meter_interval/'+str(last_meter_id),json=data)
+            #requests.get(db_address+'bids/?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][1][(self.meter-7)]
             return
 
       def dispatch(self,dt_sim_time,p_lem,alpha):

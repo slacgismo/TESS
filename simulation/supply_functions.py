@@ -48,6 +48,13 @@ class WSSupplier:
 		#q_bid = requests.get(db_address+'WS_supply')['results']['data']
 
 		# Temporary solution with db_transformer_meter (should be through API)
+		# import pdb; pdb.set_trace()
+		# requests.get(db_address+'bids/?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][1][(self.meter-7)]
+		# requests.get(db_address+'HceBids')
+		# data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(minutes=5)),'p_bid':0.,'q_bid':0.,'is_supply':True,'comment':'','market_id':1}
+		# requests.post(db_address+'HceBids',json=data) #with dummy bid
+		# requests.post(db_address+'hce_bids',json=data) #with dummy bid
+
 		db_transformer_meter = pandas.read_csv(results_folder+'/db_transformer_meter.csv',index_col=[0],parse_dates=True)
 		p_bid = lem.Pmax
 		try:

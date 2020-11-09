@@ -59,7 +59,7 @@ def on_init(t):
 	global df_battery_state;
 	df_battery_state = Bfct.get_settings_batteries(batterylist,interval)
 	global df_EV_state;
-	if EV_data == 'None':
+	if (EV_data == 'None') or (len(EVlist) == 0):
 		df_EV_state = EVfct.get_settings_EVs_rnd(EVlist,interval)
 	else:
 		df_EV_state = EVfct.get_settings_EVs(EVlist,interval)
@@ -87,7 +87,7 @@ def on_init(t):
 	global df_tokens;
 	df_tokens = pandas.DataFrame(columns=['clearing_price','clearing_quantity','partial','alpha','unresponsive_loads','system_mode','slack_t-1'])
 	global df_controlroom;
-	df_controlroom = pandas.read_csv(input_folder + '/df_controlroom_2016_July.csv',index_col=[0],parse_dates=True)
+	df_controlroom = pandas.read_csv(input_folder + '/df_controlroom_2016_July.csv',index_col=[0],parse_dates=True) # This includes the control room ts of coincident peak forecast
 
 	print('Initialize finished after '+str(time.time()-t0))
 	return True
@@ -194,12 +194,15 @@ def on_precommit(t):
 		min_capacity = df_controlroom['C_min'].loc[dt_sim_time] #Min import / max export
 
 		#Supply cost
+
 		coincident_peak_forecasted = df_controlroom['coincident_peak_forecasted'].loc[dt_sim_time]
 		if coincident_peak_forecasted == 0:
 			supply_costs = fixed_procurement_cost #df_controlroom['fixed_procurement'].loc[dt_sim_time]
 		else:
 			supply_costs = coincident_peak_rate #df_controlroom['coincident_peak_rate'].loc[dt_sim_time]
 		
+		# Include import and export constraints
+
 		if min_capacity > 0.0:
 			#Minimum import
 			retail.sell(min_capacity,-retail.Pmax,gen_name='min_import') #in [USD/kW]
@@ -226,8 +229,8 @@ def on_precommit(t):
 		print('Clearing price: '+str(Pd))
 		Qd = retail.Qd #in kW
 		print('Clearing quantity: '+str(Qd))
-		partial = retail.partial
-		alpha = retail.alpha
+		partial = retail.partial # Demand or supply
+		alpha = retail.alpha # Share of marginal bids
 
 		#Check system conditions
 
@@ -266,7 +269,7 @@ def on_precommit(t):
 			#df_awarded_bids = PVfct.set_PV(dt_sim_time,retail,df_PV_state,df_awarded_bids)
 			# control of PVs (if inverter can disconnect remotely)
 			df_awarded_bids = PVfct.set_PV_by_price(dt_sim_time,df_PV_state,Pd,df_awarded_bids,partial,alpha)
-
+		#import pdb; pdb.set_trace()
 		#no alpha and partial yet
 		if len(batterylist) > 0:
 			if allocation_rule == 'by_price':

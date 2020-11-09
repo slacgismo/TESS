@@ -44,17 +44,23 @@ clock {
 // WEATHER
 //
 ///////////////////////////////////////////////////////
-#ifexist ${WEATHER}
+//#ifexist ${WEATHER}
+//module climate;
+//object climate {
+//        name weather;
+//        tmyfile "${WEATHER}";
+//        interpolate QUADRATIC;
+//}
+//#else
+//#error WEATHER is not specified in ${CONFIGFILE}
+//#endif // exist WEATHER
+
 module climate;
 object climate {
         name weather;
-        tmyfile "${WEATHER}";
+        tmyfile 722900TYA.tmy3;//"${WEATHER}";
         interpolate QUADRATIC;
 }
-#else
-#error WEATHER is not specified in ${CONFIGFILE}
-#endif // exist WEATHER
-
 
 #ifdef SOLAR
 module generators;
@@ -109,12 +115,12 @@ object meter {
 	name node_149;
 	nominal_voltage 24.941kV;
 	phases ABCN;
-	bustype SWING;
+	//bustype SWING;
 	object recorder {
 		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
 		property measured_real_power, measured_reactive_power; 
 		file TESS/TESS/load_node_149.csv;
-		interval 1min;
+		interval 60;
 	};
 }
 
@@ -205,6 +211,12 @@ object meter {
 	name main_node;
 	nominal_voltage 24.941kV;
 	phases ABCN;
+	object recorder {
+		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
+		property measured_real_power, measured_reactive_power; 
+		file TESS/TESS/main_node_149.csv;
+		interval 60;
+	};
 }
 object meter {
 	name main_node_A;
@@ -223,12 +235,12 @@ object meter {
 	parent main_node;
 	nominal_voltage 24.941kV;
 	phases CN;
-	object recorder {
+	//object recorder {
 		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
-		property measured_real_power, measured_reactive_power; 
-		file TESS/TESS/main_node_C.csv;
-		interval 1min;
-	};
+	//	property measured_real_power, measured_reactive_power; 
+	//	file TESS/TESS/main_node_C.csv;
+	//	interval 1min;
+	//};
 }
 
 object transformer_configuration {
@@ -318,13 +330,13 @@ object group_recorder {
 	interval 60;
 }
 
-object group_recorder {
-	name rec_Tm;
-	group "class=house";
-	property mass_temperature;
-	file TESS/TESS/Tm_all.csv;
-	interval 60;
-}
+//object group_recorder {
+//	name rec_Tm;
+//	group "class=house";
+//	property mass_temperature;
+//	file TESS/TESS/Tm_all.csv;
+//	interval 60;
+//}
 
 object group_recorder {
 	name rec_pv_infeed;

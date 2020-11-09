@@ -106,8 +106,12 @@ if False:
 	#requests.get(db_address+'bids/?is_supply=true&start_time=2019-01-01').json()
 	#equests.get(db_address+'bids/?is_supply=false&start_time=2019-01-01').json()
 
+# Adjust/Re-write
+
+# folders
+# interval (interval for markets should be identical with recorders)
+
 #Start simulation
-#import pdb; pdb.set_trace()
 
 gridlabd.command('model_RT.glm')
 #gridlabd.command('-D')

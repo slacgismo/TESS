@@ -86,11 +86,13 @@ def set_PV_GLD(dt_sim_time,df_PV_state,df_awarded_bids,partial,alpha):
       for ind in df_PV_state.index:        
             PV = df_PV_state['PV_name'].loc[ind]
             # if inverter has not been and is not switched off, only save bid and NO interaction with GLD 
-            if (df_PV_state['inv_ON_t'].loc[ind] == 1) and (df_PV_state['inv_ON_t-1'].loc[ind] == 1) and (df_PV_state['q_sell'].loc[ind] > 0.0):
-                  # Keep inverter unchanges: gridlabd.set_value()
-                  p_bid = df_PV_state['p_sell'].loc[ind]
-                  q_bid = df_PV_state['q_sell'].loc[ind]
-                  df_awarded_bids = df_awarded_bids.append(pandas.DataFrame(columns=df_awarded_bids.columns,data=[[dt_sim_time,PV,float(p_bid),float(q_bid),'S']]),ignore_index=True)
+            if (df_PV_state['inv_ON_t'].loc[ind] == 1) and (df_PV_state['inv_ON_t-1'].loc[ind] == 1):
+                  # Keep inverter unchanged: 
+                  # gridlabd.set_value()
+                  if df_PV_state['q_sell'].loc[ind] > 0.0:
+                        p_bid = df_PV_state['p_sell'].loc[ind]
+                        q_bid = df_PV_state['q_sell'].loc[ind]
+                        df_awarded_bids = df_awarded_bids.append(pandas.DataFrame(columns=df_awarded_bids.columns,data=[[dt_sim_time,PV,float(p_bid),float(q_bid),'S']]),ignore_index=True)
             # if inverter was (partially) switched off and now (partially) switched on
             elif (df_PV_state['inv_ON_t'].loc[ind] > 0.0) and (df_PV_state['inv_ON_t-1'].loc[ind] < 1):
                   #import pdb; pdb.set_trace()
@@ -104,8 +106,8 @@ def set_PV_GLD(dt_sim_time,df_PV_state,df_awarded_bids,partial,alpha):
                   #import pdb; pdb.set_trace()
                   gridlabd.set_value(df_PV_state['inverter_name'].loc[ind],'P_Out','0.0') #Switch inverter (partially) off
             else:
-                  print('Should not happen')
-                  import pdb; pdb.set_trace()
+                  print('Should not happen unless for the first iteration')
+                  #import pdb; pdb.set_trace()
       return df_PV_state,df_awarded_bids
 
 def set_PV_by_price(dt_sim_time,df_PV_state,Pd,df_awarded_bids,partial,alpha):

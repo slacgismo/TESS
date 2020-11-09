@@ -72,17 +72,18 @@ def on_init(t):
 
 # At each market interval : bidding, clearing, and dispatching
 def on_precommit(t):
+	#import pdb; pdb.set_trace()
 
 	#Run market only every five minutes
 	dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None)
 	global LEM_operator;
-	if not ((dt_sim_time.second == 0) and (dt_sim_time.minute % (LEM_operator.interval/60) == 0)):
+	if not ((dt_sim_time.second%15 == 0)): # and (dt_sim_time.minute % (LEM_operator.interval/60) == 0)):
 		return t
 	
 	else: #interval in minutes #is not start time
 		print('Start precommit: '+str(dt_sim_time))
 
-		import pdb; pdb.set_trace()
+		#import pdb; pdb.set_trace()
 		# Check clock and if it's actually five minutes
 
 		############
