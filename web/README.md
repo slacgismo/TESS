@@ -24,7 +24,7 @@ brew services start mysql
 # Alternatively, you can use the command line
 mysql -u root -p 'your root password'
 
-# Then, create the tess_user, something like: 
+# Then, create the tess_user, something like:
 # 👇 this user and password is for the development config
 # CREATE USER 'tess_user'@'localhost' IDENTIFIED BY 'tess_db_password_local';
 # FLUSH PRIVILEGES;
@@ -47,7 +47,7 @@ flask db upgrade
 # there are new models or changes to existing models!!
 ```
 
-## Our frontend is currently leveraging react and mdc to generate the whole experience 
+## Our frontend is currently leveraging react and mdc to generate the whole experience
 Everything gets bundled via webpack, however, for sake of speed (since I don't want to deal with routing on the web client) this is not a SPA, so we need to manually register every file to bundle in the webpack config. Anyways...
 ```bash
 # make sure you have node/nvm installed
