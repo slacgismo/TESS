@@ -1,6 +1,10 @@
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Personalization, Email
+from sendgrid.helpers.mail import Mail
+from python_http_client.exceptions import (BadRequestsError, UnauthorizedError, TooManyRequestsError,
+                                           PayloadTooLargeError, ServiceUnavailableError, InternalServerError,
+                                           UnsupportedMediaTypeError, NotFoundError, ForbiddenError)
 import os
+
 
 def send_email(alert_type, notification_message, email_address):
     '''sendgrid email setup'''
@@ -8,7 +12,7 @@ def send_email(alert_type, notification_message, email_address):
     message = Mail(
         from_email=os.getenv('EMAIL_ADDRESS'),
         to_emails=email_address
-        )
+    )
 
     message.dynamic_template_data = {
         "subject": "TESS Notification: " + alert_type + " alert",
@@ -18,8 +22,13 @@ def send_email(alert_type, notification_message, email_address):
     message.template_id = os.environ.get('SENDGRID_NOTIFICATION_TEMPLATE_ID')
 
     try:
-        sendgrid_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-        sendgrid_client.send(message)
 
-    except Exception as e:
-        print(e)
+        sendgrid_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sendgrid_client.send(message)
+        print(response.status_code)
+
+    except (BadRequestsError, UnauthorizedError, NotFoundError, PayloadTooLargeError,
+            TooManyRequestsError, UnsupportedMediaTypeError, ServiceUnavailableError,
+            InternalServerError, ForbiddenError) as e:
+
+        print(e.body)
