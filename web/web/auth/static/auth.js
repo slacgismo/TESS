@@ -8,6 +8,7 @@ import CreateAccount from './create_account';
 import { menuRoutes } from '../../static/js/config/routes';
 import ConnectedComponentWrapper from '../../static/js/base';
 import { queue } from '../../static/js/components/app_notification_queue';
+import { api } from '../../static/js/network_client';
 
 import '@rmwc/button/styles';
 import '@rmwc/textfield/styles';
@@ -59,9 +60,29 @@ class Auth extends React.Component {
         }
     }
 
-    setUserCreateFlow = (isInCreateFlow) => {
+    setUserCreateFlow = async (isInCreateFlow) => {
+        const data: {
+
+
+        }
+        api.post('users', (data, response) => {
+
+        })
+
         this.setState({userIsCreatingAccount: isInCreateFlow})
     }
+
+    // export function getNotifications() {
+    //     return dispatch => {
+    //         api.get('notifications', (response) => {
+    //             const convertedRes = groupDataBy(response.results.data, 'email');
+    //             dispatch(updateFetchedNotifications(convertedRes));
+    //         }, (error) => {
+    //             console.warn(error);
+    //         })
+    //     }
+    // }
+
 
     render() {
         if(this.state.userIsCreatingAccount) {

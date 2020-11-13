@@ -40,6 +40,7 @@ from web.api.v1.meter_interval import meter_interval_api_bp
 from web.api.v1.market_interval import market_interval_api_bp
 from web.api.v1.service_location import service_location_api_bp
 from web.api.v1.transformer_interval import transformer_interval_api_bp
+from web.api.v1.login import login_api_bp
 
 
 def page_not_found(e):
@@ -107,6 +108,7 @@ def register_blueprints(app):
     app.register_blueprint(market_interval_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(service_location_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(transformer_interval_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(login_api_bp, url_prefix='/api/v1/')
 
 
 if os.environ.get('FLASK_ENV', 'development') == 'production':
