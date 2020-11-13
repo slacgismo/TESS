@@ -58,4 +58,3 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 sendgrid.env
-sendgrid.env
