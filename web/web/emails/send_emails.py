@@ -4,7 +4,7 @@ import os
 
 def send_email(alert_type, notification_message, email_address):
     '''sendgrid email setup'''
-    print(email_address)
+
     message = Mail(
         from_email=os.getenv('EMAIL_ADDRESS'),
         to_emails=email_address
@@ -19,11 +19,7 @@ def send_email(alert_type, notification_message, email_address):
 
     try:
         sendgrid_client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-        response = sendgrid_client.send(message)
-        print("RESPONSE")
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
+        sendgrid_client.send(message)
 
     except Exception as e:
         print(e)
