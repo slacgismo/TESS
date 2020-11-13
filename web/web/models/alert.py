@@ -158,10 +158,10 @@ def after_insert(mapper, connection, target):
 
     alert_type_name, message = alert.create_alert_notification_message()
 
-    #Sends BCC emails to active notifications
+    #Sends emails to active notifications
     receiving_emails = [notification.email for notification in notifications]
-    send_email(alert_type_name, message, receiving_emails)
-
+    for email in receiving_emails:
+        send_email(alert_type_name, message, email)
 
 ##########################
 ### MARSHMALLOW SCHEMA ###
