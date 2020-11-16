@@ -47,7 +47,7 @@ class Address(Model):
         return f'<Address address_id={self.address_id} address={self.address} postal_code={self.postal_code}>'
 
     # Relationships on other tables
-    user = relationship('User', backref=db.backref('address'), uselist=False)
+    users = relationship('User', backref=db.backref('address'))
 
 
 ##########################

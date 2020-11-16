@@ -18,7 +18,7 @@ def show_login_info(login_id):
     login_schema = LoginSchema()
 
     try:
-        login = Login.query.filter_by(id=login_id).one()
+        login = Login.query.filter_by(login_id=login_id).one()
 
     except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
@@ -44,7 +44,7 @@ def modify_login(login_id):
     modified_login = request.get_json()
 
     try:
-        Login.query.filter_by(id=login_id).one()
+        Login.query.filter_by(login_id=login_id).one()
         modified_login = login_schema.load(modified_login, session=db.session)
         db.session.commit()
 
@@ -66,13 +66,13 @@ def modify_login(login_id):
     return arw.to_json(results)
 
 
-@login_api_bp.route('/user', methods=['POST'])
+@login_api_bp.route('/login', methods=['POST'])
 def add_login():
     '''
     Adds new login object to database
     '''
     arw = ApiResponseWrapper()
-    login_schema = LoginSchema(exclude=['id', 'created_at', 'updated_at'])
+    login_schema = LoginSchema(exclude=['login_id', 'created_at', 'updated_at'])
     new_login = request.get_json()
 
     try:

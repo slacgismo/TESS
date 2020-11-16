@@ -37,7 +37,6 @@ class User(UserMixin, Model):
 
     address_id = Column(db.Integer,
                         db.ForeignKey('addresses.address_id'),
-                        unique=True,
                         nullable=False)
 
     utility_id = Column(db.Integer,

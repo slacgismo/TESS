@@ -1,6 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import text, func
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow import fields
 from flask_user import UserMixin
 
 from web.database import (
@@ -51,3 +53,21 @@ class Login(UserMixin, Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
+
+
+class LoginSchema(SQLAlchemyAutoSchema):
+    password_hash = fields.Method(deserialize='create_password_hash')
+
+    # Marshmallow methods
+    def create_password_hash(self, obj):
+        self.password_hash = generate_password_hash(obj)
+
+    class Meta:
+        model = Login
+        load_instance = True
+        include_fk = True

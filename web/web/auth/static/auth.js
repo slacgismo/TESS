@@ -9,15 +9,19 @@ import { menuRoutes } from '../../static/js/config/routes';
 import ConnectedComponentWrapper from '../../static/js/base';
 import { queue } from '../../static/js/components/app_notification_queue';
 import { api } from '../../static/js/network_client';
+import{ validateLogin } from './helpers';
 
 import '@rmwc/button/styles';
 import '@rmwc/textfield/styles';
 
 class Auth extends React.Component {
-    state = {
-        username: "",
-        password: "",
-        userIsCreatingAccount: false
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: "",
+            password: "",
+            userIsCreatingAccount: false
+        };
     }
 
     handleUsernameChange = (e) => {
@@ -28,68 +32,25 @@ class Auth extends React.Component {
         this.setState({password: e.target.value});
     }
 
-    handleLogin = () => {
-        let valid = true;
-        if(!~this.state.username.indexOf("@")) {
-            valid = false;
-            // validate the email contains at least an @ symbol
-            queue.notify({
-                title: <b>Username</b>,
-                body: 'Must be a valid email in the format: "someone@somewhere.com"',
-                dismissesOnAction: true,
-                timeout: -1,
-                actions: [{title: 'Dismiss'}]
-            });
-        }
-
-        if(this.state.password.length < 8) {
-            valid = false;
-            // validate the password is at least eight chars long
-            // validate the username is not empty
-            queue.notify({
-                title: <b>Password</b>,
-                body: 'Must be at least 8 characters long',
-                dismissesOnAction: true,
-                timeout: -1,
-                actions: [{title: 'Dismiss'}]
-            })
-        }
-
-        if(valid) {
-            window.location.href = menuRoutes[0].path;
-        }
-    }
-
-    setUserCreateFlow = async (isInCreateFlow) => {
-        const data: {
-
-
-        }
-        api.post('users', (data, response) => {
-
-        })
-
+    setUserCreateFlow = (isInCreateFlow) => {
         this.setState({userIsCreatingAccount: isInCreateFlow})
     }
 
-    // export function getNotifications() {
-    //     return dispatch => {
-    //         api.get('notifications', (response) => {
-    //             const convertedRes = groupDataBy(response.results.data, 'email');
-    //             dispatch(updateFetchedNotifications(convertedRes));
-    //         }, (error) => {
-    //             console.warn(error);
-    //         })
-    //     }
-    // }
-
+    handleLogin = () =>{
+        const isValid = validateLogin(this.state.username, this.state.password)
+        if (isValid) {
+            window.location.href = menuRoutes[0].path;
+        }
+    }
 
     render() {
         if(this.state.userIsCreatingAccount) {
             return (
                 <div className="create-account-page-container">
                     <div className="create-account-form-container">
-                        <CreateAccount setCreateFlow={this.setUserCreateFlow} />
+                        <CreateAccount
+                            setCreateFlow={ (isInCreateFlow) => this.setUserCreateFlow(isInCreateFlow) }
+                        />
                     </div>
                 </div>
             );
