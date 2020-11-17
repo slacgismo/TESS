@@ -11,10 +11,10 @@ from web.models.meter_interval import MeterInterval, MeterIntervalSchema
 bids_api_bp = Blueprint('bids_api_bp', __name__)
 
 
-@bids_api_bp.route('/bids/', methods=['GET'])
+@bids_api_bp.route('/bids', methods=['GET'])
 def get_bids():
     '''
-    Get the supply or demand bids 
+    Get the supply or demand bids
     '''
     arw = ApiResponseWrapper()
     start_time = request.args.get('start_time', None)
@@ -60,4 +60,35 @@ def get_bids():
     if arw.has_errors():
         return arw.to_json(None, 400)
 
+    return arw.to_json(results)
+
+
+@bids_api_bp.route('/bids', methods=['POST'])
+def add_bid():
+    '''
+    adds new HCEBids to database
+    '''
+
+    arw = ApiResponseWrapper()
+    hb_schema = HceBidsSchema(
+            exclude=['bid_id', 'created_at', 'updated_at']
+    )
+    new_bid = request.get_json()
+
+    try:
+        new_bid = hb_schema.load(new_bid, session=db.session)
+        db.session.add(new_bid)
+        db.session.commit()
+
+    except ValidationError as ve:
+        arw.add_errors(ve.messages)
+
+    except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
+        db.session.rollback()
+        return arw.to_json(None, 400)
+
+    results = HceBidsSchema().dump(new_bid)
     return arw.to_json(results)
