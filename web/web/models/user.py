@@ -2,6 +2,7 @@ from flask_user import UserMixin
 from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import text, func
 from marshmallow import fields
+from sqlalchemy.schema import UniqueConstraint
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.models.notification import Notification

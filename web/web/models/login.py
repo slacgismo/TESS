@@ -1,8 +1,9 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.exceptions import Unauthorized
 from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from marshmallow import fields
+from marshmallow import fields, ValidationError
 from flask_user import UserMixin
 
 from web.database import (
@@ -52,7 +53,12 @@ class Login(UserMixin, Model):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        print(self)
+
+        is_correct_password = check_password_hash(self.password_hash, password)
+        if not is_correct_password:
+            raise ValueError('Incorrect Password')
+        return is_correct_password
 
 
 ##########################
@@ -65,7 +71,9 @@ class LoginSchema(SQLAlchemyAutoSchema):
 
     # Marshmallow methods
     def create_password_hash(self, obj):
-        self.password_hash = generate_password_hash(obj)
+        print("SELF")
+        password_hash = generate_password_hash(obj)
+        return password_hash
 
     class Meta:
         model = Login

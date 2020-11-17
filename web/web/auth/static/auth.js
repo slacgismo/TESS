@@ -5,11 +5,8 @@ import { connect } from 'react-redux';
 import { Button } from '@rmwc/button';
 import { TextField } from '@rmwc/textfield';
 import CreateAccount from './create_account';
-import { menuRoutes } from '../../static/js/config/routes';
 import ConnectedComponentWrapper from '../../static/js/base';
-import { queue } from '../../static/js/components/app_notification_queue';
-import { api } from '../../static/js/network_client';
-import{ validateLogin } from './helpers';
+import { validateLogin } from './helpers';
 
 import '@rmwc/button/styles';
 import '@rmwc/textfield/styles';
@@ -37,9 +34,9 @@ class Auth extends React.Component {
     }
 
     handleLogin = () =>{
-        const isValid = validateLogin(this.state.username, this.state.password)
+        const isValid = validateLogin(this.state.username, this.state.password);
         if (isValid) {
-            window.location.href = menuRoutes[0].path;
+            this.props.dispatch(action.processLogin(this.state.username, this.state.password));
         }
     }
 
@@ -49,7 +46,9 @@ class Auth extends React.Component {
                 <div className="create-account-page-container">
                     <div className="create-account-form-container">
                         <CreateAccount
-                            setCreateFlow={ (isInCreateFlow) => this.setUserCreateFlow(isInCreateFlow) }
+                            authProps = {this.props}
+                            setCreateFlow={
+                                (isInCreateFlow) => this.setUserCreateFlow(isInCreateFlow) }
                         />
                     </div>
                 </div>
