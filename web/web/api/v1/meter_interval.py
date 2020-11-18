@@ -91,6 +91,31 @@ def retrieve_meter_interval_info(meter_interval_id):
     return arw.to_json(results)
 
 
+@meter_interval_api_bp.route('/meter_interval_latest/<int:meter_id>',
+                             methods=['GET'])
+def retrieve_latest_meter_interval_info(meter_id):
+    '''
+    Retrieves the last meter_interval based on a given meter id
+    '''
+
+    arw = ApiResponseWrapper()
+    meter_interval_schema = MeterIntervalSchema()
+
+    try:
+        meter_interval = MeterInterval.query.filter_by(
+            meter_id=meter_id).order_by(-MeterInterval.meter_interval_id).first()
+
+    except (MultipleResultsFound, NoResultFound):
+        arw.add_errors('No result found or multiple results found')
+
+    if arw.has_errors():
+        return arw.to_json(None, 400)
+
+    results = meter_interval_schema.dump(meter_interval)
+
+    return arw.to_json(results)
+
+
 @meter_interval_api_bp.route('/meter_interval/<int:meter_interval_id>',
                              methods=['PUT'])
 def update_meter_interval(meter_interval_id):
