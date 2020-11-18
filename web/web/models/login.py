@@ -1,5 +1,4 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.exceptions import Unauthorized
 from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
