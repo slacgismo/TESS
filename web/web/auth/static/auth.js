@@ -43,15 +43,6 @@ class Auth extends React.Component {
         }
     };
 
-    // handleSignUp = (username, firstName, lastName, password) => {
-    //     const isValid = validateLogin(username, password);
-    //     if (isValid) {
-    //         this.props.dispatch(
-    //             action.processSignUp(username, firstName, lastName, password)
-    //         );
-    //     }
-    // };
-
     componentDidUpdate() {
         if (this.props.isUserLoggedIn) {
             this.props.dispatch(action.resetUserLoggedIn());
@@ -65,19 +56,6 @@ class Auth extends React.Component {
                 <div className="create-account-page-container">
                     <div className="create-account-form-container">
                         <CreateAccount
-                            // handleSignUp={(
-                            //     username,
-                            //     firstName,
-                            //     lastName,
-                            //     password
-                            // ) =>
-                            //     this.handleSignUp(
-                            //         username,
-                            //         firstName,
-                            //         lastName,
-                            //         password
-                            //     )
-                            // }
                             authProps={this.props}
                             setCreateFlow={(isInCreateFlow) =>
                                 this.setUserCreateFlow(isInCreateFlow)
