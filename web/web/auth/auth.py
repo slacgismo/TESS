@@ -16,7 +16,6 @@ auth_bp = Blueprint('auth_bp',
 @jwt_optional
 def index():
     user_has_tokens = get_jwt_identity()
-
     if user_has_tokens:
         return redirect('power/capacity')
     else:

@@ -36,9 +36,8 @@ export function logout() {
             "access_revoke",
             {
                 headers: {
-                    Authorization: {
-                        access_token_header,
-                    },
+                    Authorization:
+                        `${access_token_header}`
                 },
             },
             (data) => {
@@ -47,9 +46,8 @@ export function logout() {
                     "refresh_revoke",
                     {
                         headers: {
-                            Authorization: {
-                                refresh_token_header,
-                            },
+                            Authorization:
+                                `${refresh_token_header}`
                         },
                     },
                     (data) => {

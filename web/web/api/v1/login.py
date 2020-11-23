@@ -166,7 +166,6 @@ def process_sign_up():
 
 #  COMMENT OUT FOR TESTING FLASK-JWT-EXT
 
-
 # @login_api_bp.route('/check')
 # @jwt_optional
 # def check_login():
