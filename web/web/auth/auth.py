@@ -11,9 +11,9 @@ auth_bp = Blueprint('auth_bp',
                     static_url_path='assets')
 
 
-@jwt_optional
 @auth_bp.route('/')
 @auth_bp.route('/auth', strict_slashes=False)
+@jwt_optional
 def index():
     user_has_tokens = get_jwt_identity()
 
@@ -29,24 +29,24 @@ def index():
 
 
 # Revokes the current user's access token
-@jwt_required
 @auth_bp.route('/auth/access_revoke', methods=['DELETE'])
+@jwt_required
 def logout():
     jti = get_raw_jwt()['jti']
     revoked_store.set(jti, 'true', timedelta(minutes=15) * 1.2)
     return jsonify({"msg": "Access token revoked"}), 200
 
 # Revokes the current user's refresh token
-@jwt_refresh_token_required
 @auth_bp.route('/auth/refresh_revoke', methods=['DELETE'])
+@jwt_refresh_token_required
 def logout2():
     jti = get_raw_jwt()['jti']
     revoked_store.set(jti, 'true', timedelta(days=30) * 1.2)
     return jsonify({"msg": "Refresh token revoked"}), 200
 
 # Regenerates access token, with refresh token
-@jwt_refresh_token_required
 @auth_bp.route('/refresh', methods=['POST'])
+@jwt_refresh_token_required
 def refresh():
     current_user = get_jwt_identity()
     access_token = {

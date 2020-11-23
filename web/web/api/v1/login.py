@@ -166,8 +166,9 @@ def process_sign_up():
 
 #  COMMENT OUT FOR TESTING FLASK-JWT-EXT
 
-# @jwt_required
+
 # @login_api_bp.route('/check')
+# @jwt_required
 # def check_login():
 #     arw = ApiResponseWrapper()
 #     current_user = get_current_user()
