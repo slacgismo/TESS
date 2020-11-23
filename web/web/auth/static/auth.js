@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { Button } from "@rmwc/button";
 import { TextField } from "@rmwc/textfield";
 import CreateAccount from "./create_account";
+import { menuRoutes } from "../../static/js/config/routes";
 import ConnectedComponentWrapper from "../../static/js/base";
 import { validateLogin } from "./helpers";
 
@@ -42,12 +43,41 @@ class Auth extends React.Component {
         }
     };
 
+    // handleSignUp = (username, firstName, lastName, password) => {
+    //     const isValid = validateLogin(username, password);
+    //     if (isValid) {
+    //         this.props.dispatch(
+    //             action.processSignUp(username, firstName, lastName, password)
+    //         );
+    //     }
+    // };
+
+    componentDidUpdate() {
+        if (this.props.isUserLoggedIn) {
+            this.props.dispatch(action.resetUserLoggedIn());
+            window.location.href = menuRoutes[0].path;
+        }
+    }
+
     render() {
         if (this.state.userIsCreatingAccount) {
             return (
                 <div className="create-account-page-container">
                     <div className="create-account-form-container">
                         <CreateAccount
+                            // handleSignUp={(
+                            //     username,
+                            //     firstName,
+                            //     lastName,
+                            //     password
+                            // ) =>
+                            //     this.handleSignUp(
+                            //         username,
+                            //         firstName,
+                            //         lastName,
+                            //         password
+                            //     )
+                            // }
                             authProps={this.props}
                             setCreateFlow={(isInCreateFlow) =>
                                 this.setUserCreateFlow(isInCreateFlow)
@@ -100,7 +130,7 @@ class Auth extends React.Component {
 }
 
 const ConnectedAuth = connect((state) => ({
-    token: state.auth.token,
+    isUserLoggedIn: state.auth.userLoggedIn,
 }))(Auth);
 
 const authElement = (

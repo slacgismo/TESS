@@ -23,6 +23,7 @@
     "@rmwc/top-app-bar": "^6.0.14",
     "@rmwc/typography": "^6.0.14",
     "chart.js": "^2.9.3",
+    "js-cookie": "^2.2.1",
     "ky": "^0.19.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

@@ -4,7 +4,6 @@ from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
 from flask_user import UserMixin
-
 from web.database import (
     db,
     Model,

@@ -1,44 +1,58 @@
+import Cookies from "js-cookie";
 import { api } from "../../static/js/network_client";
-import { menuRoutes } from "../../static/js/config/routes";
 import { createLoginError } from "./helpers";
 
-export function loginSuccessful(token) {
-    window.location.href = menuRoutes[0].path;
+export function loginSuccessful() {
     return {
         type: "LOGIN_SUCCESSFUL",
-        token,
+        userLoggedIn: true,
     };
 }
 
-export function loginFailed(token) {
+export function loginFailed() {
     return {
         type: "LOGIN_FAILED",
-        token,
+        userLoggedIn: false,
+    };
+}
+
+export function resetUserLoggedIn() {
+    return {
+        type: "RESET_USER_LOGGED_IN",
+        userLoggedIn: false,
     };
 }
 
 export function processLogin(username, password) {
     return (dispatch) => {
-        const json = {
-            json: {
-                username: username,
-                password_hash: password,
-            },
-        };
-        api.post(
-            "validate_login",
-            json,
-            (data) => {
-                dispatch(loginSuccessful);
-            },
-            (error) => {
-                createLoginError(
-                    "Login failed",
-                    "Incorrect username and/or password"
-                );
-                dispatch(loginFailed);
-            }
-        );
+        try {
+            const json = {
+                json: {
+                    username: username,
+                    password_hash: password,
+                },
+            };
+            api.post(
+                "login",
+                json,
+                (data) => {
+                    Cookies.set("access_token", data.access_token);
+                    Cookies.set("refresh_token", data.refresh_token);
+                    dispatch(loginSuccessful());
+                },
+                (error) => {
+                    console.warn(error);
+                    createLoginError(
+                        "Login failed",
+                        "Incorrect username and/or password"
+                    );
+                    dispatch(loginFailed());
+                }
+            );
+        } catch (error) {
+            createLoginError("Server error", "Something went wrong");
+            dispatch(loginFailed());
+        }
     };
 }
 
@@ -46,50 +60,41 @@ export function processSignUp(username, firstName, lastName, password) {
     return (dispatch) => {
         try {
             // Placeholders for address_id and utility_id
-            const userJson = {
+            const json = {
                 json: {
-                    email: username,
-                    first_name: firstName,
-                    last_name: lastName,
-                    address_id: "1",
-                    utility_id: "1",
+                    user: {
+                        email: username,
+                        first_name: firstName,
+                        last_name: lastName,
+                        address_id: "1",
+                        utility_id: "1",
+                        is_active: true,
+                    },
+                    login: {
+                        username: username,
+                        password_hash: password,
+                    },
                 },
             };
             api.post(
-                "user",
-                userJson,
+                "sign_up",
+                json,
                 (data) => {
-                    const userId = data.results.data.id.toString();
-                    const loginJson = {
-                        json: {
-                            username: username,
-                            password_hash: password,
-                            user_id: userId,
-                        },
-                    };
-                    api.post(
-                        "create_login",
-                        loginJson,
-                        (data) => {
-                            dispatch(loginSuccessful);
-                        },
-                        (error) => {
-                            createLoginError(
-                                "Sign up failed",
-                                "Email already in use"
-                            );
-                            dispatch(loginFailed);
-                        }
+                    Cookies.set("access_token", data.results.data.access_token);
+                    Cookies.set(
+                        "refresh_token",
+                        data.results.data.refresh_token
                     );
+                    dispatch(loginSuccessful());
                 },
                 (error) => {
                     createLoginError("Sign up failed", "Email already in use");
-                    dispatch(loginFailed);
+                    dispatch(loginFailed());
                 }
             );
         } catch (error) {
             createLoginError("Server error", "Something went wrong");
-            dispatch(loginFailed);
+            dispatch(loginFailed());
         }
     };
 }

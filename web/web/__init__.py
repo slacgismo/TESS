@@ -1,8 +1,9 @@
 import os
 
 from flask import Flask, render_template
+import redis
 from web.config import *
-from web.extensions import db, bcrypt, migrate, ma
+from web.extensions import db, bcrypt, migrate, ma, jwt
 
 from web.models import transformer
 
@@ -53,6 +54,7 @@ def create_app(config_obj):
     :param config_object: The configuration object to use.
     """
     app = Flask(__name__, static_url_path='')
+    app.secret_key = os.urandom(12).hex()
     app.config.from_object(config_obj)
     register_extensions(app)
     register_blueprints(app)
@@ -68,6 +70,7 @@ def register_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)
+    jwt.init_app(app)
 
 
 def register_blueprints(app):

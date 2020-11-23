@@ -28,8 +28,36 @@ export const api = {
             api.handleApiError(e, errorHandler);
         }
     },
-    
+
     handleApiError: (exception, errorHandler) => {
+        if(exception instanceof ky.HTTPError) {
+            console.warn("there was an HTTPError");
+            if(errorHandler && typeof errorHandler === "function") {
+                errorHandler(exception.response);
+            }
+        } else {
+            throw exception;
+            //TODO: write a global/api error handler
+        }
+    }
+}
+
+export const auth = {
+    network: ky,    
+    url: '/auth/',
+
+    delete: async (resource, successHandler, errorHandler) => {
+        try {
+            const response = await auth.network.delete(`${auth.url}${resource}`).json();
+            if(successHandler && typeof successHandler === "function") {
+                successHandler(response);
+            }
+        } catch(e) {            
+            auth.handleError(e, errorHandler);
+        }
+    },
+
+    handleError: (exception, errorHandler) => {
         if(exception instanceof ky.HTTPError) {
             console.warn("there was an HTTPError");
             if(errorHandler && typeof errorHandler === "function") {

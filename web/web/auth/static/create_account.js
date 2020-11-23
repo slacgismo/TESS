@@ -3,6 +3,7 @@ import * as action from "./actions";
 import { Button } from "@rmwc/button";
 import { TextField } from "@rmwc/textfield";
 import { validateLogin } from "./helpers";
+import { menuRoutes } from "../../static/js/config/routes";
 
 import "@rmwc/button/styles";
 import "@rmwc/textfield/styles";
@@ -31,19 +32,21 @@ class CreateAccount extends React.PureComponent {
         this.setState({ password: e.target.value });
     };
 
-    processSignUp = () => {
-        const isValid = validateLogin(this.state.username, this.state.password);
+    handleSignUp = (username, firstName, lastName, password) => {
+        const isValid = validateLogin(username, password);
         if (isValid) {
             this.props.authProps.dispatch(
-                action.processSignUp(
-                    this.state.username,
-                    this.state.firstName,
-                    this.state.lastName,
-                    this.state.password
-                )
+                action.processSignUp(username, firstName, lastName, password)
             );
         }
     };
+
+    componentDidUpdate() {
+        if (this.props.authProps.isUserLoggedIn) {
+            this.props.authProps.dispatch(action.resetUserLoggedIn());
+            window.location.href = menuRoutes[0].path;
+        }
+    }
 
     render() {
         return (
@@ -86,7 +89,14 @@ class CreateAccount extends React.PureComponent {
                         <Button
                             outlined
                             label="CREATE"
-                            onClick={this.processSignUp}
+                            onClick={() =>
+                                this.handleSignUp(
+                                    this.state.username,
+                                    this.state.firstName,
+                                    this.state.lastName,
+                                    this.state.password
+                                )
+                            }
                         />
                     </div>
                     <br />

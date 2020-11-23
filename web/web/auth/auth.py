@@ -1,4 +1,8 @@
-from flask import Blueprint, render_template
+from datetime import timedelta
+from flask import Blueprint, render_template, jsonify, redirect
+from flask_jwt_extended import (jwt_required, create_access_token, get_current_user,
+                                jwt_optional, get_jwt_identity, jwt_refresh_token_required, get_raw_jwt)
+from web.redis import revoked_store
 
 auth_bp = Blueprint('auth_bp',
                     __name__,
@@ -7,7 +11,45 @@ auth_bp = Blueprint('auth_bp',
                     static_url_path='assets')
 
 
+@jwt_optional
 @auth_bp.route('/')
 @auth_bp.route('/auth', strict_slashes=False)
 def index():
-    return render_template('auth/login.html')
+    user_has_tokens = get_jwt_identity()
+
+    if user_has_tokens:
+        return redirect('power/capacity')
+    else:
+        # redirect to the main page if jwt is valid
+        return render_template('auth/login.html')
+
+
+# see this repo for JWT redis blacklist setup:
+# https://github.com/vimalloc/flask-jwt-extended/blob/master/examples/redis_blacklist.py
+
+
+# Revokes the current user's access token
+@jwt_required
+@auth_bp.route('/auth/access_revoke', methods=['DELETE'])
+def logout():
+    jti = get_raw_jwt()['jti']
+    revoked_store.set(jti, 'true', timedelta(minutes=15) * 1.2)
+    return jsonify({"msg": "Access token revoked"}), 200
+
+# Revokes the current user's refresh token
+@jwt_refresh_token_required
+@auth_bp.route('/auth/refresh_revoke', methods=['DELETE'])
+def logout2():
+    jti = get_raw_jwt()['jti']
+    revoked_store.set(jti, 'true', timedelta(days=30) * 1.2)
+    return jsonify({"msg": "Refresh token revoked"}), 200
+
+# Regenerates access token, with refresh token
+@jwt_refresh_token_required
+@auth_bp.route('/refresh', methods=['POST'])
+def refresh():
+    current_user = get_jwt_identity()
+    access_token = {
+        'access_token': create_access_token(identity=current_user)
+    }
+    return jsonify(access_token), 200

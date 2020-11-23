@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 
+
 cost_revenue_bp = Blueprint('cost_revenue_bp',
                             __name__,
                             template_folder='templates',

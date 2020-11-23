@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 
 class Config(object):
@@ -31,3 +32,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_ECHO = False
     DB_USER = "tess_user"
     DB_PASSWORD = "tess_db_password_local"
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+    JWT_BLACKLIST_ENABLED = True
+    JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']

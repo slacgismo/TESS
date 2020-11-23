@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 
+
 constraints_bp = Blueprint('constraints_bp',
                            __name__,
                            template_folder='templates',
