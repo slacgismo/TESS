@@ -36,8 +36,8 @@ export function processLogin(username, password) {
                 "login",
                 json,
                 (data) => {
-                    Cookies.set("access_token", data.access_token);
-                    Cookies.set("refresh_token", data.refresh_token);
+                    Cookies.set("access_token", data.results.data.access_token);
+                    Cookies.set("refresh_token", data.results.data.refresh_token);
                     dispatch(loginSuccessful());
                 },
                 (error) => {
@@ -80,6 +80,7 @@ export function processSignUp(username, firstName, lastName, password) {
                 "sign_up",
                 json,
                 (data) => {
+                    console.log(data.results.data.access_token)
                     Cookies.set("access_token", data.results.data.access_token);
                     Cookies.set(
                         "refresh_token",

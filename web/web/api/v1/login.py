@@ -168,7 +168,7 @@ def process_sign_up():
 
 
 # @login_api_bp.route('/check')
-# @jwt_required
+# @jwt_optional
 # def check_login():
 #     arw = ApiResponseWrapper()
 #     current_user = get_current_user()
