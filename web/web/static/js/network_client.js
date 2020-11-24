@@ -46,9 +46,9 @@ export const auth = {
     network: ky,    
     url: '/auth/',
 
-    delete: async (resource, successHandler, errorHandler) => {
+    delete: async (resource, data, successHandler, errorHandler) => {
         try {
-            const response = await auth.network.delete(`${auth.url}${resource}`).json();
+            const response = await auth.network.delete(`${auth.url}${resource}`, data).json();
             if(successHandler && typeof successHandler === "function") {
                 successHandler(response);
             }

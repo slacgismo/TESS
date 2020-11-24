@@ -1,69 +1,78 @@
 import Cookies from "js-cookie";
 import { api, auth } from "./network_client";
+import { createError } from "./helpers";
 
-export function completeLogout(){
+export function completeLogout() {
     return {
         type: "USER_LOGGED_OUT",
-        userLoggedOut: true
-    }
+        userLoggedOut: true,
+    };
 }
 
-export function resetUserLoggedOut(){
+export function resetUserLoggedOut() {
     return {
         type: "RESET_USER_LOGGED_OUT",
-        userLoggedOut: false
-    }
+        userLoggedOut: false,
+    };
 }
 
 export function toggleNavigationDrawer() {
     return {
-        type: "TOGGLE_NAVIGATION_DRAWER"
+        type: "TOGGLE_NAVIGATION_DRAWER",
     };
 }
 
 export function selectMenuOption(selectedMenuName) {
     return {
         type: "SELECT_MENU_OPTION",
-        selectedMenuName
+        selectedMenuName,
     };
 }
 
 export function logout() {
     return (dispatch) => {
-        const access_token_header = "Bearer " + Cookies.get("access_token");
-        const refresh_token_header = "Bearer " + Cookies.get("refresh_token");
-        auth.delete(
-            "access_revoke",
-            {
+        try {
+            const access_token = Cookies.get("access_token");
+            const access_token_json = {
                 headers: {
-                    Authorization:
-                        `${access_token_header}`
+                    Authorization: "Bearer " + access_token,
                 },
-            },
-            (data) => {
-                Cookies.remove("access_token");
-                auth.delete(
-                    "refresh_revoke",
-                    {
+            };
+            auth.delete(
+                "access_revoke",
+                access_token_json,
+                () => {
+                    Cookies.remove("access_token");
+                    const refresh_token = Cookies.get("refresh_token");
+                    const refresh_token_json = {
                         headers: {
-                            Authorization:
-                                `${refresh_token_header}`
+                            Authorization: "Bearer " + refresh_token,
                         },
-                    },
-                    (data) => {
-                        Cookies.remove("refresh_token");
-                        window.location.href = "/";
-                        dispatch(completeLogout);
-                    },
-                    (error) => {
-                        console.warn("This is an error handler", error);
-                    }
-                );
-            },
-            (error) => {
-                console.warn("This is an error handler", error);
-            }
-        );
+                    };
+                    auth.delete(
+                        "refresh_revoke",
+                        refresh_token_json,
+                        () => {
+                            Cookies.remove("refresh_token");
+                            window.location.href = "/";
+                            dispatch(completeLogout);
+                            createError(
+                                "",
+                                "You have successfully logged out."
+                            );
+                        },
+                        (error) => {
+                            createError("Error", "Unable to log out");
+                        }
+                    );
+                },
+                (error) => {
+                    createError("Error", "Unable to log out");
+                }
+            );
+        } catch (error) {
+            createError("Server error", "Something went wrong");
+        }
     };
 }
 

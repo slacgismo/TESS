@@ -89,11 +89,11 @@ def check_login_info():
 
         access_token = create_access_token(identity=matching_login.login_id)
         access_jti = get_jti(encoded_token=access_token)
-        revoked_store.set(access_jti, 'false', timedelta(minutes=15) * 1.2)
+        revoked_store.set(access_jti, 'false', timedelta(minutes=15))
 
         refresh_token = create_refresh_token(identity=matching_login.login_id)
         refresh_jti = get_jti(encoded_token=refresh_token)
-        revoked_store.set(refresh_jti, 'false',  timedelta(days=30) * 1.2)
+        revoked_store.set(refresh_jti, 'false',  timedelta(days=30))
 
         tokens = {
             'access_token': access_token,
@@ -162,14 +162,3 @@ def process_sign_up():
         return arw.to_json(None, 400)
 
     return arw.to_json(tokens, 201)
-
-
-#  COMMENT OUT FOR TESTING FLASK-JWT-EXT
-
-# @login_api_bp.route('/check')
-# @jwt_optional
-# def check_login():
-#     arw = ApiResponseWrapper()
-#     current_user = get_raw_jwt()['jti']
-#     user_has_tokens = get_jwt_identity()
-#     return arw.to_json({"user": current_user, "tokens": user_has_tokens})

@@ -80,7 +80,6 @@ export function processSignUp(username, firstName, lastName, password) {
                 "sign_up",
                 json,
                 (data) => {
-                    console.log(data.results.data.access_token)
                     Cookies.set("access_token", data.results.data.access_token);
                     Cookies.set(
                         "refresh_token",

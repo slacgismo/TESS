@@ -1,5 +1,5 @@
 from datetime import timedelta
-from flask import Blueprint, render_template, jsonify, redirect
+from flask import Blueprint, render_template, jsonify, redirect, request
 from flask_jwt_extended import (jwt_required, create_access_token, get_current_user,
                                 jwt_optional, get_jwt_identity, jwt_refresh_token_required, get_raw_jwt)
 from web.redis import revoked_store
@@ -29,7 +29,7 @@ def index():
 
 # Revokes the current user's access token
 @auth_bp.route('/auth/access_revoke', methods=['DELETE'])
-@jwt_required
+@jwt_optional
 def logout():
     jti = get_raw_jwt()['jti']
     revoked_store.set(jti, 'true', timedelta(minutes=15) * 1.2)
@@ -40,6 +40,7 @@ def logout():
 @jwt_refresh_token_required
 def logout2():
     jti = get_raw_jwt()['jti']
+    print(jti)
     revoked_store.set(jti, 'true', timedelta(days=30) * 1.2)
     return jsonify({"msg": "Refresh token revoked"}), 200
 
