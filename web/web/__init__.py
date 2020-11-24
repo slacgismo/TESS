@@ -57,9 +57,6 @@ def create_app(config_obj):
     register_extensions(app)
     register_blueprints(app)
     app.register_error_handler(404, page_not_found)
-    # context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-    # context.load_chain('web/server.crt', 'web/server.key')#certificate and key files
-    # app.run(debug=True, ssl_context=context)
     return app
 
 
@@ -120,11 +117,6 @@ else:
     config = DevelopmentConfig()
 
 app = create_app(config)
-
-# context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-# context.load_chain('web/server.crt', 'web/server.key')#certificate and key files
-# app.run(debug=True, ssl_context=context)
-
 
 # IF YOU NEED TO SEED YOUR DB WITH SOME TEST DATA,
 # UNCOMMENT BELOW THIS LINE AND RUN THE APP. DELETE LATER!!
