@@ -18,28 +18,6 @@ from web.config import JWT_ACCESS_EXPIRES, JWT_REFRESH_EXPIRES
 login_api_bp = Blueprint('login_api_bp', __name__)
 
 
-@login_api_bp.route('/login/<int:login_id>', methods=['GET'])
-def show_login_info(login_id):
-    '''
-    Retrieves one login object
-    '''
-    arw = ApiResponseWrapper()
-    login_schema = LoginSchema(exclude=['password_hash'])
-
-    try:
-        login = Login.query.filter_by(login_id=login_id).one()
-
-    except (MultipleResultsFound, NoResultFound):
-        arw.add_errors('No result found or multiple results found')
-
-    if arw.has_errors():
-        return arw.to_json(None, 400)
-
-    results = login_schema.dump(login)
-
-    return arw.to_json(results)
-
-
 @login_api_bp.route('/login/<int:login_id>', methods=['PUT'])
 def modify_login(login_id):
     '''
