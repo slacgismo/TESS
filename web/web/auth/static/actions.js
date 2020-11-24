@@ -41,7 +41,6 @@ export function processLogin(username, password) {
                     dispatch(loginSuccessful());
                 },
                 (error) => {
-                    console.warn(error);
                     createLoginError(
                         "Login failed",
                         "Incorrect username and/or password"
