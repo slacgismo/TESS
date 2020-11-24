@@ -1,5 +1,5 @@
 import os
-
+import ssl
 from flask import Flask, render_template
 from web.config import *
 from web.extensions import db, bcrypt, migrate, ma
@@ -31,6 +31,7 @@ from web.api.v1.market import market_api_bp
 from web.api.v1.utility import utility_api_bp
 from web.api.v1.address import address_api_bp
 from web.api.v1.channel import channel_api_bp
+from web.api.v1.sns_read import sns_read_api_bp
 from web.api.v1.home_hub import home_hub_api_bp
 from web.api.v1.alert_type import alert_types_api_bp
 from web.api.v1.device_event_source import des_api_bp
@@ -56,6 +57,9 @@ def create_app(config_obj):
     register_extensions(app)
     register_blueprints(app)
     app.register_error_handler(404, page_not_found)
+    # context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+    # context.load_chain('web/server.crt', 'web/server.key')#certificate and key files
+    # app.run(debug=True, ssl_context=context)
     return app
 
 
@@ -99,6 +103,7 @@ def register_blueprints(app):
     app.register_blueprint(utility_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(address_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(channel_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(sns_read_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(home_hub_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(transformer_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(alert_types_api_bp, url_prefix='/api/v1/')
@@ -115,6 +120,11 @@ else:
     config = DevelopmentConfig()
 
 app = create_app(config)
+
+# context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+# context.load_chain('web/server.crt', 'web/server.key')#certificate and key files
+# app.run(debug=True, ssl_context=context)
+
 
 # IF YOU NEED TO SEED YOUR DB WITH SOME TEST DATA,
 # UNCOMMENT BELOW THIS LINE AND RUN THE APP. DELETE LATER!!
