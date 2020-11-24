@@ -16,7 +16,7 @@ def sns():
     # subscribe to the SNS topic
     if hdr == 'SubscriptionConfirmation' and 'SubscribeURL' in js:
         r = requests.get(js['SubscribeURL'])
-        print(r)
+        return js['SubscribeURL']
     if hdr == 'Notification':
         parseRealPower(js['Message'])
     return 'OK\n'
