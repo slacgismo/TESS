@@ -1,9 +1,7 @@
 import os
-import ssl
 from flask import Flask, render_template
 from web.config import *
 from web.extensions import db, bcrypt, migrate, ma
-
 from web.models import transformer
 
 # FRONT-END TEMPLATE BP ROUTES
