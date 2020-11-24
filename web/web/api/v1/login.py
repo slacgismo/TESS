@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask_jwt_extended import (create_access_token, get_jwt_identity,
-                                create_refresh_token, jwt_required, jwt_optional, get_raw_jwt, get_current_user, get_jti)
+                                create_refresh_token, get_jti)
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
 from web.models.login import Login, LoginSchema

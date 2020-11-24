@@ -1,7 +1,7 @@
 from datetime import timedelta
 from flask import Blueprint, render_template, jsonify, redirect, request
 from flask_jwt_extended import (jwt_required, create_access_token, get_current_user,
-                                jwt_optional, get_jwt_identity, jwt_refresh_token_required, get_raw_jwt)
+                                jwt_optional, jwt_refresh_token_required, get_raw_jwt)
 from web.redis import revoked_store
 
 auth_bp = Blueprint('auth_bp',
@@ -15,11 +15,11 @@ auth_bp = Blueprint('auth_bp',
 @auth_bp.route('/auth', strict_slashes=False)
 @jwt_optional
 def index():
-    user_has_tokens = get_jwt_identity()
-    if user_has_tokens:
+    access_token = request.cookies.get('access_token')
+    refresh_token = request.cookies.get('refresh_token')
+    if access_token and refresh_token:
         return redirect('power/capacity')
     else:
-        # redirect to the main page if jwt is valid
         return render_template('auth/login.html')
 
 
@@ -29,7 +29,7 @@ def index():
 
 # Revokes the current user's access token
 @auth_bp.route('/auth/access_revoke', methods=['DELETE'])
-@jwt_optional
+@jwt_required
 def logout():
     jti = get_raw_jwt()['jti']
     revoked_store.set(jti, 'true', timedelta(minutes=15) * 1.2)
@@ -40,7 +40,6 @@ def logout():
 @jwt_refresh_token_required
 def logout2():
     jti = get_raw_jwt()['jti']
-    print(jti)
     revoked_store.set(jti, 'true', timedelta(days=30) * 1.2)
     return jsonify({"msg": "Refresh token revoked"}), 200
 
