@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint
-from datetime import timedelta
+# from datetime import timedelta
 from werkzeug.security import generate_password_hash
 from python_http_client.exceptions import BadRequestsError
 from marshmallow import ValidationError
@@ -12,6 +12,7 @@ from web.database import db
 from web.models.login import Login, LoginSchema
 from web.models.user import User, UserSchema
 from web.redis import revoked_store
+from web.config import JWT_ACCESS_EXPIRES, JWT_REFRESH_EXPIRES
 
 
 login_api_bp = Blueprint('login_api_bp', __name__)
@@ -75,7 +76,7 @@ def modify_login(login_id):
 
 
 @login_api_bp.route('/login', methods=['POST'])
-def check_login_info():
+def create_login_info():
     '''
     Login user
     '''
@@ -89,11 +90,11 @@ def check_login_info():
 
         access_token = create_access_token(identity=matching_login.login_id)
         access_jti = get_jti(encoded_token=access_token)
-        revoked_store.set(access_jti, 'false', timedelta(minutes=15))
+        revoked_store.set(access_jti, 'false', JWT_ACCESS_EXPIRES)
 
         refresh_token = create_refresh_token(identity=matching_login.login_id)
         refresh_jti = get_jti(encoded_token=refresh_token)
-        revoked_store.set(refresh_jti, 'false',  timedelta(days=30))
+        revoked_store.set(refresh_jti, 'false', JWT_REFRESH_EXPIRES)
 
         tokens = {
             'access_token': access_token,
