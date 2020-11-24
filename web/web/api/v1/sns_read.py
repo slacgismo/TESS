@@ -1,5 +1,4 @@
 from flask import Flask, request, Blueprint
-import requests
 import json
 
 sns_read_api_bp =  Blueprint('sns_read_api_bp', __name__)
