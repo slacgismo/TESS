@@ -41,7 +41,7 @@ def logout():
 
         refresh_token = request.cookies.get('refresh_token')
         refresh_jti = get_jti((refresh_token))
-        revoked_store.set((refresh_jti), 'true', JWT_ACCESS_EXPIRES)
+        revoked_store.set(refresh_jti, 'true', JWT_ACCESS_EXPIRES)
 
     except (BadRequestsError, UnauthorizedError, MethodNotAllowedError, InternalServerError, NotFoundError) as e:
         arw.add_errors(e.messages)
