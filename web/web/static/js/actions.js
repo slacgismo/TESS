@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 import { api, auth } from "./network_client";
-import { createError } from "./helpers";
+import { createErrorMessage } from "./helpers";
 
 export function completeLogout() {
     return {
@@ -48,11 +48,11 @@ export function logout() {
                     dispatch(completeLogout);
                 },
                 (error) => {
-                    createError("Error", "Unable to log out");
+                    createErrorMessage("Error", "Unable to log out");
                 }
             );
         } catch (error) {
-            createError("Server error", "Something went wrong");
+            createErrorMessage("Server error", "Something went wrong");
         }
     };
 }

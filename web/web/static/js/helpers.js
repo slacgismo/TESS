@@ -1,7 +1,7 @@
 import React from "react";
 import { queue } from "./components/app_notification_queue";
 
-export function createError(subject, description) {
+export function createErrorMessage(subject, description) {
     queue.notify({
         title: <b>{subject}</b>,
         body: description,
