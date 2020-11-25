@@ -39,32 +39,13 @@ export function logout() {
                 },
             };
             auth.delete(
-                "access_revoke",
+                "revoke",
                 access_token_json,
                 () => {
                     Cookies.remove("access_token");
-                    const refresh_token = Cookies.get("refresh_token");
-                    const refresh_token_json = {
-                        headers: {
-                            Authorization: "Bearer " + refresh_token,
-                        },
-                    };
-                    auth.delete(
-                        "refresh_revoke",
-                        refresh_token_json,
-                        () => {
-                            Cookies.remove("refresh_token");
-                            window.location.href = "/";
-                            dispatch(completeLogout);
-                            createError(
-                                "",
-                                "You have successfully logged out."
-                            );
-                        },
-                        (error) => {
-                            createError("Error", "Unable to log out");
-                        }
-                    );
+                    Cookies.remove("refresh_token");
+                    window.location.href = "/";
+                    dispatch(completeLogout);
                 },
                 (error) => {
                     createError("Error", "Unable to log out");

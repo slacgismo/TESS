@@ -1,3 +1,4 @@
+import React from "react";
 import { queue } from "./components/app_notification_queue";
 
 export function createError(subject, description) {
