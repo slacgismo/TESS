@@ -1,11 +1,12 @@
 from flask import request, jsonify, Blueprint
 from werkzeug.security import generate_password_hash
-from python_http_client.exceptions import BadRequestsError
+from python_http_client.exceptions import (BadRequestsError, UnauthorizedError, MethodNotAllowedError,
+                                           InternalServerError, NotFoundError)
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask_jwt_extended import (create_access_token, get_jwt_identity,
-                                create_refresh_token, get_jti, jwt_required)
+                                create_refresh_token, get_raw_jwt, get_jti, jwt_required)
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
 from web.models.login import Login, LoginSchema
@@ -135,3 +136,26 @@ def process_sign_up():
         return arw.to_json(None, 400)
 
     return arw.to_json(tokens, 201)
+
+@login_api_bp.route('/logout', methods=['DELETE'])
+@jwt_required
+def logout():
+    '''Revokes the current user's tokens to logout user'''
+
+    arw = ApiResponseWrapper()
+
+    try:
+        access_token = get_raw_jwt()['jti']
+        revoked_store.set(access_token, 'true', JWT_ACCESS_EXPIRES)
+
+        refresh_token = request.cookies.get('refresh_token')
+        refresh_jti = get_jti((refresh_token))
+        revoked_store.set(refresh_jti, 'true', JWT_ACCESS_EXPIRES)
+
+    except (BadRequestsError, UnauthorizedError, MethodNotAllowedError, InternalServerError, NotFoundError) as e:
+        arw.add_errors(e.messages)
+
+    if arw.has_errors():
+        return arw.to_json(None, 400)
+
+    return arw.to_json({'msg': 'Tokens revoked'}, 200)

@@ -32,15 +32,15 @@ export function selectMenuOption(selectedMenuName) {
 export function logout() {
     return (dispatch) => {
         try {
-            const access_token = Cookies.get("access_token");
-            const access_token_json = {
+            const accessTokenJson = {
                 headers: {
-                    Authorization: "Bearer " + access_token,
+                    Authorization: "Bearer " + Cookies.get("access_token"),
                 },
             };
-            auth.delete(
-                "revoke",
-                access_token_json,
+            console.log(accessTokenJson)
+            api.delete(
+                "logout",
+                accessTokenJson,
                 () => {
                     Cookies.remove("access_token");
                     Cookies.remove("refresh_token");
