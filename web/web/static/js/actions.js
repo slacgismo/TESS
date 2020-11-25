@@ -37,7 +37,6 @@ export function logout() {
                     Authorization: "Bearer " + Cookies.get("access_token"),
                 },
             };
-            console.log(accessTokenJson)
             api.delete(
                 "logout",
                 accessTokenJson,
