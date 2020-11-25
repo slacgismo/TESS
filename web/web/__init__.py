@@ -17,6 +17,7 @@ from web.user_settings.user_settings import user_settings_bp
 
 # API V1 BP ROUTES
 from web.api.v1.pv import pv_api_bp
+from web.api.v1.sns import sns_api_bp
 from web.api.v1.bids import bids_api_bp
 from web.api.v1.role import role_api_bp
 from web.api.v1.rate import rate_api_bp
@@ -29,7 +30,6 @@ from web.api.v1.market import market_api_bp
 from web.api.v1.utility import utility_api_bp
 from web.api.v1.address import address_api_bp
 from web.api.v1.channel import channel_api_bp
-from web.api.v1.sns_read import sns_read_api_bp
 from web.api.v1.home_hub import home_hub_api_bp
 from web.api.v1.alert_type import alert_types_api_bp
 from web.api.v1.device_event_source import des_api_bp
@@ -86,6 +86,7 @@ def register_blueprints(app):
     # register api v1 blueprint routes
     app.register_blueprint(pv_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(des_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(sns_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(bids_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(role_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(rate_api_bp, url_prefix='/api/v1/')
@@ -98,7 +99,6 @@ def register_blueprints(app):
     app.register_blueprint(utility_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(address_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(channel_api_bp, url_prefix='/api/v1/')
-    app.register_blueprint(sns_read_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(home_hub_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(transformer_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(alert_types_api_bp, url_prefix='/api/v1/')
