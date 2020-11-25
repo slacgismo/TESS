@@ -30,7 +30,7 @@ def index():
 
 @auth_bp.route('/auth/revoke', methods=['DELETE'])
 @jwt_required
-def logout1():
+def logout():
     '''Revokes the current user's tokens'''
 
     arw = ApiResponseWrapper()
