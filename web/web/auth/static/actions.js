@@ -26,18 +26,19 @@ export function resetUserLoggedIn() {
 export function processLogin(username, password) {
     return (dispatch) => {
         try {
-            const json = {
-                json: {
-                    username: username,
-                    password_hash: password,
-                },
+            const loginData = {
+                username: username,
+                password_hash: password,
             };
             api.post(
                 "login",
-                json,
+                { json: { ...loginData } },
                 (data) => {
                     Cookies.set("access_token", data.results.data.access_token);
-                    Cookies.set("refresh_token", data.results.data.refresh_token);
+                    Cookies.set(
+                        "refresh_token",
+                        data.results.data.refresh_token
+                    );
                     dispatch(loginSuccessful());
                 },
                 (error) => {
@@ -59,25 +60,23 @@ export function processSignUp(username, firstName, lastName, password) {
     return (dispatch) => {
         try {
             // Placeholders for address_id and utility_id
-            const json = {
-                json: {
-                    user: {
-                        email: username,
-                        first_name: firstName,
-                        last_name: lastName,
-                        address_id: "1",
-                        utility_id: "1",
-                        is_active: true,
-                    },
-                    login: {
-                        username: username,
-                        password_hash: password,
-                    },
+            const signUpData = {
+                user: {
+                    email: username,
+                    first_name: firstName,
+                    last_name: lastName,
+                    address_id: "1",
+                    utility_id: "1",
+                    is_active: true,
+                },
+                login: {
+                    username: username,
+                    password_hash: password,
                 },
             };
             api.post(
                 "sign_up",
-                json,
+                { json: { ...signUpData } },
                 (data) => {
                     Cookies.set("access_token", data.results.data.access_token);
                     Cookies.set(

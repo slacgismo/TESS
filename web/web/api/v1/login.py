@@ -55,6 +55,7 @@ def create_login_info():
     arw = ApiResponseWrapper()
     login_data = request.get_json()
 
+    print(login_data)
     try:
         matching_login = Login.query.filter_by(
             username=login_data['username']).one()
