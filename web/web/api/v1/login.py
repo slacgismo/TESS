@@ -1,12 +1,11 @@
 from flask import request, jsonify, Blueprint
-# from datetime import timedelta
 from werkzeug.security import generate_password_hash
 from python_http_client.exceptions import BadRequestsError
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask_jwt_extended import (create_access_token, get_jwt_identity,
-                                create_refresh_token, get_jti)
+                                create_refresh_token, get_jti, jwt_required)
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
 from web.models.login import Login, LoginSchema
@@ -18,21 +17,18 @@ from web.config import JWT_ACCESS_EXPIRES, JWT_REFRESH_EXPIRES
 login_api_bp = Blueprint('login_api_bp', __name__)
 
 
-@login_api_bp.route('/login/<int:login_id>', methods=['PUT'])
-def modify_login(login_id):
+@login_api_bp.route('/login/<int:login_id>/reset_password', methods=['PATCH'])
+@jwt_required
+def reset_password(login_id):
     '''
-    Updates one login object in database
+    Resets password
     '''
-
     arw = ApiResponseWrapper()
-    login_schema = LoginSchema(exclude=[
-        'updated_at', 'created_at'
-    ])
-    modified_login = request.get_json()
+    login_schema = LoginSchema()
 
     try:
-        Login.query.filter_by(login_id=login_id).one()
-        modified_login = login_schema.load(modified_login, session=db.session)
+        login = Login.query.filter_by(login_id=login_id).one()
+        login_schema.load(request.get_json(), instance=login, partial=True, session=db.session)
         db.session.commit()
 
     except (MultipleResultsFound, NoResultFound):
@@ -48,9 +44,7 @@ def modify_login(login_id):
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = login_schema.dump(modified_login)
-
-    return arw.to_json(results)
+    return arw.to_json(None, 200)
 
 
 @login_api_bp.route('/login', methods=['POST'])
@@ -97,7 +91,7 @@ def create_login_info():
 @login_api_bp.route('/sign_up', methods=['POST'])
 def process_sign_up():
     '''
-    Adds new user and login object to database
+    Adds new user and login objects to database
     '''
     arw = ApiResponseWrapper()
     sign_up_data = request.get_json()
@@ -119,11 +113,11 @@ def process_sign_up():
 
         access_token = create_access_token(identity=new_login.login_id)
         access_jti = get_jti(encoded_token=access_token)
-        revoked_store.set(access_jti, 'false', timedelta(minutes=15) * 1.2)
+        revoked_store.set(access_jti, 'false', JWT_ACCESS_EXPIRES)
 
         refresh_token = create_refresh_token(identity=new_login.login_id)
         refresh_jti = get_jti(encoded_token=refresh_token)
-        revoked_store.set(refresh_jti, 'false',  timedelta(days=30) * 1.2)
+        revoked_store.set(refresh_jti, 'false', JWT_REFRESH_EXPIRES)
 
         tokens = {
             'access_token': access_token,

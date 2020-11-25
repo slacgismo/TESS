@@ -64,11 +64,15 @@ class Login(UserMixin, Model):
 
 class LoginSchema(SQLAlchemyAutoSchema):
     password_hash = fields.Method(deserialize='create_password_hash')
+    old_password = fields.Method('get_old_password', dump_only=True)
 
     # Marshmallow methods
     def create_password_hash(self, obj):
         password_hash = generate_password_hash(obj)
         return password_hash
+
+    def get_old_password(self, value):
+        return value
 
     class Meta:
         model = Login
