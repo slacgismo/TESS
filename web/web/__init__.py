@@ -1,5 +1,4 @@
 import os
-
 from flask import Flask, render_template
 import redis
 from web.config import *
@@ -20,6 +19,7 @@ from web.user_settings.user_settings import user_settings_bp
 
 # API V1 BP ROUTES
 from web.api.v1.pv import pv_api_bp
+from web.api.v1.sns import sns_api_bp
 from web.api.v1.bids import bids_api_bp
 from web.api.v1.role import role_api_bp
 from web.api.v1.rate import rate_api_bp
@@ -91,6 +91,7 @@ def register_blueprints(app):
     # register api v1 blueprint routes
     app.register_blueprint(pv_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(des_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(sns_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(bids_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(role_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(rate_api_bp, url_prefix='/api/v1/')
