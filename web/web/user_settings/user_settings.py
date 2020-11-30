@@ -9,4 +9,5 @@ user_settings_bp = Blueprint('user_settings_bp',
 
 @user_settings_bp.route('/')
 def index():
+
     return render_template('user_settings/index.html')

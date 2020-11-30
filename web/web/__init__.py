@@ -1,7 +1,9 @@
 import os
 from flask import Flask, render_template
+import redis
 from web.config import *
-from web.extensions import db, bcrypt, migrate, ma
+from web.extensions import db, bcrypt, migrate, ma, jwt
+
 from web.models import transformer
 
 # FRONT-END TEMPLATE BP ROUTES
@@ -39,6 +41,7 @@ from web.api.v1.meter_interval import meter_interval_api_bp
 from web.api.v1.market_interval import market_interval_api_bp
 from web.api.v1.service_location import service_location_api_bp
 from web.api.v1.transformer_interval import transformer_interval_api_bp
+from web.api.v1.login import login_api_bp
 
 
 def page_not_found(e):
@@ -51,6 +54,7 @@ def create_app(config_obj):
     :param config_object: The configuration object to use.
     """
     app = Flask(__name__, static_url_path='')
+    app.secret_key = os.urandom(12).hex()
     app.config.from_object(config_obj)
     register_extensions(app)
     register_blueprints(app)
@@ -66,6 +70,7 @@ def register_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)
+    jwt.init_app(app)
 
 
 def register_blueprints(app):
@@ -107,6 +112,7 @@ def register_blueprints(app):
     app.register_blueprint(market_interval_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(service_location_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(transformer_interval_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(login_api_bp, url_prefix='/api/v1/')
 
 
 if os.environ.get('FLASK_ENV', 'development') == 'production':

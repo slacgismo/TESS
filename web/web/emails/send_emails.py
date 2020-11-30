@@ -1,9 +1,9 @@
+import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from python_http_client.exceptions import (BadRequestsError, UnauthorizedError, TooManyRequestsError,
                                            PayloadTooLargeError, ServiceUnavailableError, InternalServerError,
                                            UnsupportedMediaTypeError, NotFoundError, ForbiddenError)
-import os
 
 
 def send_email(alert_type, notification_message, email_address):

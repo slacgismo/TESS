@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 
+
 markets_bp = Blueprint('markets_bp',
                        __name__,
                        template_folder='templates',

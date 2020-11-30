@@ -28,7 +28,18 @@ export const api = {
             api.handleApiError(e, errorHandler);
         }
     },
-    
+
+    delete: async (resource, data, successHandler, errorHandler) => {
+        try {
+            const response = await api.network.delete(`${api.url}${resource}`, data).json();
+            if(successHandler && typeof successHandler === "function") {
+                successHandler(response);
+            }
+        } catch(e) {            
+            auth.handleError(e, errorHandler);
+        }
+    },
+
     handleApiError: (exception, errorHandler) => {
         if(exception instanceof ky.HTTPError) {
             console.warn("there was an HTTPError");

@@ -1,74 +1,66 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import * as action from './actions';
-import { connect } from 'react-redux';
-import { Button } from '@rmwc/button';
-import { TextField } from '@rmwc/textfield';
-import CreateAccount from './create_account';
-import { menuRoutes } from '../../static/js/config/routes';
-import ConnectedComponentWrapper from '../../static/js/base';
-import { queue } from '../../static/js/components/app_notification_queue';
+import React from "react";
+import ReactDOM from "react-dom";
+import * as action from "./actions";
+import { connect } from "react-redux";
+import { Button } from "@rmwc/button";
+import { TextField } from "@rmwc/textfield";
+import CreateAccount from "./create_account";
+import { menuRoutes } from "../../static/js/config/routes";
+import ConnectedComponentWrapper from "../../static/js/base";
+import { validateLogin } from "./helpers";
 
-import '@rmwc/button/styles';
-import '@rmwc/textfield/styles';
+import "@rmwc/button/styles";
+import "@rmwc/textfield/styles";
 
 class Auth extends React.Component {
-    state = {
-        username: "",
-        password: "",
-        userIsCreatingAccount: false
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: "",
+            password: "",
+            userIsCreatingAccount: false,
+        };
     }
 
     handleUsernameChange = (e) => {
-        this.setState({username: e.target.value});
-    }
+        this.setState({ username: e.target.value });
+    };
 
     handlePasswordChange = (e) => {
-        this.setState({password: e.target.value});
-    }
+        this.setState({ password: e.target.value });
+    };
+
+    setUserCreateFlow = (isInCreateFlow) => {
+        this.setState({ userIsCreatingAccount: isInCreateFlow });
+    };
 
     handleLogin = () => {
-        let valid = true;
-        if(!~this.state.username.indexOf("@")) {
-            valid = false;
-            // validate the email contains at least an @ symbol
-            queue.notify({
-                title: <b>Username</b>,
-                body: 'Must be a valid email in the format: "someone@somewhere.com"',
-                dismissesOnAction: true,
-                timeout: -1,
-                actions: [{title: 'Dismiss'}]
-            });
+        const isValid = validateLogin(this.state.username, this.state.password);
+        if (isValid) {
+            this.props.dispatch(
+                action.processLogin(this.state.username, this.state.password)
+            );
         }
+    };
 
-        if(this.state.password.length < 8) {
-            valid = false;
-            // validate the password is at least eight chars long
-            // validate the username is not empty
-            queue.notify({
-                title: <b>Password</b>,
-                body: 'Must be at least 8 characters long',
-                dismissesOnAction: true,
-                timeout: -1,
-                actions: [{title: 'Dismiss'}]
-            })
-        }
-
-        if(valid) {
+    componentDidUpdate() {
+        if (this.props.isUserLoggedIn) {
+            this.props.dispatch(action.resetUserLoggedIn());
             window.location.href = menuRoutes[0].path;
         }
     }
 
-    setUserCreateFlow = (isInCreateFlow) => {
-        this.setState({userIsCreatingAccount: isInCreateFlow})
-    }
-
     render() {
-        if(this.state.userIsCreatingAccount) {
+        if (this.state.userIsCreatingAccount) {
             return (
                 <div className="create-account-page-container">
                     <div className="create-account-form-container">
-                        <CreateAccount setCreateFlow={this.setUserCreateFlow} />
+                        <CreateAccount
+                            authProps={this.props}
+                            setCreateFlow={(isInCreateFlow) =>
+                                this.setUserCreateFlow(isInCreateFlow)
+                            }
+                        />
                     </div>
                 </div>
             );
@@ -80,30 +72,34 @@ class Auth extends React.Component {
                     <div>
                         <TextField
                             onChange={(e) => this.handleUsernameChange(e)}
-                            outlined={true} 
-                            label="Username" />
+                            outlined={true}
+                            label="Username"
+                        />
                     </div>
                     <br />
                     <div>
                         <TextField
                             onChange={this.handlePasswordChange}
                             outlined={true}
-                            type="password" 
-                            label="Password" />
+                            type="password"
+                            label="Password"
+                        />
                     </div>
                     <br />
                     <div>
                         <Button
                             outlined
                             label="LOGIN"
-                            onClick={this.handleLogin} />
+                            onClick={this.handleLogin}
+                        />
                     </div>
                     <br />
                     <div>
                         <Button
                             outlined
                             label="SIGN UP"
-                            onClick={() => this.setUserCreateFlow(true)} />
+                            onClick={() => this.setUserCreateFlow(true)}
+                        />
                     </div>
                 </div>
             </div>
@@ -111,13 +107,13 @@ class Auth extends React.Component {
     }
 }
 
-const ConnectedAuth = connect(state => ({
-    token: state.auth.token
-  }))(Auth)
+const ConnectedAuth = connect((state) => ({
+    isUserLoggedIn: state.auth.userLoggedIn,
+}))(Auth);
 
 const authElement = (
     <ConnectedComponentWrapper isVisible={false}>
-        <ConnectedAuth/>
+        <ConnectedAuth />
     </ConnectedComponentWrapper>
 );
-ReactDOM.render(authElement, document.getElementById('master-container'));
+ReactDOM.render(authElement, document.getElementById("master-container"));

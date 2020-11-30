@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { SimpleTopAppBar, TopAppBarFixedAdjust } from '@rmwc/top-app-bar';
 import { toggleNavigationDrawer, logout } from '../actions';
 
+
 class TopBar extends React.Component {
     toggleNavigationDrawer = () => {
         this.props.dispatch(toggleNavigationDrawer());
@@ -13,7 +14,6 @@ class TopBar extends React.Component {
     logoutOfTess = () => {
         console.log("logging out of the application, will need to clear the token cache");
         this.props.dispatch(logout());
-        window.location.href = "/";
     }
 
     render() {

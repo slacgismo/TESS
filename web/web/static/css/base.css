@@ -8,6 +8,12 @@ ul, li {
     list-style-type: none;
 }
 
+/* SNACKBAR */
+.snackbar-center{
+    top: 5%;
+    left: 50%;
+}
+
 /* LOAD/PRICE NOTIFICATION CONTAINER */
 .load-price-notification-container {
     overflow: auto;
