@@ -5,7 +5,7 @@ from python_http_client.exceptions import (BadRequestsError, UnauthorizedError, 
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
-from flask_jwt_extended import (create_access_token, get_jwt_identity,
+from flask_jwt_extended import (create_access_token, get_jwt_identity, jwt_refresh_token_required,
                                 create_refresh_token, get_raw_jwt, get_jti, jwt_required)
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
@@ -159,3 +159,16 @@ def logout():
         return arw.to_json(None, 400)
 
     return arw.to_json({'msg': 'Tokens revoked'}, 200)
+
+# see this repo for JWT redis blacklist setup:
+# https://github.com/vimalloc/flask-jwt-extended/blob/master/examples/redis_blacklist.py
+
+@login_api_bp.route('/refresh', methods=['POST'])
+@jwt_refresh_token_required
+def refresh():
+    '''Regenerates access token, with refresh token'''
+    current_user = get_jwt_identity()
+    access_token = {
+        'access_token': create_access_token(identity=current_user)
+    }
+    return jsonify(access_token), 200

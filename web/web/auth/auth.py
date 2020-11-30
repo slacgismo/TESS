@@ -18,18 +18,3 @@ def index():
         return redirect('power/capacity')
     else:
         return render_template('auth/login.html')
-
-
-# see this repo for JWT redis blacklist setup:
-# https://github.com/vimalloc/flask-jwt-extended/blob/master/examples/redis_blacklist.py
-
-
-@auth_bp.route('/refresh', methods=['POST'])
-@jwt_refresh_token_required
-def refresh():
-    '''Regenerates access token, with refresh token'''
-    current_user = get_jwt_identity()
-    access_token = {
-        'access_token': create_access_token(identity=current_user)
-    }
-    return jsonify(access_token), 200

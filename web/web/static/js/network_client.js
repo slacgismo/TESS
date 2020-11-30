@@ -52,31 +52,3 @@ export const api = {
         }
     }
 }
-
-export const auth = {
-    network: ky,    
-    url: '/auth/',
-
-    post: async (resource, data, successHandler, errorHandler) => {
-        try {
-            const response = await auth.network.post(`${auth.url}${resource}`, data).json();
-            if(successHandler && typeof successHandler === "function") {
-                successHandler(response);
-            }
-        } catch(e) {            
-            auth.handleError(e, errorHandler);
-        }
-    },
-
-    handleError: (exception, errorHandler) => {
-        if(exception instanceof ky.HTTPError) {
-            console.warn("there was an HTTPError");
-            if(errorHandler && typeof errorHandler === "function") {
-                errorHandler(exception.response);
-            }
-        } else {
-            throw exception;
-            //TODO: write a global/api error handler
-        }
-    }
-}
