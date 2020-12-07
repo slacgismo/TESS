@@ -16,7 +16,10 @@ import config
 
 def publish(client, topic, payload, Device_ID):
     payload = {'DeviceID': Device_ID, 'DeviceInformation': [payload]}
-    client.publish(topic, json.dumps(payload), 1)
+    try:
+        client.publish(topic, json.dumps(payload), 1)
+    except Exception as e:
+        print('Publish error: ', e.message)
     print("Message published: ")
     print(payload)
     # client.disconnect() # Figure out if need to disconnect or not -> best pratices
