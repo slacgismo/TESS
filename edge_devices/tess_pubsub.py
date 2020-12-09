@@ -3,19 +3,20 @@ import json
 import AWSIoTPythonSDK.MQTTLib as AWSIoTPyMQTT
 import heila_comms as hc
 import config
+import sonnen_comms as sonnen
 
 # Expected payload to be received by edge devices when subscribing to a topic:
 # {
-#   "DeviceID": "TessEdgeController_NAME", "information":
+#   "DeviceID": "TessEdgeController_NAME", "DeviceInformation":
 #   [
-#       {"resource": "solar", "real_power": "1000"},
-#       {"resource": "battery", "real_power": "2000"},
-#       {"resource": "ev", "real_power": "4000"}
+#       {"resource": "solar", "payload": payload},
+#       {"resource": "battery", "payload": payload},
+#       {"resource": "ev", "payload": payload}
 #   ]
 # }
 
 def publish(client, topic, payload, Device_ID):
-    payload = {'DeviceID': Device_ID, 'DeviceInformation': [payload]}
+    payload = {'DeviceID': Device_ID, 'DeviceInformation': payload}
     try:
         client.publish(topic, json.dumps(payload), 1)
     except Exception as e:
@@ -80,6 +81,7 @@ subscribe(myAWSIoTMQTTClient, TOPIC_SUBSCRIBE)
 
 # publishing to topic
 while True:
-    payload = hc.heila_update(url=url)
+    sonnen_obj = sonnen.SonnenApiInterface()
+    payload = [{'resource': 'solar', 'payload': hc.heila_update(url=url)}, {'resource': 'battery', 'payload': sonnen_obj.get_batteries_status_json(serial=config.SONNEN_BATT)}, {'resource': 'ev', 'payload': None}]
     publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, payload, CLIENT_ID)
     t.sleep(10) # Need to define how often to provide info updates
