@@ -28,6 +28,9 @@ class SonnenApiInterface:
         except requests.exceptions.HTTPError as err:
             print('Error get_battery_status_json: ', err)
             return None
+        except requests.ConnectionError, e:
+            print("Connection Error: ", e)
+            return None
 
     def enable_self_consumption(self, serial):
         try:
@@ -76,19 +79,3 @@ class SonnenApiInterface:
         except requests.exceptions.HTTPError as err:
             print(err)
             return {'Error: ', err}
-
-
-# This method is used on scheduler.py to pull data in given periodicity
-# def update_battery_status():
-#     for dev in devices:
-#         json_batt = sonnen_api.get_batteries_status_json(serial=dev.device_uid)
-#         if json_batt is not None:
-#             try:
-#                 farm_device = FarmDevice.objects.get(device_uid=dev.device_uid)
-#                 farmdata = FarmData(farm_device=farm_device)
-#                 farmdata.device_data = json_batt
-#                 farmdata.save()
-#                 print('saving...\n')
-#             except FarmDevice.DoesNotExist as e:
-#                 print('Error update_battery_status for serial: ', dev.device_uid)
-#                 print(e)
