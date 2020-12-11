@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { api, auth } from "./network_client";
+import { api } from "./network_client";
 import { createErrorMessage } from "./helpers";
 
 export function completeLogout() {

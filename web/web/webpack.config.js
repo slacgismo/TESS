@@ -5,6 +5,7 @@ module.exports = {
     watchOptions: {
         ignored: /node_modules/
     },
+    mode: "development",
     entry: {
         main: "./static/js/base.js",
         auth: "./auth/static/auth.js",
@@ -64,6 +65,6 @@ module.exports = {
         ]
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
     ]
 };

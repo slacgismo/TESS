@@ -6,7 +6,7 @@ from sqlalchemy.schema import UniqueConstraint
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from web.models.notification import Notification
-from web.models.login import Login
+from web.models.login import Login, LoginSchema
 from web.models.alert import Alert
 from web.database import (
     db,
@@ -91,6 +91,7 @@ class User(UserMixin, Model):
 class UserSchema(SQLAlchemyAutoSchema):
     roles = fields.Method('get_roles', dump_only=True)
     postal_code = fields.Method('get_postal_code', dump_only=True)
+    login = fields.Nested(LoginSchema(), dump_only=True)
 
     # Marshmallow methods
     def get_roles(self, obj):
@@ -111,3 +112,5 @@ class UserSchema(SQLAlchemyAutoSchema):
         model = User
         include_fk = True
         load_instance = True
+        transient = True
+

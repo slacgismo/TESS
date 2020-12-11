@@ -2,10 +2,11 @@ import Cookies from "js-cookie";
 import { api } from "../../static/js/network_client";
 import { createLoginError } from "./helpers";
 
-export function loginSuccessful() {
+export function loginSuccessful(userData) {
     return {
         type: "LOGIN_SUCCESSFUL",
         userLoggedIn: true,
+        userData: userData,
     };
 }
 
@@ -13,6 +14,7 @@ export function loginFailed() {
     return {
         type: "LOGIN_FAILED",
         userLoggedIn: false,
+        userData: {}
     };
 }
 
@@ -20,6 +22,13 @@ export function resetUserLoggedIn() {
     return {
         type: "RESET_USER_LOGGED_IN",
         userLoggedIn: false,
+    };
+}
+
+export function emptyUserData() {
+    return {
+        type: "EMPTY_USER_DATA",
+        userData: {}
     };
 }
 
@@ -39,7 +48,7 @@ export function processLogin(username, password) {
                         "refresh_token",
                         data.results.data.refresh_token
                     );
-                    dispatch(loginSuccessful());
+                    dispatch(loginSuccessful(data.results.data.login));
                 },
                 (error) => {
                     createLoginError(
@@ -83,7 +92,7 @@ export function processSignUp(username, firstName, lastName, password) {
                         "refresh_token",
                         data.results.data.refresh_token
                     );
-                    dispatch(loginSuccessful());
+                    dispatch(loginSuccessful(data.results.data.login));
                 },
                 (error) => {
                     createLoginError("Sign up failed", "Email already in use");

@@ -1,4 +1,5 @@
 from flask import request, jsonify, Blueprint
+from flask_jwt_extended import jwt_required, get_jwt_identity, jwt_optional
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -6,6 +7,7 @@ from datetime import datetime
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
 from web.models.user import User, UserSchema
+from web.models.login import Login, LoginSchema
 
 users_api_bp = Blueprint('users_api_bp', __name__)
 
@@ -55,8 +57,7 @@ def show_user_info(user_id):
 
     return arw.to_json(results)
 
-
-@users_api_bp.route('user/<int:user_id>', methods=['PUT'])
+@users_api_bp.route('/user/<int:user_id>', methods=['PUT'])
 def modify_user(user_id):
     '''
     Updates one user object in database
@@ -117,5 +118,49 @@ def add_user():
         return arw.to_json(None, 400)
 
     results = UserSchema().dump(new_user)
+
+    return arw.to_json(results)
+
+
+@users_api_bp.route('/update_user_settings', methods=['PATCH'])
+@jwt_optional
+def updates_user_settings():
+    '''
+    Updates user and corresponding login in database
+    '''
+
+    arw = ApiResponseWrapper()
+    user_schema = UserSchema()
+    login_schema = LoginSchema()
+
+    try:
+        json = request.get_json()
+
+        user = User.query.filter_by(id=json['user']['id']).one()
+        updated_user = user_schema.load(json['user'], instance=user, partial=True, session=db.session)
+        db.session.flush()
+
+        if len(json['login']['password_hash']) == 0:
+            del json['login']['password_hash']
+
+        login = Login.query.filter_by(user_id=json['user']['id']).one()
+        login_schema.load(json['login'], instance=login, partial=True, session=db.session)
+        db.session.commit()
+
+    except (MultipleResultsFound, NoResultFound):
+        arw.add_errors('No result found or multiple results found')
+
+    except ValidationError as ve:
+        arw.add_errors(ve.messages)
+
+    except IntegrityError:
+        arw.add_errors('Integrity error')
+
+    if arw.has_errors():
+        db.session.rollback()
+        return arw.to_json(None, 400)
+
+
+    results = user_schema.dump(updated_user)
 
     return arw.to_json(results)

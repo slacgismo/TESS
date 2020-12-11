@@ -18,6 +18,28 @@ export const api = {
         }
     },
 
+    put: async (resource, data, successHandler, errorHandler) => {
+        try {
+            const response = await api.network.put(`${api.url}${resource}`, data).json();
+            if(successHandler && typeof successHandler === "function") {
+                successHandler(response);
+            }            
+        } catch(e) {
+            api.handleApiError(e, errorHandler);
+        }
+    },
+
+    patch: async (resource, data, successHandler, errorHandler) => {
+        try {
+            const response = await api.network.patch(`${api.url}${resource}`, data).json();
+            if(successHandler && typeof successHandler === "function") {
+                successHandler(response);
+            }            
+        } catch(e) {
+            api.handleApiError(e, errorHandler);
+        }
+    },
+
     get: async (resource, successHandler, errorHandler) => {
         try {
             const response = await api.network.get(`${api.url}${resource}`).json();
@@ -36,7 +58,7 @@ export const api = {
                 successHandler(response);
             }
         } catch(e) {            
-            auth.handleError(e, errorHandler);
+            api.handleApiError(e, errorHandler);
         }
     },
 

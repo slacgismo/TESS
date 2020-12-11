@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template
+from flask_jwt_extended import jwt_required, jwt_optional, get_jwt_identity
 
 user_settings_bp = Blueprint('user_settings_bp',
                              __name__,
@@ -8,6 +9,6 @@ user_settings_bp = Blueprint('user_settings_bp',
 
 
 @user_settings_bp.route('/')
+@jwt_required
 def index():
-
     return render_template('user_settings/index.html')

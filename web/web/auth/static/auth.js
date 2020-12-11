@@ -48,6 +48,10 @@ class Auth extends React.Component {
             this.props.dispatch(action.resetUserLoggedIn());
             window.location.href = menuRoutes[0].path;
         }
+
+        if (this.props.userLoggedOut) {
+            this.props.dispatch(action.emptyUserData());
+        }
     }
 
     render() {
@@ -109,6 +113,7 @@ class Auth extends React.Component {
 
 const ConnectedAuth = connect((state) => ({
     isUserLoggedIn: state.auth.userLoggedIn,
+    userData: state.auth.userData
 }))(Auth);
 
 const authElement = (

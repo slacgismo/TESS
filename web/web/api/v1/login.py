@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask_jwt_extended import (create_access_token, get_jwt_identity, jwt_refresh_token_required,
-                                create_refresh_token, get_raw_jwt, get_jti, jwt_required)
+                                create_refresh_token, unset_jwt_cookies, get_raw_jwt, get_jti, jwt_required, jwt_optional, set_access_cookies, set_refresh_cookies)
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
 from web.models.login import Login, LoginSchema
@@ -55,6 +55,8 @@ def create_login_info():
     '''
     arw = ApiResponseWrapper()
     login_data = request.get_json()
+    login_schema = LoginSchema(
+        exclude=['login_id', 'created_at', 'updated_at'])
 
     try:
         matching_login = Login.query.filter_by(
@@ -69,7 +71,14 @@ def create_login_info():
         refresh_jti = get_jti(encoded_token=refresh_token)
         revoked_store.set(refresh_jti, 'false', JWT_REFRESH_EXPIRES)
 
-        tokens = {
+        # resp = jsonify({'login': True})
+        # set_access_cookies(resp, access_token)
+        # set_refresh_cookies(resp, refresh_token)
+
+        login_data = login_schema.dump(matching_login)
+
+        results = {
+            'login': login_data,
             'access_token': access_token,
             'refresh_token': refresh_token
         }
@@ -86,7 +95,7 @@ def create_login_info():
     if arw.has_errors():
         return arw.to_json(None, 400)
 
-    return arw.to_json(tokens, 201)
+    return arw.to_json(results, 201)
 
 
 @login_api_bp.route('/sign_up', methods=['POST'])
@@ -120,7 +129,14 @@ def process_sign_up():
         refresh_jti = get_jti(encoded_token=refresh_token)
         revoked_store.set(refresh_jti, 'false', JWT_REFRESH_EXPIRES)
 
-        tokens = {
+        # resp = jsonify({'login': True})
+        # set_access_cookies(resp, access_token)
+        # set_refresh_cookies(resp, refresh_token)
+
+        login_data = login_schema.dump(new_login)
+
+        results = {
+            'login_data': login_data,
             'access_token': access_token,
             'refresh_token': refresh_token
         }
@@ -135,10 +151,10 @@ def process_sign_up():
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    return arw.to_json(tokens, 201)
+    return arw.to_json(results, 201)
 
 @login_api_bp.route('/logout', methods=['DELETE'])
-@jwt_required
+@jwt_optional
 def logout():
     '''Revokes the current user's tokens to logout user'''
 
@@ -151,6 +167,7 @@ def logout():
         refresh_token = request.cookies.get('refresh_token')
         refresh_jti = get_jti((refresh_token))
         revoked_store.set(refresh_jti, 'true', JWT_ACCESS_EXPIRES)
+        # unset_jwt_cookies({'logout': True})
 
     except (BadRequestsError, UnauthorizedError, MethodNotAllowedError, InternalServerError, NotFoundError) as e:
         arw.add_errors(e.messages)

@@ -1,17 +1,7 @@
 import React from "react";
-import { queue } from "./components/app_notification_queue";
+import { queue } from "../../static/js/components/app_notification_queue";
 
-export function createErrorMessage(subject, description) {
-    queue.notify({
-        title: <b>{subject}</b>,
-        body: description,
-        dismissesOnAction: true,
-        timeout: -1,
-        actions: [{ title: "Dismiss" }],
-    });
-}
-
-export function validateLoginInfo(username, password) {
+export function validateUserSettingsInfo(username, password) {
     let valid = true;
     if (!~username.indexOf("@")) {
         valid = false;
@@ -26,7 +16,7 @@ export function validateLoginInfo(username, password) {
         });
     }
 
-    if (password.length < 8) {
+    if (0 < password.length && password.length < 8) {
         valid = false;
         // validate the password is at least eight chars long
         // validate the username is not empty

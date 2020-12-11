@@ -27,7 +27,6 @@ def invalid_token_callback(error):
         'error': 'invalid_token'
     }), 401
 
-
 @jwt.unauthorized_loader
 def missing_token_callback(error):
     return jsonify({
@@ -35,14 +34,12 @@ def missing_token_callback(error):
         'error': 'authorization_required'
     }), 401
 
-
 @jwt.needs_fresh_token_loader
 def token_not_fresh_callback():
     return jsonify({
         'description': 'The token is not fresh',
         'error': 'fresh_token_required'
     }), 401
-
 
 @jwt.revoked_token_loader
 def revoked_token_callback():
