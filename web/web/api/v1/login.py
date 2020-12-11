@@ -71,16 +71,18 @@ def create_login_info():
         refresh_jti = get_jti(encoded_token=refresh_token)
         revoked_store.set(refresh_jti, 'false', JWT_REFRESH_EXPIRES)
 
-        # resp = jsonify({'login': True})
-        # set_access_cookies(resp, access_token)
-        # set_refresh_cookies(resp, refresh_token)
+        resp = jsonify({'login': True})
+        set_access_cookies(resp, access_token)
+        set_refresh_cookies(resp, refresh_token)
 
         login_data = login_schema.dump(matching_login)
 
         results = {
             'login': login_data,
             'access_token': access_token,
-            'refresh_token': refresh_token
+            'refresh_token': refresh_token,
+            # 'token1': token1,
+            # 'token2': token2
         }
 
     except (MultipleResultsFound, NoResultFound):
@@ -154,7 +156,7 @@ def process_sign_up():
     return arw.to_json(results, 201)
 
 @login_api_bp.route('/logout', methods=['DELETE'])
-@jwt_optional
+@jwt_required
 def logout():
     '''Revokes the current user's tokens to logout user'''
 

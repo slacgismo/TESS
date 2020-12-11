@@ -41,6 +41,7 @@ class DevelopmentConfig(Config):
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
     JWT_TOKEN_LOCATION = ['cookies', 'headers', 'query_string']
     # JWT_COOKIE_CSRF_PROTECT = False
-    # JWT_CSRF_CHECK_FORM = True
+    JWT_CSRF_IN_COOKIES = False
+    # JWT_CSRF_CHECK_FORM = False
     # JWT_ACCESS_COOKIE_PATH = '/'
     # JWT_COOKIE_SECURE = False

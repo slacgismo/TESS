@@ -13,6 +13,7 @@ users_api_bp = Blueprint('users_api_bp', __name__)
 
 
 @users_api_bp.route('/users', methods=['GET'])
+@jwt_required
 def get_user_ids():
     '''
     Retrieves all user objects

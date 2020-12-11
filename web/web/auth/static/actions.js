@@ -43,12 +43,19 @@ export function processLogin(username, password) {
                 "login",
                 { json: { ...loginData } },
                 (data) => {
-                    Cookies.set("access_token", data.results.data.access_token);
-                    Cookies.set(
-                        "refresh_token",
-                        data.results.data.refresh_token
-                    );
-                    dispatch(loginSuccessful(data.results.data.login));
+                    console.log("DATA");
+                    console.log(data);
+                    api.get(
+                        "users", (data) => {
+                        console.log(data);
+                    })
+                    //make ajax call to protected endpoint
+                    // Cookies.set("access_token", data.results.data.access_token);
+                    // Cookies.set(
+                    //     "refresh_token",
+                    //     data.results.data.refresh_token
+                    // );
+                    // dispatch(loginSuccessful(data.results.data.login));
                 },
                 (error) => {
                     createLoginError(
