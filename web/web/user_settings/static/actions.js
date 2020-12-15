@@ -38,8 +38,6 @@ export function updateUserSettings(
                 "update_user_settings",
                 { json: { ...userData } },
                 (data) => {
-                    console.log("HEYYYY")
-                    console.log(data)
                     dispatch(updateUserData(data.results.data));
                     createPopup(
                         "",
