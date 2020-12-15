@@ -7,13 +7,6 @@ export function completeLogout() {
     };
 }
 
-export function resetUserLoggedOut() {
-    return {
-        type: "RESET_USER_LOGGED_OUT",
-        userLoggedOut: false,
-    };
-}
-
 export function toggleNavigationDrawer() {
     return {
         type: "TOGGLE_NAVIGATION_DRAWER",

@@ -32,7 +32,6 @@ class TopBar extends React.Component {
     componentDidUpdate() {
         if (this.props.userLoggedOut) {
             window.location.href = "/";
-            this.props.dispatch(resetUserLoggedOut());
         }
     }
 
