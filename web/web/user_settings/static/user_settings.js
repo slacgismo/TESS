@@ -27,7 +27,7 @@ class UserSettings extends React.Component {
             username: this.props.userData.username,
             password: "",
             firstName: this.props.userData.first_name,
-            lastName: this.props.userData.last_name
+            lastName: this.props.userData.last_name,
         };
     }
 
@@ -36,14 +36,22 @@ class UserSettings extends React.Component {
     };
 
     handleSaveSettings = () => {
-        const isValid = validateUserSettingsInfo(this.state.username, this.state.password);
+        const isValid = validateUserSettingsInfo(
+            this.state.username,
+            this.state.password
+        );
         if (isValid) {
             this.props.dispatch(
-                action.updateUserSettings(this.props.userData.user_id, this.state.username, this.state.password, this.state.firstName, this.state.lastName)
-            )
+                action.updateUserSettings(
+                    this.props.userData.user_id,
+                    this.state.username,
+                    this.state.password,
+                    this.state.firstName,
+                    this.state.lastName
+                )
+            );
         }
-
-    }
+    };
 
     componentDidMount() {
         // if a user decides to navigate back and forth through the
@@ -114,8 +122,7 @@ class UserSettings extends React.Component {
                         <Typography use="headline5" tag="div">
                             First Name
                         </Typography>
-                        <Typography use="body1" tag="p">
-                        </Typography>
+                        <Typography use="body1" tag="p"></Typography>
                         <TextField
                             onChange={(e) =>
                                 this.handleStateChange("firstName", e)
@@ -132,8 +139,7 @@ class UserSettings extends React.Component {
                         <Typography use="headline5" tag="div">
                             Last Name
                         </Typography>
-                        <Typography use="body1" tag="p">
-                        </Typography>
+                        <Typography use="body1" tag="p"></Typography>
                         <TextField
                             onChange={(e) =>
                                 this.handleStateChange("lastName", e)
@@ -142,20 +148,23 @@ class UserSettings extends React.Component {
                         />
                     </div>
                 </CardPrimaryAction>
-                
+
                 <ListDivider />
 
                 <CardActions fullBleed>
-                    <CardActionButton 
+                    <CardActionButton
                         onClick={this.handleSaveSettings}
-                        label="Save Changes" />
+                        label="Save Changes"
+                    />
                 </CardActions>
             </Card>
         );
     }
 }
 
-const ConnectedUserSettings = connect((state) => ({ userData: state.userSettings.userData }))(UserSettings);
+const ConnectedUserSettings = connect((state) => ({
+    userData: state.userSettings.userData,
+}))(UserSettings);
 
 const userSettingsElement = (
     <ConnectedComponentWrapper isVisible={true} pageTitle="USER SETTINGS">

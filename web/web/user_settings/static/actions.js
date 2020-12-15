@@ -1,4 +1,4 @@
-import { createErrorMessage } from "../../static/js/helpers"
+import { createErrorMessage } from "../../static/js/helpers";
 import { api } from "../../static/js/network_client";
 
 export function updateSuccessful() {
@@ -13,19 +13,25 @@ export function updateFailed() {
     };
 }
 
-export function updateUserSettings(userId, username, password, firstName, lastName) {
+export function updateUserSettings(
+    userId,
+    username,
+    password,
+    firstName,
+    lastName
+) {
     return (dispatch) => {
         try {
             const userData = {
-                "user": {
-                    "id": userId,
-                    "first_name": firstName,
-                    "last_name": lastName,
+                user: {
+                    id: userId,
+                    first_name: firstName,
+                    last_name: lastName,
                 },
-                "login": {
-                    "username": username,
-                    "password_hash": password,
-                }
+                login: {
+                    username: username,
+                    password_hash: password,
+                },
             };
             api.patch(
                 "update_user_settings",
