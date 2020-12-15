@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import { api } from "../../static/js/network_client";
 import { createLoginError } from "./helpers";
 
@@ -14,7 +13,7 @@ export function loginFailed() {
     return {
         type: "LOGIN_FAILED",
         userLoggedIn: false,
-        userData: {}
+        userData: {},
     };
 }
 
@@ -22,13 +21,6 @@ export function resetUserLoggedIn() {
     return {
         type: "RESET_USER_LOGGED_IN",
         userLoggedIn: false,
-    };
-}
-
-export function emptyUserData() {
-    return {
-        type: "EMPTY_USER_DATA",
-        userData: {}
     };
 }
 
@@ -43,19 +35,7 @@ export function processLogin(username, password) {
                 "login",
                 { json: { ...loginData } },
                 (data) => {
-                    console.log("DATA");
-                    console.log(data);
-                    api.get(
-                        "users", (data) => {
-                        console.log(data);
-                    })
-                    //make ajax call to protected endpoint
-                    // Cookies.set("access_token", data.results.data.access_token);
-                    // Cookies.set(
-                    //     "refresh_token",
-                    //     data.results.data.refresh_token
-                    // );
-                    // dispatch(loginSuccessful(data.results.data.login));
+                    dispatch(loginSuccessful(data.results.data.login));
                 },
                 (error) => {
                     createLoginError(
@@ -94,11 +74,6 @@ export function processSignUp(username, firstName, lastName, password) {
                 "sign_up",
                 { json: { ...signUpData } },
                 (data) => {
-                    Cookies.set("access_token", data.results.data.access_token);
-                    Cookies.set(
-                        "refresh_token",
-                        data.results.data.refresh_token
-                    );
                     dispatch(loginSuccessful(data.results.data.login));
                 },
                 (error) => {

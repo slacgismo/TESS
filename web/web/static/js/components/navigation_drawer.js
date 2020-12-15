@@ -4,7 +4,6 @@ import { menuRoutes } from '../config/routes';
 import { List, SimpleListItem } from '@rmwc/list';
 import { Drawer, DrawerContent } from '@rmwc/drawer';
 import { selectMenuOption, toggleNavigationDrawer } from '../actions';
-import Cookies from "js-cookie";
 
 import '@rmwc/list/styles';
 import '@rmwc/drawer/styles';
@@ -18,7 +17,7 @@ class NavigationDrawer extends React.Component {
     onClick = (path, id) => {
         this.props.dispatch(toggleNavigationDrawer());
         this.props.dispatch(selectMenuOption(id));
-        window.location.href = `${path}?jwt=${Cookies.get("access_token")}`;
+        window.location.href = path;
     }
 
     generateMenuOptions = () => {

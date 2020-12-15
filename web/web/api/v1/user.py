@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint
-from flask_jwt_extended import jwt_required, get_jwt_identity, jwt_optional
+from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -11,9 +11,7 @@ from web.models.login import Login, LoginSchema
 
 users_api_bp = Blueprint('users_api_bp', __name__)
 
-
 @users_api_bp.route('/users', methods=['GET'])
-@jwt_required
 def get_user_ids():
     '''
     Retrieves all user objects
@@ -124,7 +122,7 @@ def add_user():
 
 
 @users_api_bp.route('/update_user_settings', methods=['PATCH'])
-@jwt_optional
+@jwt_required
 def updates_user_settings():
     '''
     Updates user and corresponding login in database
@@ -160,7 +158,6 @@ def updates_user_settings():
     if arw.has_errors():
         db.session.rollback()
         return arw.to_json(None, 400)
-
 
     results = user_schema.dump(updated_user)
 

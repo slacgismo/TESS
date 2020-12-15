@@ -45,10 +45,6 @@ class CreateAccount extends React.PureComponent {
         if (this.props.authProps.userData) {
             window.location.href = menuRoutes[0].path;
         }
-
-        if (this.props.authProps.userLoggedOut) {
-            this.props.authProps.dispatch(action.emptyUserData());
-        }
     }
 
     render() {

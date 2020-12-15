@@ -1,6 +1,4 @@
-import Cookies from "js-cookie";
 import { api } from "./network_client";
-import { createErrorMessage } from "./helpers";
 
 export function completeLogout() {
     return {
@@ -26,33 +24,6 @@ export function selectMenuOption(selectedMenuName) {
     return {
         type: "SELECT_MENU_OPTION",
         selectedMenuName,
-    };
-}
-
-export function logout() {
-    return (dispatch) => {
-        try {
-            const accessTokenJson = {
-                headers: {
-                    Authorization: "Bearer " + Cookies.get("access_token"),
-                },
-            };
-            api.delete(
-                "logout",
-                accessTokenJson,
-                () => {
-                    Cookies.remove("access_token");
-                    Cookies.remove("refresh_token");
-                    window.location.href = "/";
-                    dispatch(completeLogout);
-                },
-                (error) => {
-                    createErrorMessage("Error", "Unable to log out");
-                }
-            );
-        } catch (error) {
-            createErrorMessage("Server error", "Something went wrong");
-        }
     };
 }
 

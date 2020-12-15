@@ -7,7 +7,7 @@ export default function userSettings(state = initialState, action) {
         case "LOGIN_SUCCESSFUL":
             return { ...state, userData: action.userData }
         case "UPDATE_SUCCESSFUL":
-        case "UPDATE_FAILED":  
+        case "UPDATE_FAILED":
             return {
                 ...state
             }     
