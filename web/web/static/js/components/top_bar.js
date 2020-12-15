@@ -3,8 +3,8 @@ import "@rmwc/top-app-bar/styles";
 import React from "react";
 import { connect } from "react-redux";
 import { SimpleTopAppBar, TopAppBarFixedAdjust } from "@rmwc/top-app-bar";
-import { toggleNavigationDrawer, completeLogout, resetUserLoggedOut } from "../actions";
-import { createErrorMessage } from "../helpers";
+import { toggleNavigationDrawer, completeLogout } from "../actions";
+import { createPopup } from "../helpers";
 import { api } from "../network_client";
 
 class TopBar extends React.Component {
@@ -21,11 +21,11 @@ class TopBar extends React.Component {
                     this.props.dispatch(completeLogout());
                 },
                 () => {
-                    createErrorMessage("Error", "Unable to logout");
+                    createPopup("Error", "Unable to logout");
                 }
             );
         } catch (error) {
-            createErrorMessage("Server error", "Something went wrong");
+            createPopup("Server error", "Something went wrong");
         }
     };
 

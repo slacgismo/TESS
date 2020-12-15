@@ -18,7 +18,7 @@ import "@rmwc/card/styles";
 import "@rmwc/list/styles";
 import "@rmwc/textfield/styles";
 import "@rmwc/typography/styles";
-import { validateUserSettingsInfo } from "./helpers";
+import { validateLoginData } from "../../static/js/helpers";
 
 class UserSettings extends React.Component {
     constructor(props) {
@@ -36,9 +36,14 @@ class UserSettings extends React.Component {
     };
 
     handleSaveSettings = () => {
-        const isValid = validateUserSettingsInfo(
+        const isValid = validateLoginData(
             this.state.username,
-            this.state.password
+            this.state.password,
+            "Username",
+            'Must be a valid email in the format: "someone@somewhere.com"',
+            "Password",
+            "Must be at least 8 characters long",
+            true
         );
         if (isValid) {
             this.props.dispatch(

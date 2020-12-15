@@ -1,42 +1,40 @@
 import React from "react";
 import { queue } from "./components/app_notification_queue";
 
-export function createErrorMessage(subject, description) {
+export function createPopup(subject, description) {
     queue.notify({
         title: <b>{subject}</b>,
         body: description,
         dismissesOnAction: true,
         timeout: -1,
-        actions: [{ title: "Dismiss" }],
+        actions: [{ title: "OK" }],
     });
 }
 
-export function validateLoginInfo(username, password) {
+export function validateLoginData(
+    username,
+    password,
+    usernameTitle,
+    usernameBody,
+    pwTitle,
+    pwBody,
+    isUserSettingsUpdate
+) {
     let valid = true;
     if (!~username.indexOf("@")) {
         valid = false;
-        // validate the email contains at least an @ symbol
-        queue.notify({
-            title: <b>Username</b>,
-            body:
-                'Must be a valid email in the format: "someone@somewhere.com"',
-            dismissesOnAction: true,
-            timeout: -1,
-            actions: [{ title: "Dismiss" }],
-        });
+        createPopup(usernameTitle, usernameBody);
     }
 
-    if (password.length < 8) {
+    if (!isUserSettingsUpdate && password.length < 8) {
         valid = false;
-        // validate the password is at least eight chars long
-        // validate the username is not empty
-        queue.notify({
-            title: <b>Password</b>,
-            body: "Must be at least 8 characters long",
-            dismissesOnAction: true,
-            timeout: -1,
-            actions: [{ title: "Dismiss" }],
-        });
+        createPopup(pwTitle, pwBody);
     }
+
+    if (isUserSettingsUpdate && 0 < password.length && password.length < 8) {
+        valid = false;
+        createPopup(pwTitle, pwBody);
+    }
+
     return valid;
 }

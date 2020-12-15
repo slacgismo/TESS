@@ -136,14 +136,14 @@ def updates_user_settings():
         json = request.get_json()
 
         user = User.query.filter_by(id=json['user']['id']).one()
-        updated_user = user_schema.load(json['user'], instance=user, partial=True, session=db.session)
+        user_schema.load(json['user'], instance=user, partial=True, session=db.session)
         db.session.flush()
 
         if len(json['login']['password_hash']) == 0:
             del json['login']['password_hash']
 
         login = Login.query.filter_by(user_id=json['user']['id']).one()
-        login_schema.load(json['login'], instance=login, partial=True, session=db.session)
+        updated_login = login_schema.load(json['login'], instance=login, partial=True, session=db.session)
         db.session.commit()
 
     except (MultipleResultsFound, NoResultFound):
@@ -159,6 +159,6 @@ def updates_user_settings():
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    results = user_schema.dump(updated_user)
+    results = LoginSchema(exclude=['created_at', 'login_id', 'updated_at']).dump(updated_login)
 
     return arw.to_json(results)

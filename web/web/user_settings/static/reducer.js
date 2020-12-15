@@ -5,12 +5,10 @@ const initialState = {
 export default function userSettings(state = initialState, action) {
     switch (action.type) {
         case "LOGIN_SUCCESSFUL":
+        case "UPDATE_USER_DATA":
             return { ...state, userData: action.userData };
-        case "UPDATE_SUCCESSFUL":
         case "UPDATE_FAILED":
-            return {
-                ...state,
-            };
+            return { ...state };
         default:
             return state;
     }

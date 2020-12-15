@@ -1,5 +1,6 @@
-import { createErrorMessage } from "../../static/js/helpers";
+import { createPopup } from "../../static/js/helpers";
 import { api } from "../../static/js/network_client";
+import { updateUserData } from "../../auth/static/actions";
 
 export function updateSuccessful() {
     return {
@@ -37,14 +38,16 @@ export function updateUserSettings(
                 "update_user_settings",
                 { json: { ...userData } },
                 (data) => {
-                    dispatch(updateSuccessful());
-                    createErrorMessage(
+                    console.log("HEYYYY")
+                    console.log(data)
+                    dispatch(updateUserData(data.results.data));
+                    createPopup(
                         "",
                         "User settings have been successfully updated"
                     );
                 },
                 (error) => {
-                    createErrorMessage(
+                    createPopup(
                         "Failed",
                         "Unable to update user settings"
                     );
@@ -52,7 +55,7 @@ export function updateUserSettings(
                 }
             );
         } catch (error) {
-            createErrorMessage("Server error", "Something went wrong");
+            createPopup("Server error", "Something went wrong");
             dispatch(updateFailed());
         }
     };

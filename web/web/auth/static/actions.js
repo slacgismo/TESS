@@ -1,5 +1,5 @@
 import { api } from "../../static/js/network_client";
-import { createLoginError } from "./helpers";
+import { createPopup } from "../../static/js/helpers";
 
 export function loginSuccessful(userData) {
     return {
@@ -24,6 +24,13 @@ export function resetUserLoggedIn() {
     };
 }
 
+export function updateUserData(userData) {
+    return {
+        type: "UPDATE_USER_DATA",
+        userData: userData,
+    };
+}
+
 export function processLogin(username, password) {
     return (dispatch) => {
         try {
@@ -38,7 +45,7 @@ export function processLogin(username, password) {
                     dispatch(loginSuccessful(data.results.data.login));
                 },
                 (error) => {
-                    createLoginError(
+                    createPopup(
                         "Login failed",
                         "Incorrect username and/or password"
                     );
@@ -46,7 +53,7 @@ export function processLogin(username, password) {
                 }
             );
         } catch (error) {
-            createLoginError("Server error", "Something went wrong");
+            createPopup("Server error", "Something went wrong");
             dispatch(loginFailed());
         }
     };
@@ -77,12 +84,12 @@ export function processSignUp(username, firstName, lastName, password) {
                     dispatch(loginSuccessful(data.results.data.login));
                 },
                 (error) => {
-                    createLoginError("Sign up failed", "Email already in use");
+                    createPopup("Sign up failed", "Email already in use");
                     dispatch(loginFailed());
                 }
             );
         } catch (error) {
-            createLoginError("Server error", "Something went wrong");
+            createPopup("Server error", "Something went wrong");
             dispatch(loginFailed());
         }
     };

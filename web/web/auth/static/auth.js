@@ -7,7 +7,7 @@ import { TextField } from "@rmwc/textfield";
 import CreateAccount from "./create_account";
 import { menuRoutes } from "../../static/js/config/routes";
 import ConnectedComponentWrapper from "../../static/js/base";
-import { validateLogin } from "./helpers";
+import { validateLoginData } from "../../static/js/helpers";
 
 import "@rmwc/button/styles";
 import "@rmwc/textfield/styles";
@@ -35,7 +35,15 @@ class Auth extends React.Component {
     };
 
     handleLogin = () => {
-        const isValid = validateLogin(this.state.username, this.state.password);
+        const isValid = validateLoginData(
+            this.state.username,
+            this.state.password,
+            "",
+            "Incorrect username and/or password",
+            "",
+            "Incorrect username and/or password",
+            false
+        );
         if (isValid) {
             this.props.dispatch(
                 action.processLogin(this.state.username, this.state.password)

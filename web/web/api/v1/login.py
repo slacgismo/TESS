@@ -74,9 +74,7 @@ def create_login_info():
 
         login_data = login_schema.dump(matching_login)
 
-        results = {
-            'login': login_data
-        }
+        results = { 'login': login_data }
 
     except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
@@ -130,9 +128,7 @@ def process_sign_up():
 
         login_data = login_schema.dump(new_login)
 
-        results = {
-            'login_data': login_data
-        }
+        results = { 'login': login_data }
 
         final_response, status_code, headers = arw.to_json(results, 201)
         set_access_cookies(final_response, access_token)
