@@ -35,20 +35,9 @@ class Auth extends React.Component {
     };
 
     handleLogin = () => {
-        const isValid = validateLoginData(
-            this.state.username,
-            this.state.password,
-            "",
-            "Incorrect username and/or password",
-            "",
-            "Incorrect username and/or password",
-            false
+        this.props.dispatch(
+            action.processLogin(this.state.username, this.state.password)
         );
-        if (isValid) {
-            this.props.dispatch(
-                action.processLogin(this.state.username, this.state.password)
-            );
-        }
     };
 
     componentDidUpdate() {
