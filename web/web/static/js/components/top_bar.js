@@ -21,7 +21,7 @@ class TopBar extends React.Component {
                     this.props.dispatch(completeLogout());
                 },
                 () => {
-                    createPopup("Error", "Unable to logout");
+                    this.props.dispatch(completeLogout());
                 }
             );
         } catch (error) {
