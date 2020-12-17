@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --mode development --config webpack.config.js",
-    "build": "webpack --watch --mode production"
+    "build": "webpack --watch --mode production",
+    "build-dev": "webpack --watch --mode development"
   },
   "author": "",
   "license": "ISC",
@@ -23,7 +24,6 @@
     "@rmwc/top-app-bar": "^6.0.14",
     "@rmwc/typography": "^6.0.14",
     "chart.js": "^2.9.3",
-    "js-cookie": "^2.2.1",
     "ky": "^0.19.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

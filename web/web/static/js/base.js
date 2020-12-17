@@ -20,13 +20,6 @@ class ConnectedComponentWrapper extends React.Component {
         super(props);
     }
 
-    componentDidUpdate() {
-        if (this.props.userLoggedOut) {
-            this.props.dispatch(action.resetUserLoggedOut());
-            window.location.href = menuRoutes[0].path;
-        }
-    }
-
     render() {
         return (
             <Provider store={store}>

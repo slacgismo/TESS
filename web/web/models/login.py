@@ -64,13 +64,22 @@ class Login(UserMixin, Model):
 
 class LoginSchema(SQLAlchemyAutoSchema):
     password_hash = fields.Method(deserialize='create_password_hash')
+    first_name = fields.Method('get_user_first_name', dump_only=True)
+    last_name = fields.Method('get_user_last_name', dump_only=True)
 
     # Marshmallow methods
     def create_password_hash(self, obj):
         password_hash = generate_password_hash(obj)
         return password_hash
 
+    def get_user_first_name(self, obj):
+        return obj.user.first_name
+    
+    def get_user_last_name(self, obj):
+        return obj.user.last_name
+
     class Meta:
         model = Login
         load_instance = True
         include_fk = True
+        transient = True

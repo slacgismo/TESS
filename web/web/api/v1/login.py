@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask_jwt_extended import (create_access_token, get_jwt_identity, jwt_refresh_token_required,
-                                create_refresh_token, get_raw_jwt, get_jti, jwt_required)
+                                create_refresh_token, unset_jwt_cookies, get_jti, jwt_required, set_access_cookies, set_refresh_cookies)
 from .response_wrapper import ApiResponseWrapper
 from web.database import db
 from web.models.login import Login, LoginSchema
@@ -29,7 +29,8 @@ def reset_password(login_id):
 
     try:
         login = Login.query.filter_by(login_id=login_id).one()
-        login_schema.load(request.get_json(), instance=login, partial=True, session=db.session)
+        login_schema.load(request.get_json(), instance=login,
+                          partial=True, session=db.session)
         db.session.commit()
 
     except (MultipleResultsFound, NoResultFound):
@@ -55,6 +56,8 @@ def create_login_info():
     '''
     arw = ApiResponseWrapper()
     login_data = request.get_json()
+    login_schema = LoginSchema(
+        exclude=['login_id', 'created_at', 'updated_at'])
 
     try:
         matching_login = Login.query.filter_by(
@@ -69,10 +72,9 @@ def create_login_info():
         refresh_jti = get_jti(encoded_token=refresh_token)
         revoked_store.set(refresh_jti, 'false', JWT_REFRESH_EXPIRES)
 
-        tokens = {
-            'access_token': access_token,
-            'refresh_token': refresh_token
-        }
+        login_data = login_schema.dump(matching_login)
+
+        results = { 'login': login_data }
 
     except (MultipleResultsFound, NoResultFound):
         arw.add_errors('No result found or multiple results found')
@@ -86,7 +88,11 @@ def create_login_info():
     if arw.has_errors():
         return arw.to_json(None, 400)
 
-    return arw.to_json(tokens, 201)
+    final_response, status_code, headers = arw.to_json(results, 201)
+    set_access_cookies(final_response, access_token)
+    set_refresh_cookies(final_response, refresh_token)
+
+    return final_response, status_code, headers
 
 
 @login_api_bp.route('/sign_up', methods=['POST'])
@@ -120,10 +126,13 @@ def process_sign_up():
         refresh_jti = get_jti(encoded_token=refresh_token)
         revoked_store.set(refresh_jti, 'false', JWT_REFRESH_EXPIRES)
 
-        tokens = {
-            'access_token': access_token,
-            'refresh_token': refresh_token
-        }
+        login_data = login_schema.dump(new_login)
+
+        results = { 'login': login_data }
+
+        final_response, status_code, headers = arw.to_json(results, 201)
+        set_access_cookies(final_response, access_token)
+        set_refresh_cookies(final_response, refresh_token)
 
     except ValidationError as ve:
         arw.add_errors(ve.messages)
@@ -135,7 +144,8 @@ def process_sign_up():
         db.session.rollback()
         return arw.to_json(None, 400)
 
-    return arw.to_json(tokens, 201)
+    return final_response, status_code, headers
+
 
 @login_api_bp.route('/logout', methods=['DELETE'])
 @jwt_required
@@ -145,12 +155,16 @@ def logout():
     arw = ApiResponseWrapper()
 
     try:
-        access_token = get_raw_jwt()['jti']
-        revoked_store.set(access_token, 'true', JWT_ACCESS_EXPIRES)
+        access_token = request.cookies.get('access_token_cookie')
+        access_jti = get_jti((access_token))
+        revoked_store.set(access_jti, 'true', JWT_ACCESS_EXPIRES)
 
-        refresh_token = request.cookies.get('refresh_token')
+        refresh_token = request.cookies.get('refresh_token_cookie')
         refresh_jti = get_jti((refresh_token))
         revoked_store.set(refresh_jti, 'true', JWT_ACCESS_EXPIRES)
+
+        final_response, status_code, headers = arw.to_json(None, 201)
+        unset_jwt_cookies(final_response)
 
     except (BadRequestsError, UnauthorizedError, MethodNotAllowedError, InternalServerError, NotFoundError) as e:
         arw.add_errors(e.messages)
@@ -158,10 +172,11 @@ def logout():
     if arw.has_errors():
         return arw.to_json(None, 400)
 
-    return arw.to_json({'msg': 'Tokens revoked'}, 200)
+    return final_response, status_code, headers
 
 # see this repo for JWT redis blacklist setup:
 # https://github.com/vimalloc/flask-jwt-extended/blob/master/examples/redis_blacklist.py
+
 
 @login_api_bp.route('/refresh', methods=['POST'])
 @jwt_refresh_token_required

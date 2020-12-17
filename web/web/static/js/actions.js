@@ -1,18 +1,9 @@
-import Cookies from "js-cookie";
-import { api, auth } from "./network_client";
-import { createErrorMessage } from "./helpers";
+import { api } from "./network_client";
 
 export function completeLogout() {
     return {
         type: "USER_LOGGED_OUT",
         userLoggedOut: true,
-    };
-}
-
-export function resetUserLoggedOut() {
-    return {
-        type: "RESET_USER_LOGGED_OUT",
-        userLoggedOut: false,
     };
 }
 
@@ -26,33 +17,6 @@ export function selectMenuOption(selectedMenuName) {
     return {
         type: "SELECT_MENU_OPTION",
         selectedMenuName,
-    };
-}
-
-export function logout() {
-    return (dispatch) => {
-        try {
-            const accessTokenJson = {
-                headers: {
-                    Authorization: "Bearer " + Cookies.get("access_token"),
-                },
-            };
-            api.delete(
-                "logout",
-                accessTokenJson,
-                () => {
-                    Cookies.remove("access_token");
-                    Cookies.remove("refresh_token");
-                    window.location.href = "/";
-                    dispatch(completeLogout);
-                },
-                (error) => {
-                    createErrorMessage("Error", "Unable to log out");
-                }
-            );
-        } catch (error) {
-            createErrorMessage("Server error", "Something went wrong");
-        }
     };
 }
 

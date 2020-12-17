@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect
+from flask_jwt_extended import (jwt_optional, get_jwt_identity)
 
 alerts_bp = Blueprint('alerts_bp',
                       __name__,
@@ -8,5 +9,11 @@ alerts_bp = Blueprint('alerts_bp',
 
 
 @alerts_bp.route('/')
+@jwt_optional
 def index():
-    return render_template('alerts/index.html')
+    has_tokens = get_jwt_identity()
+    if has_tokens:
+        return render_template('alerts/index.html')
+    else:
+        return redirect('/?access_denied=true')
+
