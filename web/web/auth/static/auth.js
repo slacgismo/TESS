@@ -7,8 +7,7 @@ import { TextField } from "@rmwc/textfield";
 import CreateAccount from "./create_account";
 import { menuRoutes } from "../../static/js/config/routes";
 import ConnectedComponentWrapper from "../../static/js/base";
-import { validateLoginData } from "../../static/js/helpers";
-
+import { createPopup } from "../../static/js/helpers";
 import "@rmwc/button/styles";
 import "@rmwc/textfield/styles";
 
@@ -19,6 +18,7 @@ class Auth extends React.Component {
             username: "",
             password: "",
             userIsCreatingAccount: false,
+            showAccessDeniedAlert: false,
         };
     }
 
@@ -40,10 +40,24 @@ class Auth extends React.Component {
         );
     };
 
+    componentDidMount() {
+        const search = window.location.search;
+        const params = new URLSearchParams(search);
+        const accessDenied = params.get("access_denied");
+        if (accessDenied) {
+            this.setState({ showAccessDeniedAlert: true });
+        }
+    }
+
     componentDidUpdate() {
         if (this.props.isUserLoggedIn) {
             this.props.dispatch(action.resetUserLoggedIn());
             window.location.href = menuRoutes[0].path;
+        }
+
+        if (this.state.showAccessDeniedAlert === true) {
+            createPopup("Access Denied", "Please login");
+            this.setState({ showAccessDeniedAlert: false });
         }
     }
 

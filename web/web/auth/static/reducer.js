@@ -1,6 +1,6 @@
 const initialState = {
     userData: {},
-    userLoggedIn: false,
+    userLoggedIn: false
 };
 
 export default function auth(state = initialState, action) {

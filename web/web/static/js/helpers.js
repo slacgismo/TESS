@@ -8,6 +8,7 @@ export function createPopup(subject, description) {
         dismissesOnAction: true,
         timeout: -1,
         actions: [{ title: "OK" }],
+        open: true
     });
 }
 

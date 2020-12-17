@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, redirect, request
+from flask import Blueprint, render_template, redirect
 from flask_jwt_extended import (jwt_optional, get_jwt_identity)
 
 auth_bp = Blueprint('auth_bp',

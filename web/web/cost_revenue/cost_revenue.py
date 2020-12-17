@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect
+from flask_jwt_extended import (jwt_optional, get_jwt_identity)
 
 
 cost_revenue_bp = Blueprint('cost_revenue_bp',
@@ -9,5 +10,10 @@ cost_revenue_bp = Blueprint('cost_revenue_bp',
 
 
 @cost_revenue_bp.route('/')
+@jwt_optional
 def index():
-    return render_template('cost_revenue/index.html')
+    has_tokens = get_jwt_identity()
+    if has_tokens:
+        return render_template('cost_revenue/index.html')
+    else:
+        return redirect('/?access_denied=true')
