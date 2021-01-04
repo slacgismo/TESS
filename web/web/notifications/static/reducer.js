@@ -9,8 +9,6 @@ export default function notifications(state = initialState, action) {
             return { ...state, notificationEntries: action.data };
 
         case 'ADD_NEW_NOTIFICATION_ROW':
-            console.log("burdayim")
-            console.log(state.notificationEntries)
             state.notificationEntries.unshift(action.rowTemplate);
             return { ...state, notificationEntries: state.notificationEntries.slice(0) };
 
