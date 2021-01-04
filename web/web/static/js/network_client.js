@@ -4,15 +4,15 @@ import ky from 'ky';
  * Define the network API abstraction layer
  */
 export const api = {
-    network: ky,
+    network: ky,    
     url: '/api/v1/',
-
+    
     post: async (resource, data, successHandler, errorHandler) => {
         try {
             const response = await api.network.post(`${api.url}${resource}`, data).json();
             if(successHandler && typeof successHandler === "function") {
                 successHandler(response);
-            }
+            }            
         } catch(e) {
             api.handleApiError(e, errorHandler);
         }
@@ -23,18 +23,7 @@ export const api = {
             const response = await api.network.put(`${api.url}${resource}`, data).json();
             if(successHandler && typeof successHandler === "function") {
                 successHandler(response);
-            }
-        } catch(e) {
-            api.handleApiError(e, errorHandler);
-        }
-    },
-
-    put: async (resource, data, successHandler, errorHandler) => {
-        try {
-            const response = await api.network.put(`${api.url}${resource}`, data).json();
-            if(successHandler && typeof successHandler === "function") {
-                successHandler(response);
-            }
+            }            
         } catch(e) {
             api.handleApiError(e, errorHandler);
         }
@@ -45,7 +34,7 @@ export const api = {
             const response = await api.network.patch(`${api.url}${resource}`, data).json();
             if(successHandler && typeof successHandler === "function") {
                 successHandler(response);
-            }
+            }            
         } catch(e) {
             api.handleApiError(e, errorHandler);
         }
@@ -57,7 +46,7 @@ export const api = {
             if(successHandler && typeof successHandler === "function") {
                 successHandler(response);
             }
-        } catch(e) {
+        } catch(e) {            
             api.handleApiError(e, errorHandler);
         }
     },
@@ -68,7 +57,7 @@ export const api = {
             if(successHandler && typeof successHandler === "function") {
                 successHandler(response);
             }
-        } catch(e) {
+        } catch(e) {            
             api.handleApiError(e, errorHandler);
         }
     },

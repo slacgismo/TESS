@@ -57,6 +57,11 @@ yarn install # install all the dependencies in the package.json
 yarn build   # bundle and deploy all the assets referenced in the application
 ```
 
+## Starting the Redis Server
+```bash
+redis-server
+```
+
 ## Running the project
 ```bash
 flask run
