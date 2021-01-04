@@ -154,7 +154,6 @@ class Notifications extends React.Component {
     }
 
     getBody = () => {
-        let latestNotificationId = 0
         const numAlertTypes = this.props.alertTypeEntries.length
         const dataTableBody = this.props.notificationEntries.map((item, index) => {
             const numNotifications = item.notifications.length
@@ -170,20 +169,16 @@ class Notifications extends React.Component {
                     let index = alertTypes.indexOf(notification.alert_type_id)
                     alertTypes.splice(index, 1)
                 }
-                if (notification.notification_id > latestNotificationId) {
-                    latestNotificationId = notification.notification_id
-                }
                 notifications.push(notification)
             })
-            // create nonexistent notifications in
+            // create nonexistent notifications for each checkbox to display
             alertTypes.map((alertType) => {
                 notifications.push({
                     "alert_type_id" : alertType,
                     "is_active" : false,
-                    "notification_id" : latestNotificationId + 1,
+                    "notification_id" : uuidv4(),
                     "not_exist" : true
                 })
-                latestNotificationId++
             })
             // sorting items
             notifications.sort((a, b) => (a.alert_type_id > b.alert_type_id) ? 1 : -1)
