@@ -5,6 +5,7 @@ from sqlalchemy.types import TIMESTAMP
 from sqlalchemy.schema import UniqueConstraint
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from sqlalchemy.orm import validates
 
 from web.database import (
     db,
@@ -47,6 +48,15 @@ class Notification(Model):
                                        name='_alert_type_id_email_uc'), )
 
     # Methods
+    @validates('email')
+    def empty_string_to_null(self, key, value):
+        # converts empty string to null as field is not nullable
+        if isinstance(value,str) and value == '':
+            return None
+        else:
+            return value
+
+
     def __repr__(self):
         return f'<Notification notification_id={self.notification_id} alert_type_id={self.alert_type_id} is_active={self.is_active}>'
 
@@ -57,19 +67,6 @@ class Notification(Model):
 
 
 class NotificationSchema(SQLAlchemyAutoSchema):
-    pk = fields.Method('get_id')
-    notification_type = fields.Method('get_notification_type')
-    label = fields.Method('get_label')
-
-    def get_notification_type(self, obj):
-        return str(obj.alert_type.name.name)
-
-    def get_label(self, obj):
-        return obj.alert_type.name.value
-
-    def get_id(self, obj):
-        return obj.notification_id
-
     class Meta:
         model = Notification
         load_instance = True

@@ -2,13 +2,17 @@ import datetime
 from sqlalchemy import exc
 from web.extensions import db
 from web.models.rate import Rate
+from web.models.user import User
+from web.models.alert import Alert
 from web.models.market import Market
 from web.models.address import Address
 from web.models.utility import Utility
 from web.models.home_hub import HomeHub
 from web.models.hce_bids import HceBids
+from web.models.alert_type import AlertType
 from web.models.meter import Meter, MeterType
 from web.models.transformer import Transformer
+from web.models.notification import Notification
 from web.models.meter_interval import MeterInterval
 from web.models.market_interval import MarketInterval
 from web.models.transformer_interval import TransformerInterval
@@ -178,3 +182,110 @@ def seed():
     except exc.IntegrityError:
         db.session.rollback()
         print('transformer interval already exists')
+
+    try:
+        at = AlertType(
+            alert_type_id=1,
+            utility_id=1,
+            name='price_alert',
+            limit=1.0,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(at)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert type already exists')
+
+    try:
+        at = AlertType(
+            alert_type_id=2,
+            utility_id=1,
+            name='YELLOW_ALARM_LOAD',
+            limit=3.0,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(at)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert type already exists')
+
+    try:
+        user = User(
+            id=1,
+            email='test@test.com',
+            email_confirmed_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            first_name='fname',
+            last_name='lname',
+            address_id=1,
+            utility_id=1,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(user)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('user already exists')
+
+    try:
+        alert = Alert(
+            alert_id=1,
+            alert_type_id=1,
+            assigned_to='test@test.com',
+            description='sdjfd',
+            status='open',
+            context='feeder',
+            context_id='1',
+            resolution = 'fdjgh')
+        db.session.add(alert)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert already exists')
+
+    try:
+        alert = Alert(
+            alert_id=2,
+            alert_type_id=1,
+            assigned_to='test@test.com',
+            description='sdjfd',
+            status='open',
+            context='feeder',
+            context_id='1',
+            resolution = 'fdjgh')
+        db.session.add(alert)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert already exists')
+
+    try:
+        notification = Notification(
+            notification_id=1,
+            alert_type_id=1,
+            email="test@test.com",
+            is_active=False,
+            created_by=1,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(notification)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('notification already exists')
+
+    try:
+        notification = Notification(
+            notification_id=2,
+            alert_type_id=2,
+            email="test@test.com",
+            is_active=False,
+            created_by=1,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(notification)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('notification already exists')

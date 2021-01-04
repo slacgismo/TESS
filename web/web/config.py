@@ -30,7 +30,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DB_SERVER = 'localhost'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_ECHO = False
     DB_USER = "tess_user"
     DB_PASSWORD = "tess_db_password_local"

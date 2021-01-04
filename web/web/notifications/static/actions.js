@@ -22,7 +22,7 @@ function updateFetchedNotifications(data) {
 }
 
 export function addNewNotificationRow(rowTemplate) {
-    return { 
+    return {
         type: 'ADD_NEW_NOTIFICATION_ROW',
         rowTemplate
     }
@@ -38,6 +38,37 @@ export function getNotifications() {
         })
     }
 }
+
+export function postNotifications(data) {
+    return dispatch => {
+        api.post('notification', { json: { ...data } }, (response) => {
+            dispatch(getNotifications());
+        }, (error) => {
+            console.warn(error);
+        })
+    }
+}
+
+export function updateNotifications(data) {
+    return dispatch => {
+        api.put('notification', { json: { ...data } }, (response) => {
+            dispatch(getNotifications());
+        }, (error) => {
+            console.warn(error);
+        })
+    }
+}
+
+export function deleteNotifications(data) {
+    return dispatch => {
+        api.delete('notification', { json: { ...data } }, (response) => {
+            dispatch(getNotifications());
+        }, (error) => {
+            console.warn(error);
+        })
+    }
+}
+
 
 function updateFetchedAlertTypes(data) {
   return {
