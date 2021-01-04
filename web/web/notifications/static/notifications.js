@@ -34,8 +34,7 @@ class Notifications extends React.Component {
             checkboxReferences: {},
             inputValueReferences: {},
             selectedRowIdsToDelete: [],
-            currentEmail: "",
-            maxNotificationId: 0
+            currentEmail: ""
         };
     }
 
@@ -102,27 +101,6 @@ class Notifications extends React.Component {
         }
     }
 
-    getHeader = () => {
-        const headers = this.props.alertTypeEntries.length
-            ? this.props.alertTypeEntries
-            : defaultHeaders
-        return (
-            <DT.DataTableHead>
-                <DT.DataTableRow>
-                    <DT.DataTableHeadCell>Delete</DT.DataTableHeadCell>
-                    <DT.DataTableHeadCell>Email</DT.DataTableHeadCell>
-                    {
-                        headers.map(item => {
-                            return (
-                                <DT.DataTableHeadCell>{item.name}</DT.DataTableHeadCell>
-                            );
-                        })
-                    }
-                </DT.DataTableRow>
-            </DT.DataTableHead>
-        );
-    }
-
     handleEmailAdd = (e) => {
         const isValid = validateEmail(e.target.value)
         const curEmail = this.state.currentEmail
@@ -151,6 +129,27 @@ class Notifications extends React.Component {
                 }))
             }
         }
+    }
+
+    getHeader = () => {
+        const headers = this.props.alertTypeEntries.length
+            ? this.props.alertTypeEntries
+            : defaultHeaders
+        return (
+            <DT.DataTableHead>
+                <DT.DataTableRow>
+                    <DT.DataTableHeadCell>Delete</DT.DataTableHeadCell>
+                    <DT.DataTableHeadCell>Email</DT.DataTableHeadCell>
+                    {
+                        headers.map(item => {
+                            return (
+                                <DT.DataTableHeadCell>{item.name}</DT.DataTableHeadCell>
+                            );
+                        })
+                    }
+                </DT.DataTableRow>
+            </DT.DataTableHead>
+        );
     }
 
     getBody = () => {
@@ -226,7 +225,6 @@ class Notifications extends React.Component {
     }
 
     addNewRow = () => {
-        let currentId = this.state.maxNotificationId
         let notifications = [];
         if(!this.props.alertTypeEntries.length) {
             notifications = defaultHeaders;
@@ -234,7 +232,6 @@ class Notifications extends React.Component {
             // use the first entry in notification entries as the template, since there may
             // new, unaccounted for columns
             notifications = this.props.notificationEntries[0].notifications.map(item => {
-                currentId++
                 return {
                     alert_type_id: item.alert_type_id,
                     is_active: false,
