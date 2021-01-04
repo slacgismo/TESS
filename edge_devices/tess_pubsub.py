@@ -4,6 +4,7 @@ import AWSIoTPythonSDK.MQTTLib as AWSIoTPyMQTT
 import heila_comms as hc
 import config
 import sonnen_comms as sonnen
+import requests
 
 # Expected payload to be received by edge devices when subscribing to a topic:
 # {
@@ -14,6 +15,7 @@ import sonnen_comms as sonnen
 #       {"resource": "ev", "payload": payload}
 #   ]
 # }
+
 
 def publish(client, topic, payload, Device_ID):
     payload = {'DeviceID': Device_ID, 'DeviceInformation': payload}
@@ -50,6 +52,14 @@ def customCallback(client, userdata, message):
     print("--------------\n\n")
 
 
+def request():
+    try:
+        retval = requests.get('https://www.google.com/').status_code
+        print('status code: ', retval)
+    except requests.exceptions.RequestException as e:
+        print('error: ', e)
+        t.sleep(5)
+
 # AWS Info
 ENDPOINT = config.ENDPOINT
 CLIENT_ID = config.CLIENT_ID
@@ -81,7 +91,18 @@ subscribe(myAWSIoTMQTTClient, TOPIC_SUBSCRIBE)
 
 # publishing to topic
 while True:
-    sonnen_obj = sonnen.SonnenApiInterface()
-    payload = [{'resource': 'solar', 'payload': hc.heila_update(url=url)}, {'resource': 'battery', 'payload': sonnen_obj.get_batteries_status_json(serial=config.SONNEN_BATT)}, {'resource': 'ev', 'payload': None}]
-    publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, payload, CLIENT_ID)
+    try:
+        # Testing connection
+        retval = requests.get('https://www.google.com/').status_code
+        print('status code: ', retval)
+        sonnen_obj = sonnen.SonnenApiInterface()
+        payload = [{'resource': 'solar', 'payload': hc.heila_update(url=url)},
+                   {'resource': 'battery', 'payload': sonnen_obj.get_batteries_status_json(serial=config.SONNEN_BATT)},
+                   {'resource': 'ev', 'payload': None}]
+        publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, payload, CLIENT_ID)
+
+    except requests.exceptions.RequestException as e:
+        print('error: ', e)
+        print('Transfer control back to HEILA... Implement function - TBD')
+
     t.sleep(10) # Need to define how often to provide info updates
