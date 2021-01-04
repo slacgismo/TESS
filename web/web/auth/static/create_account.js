@@ -2,7 +2,7 @@ import React from "react";
 import * as action from "./actions";
 import { Button } from "@rmwc/button";
 import { TextField } from "@rmwc/textfield";
-import { validateLogin } from "./helpers";
+import { validateLoginData } from "../../static/js/helpers";
 import { menuRoutes } from "../../static/js/config/routes";
 
 import "@rmwc/button/styles";
@@ -33,7 +33,15 @@ class CreateAccount extends React.PureComponent {
     };
 
     handleSignUp = (username, firstName, lastName, password) => {
-        const isValid = validateLogin(username, password);
+        const isValid = validateLoginData(
+            username,
+            password,
+            "Username",
+            'Must be a valid email in the format: "someone@somewhere.com"',
+            "Password",
+            "Must be at least 8 characters long",
+            false
+        );
         if (isValid) {
             this.props.authProps.dispatch(
                 action.processSignUp(username, firstName, lastName, password)
@@ -43,7 +51,6 @@ class CreateAccount extends React.PureComponent {
 
     componentDidUpdate() {
         if (this.props.authProps.isUserLoggedIn) {
-            this.props.authProps.dispatch(action.resetUserLoggedIn());
             window.location.href = menuRoutes[0].path;
         }
     }

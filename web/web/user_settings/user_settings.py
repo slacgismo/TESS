@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect
+from flask_jwt_extended import (jwt_optional, get_jwt_identity)
 
 user_settings_bp = Blueprint('user_settings_bp',
                              __name__,
@@ -8,6 +9,10 @@ user_settings_bp = Blueprint('user_settings_bp',
 
 
 @user_settings_bp.route('/')
+@jwt_optional
 def index():
-
-    return render_template('user_settings/index.html')
+    has_tokens = get_jwt_identity()
+    if has_tokens:
+        return render_template('user_settings/index.html')
+    else:
+        return redirect('/?access_denied=true')

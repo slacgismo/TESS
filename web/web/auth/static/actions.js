@@ -1,11 +1,11 @@
-import Cookies from "js-cookie";
 import { api } from "../../static/js/network_client";
-import { createLoginError } from "./helpers";
+import { createPopup } from "../../static/js/helpers";
 
-export function loginSuccessful() {
+export function loginSuccessful(userData) {
     return {
         type: "LOGIN_SUCCESSFUL",
         userLoggedIn: true,
+        userData: userData,
     };
 }
 
@@ -13,6 +13,7 @@ export function loginFailed() {
     return {
         type: "LOGIN_FAILED",
         userLoggedIn: false,
+        userData: {},
     };
 }
 
@@ -20,6 +21,13 @@ export function resetUserLoggedIn() {
     return {
         type: "RESET_USER_LOGGED_IN",
         userLoggedIn: false,
+    };
+}
+
+export function updateUserData(userData) {
+    return {
+        type: "UPDATE_USER_DATA",
+        userData: userData,
     };
 }
 
@@ -34,15 +42,10 @@ export function processLogin(username, password) {
                 "login",
                 { json: { ...loginData } },
                 (data) => {
-                    Cookies.set("access_token", data.results.data.access_token);
-                    Cookies.set(
-                        "refresh_token",
-                        data.results.data.refresh_token
-                    );
-                    dispatch(loginSuccessful());
+                    dispatch(loginSuccessful(data.results.data.login));
                 },
                 (error) => {
-                    createLoginError(
+                    createPopup(
                         "Login failed",
                         "Incorrect username and/or password"
                     );
@@ -50,7 +53,7 @@ export function processLogin(username, password) {
                 }
             );
         } catch (error) {
-            createLoginError("Server error", "Something went wrong");
+            createPopup("Server error", "Something went wrong");
             dispatch(loginFailed());
         }
     };
@@ -78,20 +81,15 @@ export function processSignUp(username, firstName, lastName, password) {
                 "sign_up",
                 { json: { ...signUpData } },
                 (data) => {
-                    Cookies.set("access_token", data.results.data.access_token);
-                    Cookies.set(
-                        "refresh_token",
-                        data.results.data.refresh_token
-                    );
-                    dispatch(loginSuccessful());
+                    dispatch(loginSuccessful(data.results.data.login));
                 },
                 (error) => {
-                    createLoginError("Sign up failed", "Email already in use");
+                    createPopup("Sign up failed", "Email already in use");
                     dispatch(loginFailed());
                 }
             );
         } catch (error) {
-            createLoginError("Server error", "Something went wrong");
+            createPopup("Server error", "Something went wrong");
             dispatch(loginFailed());
         }
     };
