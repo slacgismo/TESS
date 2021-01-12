@@ -46,21 +46,24 @@ def on_init(t):
 	global t0;
 	t0 = time.time()
 
-	# Get users and create house agents
+	# Gets the list of active home hubs (active == in the TESS database)
+	import pdb; pdb.set_trace()
 	hh_list = requests.get(db_address+'home_hubs').json()['results']['data']
 	hh_ids = []
 	for hh in hh_list:
 		hh_ids += [hh['home_hub_id']]
+	
+	# Creates house objects for each active home hub
 	global houses;
 	houses = []
 	for hh_id in hh_ids:
 		houses += [HHfct.create_agent_house(hh_id)]
 
-	#Create WS supplier
+	#Create WS supplier object
 	global retailer;
 	retailer = WSSupplier()
 
-	#Create market operator
+	#Create market operator object
 	global LEM_operator;
 	LEM_operator = MarketOperator(interval,p_max) #Does that need to be updated based on DB?
 
@@ -72,9 +75,10 @@ def on_init(t):
 
 # At each market interval : bidding, clearing, and dispatching
 def on_precommit(t):
-	#import pdb; pdb.set_trace()
+	import pdb; pdb.set_trace()
 
 	#Run market only every five minutes
+
 	dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None)
 	global LEM_operator;
 	if not ((dt_sim_time.second%15 == 0)): # and (dt_sim_time.minute % (LEM_operator.interval/60) == 0)):
@@ -83,11 +87,8 @@ def on_precommit(t):
 	else: #interval in minutes #is not start time
 		print('Start precommit: '+str(dt_sim_time))
 
-		#import pdb; pdb.set_trace()
-		# Check clock and if it's actually five minutes
-
 		############
-		#Imitates physical process of EV arrival
+		#Imitates physical process of EV arrival - placeholder in MVP
 		############
 
 		# global houses;
@@ -99,11 +100,15 @@ def on_precommit(t):
 		# Physical info : physical model --> TESS DB
 		############
 
-		# GLD --> DB
+		#gldimport.update_settings() #If user changes settings in API, this should be called
+
+		# If simulation is run in GridlabD : GLD --> DB
+
 		if gld_simulation:
-			# Houses / Load
-			for house in houses:
-				#gldimport.update_settings() #If user changes settings in API, this should be called
+			
+			# Read out states of house / appliances
+
+			for house in houses: # only for PV so far - other appliances placeholder in MVP
 				#if house.HVAC:
 				#	gldimport.update_house_state(house.name,dt_sim_time) #For HVAC systems
 				if house.PV:
@@ -112,11 +117,14 @@ def on_precommit(t):
 				#	gldimport.update_battery_state(house.battery.name,dt_sim_time)
 				#if house.EVCP:
 				#	gldimport.update_CP_state(house.EVCP.name,dt_sim_time)
-			# External information : system / grid
-			gldimport.get_systemstate(dt_sim_time) # --> TABLE transformer_meter
-			# External information : supply costs
-			gldimport.get_supplycosts(dt_sim_time) # --> TABLE transformer_meter
-		# Real-world implementation --> DB
+			
+			# Read out system information
+			
+			gldimport.get_systemstate(dt_sim_time) # External information : system / grid # --> TABLE transformer_meter
+			gldimport.get_supplycosts(dt_sim_time) # External information : supply costs # --> TABLE transformer_meter
+		
+		# If simulation is run in lab/on-site : Real-world implementation --> DB
+		
 		else:
 			import sys; sys.exit('Physical data comes from lab/field: Not implemented yet')
 
@@ -124,27 +132,32 @@ def on_precommit(t):
 		#Market side / no phycial APIs involved
 		############
 
-		#Get air temperature, determine mode
+		#Reads in information from DB and updates python objects (house + appliances)
+
 		for house in houses:
-			#Reads in information from DB and updates python objects (house + appliances)
 			house.update_state(dt_sim_time)
 
 		#Market Operator creates market for t
+
 		lem = LEM_operator.create_market(name='LEM')
 
 		#Retailer: unresponsive load and supply function
+
 		retailer.bid_supply(dt_sim_time,lem)
 		retailer.bid_unrespload(dt_sim_time,lem)
 
 		#Houses form bids and submit them to the market IS (central market DB)
+
 		for house in houses:
 			house.bid(dt_sim_time,lem)
 
 		#Market processes bids and clears the market
 		#lem.process_bids(dt_sim_time) # only needed if separate sending and processing of bids (not the case if identical DB for meter_interval and market)
+		
 		lem.clear_lem(dt_sim_time)
 
 		#HHs determine dispatch based on price
+		
 		for house in houses:
 			house.determine_dispatch(dt_sim_time)
 

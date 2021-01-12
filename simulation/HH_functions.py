@@ -44,7 +44,7 @@ def create_agent_house(hh_id,flex_HVAC=False):
 		house.HVAC = hvac
 	#Other variables are related to continuously changing state and updated by update state: T_air, mode, cooling_demand, heating_demand
 
-	#Create and assign battery object if exists
+	#Create and assign DER objects if exist
 	house = PVfct.get_PV(house,hh_id) # get PV table and checks if PV is associated with HH id
 	# house = Bfct.get_battery(house,house_name)
 	# house = EVfct.get_CP(house,house_name)

@@ -5,6 +5,7 @@ By Marie-Louise Arlt
 gridlabd_functions for simulation of HCE model under the current institutional setup, i.e. fixed price + coincident peak charge + MVP (PV only)
 
 """
+
 import gldimport
 import os
 import random
@@ -21,10 +22,10 @@ import PV_functions as PVfct
 import market_functions as Mfct
 import time
 
-from HH_global import results_folder, flexible_houses, C, p_max, market_data, which_price, city, month
+from HH_global import results_folder, flexible_houses, C, p_max, market_data, control_room_data, which_price
 from HH_global import interval, prec, price_intervals, allocation_rule, unresp_factor, load_forecast
 from HH_global import FIXED_TARIFF, include_SO, EV_data
-from HH_global import input_folder, fixed_procurement_cost, coincident_peak_rate
+from HH_global import input_folder, fixed_procurement_cost, coincident_peak_rate, system_op
 
 def on_init(t):
 
@@ -73,12 +74,12 @@ def on_init(t):
 	if load_forecast == 'perfect':
 		global df_PV_forecast;
 		try:
-			df_PV_all = pandas.read_csv('glm_generation_'+city+'/perfect_PV_forecast_'+month+'_all.csv',parse_dates=True,skiprows=8)
+			df_PV_all = pandas.read_csv(input_folder+'/perfect_PV_forecast_'+dt_sim_time.month+'_all.csv',parse_dates=True,skiprows=8)
 			df_PV_all['# timestamp'] = df_PV_all['# timestamp'].str.replace(r' UTC$', '')
 			df_PV_all['# timestamp'] = pandas.to_datetime(df_PV_all['# timestamp'])
 			df_PV_all.set_index('# timestamp',inplace=True)
 			df_PV_forecast = pandas.DataFrame(index=df_PV_all.index,columns=['PV_infeed'],data=df_PV_all[df_PV_state['inverter_name']].sum(axis=1))
-			df_PV_forecast.to_csv('glm_generation_'+city+'/perfect_PV_forecast_'+month+'.csv')
+			df_PV_forecast.to_csv(input_folder+'/perfect_PV_forecast_'+dt_sim_time.month+'.csv')
 		except:
 			print('No perfect PV forecast found, use myopic PV forecast')
 			df_PV_forecast = None
@@ -87,7 +88,7 @@ def on_init(t):
 	global df_tokens;
 	df_tokens = pandas.DataFrame(columns=['clearing_price','clearing_quantity','partial','alpha','unresponsive_loads','system_mode','slack_t-1'])
 	global df_controlroom;
-	df_controlroom = pandas.read_csv(input_folder + '/df_controlroom_2016_July.csv',index_col=[0],parse_dates=True) # This includes the control room ts of coincident peak forecast
+	df_controlroom = pandas.read_csv(input_folder + '/' + control_room_data,index_col=[0],parse_dates=True) # This includes the control room ts of coincident peak forecast
 
 	print('Initialize finished after '+str(time.time()-t0))
 	return True
@@ -195,12 +196,16 @@ def on_precommit(t):
 
 		#Supply cost
 
-		coincident_peak_forecasted = df_controlroom['coincident_peak_forecasted'].loc[dt_sim_time]
-		if coincident_peak_forecasted == 0:
-			supply_costs = fixed_procurement_cost #df_controlroom['fixed_procurement'].loc[dt_sim_time]
+		if system_op == 'fixed_proc':
+			coincident_peak_forecasted = df_controlroom['coincident_peak_forecasted'].loc[dt_sim_time]
+			if coincident_peak_forecasted == 0:
+				supply_costs = fixed_procurement_cost #df_controlroom['fixed_procurement'].loc[dt_sim_time]
+			else:
+				supply_costs = coincident_peak_rate #df_controlroom['coincident_peak_rate'].loc[dt_sim_time]
 		else:
-			supply_costs = coincident_peak_rate #df_controlroom['coincident_peak_rate'].loc[dt_sim_time]
-		
+			import sys; sys.exit('EIM not implemented yet')
+			supply_costs = df_WS['RT'].loc[dt_sim_time]
+
 		# Include import and export constraints
 
 		if min_capacity > 0.0:

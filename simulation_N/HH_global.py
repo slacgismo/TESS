@@ -1,36 +1,38 @@
 import os
 
-#Move into settings
-input_folder = 'data_test'
-fixed_procurement_cost = 0.02
-coincident_peak_rate = 0.2
+#Data input
+input_folder = 'data_TESS'
+start_time_str = '2016-07-01 00:00'
+end_time_str = '2016-07-31 23:59'
+tmy_file = '722900TYA.tmy3'
 
 #Result file
-results_folder = 'TESS/TESS'
-if not os.path.exists(results_folder):
-	os.makedirs(results_folder)
-
-#glm parameters
-city = 'SanDiego'
-month = 'july'
-start_time_str = '2015-07-15 00:00'
-end_time_str = '2015-07-16 23:59'
-player_dir = 'players_SanDiego_2015'
-tmy_file = '722900TYA.tmy3'
-slack_node = 'node_149'
+results_folder = 'TESS/TESS_0005'
+if not os.path.exists(results_folder):	os.makedirs(results_folder)
 
 #Flexible appliances
+no_houses = 6
 flexible_houses = 0
-PV_share = 0.0
+PV_share = 1.0
 EV_share = 0.0
-EV_data = 'EV_events_2015_july.csv'
-EV_speed = 'normal'
+EV_data = 'None'
+EV_speed = 'slow'
 Batt_share = 0.0
-assert PV_share >= Batt_share, 'More batteries than PV'
-#Market parameters
-C = 5000.0
-market_data = 'CAISO_KETTNER_2015_7.csv'
-p_max = 100.0
+assert (flexible_houses == 0.0), 'No house has flexible HVAC'
+assert (PV_share == 1.0), 'All houses have PV'
+assert (EV_share == 0.0), 'EV not implemented yet'
+assert (Batt_share == 0.0), 'Battery not implemented yet'
+
+#TS parameters
+customer_op = 'direct'
+system_op = 'EIM'
+fixed_procurement_cost = 0.0
+coincident_peak_rate = 0.0
+control_room_data = 'df_controlroom_2016_July_6houses_unconstr.csv'
+RR = 30.0
+market_data = 'CAISO_KETTNER_2019_2016.csv'
+p_max = 100000.0
+slack_node = 'node_149'
 load_forecast = 'myopic'
 unresp_factor = 1.0
 FIXED_TARIFF = False
@@ -39,9 +41,9 @@ allocation_rule = 'by_award'
 
 #Appliance specifications
 delta = 3.0 #temperature bandwidth - HVAC inactivity
-ref_price = 'forward'
-price_intervals = 24 #p average calculation 
-which_price = 'DA' #battery scheduling
+ref_price = 'historical'
+price_intervals = 288 #p average calculation 
+which_price = 'RT' #battery scheduling
 
 #include System Operator
 include_SO = False

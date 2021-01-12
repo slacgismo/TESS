@@ -1,7 +1,7 @@
 #Add manual thermostat control and flexible devices
 import numpy as np
 import glob
-import os
+import os, shutil
 import pandas
 import re
 import sys
@@ -13,8 +13,86 @@ import math
 import copy
 import random
 
-from HH_global import city, player_dir, results_folder
-from HH_global import slack_node, start_time_str, end_time_str, interval, flexible_houses, EV_share, PV_share, Batt_share, tmy_file
+from HH_global import input_folder, results_folder
+from HH_global import start_time_str, end_time_str, interval, no_houses, flexible_houses, EV_share, PV_share, Batt_share, tmy_file
+
+def modify_model():
+    from HH_global import customer_op
+    if customer_op == 'default':
+        module_inserted = True # to prevent including gridlabd module
+    else:
+        module_inserted = False
+    # Iterate through model  
+    old_glm = open(input_folder + '/model.glm','r') 
+    new_glm = open('model.glm','w') 
+
+    # Distribution of houses
+    if no_houses%3 == 0:
+        houses_by_phase = [int(no_houses/3)]*3
+    elif no_houses%3 == 1:
+        houses_by_phase = [int((no_houses-1)/3)]*3
+        houses_by_phase[0] += 1
+    elif no_houses%3 == 2:
+        houses_by_phase = [int((no_houses-2)/3)]*3
+        houses_by_phase[0] += 1
+        houses_by_phase[1] += 1
+    phases = ['A','B','C']
+    
+    # Include gridlabd_functions_noEIM
+    for line in old_glm:
+        # Include gld_functions
+        if ('class' in line) and not module_inserted: # insert module before class declarations
+            new_glm.write('module gridlabd_functions;\n\n')
+            module_inserted = True
+            new_glm.write(line)
+        # Modify players
+        elif 'file' in line and 'player' in line:
+            player_file = line.split('/')[-1]
+            new_glm.write('\tfile ' + input_folder + '/players/' + player_file)
+        # Modify output folders
+        elif 'file' in line and 'csv' in line:
+            recorder_file = line.split('/')[-1]
+            new_glm.write('\t\tfile ' + results_folder + '/' + recorder_file)
+        # Modify number of houses
+        elif 'house.glm' in line:
+            new_glm.write('#include using(LOADID=1,PHASE='+phases.pop(0)+',COUNT='+str(houses_by_phase.pop())+') "'+input_folder+'/house.glm"\n')
+        else:
+            new_glm.write(line)
+    old_glm.close()
+    new_glm.close()
+
+def modify_house():
+    # Iterate through model  
+    old_glm = open(input_folder + '/house.glm','r') 
+    new_glm = open('house.glm','w') 
+    
+    # Include gridlabd_functions_noEIM
+    for line in old_glm:
+        # Include gld_functions
+        if ('class' in line) and not module_inserted: # insert module before class declarations
+            new_glm.write('module gridlabd_functions_noEIM;\n\n')
+            module_inserted = True
+            new_glm.write(line)
+        # Modify players
+        elif 'file' in line and 'player' in line:
+            player_file = line.split('/')[-1]
+            new_glm.write('\tfile ' + input_folder + '/players/' + player_file)
+        # Modify output folders
+        elif 'file' in line and 'csv' in line:
+            recorder_file = line.split('/')[-1]
+            new_glm.write('\t\tfile ' + output_folder + recorder_file)
+        else:
+            new_glm.write(line)
+    old_glm.close()
+    new_glm.close()
+
+def modify_config():
+    glm = open('config/default.glm','w') 
+    glm.write('#define TIMEZONE=${TIMEZONE:-US/CA/Los Angeles}\n')
+    glm.write('#define WEATHER=${WEATHER:-'+tmy_file+'}\n')
+    glm.write('#define STARTTIME=${STARTTIME:-'+start_time_str+'}\n')
+    glm.write('#define STOPTIME=${STOPTIME:-'+end_time_str+'}\n')
+    glm.close()
 
 #First run for new settings (new players, new house parameters, new weather)
 def write_calibrationfile():

@@ -4,7 +4,7 @@ Defines functions for the HH
 Uses direct setting of system mode
 """
 import gridlabd
-import gridlabd_functions
+#import gridlabd_functions
 #from gridlabd_functions import p_max # ???????????????
 #import mysql_functions
 #from HH_global import *
@@ -18,7 +18,7 @@ from datetime import timedelta
 """NEW FUNCTIONS / MYSQL DATABASE AVAILABLE"""
 
 #HVAC
-from HH_global import flexible_houses, C, p_max, interval, prec, start_time_str, end_time_str, EV_data, EV_speed
+from HH_global import flexible_houses, p_max, interval, prec, start_time_str, end_time_str, EV_data, EV_speed
 
 dep_hours = [6,7,8,9]
 arr_hours = [16,17,18,19,20]

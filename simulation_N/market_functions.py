@@ -19,8 +19,9 @@ from pylab import * # for plotting support
 import datetime
 from datetime import timedelta
 import gridlabd
+import gldimport
 import pandas
-from HH_global import flexible_houses, C, p_max, interval, city, prec, ref_price, price_intervals, load_forecast, unresp_factor, month, which_price, EV_data
+from HH_global import flexible_houses, p_max, interval, prec, ref_price, price_intervals, load_forecast, unresp_factor, which_price, EV_data
 from HH_global import input_folder, fixed_procurement_cost, coincident_peak_rate
 #import mysql_functions
 import time
@@ -57,7 +58,7 @@ def create_market(df_WS,df_prices,p_max,prec,price_intervals,dt_sim_time):
 def create_market_noEIM(df_forecast,df_prices,p_max,prec,price_intervals,dt_sim_time):
     retail = Market()
     retail.reset()
-    retail.Pmin = 0.0
+    retail.Pmin = -p_max
     retail.Pmax = p_max
     retail.Pprec = prec
     
@@ -89,6 +90,14 @@ def create_market_noEIM(df_forecast,df_prices,p_max,prec,price_intervals,dt_sim_
 def determine_unresp_load(dt_sim_time,retail,df_prices,df_buy_bids,df_awarded_bids):
     load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'][:-2])/1000 #measured_real_power in [W]
     print('Slack '+str(load_SLACK))
+    # houses = gldimport.find_objects('class=house')
+    # load_SLACK = 0.0
+    # for house in houses:
+    #     load_SLACK += float(gridlabd.get_object(house)['total_load'].split(' ')[0])
+    #     load_SLACK -= float(complex(gridlabd.get_object('PV_' + house.split('_')[1])['P_Out'].replace('i','j')[:-2]).real)
+    #     #import pdb; pdb.set_trace()
+    # print('Until meter works again, use sum of total load - PV as slack: '+str(load_SLACK))
+
     #Alternatively: All loads which have been bidding and active in prev period
     dt = datetime.timedelta(seconds=interval)
     if len(df_prices) == 0:
@@ -400,8 +409,10 @@ class Market :
         Q = 0.0
         nb = len(self.D)
         ns = len(self.S)
-
+        partial = '-'
         while ( i < nb ) and ( j < ns ) and ( D[i][0] >= S[j][0] ) : #loop until Price demand/supply is >= 1
+            #if D[0][0] < S[0][0]:
+             #   Q = 
             if D[i][1] > S[j][1] : #Quantity Demanded > Quantity Selling
                 Q = S[j][1]
                 partial = 'D' #Last supply bid full, last demand bid only partially served
@@ -455,13 +466,16 @@ class Market :
         elif isSZero :
             P = a
         else: #If there are bids, then the price is set equal to the average decided on above
+            #import pdb; pdb.set_trace()
             if self.surplusControl is 0: #split the surplus
                 P = (a+b)/2
             elif self.surplusControl is 1: #surplus goes to the customer
-                P = a
-            else:  #surplus goes to the producer
                 P = b
+            else:  #surplus goes to the producer
+                P = a
         #import pdb; pdb.set_trace()
+        if P > 10000.:
+            import pdb; pdb.set_trace()
         self.status = 0
         return Q,P,partial,alpha
 

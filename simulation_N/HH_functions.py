@@ -4,7 +4,7 @@ Defines functions for the HH
 Uses direct setting of system mode
 """
 import gridlabd
-import gridlabd_functions
+#import gridlabd_functions
 #from gridlabd_functions import p_max # ???????????????
 #import mysql_functions
 #from HH_global import *
@@ -19,7 +19,7 @@ from HH_global import delta
 """NEW FUNCTIONS / MYSQL DATABASE AVAILABLE"""
 
 #HVAC
-from HH_global import flexible_houses, C, p_max, interval, prec
+from HH_global import flexible_houses, p_max, interval, prec
 
 def get_settings_houses(houselist,interval,mysql=False):
 	dt = parser.parse(gridlabd.get_global('clock')) #Better: getstart time!
@@ -36,11 +36,11 @@ def get_settings_houses(houselist,interval,mysql=False):
 		k = float(house_obj['k'])
 		T_min = float(house_obj['T_min'])
 		T_max = float(house_obj['T_max'])
-		heat_q = float(house_obj['heating_demand']) #heating_demand is in kW
-		hvac_q = float(house_obj['cooling_demand']) #cooling_demand is in kW
-		heating_setpoint = float(house_obj['heating_setpoint'])
-		cooling_setpoint = float(house_obj['cooling_setpoint'])
-		T_air = float(house_obj['air_temperature'])
+		heat_q = float(house_obj['heating_demand'].split(' ')[0]) #heating_demand is in kW
+		hvac_q = float(house_obj['cooling_demand'].split(' ')[0]) #cooling_demand is in kW
+		heating_setpoint = float(house_obj['heating_setpoint'].split(' ')[0])
+		cooling_setpoint = float(house_obj['cooling_setpoint'].split(' ')[0])
+		T_air = float(house_obj['air_temperature'].split(' ')[0])
 		df_market_hvac = df_market_hvac.append(pandas.Series([house,'HVAC_'+house[4:],k,T_min,T_max,heat_q,hvac_q,heating_setpoint,cooling_setpoint,T_air,0],index=cols_market_hvac),ignore_index=True)          
 		#DB structure according to AWS structure
 		

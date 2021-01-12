@@ -74,8 +74,7 @@ module residential{
 	implicit_enduse_source EIA2015;
 }
 
-//module gridlabd_functions_dump;
-module gridlabd_functions_noEIM;
+module gridlabd_functions;
 
 class player {
 	double value;
@@ -83,32 +82,32 @@ class player {
 
 object player {
 	name player_0;
-	file glm_generation_SanDiego/players_SanDiego_2016/ps_d_17312016.player;
+	file data_TESS/players/ps_d_17312016.player;
 }
 
 object player {
 	name player_1;
-	file glm_generation_SanDiego/players_SanDiego_2016/ps_d_38642016.player;
+	file data_TESS/players/ps_d_38642016.player;
 }
 
 object player {
 	name player_2;
-	file glm_generation_SanDiego/players_SanDiego_2016/ps_d_39382016.player;
+	file data_TESS/players/ps_d_39382016.player;
 }
 
 object player {
 	name player_3;
-	file glm_generation_SanDiego/players_SanDiego_2016/ps_d_44952016.player;
+	file data_TESS/players/ps_d_44952016.player;
 }
 
 object player {
 	name player_4;
-	file glm_generation_SanDiego/players_SanDiego_2016/ps_d_59382016.player;
+	file data_TESS/players/ps_d_59382016.player;
 }
 
 object player {
 	name player_5;
-	file glm_generation_SanDiego/players_SanDiego_2016/ps_d_80612016.player;
+	file data_TESS/players/ps_d_80612016.player;
 }
 
 object meter {
@@ -119,7 +118,7 @@ object meter {
 	object recorder {
 		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
 		property measured_real_power, measured_reactive_power; 
-		file TESS/TESS/load_node_149.csv;
+		file TESS/TESS_0005/load_node_149.csv;
 		interval 60;
 	};
 }
@@ -214,7 +213,7 @@ object meter {
 	object recorder {
 		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
 		property measured_real_power, measured_reactive_power; 
-		file TESS/TESS/main_node_149.csv;
+		file TESS/TESS_0005/main_node_149.csv;
 		interval 60;
 	};
 }
@@ -223,6 +222,12 @@ object meter {
 	parent main_node;
 	nominal_voltage 24.941kV;
 	phases AN;
+	object recorder {
+		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
+		property measured_real_power, measured_reactive_power; 
+		file TESS/TESS_0005/main_node_A_149.csv;
+		interval 60;
+	};
 }
 object meter {
 	name main_node_B;
@@ -235,12 +240,6 @@ object meter {
 	parent main_node;
 	nominal_voltage 24.941kV;
 	phases CN;
-	//object recorder {
-		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
-	//	property measured_real_power, measured_reactive_power; 
-	//	file TESS/TESS/main_node_C.csv;
-	//	interval 1min;
-	//};
 }
 
 object transformer_configuration {
@@ -273,9 +272,9 @@ object transformer_configuration {
 global int32 SEQ_CUSTID 0;
 #set allow_reinclude=true
 
-#include using(LOADID=1,PHASE=A,COUNT=2) "house.glm"
-#include using(LOADID=1,PHASE=B,COUNT=2) "house.glm"
-#include using(LOADID=1,PHASE=C,COUNT=2) "house.glm"
+#include using(LOADID=1,PHASE=A,COUNT=2) "data_TESS/house.glm"
+#include using(LOADID=1,PHASE=B,COUNT=2) "data_TESS/house.glm"
+#include using(LOADID=1,PHASE=C,COUNT=2) "data_TESS/house.glm"
 
 //object switch_coordinator{
 //	name "switch_coordinator";
@@ -294,7 +293,7 @@ object group_recorder {
 	name rec_meter_load_P;
 	group "class=triplex_meter";
 	property measured_real_power; 
-	file TESS/TESS/meter_load_P.csv;
+		file TESS/TESS_0005/meter_load_P.csv;
 	interval 60;
 }
 
@@ -302,7 +301,7 @@ object group_recorder {
 	name rec_meter_load_Q;
 	group "class=triplex_meter";
 	property measured_reactive_power; 
-	file TESS/TESS/meter_load_Q.csv;
+		file TESS/TESS_0005/meter_load_Q.csv;
 	interval 60;
 }
 
@@ -310,7 +309,7 @@ object group_recorder {
 	name rec_total_load;
 	group "class=house";
 	property total_load;
-	file TESS/TESS/total_load_all.csv;
+		file TESS/TESS_0005/total_load_all.csv;
 	interval 60;
 }
 
@@ -318,7 +317,7 @@ object group_recorder {
 	name rec_hvac_load;
 	group "class=house";
 	property hvac_load;
-	file TESS/TESS/hvac_load_all.csv;
+		file TESS/TESS_0005/hvac_load_all.csv;
 	interval 60;
 }
 
@@ -326,30 +325,14 @@ object group_recorder {
 	name rec_T;
 	group "class=house";
 	property air_temperature;
-	file TESS/TESS/T_all.csv;
+		file TESS/TESS_0005/T_all.csv;
 	interval 60;
 }
-
-//object group_recorder {
-//	name rec_Tm;
-//	group "class=house";
-//	property mass_temperature;
-//	file TESS/TESS/Tm_all.csv;
-//	interval 60;
-//}
 
 object group_recorder {
 	name rec_pv_infeed;
 	group "class=inverter";
 	property P_Out;
-	file TESS/TESS/total_P_Out.csv;
+		file TESS/TESS_0005/total_P_Out.csv;
 	interval 60;
 }
-
-//object group_recorder {
-//	name rec_batt_soc;
-//	group "class=battery";
-//	property state_of_charge;
-//	file TESS/TESS_BC/battery_SOC.csv;
-//	interval 60;
-//}
