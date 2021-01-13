@@ -32,7 +32,7 @@ def assemble_data(folder_MVP,file):
 	return df_files
 
 # Creates a print-out of income / expenses
-def get_proccost_fixed(df_settings,ind_b,ind_MVP):
+def get_proccost_MVP(df_settings,ind_b,ind_MVP):
 	RR_b = df_settings['RR'].loc[ind_b]
 	RR_MVP = df_settings['RR'].loc[ind_MVP]
 	assert RR_b == RR_MVP, 'Retail rates in benchmark and MVP not identical'
@@ -60,12 +60,33 @@ def get_proccost_fixed(df_settings,ind_b,ind_MVP):
 	# System cost
 
 	input_folder = 'data_' + df_settings['run'].loc[ind_MVP]
-	df_controlroom = pd.read_csv(input_folder + '/' + df_settings['control_room_data'].loc[ind_MVP],index_col=[0],parse_dates=True)
-	df_controlroom = df_controlroom.loc[df_controlroom.index.minute%5 == 0]
+	if df_settings['system_op'].loc[ind_MVP] == 'fixed_proc':
+		df_controlroom = pd.read_csv(input_folder + '/' + df_settings['control_room_data'].loc[ind_MVP],index_col=[0],parse_dates=True)
+		df_controlroom = df_controlroom.loc[df_controlroom.index.minute%5 == 0]
+		df_controlroom['time'] = df_controlroom.index
+		df_controlroom.drop_duplicates(subset='time',keep='last',inplace=True)
+		df_controlroom.drop('time',axis=1,inplace=True)
 
-	proc_cost_b = (df_slack_b['measured_real_power']*(df_settings['coincident_peak_rate'].loc[ind_b]/1000.*df_controlroom['coincident_peak_actual'] + df_settings['fixed_procurement_cost'].loc[ind_b]/1000.*(1. - df_controlroom['coincident_peak_actual']))).sum()
-	proc_cost_MVP = (df_slack_MVP['measured_real_power']*(df_settings['coincident_peak_rate'].loc[ind_MVP]/1000.*df_controlroom['coincident_peak_actual'] + df_settings['fixed_procurement_cost'].loc[ind_MVP]/1000.*(1. - df_controlroom['coincident_peak_actual']))).sum()
-	savings = proc_cost_b - proc_cost_MVP
+		assert len(df_controlroom) == len(df_slack_b)
+		assert len(df_controlroom) == len(df_slack_MVP)
+
+		proc_cost_b = (df_slack_b['measured_real_power']/12.*(df_settings['coincident_peak_rate'].loc[ind_b]/1000.*df_controlroom['coincident_peak_actual'] + df_settings['fixed_procurement_cost'].loc[ind_b]/1000.*(1. - df_controlroom['coincident_peak_actual']))).sum()
+		proc_cost_MVP = (df_slack_MVP['measured_real_power']/12.*(df_settings['coincident_peak_rate'].loc[ind_MVP]/1000.*df_controlroom['coincident_peak_actual'] + df_settings['fixed_procurement_cost'].loc[ind_MVP]/1000.*(1. - df_controlroom['coincident_peak_actual']))).sum()
+		savings = proc_cost_b - proc_cost_MVP
+	elif df_settings['system_op'].loc[ind_MVP] == 'EIM':
+		df_WS = pd.read_csv(input_folder + '/' + df_settings['market_data'].loc[ind_MVP],index_col=[0],parse_dates=True)
+		df_WS = df_WS.loc[df_WS.index.minute%5 == 0]
+		df_WS['time'] = df_WS.index
+		df_WS.drop_duplicates(subset='time',keep='last',inplace=True)
+		df_WS.drop('time',axis=1,inplace=True)
+		df_WS = df_WS.loc[df_slack_b.index[0]:df_slack_b.index[-1]]
+
+		assert len(df_WS) == len(df_slack_b)
+		assert len(df_WS) == len(df_slack_MVP)
+
+		proc_cost_b = (df_slack_b['measured_real_power']/12.*df_WS[df_settings['which_price'].loc[ind_MVP]]).sum()
+		proc_cost_MVP = (df_slack_MVP['measured_real_power']/12.*df_WS[df_settings['which_price'].loc[ind_MVP]]).sum()
+		savings = proc_cost_b - proc_cost_MVP
 
 	print('Procurement cost wo TS [USD]: '+str(proc_cost_b))
 	print('Energy component of retail rate wo TS [USD/kWh]: '+str(proc_cost_b/procurement_b))
@@ -395,9 +416,9 @@ def get_token_value(df_settings,ind_b,ind_MVP):
 
 	# Tokens traded
 	df_tokens = pd.read_csv(folder_data + '/df_tokens.csv', parse_dates=True, index_col=[0])
-	tokens_traded = (df_tokens['clearing_price']/12.*df_tokens['clearing_quantity']).sum()
-	print('Total number of tokens traded: '+str(tokens_traded))
-
+	df_tokens['tokens_traded'] = (abs(df_tokens['clearing_price'])/12.*df_tokens['clearing_quantity']/1000.)
+	tokens_traded = df_tokens['tokens_traded'].sum()
+	
 	# Savings
 
 	# Benchmark
@@ -414,16 +435,61 @@ def get_token_value(df_settings,ind_b,ind_MVP):
 	df_PV_MVP = get_data(folder_MVP,'total_P_Out.csv',1000.)
 	procurement_MVP = df_slack_MVP['measured_real_power'].sum()/12. # kWh
 
-	# System cost
-	input_folder = 'data_' + df_settings['run'].loc[ind_MVP]
-	df_controlroom = pd.read_csv(input_folder + '/' + df_settings['control_room_data'].loc[ind_MVP],index_col=[0],parse_dates=True)
-	df_controlroom = df_controlroom.loc[df_controlroom.index.minute%5 == 0]
+	assert len(df_slack_MVP) == len(df_houses_MVP)
+	assert len(df_slack_MVP) == len(df_PV_MVP)
 
-	proc_cost_b = (df_slack_b['measured_real_power']*(df_settings['coincident_peak_rate'].loc[ind_b]/1000.*df_controlroom['coincident_peak_actual'] + df_settings['fixed_procurement_cost'].loc[ind_b]/1000.*(1. - df_controlroom['coincident_peak_actual']))).sum()
-	proc_cost_MVP = (df_slack_MVP['measured_real_power']*(df_settings['coincident_peak_rate'].loc[ind_MVP]/1000.*df_controlroom['coincident_peak_actual'] + df_settings['fixed_procurement_cost'].loc[ind_MVP]/1000.*(1. - df_controlroom['coincident_peak_actual']))).sum()
-	savings = proc_cost_b - proc_cost_MVP
+	input_folder = 'data_' + df_settings['run'].loc[ind_MVP]
+	if df_settings['system_op'].loc[ind_MVP] == 'fixed_proc':
+		df_controlroom = pd.read_csv(input_folder + '/' + df_settings['control_room_data'].loc[ind_MVP],index_col=[0],parse_dates=True)
+		df_controlroom = df_controlroom.loc[df_controlroom.index.minute%5 == 0]
+		df_controlroom['time'] = df_controlroom.index
+		df_controlroom.drop_duplicates(subset='time',keep='last',inplace=True)
+		df_controlroom.drop('time',axis=1,inplace=True)
+
+		assert len(df_controlroom) == len(df_slack_b)
+		assert len(df_controlroom) == len(df_slack_MVP)
+
+		# Proc cost in benchmark senario: WS and PV
+		proc_cost_b = (df_slack_b['measured_real_power']/12.*(df_settings['coincident_peak_rate'].loc[ind_b]/1000.*df_controlroom['coincident_peak_actual'] + df_settings['fixed_procurement_cost'].loc[ind_b]/1000.*(1. - df_controlroom['coincident_peak_actual']))).sum()
+		proc_cost_b += df_PV_b.sum().sum()*df_settings['RR'].loc[ind_b]/1000. # Net metering
+		proc_cost_MVP = (df_slack_MVP['measured_real_power']/12.*(df_settings['coincident_peak_rate'].loc[ind_MVP]/1000.*df_controlroom['coincident_peak_actual'] + df_settings['fixed_procurement_cost'].loc[ind_MVP]/1000.*(1. - df_controlroom['coincident_peak_actual']))).sum()
+		if df_settings['customer_op'].loc[ind_MVP] == 'baseline':
+			proc_cost_MVP += df_PV_MVP.sum().sum()*df_settings['RR'].loc[ind_MVP]/1000. # Net metering
+		else:
+			import pdb; pdb.set_trace()
+			proc_cost_MVP += (df_PV_MVP.sum(axis=1)*df_tokens['clearing_price']/12./1000.).sum() # Net metering
+		savings = proc_cost_b - proc_cost_MVP
+	elif df_settings['system_op'].loc[ind_MVP] == 'EIM':
+		df_WS = pd.read_csv(input_folder + '/' + df_settings['market_data'].loc[ind_MVP],index_col=[0],parse_dates=True)
+		df_WS = df_WS.loc[df_WS.index.minute%5 == 0]
+		df_WS['time'] = df_WS.index
+		df_WS.drop_duplicates(subset='time',keep='last',inplace=True)
+		df_WS.drop('time',axis=1,inplace=True)
+		df_WS = df_WS.loc[df_slack_b.index[0]:df_slack_b.index[-1]]
+
+		assert len(df_WS) == len(df_slack_b)
+		assert len(df_WS) == len(df_slack_MVP)
+
+		proc_cost_b = (df_slack_b['measured_real_power']/12.*df_WS[df_settings['which_price'].loc[ind_MVP]]/1000.).sum()
+		proc_cost_b += df_PV_b.sum().sum()*df_settings['RR'].loc[ind_b]/1000. # Net metering
+		proc_cost_MVP = (df_slack_MVP['measured_real_power']/12.*df_WS[df_settings['which_price'].loc[ind_MVP]]/1000.).sum()
+		proc_cost_MVP += (df_PV_MVP.sum(axis=1)/12.*df_tokens['clearing_price']/1000.).sum()
+		savings = proc_cost_b - proc_cost_MVP
 
 	# Token value
 
-	import pdb; pdb.set_trace()
-	token_value = savings/tokens_traded
+	if tokens_traded != 0.0:
+		token_value = savings/tokens_traded
+	else:
+		token_value = 0.0
+
+	print()
+	print('Savings of retailer: ' + str(savings))
+	print('Number of tokens traded: ' + str(tokens_traded))
+	print('Token value: ' + str(token_value))
+	print()
+	print('Share of periods with no tokens traded [%]: ' + str(100.*len(df_tokens.loc[(df_tokens['clearing_price']*df_tokens['clearing_quantity']) == 0.0])/len(df_tokens)))
+	print('Share of periods with positive equilibrium token price [%]: ' + str(100.*len(df_tokens.loc[(df_tokens['clearing_price']*df_tokens['clearing_quantity']) > 0.0])/len(df_tokens)))
+	print('Share of periods with negative equilibrium token price [%]: ' + str(100.*len(df_tokens.loc[(df_tokens['clearing_price']*df_tokens['clearing_quantity']) < 0.0])/len(df_tokens)))
+	print()
+	return token_value

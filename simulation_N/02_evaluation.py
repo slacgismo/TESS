@@ -27,24 +27,20 @@ df_settings = pandas.read_csv('settings_TESS.csv',index_col=[0])
 #efcts.compare_disaggsystemload_EIM(df_settings,ind_b,ind_EIM)
 
 # Procurement cost
-#efcts.get_proccost_fixed(df_settings,ind_b,ind_MVP_red) # without TESS
-#efcts.get_proccost_fixed(df_settings,ind_b,ind_MVP_incr) # without TESS
+
+# efcts.get_proccost_MVP(df_settings,ind_b,ind_MVP_red) # without TESS
+# efcts.get_proccost_MVP(df_settings,ind_b,ind_MVP_incr) # without TESS
+# efcts.get_proccost_MVP(df_settings,ind_b,ind_EIM) # without TESS
+# import pdb; pdb.set_trace()
 
 # Token value
-#efcts.get_token_value(df_settings,ind_b,ind_MVP_red) # without TESS
-efcts.get_token_value(df_settings,ind_b,ind_MVP_incr) # without TESS
 
-
+token_value = efcts.get_token_value(df_settings,ind_b,ind_MVP_red) # without TESS
+token_value = efcts.get_token_value(df_settings,ind_b,ind_MVP_incr) # without TESS
+token_value = efcts.get_token_value(df_settings,ind_b,ind_EIM) # without TESS
 import pdb; pdb.set_trace()
-get_proccost_fixed(ind_MVP) # with TESS
-get_proccost_EIM(ind_EIM)
+# Customer bills
 
-#efcts.compare_value_MVP(df_settings,ind_b,ind_MVP_incr)
-
-
-
-
-# Customer payments
 get_retail_income(ind_b) # all customers pay RR + net-metering
 get_all_income(ind_MVP) # calculates retail income + tokens
 get_all_income(ind_EIM) # calculates retail income + tokens
