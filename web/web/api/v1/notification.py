@@ -47,6 +47,9 @@ def get_notifications():
 
 @notifications_api_bp.route('/notification/<int:created_by>', methods=['GET'])
 def get_notifications_by_creator_id(created_by):
+    '''
+    Retrieves only the notifications by the creator_id
+    '''
     arw = ApiResponseWrapper()
     try:
         notifications = Notification.query.filter_by(created_by=created_by)
@@ -63,7 +66,7 @@ def get_notifications_by_creator_id(created_by):
     return arw.to_json(results)
 
 
-@notifications_api_bp.route('notification',
+@notifications_api_bp.route('/notification',
                             methods=['PUT'])
 def modify_notification():
     '''
