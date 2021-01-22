@@ -20,6 +20,7 @@ def get_notifications():
     '''
     Retrieves all notification objects
     '''
+    # TODO: filter by utility, so only notifications for that utility appear
 
     arw = ApiResponseWrapper()
 
@@ -59,8 +60,6 @@ def get_notifications_by_creator_id(created_by):
         exclude=['created_at', 'updated_at'])
 
     results = notification_schema.dump(notifications, many=True)
-    print("let's go")
-    print(created_by)
     return arw.to_json(results)
 
 
