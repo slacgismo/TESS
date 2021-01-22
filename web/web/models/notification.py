@@ -51,7 +51,11 @@ class Notification(Model):
     @validates('email')
     def empty_string_to_null(self, key, value):
         # converts empty string to null as field is not nullable
-        if isinstance(value,str) and value == '':
+        # throws an exeption to keep the db from being populated with empty strings
+        # email validation is already done on the react side for certain pages
+        # this is an extra layer preventing unwanted data
+        value = str(value).strip()
+        if value == '':
             return None
         else:
             return value

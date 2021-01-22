@@ -1,14 +1,16 @@
-from flask import Blueprint, request
 from web.database import db
-from marshmallow import ValidationError
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy import text, func
-from sqlalchemy.sql import label
 from itertools import groupby
 from operator import attrgetter
-from web.models.notification import Notification, NotificationSchema
+from sqlalchemy.sql import label
+from sqlalchemy import text, func
+from flask import Blueprint, request
+from marshmallow import ValidationError
+from sqlalchemy.exc import IntegrityError
 from .response_wrapper import ApiResponseWrapper
 from web.models.alert_type import AlertType, AlertTypeSchema
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from web.models.notification import Notification, NotificationSchema
+
 
 notifications_api_bp = Blueprint('notifications_api_bp', __name__)
 
@@ -18,7 +20,6 @@ def get_notifications():
     '''
     Retrieves all notification objects
     '''
-    # TODO: filter by utility, so only notifications for that utility appear
 
     arw = ApiResponseWrapper()
 
@@ -36,10 +37,30 @@ def get_notifications():
 
     notification_schema = NotificationSchema(
         only=fields_to_filter_on,
-        exclude=['created_by', 'created_at', 'updated_at'])
+        exclude=['created_at', 'updated_at'])
 
     results = notification_schema.dump(notifications, many=True)
 
+    return arw.to_json(results)
+
+
+@notifications_api_bp.route('/notification/<int:created_by>', methods=['GET'])
+def get_notifications_by_creator_id(created_by):
+    arw = ApiResponseWrapper()
+    try:
+        notifications = Notification.query.filter_by(created_by=created_by)
+    except (MultipleResultsFound, NoResultFound):
+        arw.add_errors('No result found or multiple results found')
+
+    if arw.has_errors():
+        return arw.to_json(None, 400)
+
+    notification_schema = NotificationSchema(
+        exclude=['created_at', 'updated_at'])
+
+    results = notification_schema.dump(notifications, many=True)
+    print("let's go")
+    print(created_by)
     return arw.to_json(results)
 
 

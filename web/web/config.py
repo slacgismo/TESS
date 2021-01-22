@@ -4,6 +4,7 @@ from datetime import timedelta
 JWT_ACCESS_EXPIRES = timedelta(minutes=120)
 JWT_REFRESH_EXPIRES = timedelta(days=30)
 
+
 class Config(object):
     '''Base config, uses staging database server.'''
     DEBUG = True
@@ -11,6 +12,14 @@ class Config(object):
     DB_SERVER = ''
     DB_USER = ''
     DB_PASSWORD = ''
+    JWT_SECRET_KEY = os.urandom(12).hex()
+    JWT_ACCESS_TOKEN_EXPIRES = JWT_ACCESS_EXPIRES
+    JWT_REFRESH_TOKEN_EXPIRES = JWT_REFRESH_EXPIRES
+    JWT_BLACKLIST_ENABLED = True
+    JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
+    JWT_TOKEN_LOCATION = ['cookies', 'headers']
+    JWT_COOKIE_CSRF_PROTECT = False
+    JWT_COOKIE_SECURE = False
 
     @property
     def SQLALCHEMY_DATABASE_URI(self):
@@ -34,11 +43,3 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_ECHO = False
     DB_USER = 'tess_user'
     DB_PASSWORD = 'tess_db_password_local'
-    JWT_SECRET_KEY = os.urandom(12).hex()
-    JWT_ACCESS_TOKEN_EXPIRES = JWT_ACCESS_EXPIRES
-    JWT_REFRESH_TOKEN_EXPIRES = JWT_REFRESH_EXPIRES
-    JWT_BLACKLIST_ENABLED = True
-    JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
-    JWT_TOKEN_LOCATION = ['cookies', 'headers']
-    JWT_COOKIE_CSRF_PROTECT = False
-    JWT_COOKIE_SECURE = False

@@ -9,7 +9,7 @@ import { Checkbox } from '@rmwc/checkbox';
 import { TextField } from '@rmwc/textfield';
 import { selectMenuOption } from '../../static/js/actions';
 import ConnectedComponentWrapper from '../../static/js/base';
-import { validateEmail } from "./helpers";
+import { validateEmail } from './helpers';
 
 import '@rmwc/button/styles';
 import '@rmwc/checkbox/styles';
@@ -34,7 +34,8 @@ class Notifications extends React.Component {
             checkboxReferences: {},
             inputValueReferences: {},
             selectedRowIdsToDelete: [],
-            currentEmail: ""
+            currentEmail: "",
+            userId: this.props.userData.user_id,
         };
     }
 
@@ -68,15 +69,15 @@ class Notifications extends React.Component {
             "alert_type_id" : alertTypeId,
             "email" : email,
             "is_active" : refs[id],
-            "created_by" : 1
-        }))
+            "created_by" : this.state.userId
+        }, this.state.userId) )
         :
         this.props.dispatch(action.updateNotifications({
             "notification_id" : notificationId,
             "alert_type_id" : alertTypeId,
             "email" : email,
             "is_active" : refs[id],
-            "created_by" : 1
+            "created_by" : this.state.userId
         }))
     }
 
@@ -115,7 +116,7 @@ class Notifications extends React.Component {
                             "notification_id" : notification.notification_id,
                             "alert_type_id" : notification.alert_type_id,
                             "email" : e.target.value,
-                            "created_by" : 1
+                            "created_by" : this.state.userId
                         }))
                     })
                 }
@@ -125,7 +126,7 @@ class Notifications extends React.Component {
                     "alert_type_id" : 1,
                     "email" : e.target.value,
                     "is_active" : "False",
-                    "created_by" : 1
+                    "created_by" : this.state.userId
                 }))
             }
         }
@@ -153,6 +154,7 @@ class Notifications extends React.Component {
     }
 
     getBody = () => {
+        console.log(this.props.alertTypeEntries)
         const numAlertTypes = this.props.alertTypeEntries.length
         const dataTableBody = this.props.notificationEntries.map((item, index) => {
             const numNotifications = item.notifications.length
@@ -181,6 +183,8 @@ class Notifications extends React.Component {
             })
             // sorting items
             notifications.sort((a, b) => (a.alert_type_id > b.alert_type_id) ? 1 : -1)
+            console.log("okay dude")
+            console.log(notifications)
             const rowId = notifications[0].notification_id
             const emailValue = this.state.inputValueReferences[rowId] === ""
                 ? this.state.inputValueReferences[rowId]
@@ -229,9 +233,9 @@ class Notifications extends React.Component {
         if(!this.props.alertTypeEntries.length) {
             notifications = defaultHeaders;
         } else {
-            // use the first entry in notification entries as the template, since there may
+            // based on the alertTypeEntries
             // new, unaccounted for columns
-            notifications = this.props.notificationEntries[0].notifications.map(item => {
+            notifications = this.props.alertTypeEntries.map(item => {
                 return {
                     alert_type_id: item.alert_type_id,
                     is_active: false,
@@ -298,6 +302,7 @@ class Notifications extends React.Component {
 }
 
 const ConnectedNotifications = connect(state => ({
+    userData: state.userSettings.userData,
     notificationEntries: state.notifications.notificationEntries,
     alertTypeEntries: state.notifications.alertTypeEntries
 }))(Notifications);

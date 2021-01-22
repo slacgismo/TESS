@@ -29,9 +29,11 @@ export function addNewNotificationRow(rowTemplate) {
 }
 
 export function getNotifications() {
-    return dispatch => {
+    return (dispatch, getState) => {
         api.get('notifications', (response) => {
-            const convertedRes = groupDataBy(response.results.data, 'email');
+            const userId = getState().userSettings.userData.user_id
+            const data = response.results.data.filter(v => v.created_by === userId);
+            const convertedRes = groupDataBy(data, 'email');
             dispatch(updateFetchedNotifications(convertedRes));
         }, (error) => {
             console.warn(error);
@@ -58,17 +60,6 @@ export function updateNotifications(data) {
         })
     }
 }
-
-export function deleteNotifications(data) {
-    return dispatch => {
-        api.delete('notification', { json: { ...data } }, (response) => {
-            dispatch(getNotifications());
-        }, (error) => {
-            console.warn(error);
-        })
-    }
-}
-
 
 function updateFetchedAlertTypes(data) {
   return {
