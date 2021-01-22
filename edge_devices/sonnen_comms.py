@@ -28,7 +28,7 @@ class SonnenApiInterface:
         except requests.exceptions.HTTPError as err:
             print('Error get_battery_status_json: ', err)
             return None
-        except requests.ConnectionError, e:
+        except requests.ConnectionError as e:
             print("Connection Error: ", e)
             return None
 

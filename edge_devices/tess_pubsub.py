@@ -104,5 +104,7 @@ while True:
     except requests.exceptions.RequestException as e:
         print('error: ', e)
         print('Transfer control back to HEILA... Implement function - TBD')
+        # to disable control from the power market, you need to send a POST request to the API endpoint /api/unsync .
+        # To give back control, send a POST request to the API endpoint /api/sync
 
     t.sleep(10) # Need to define how often to provide info updates
