@@ -154,7 +154,6 @@ class Notifications extends React.Component {
     }
 
     getBody = () => {
-        console.log(this.props.alertTypeEntries)
         const numAlertTypes = this.props.alertTypeEntries.length
         const dataTableBody = this.props.notificationEntries.map((item, index) => {
             const numNotifications = item.notifications.length
@@ -183,8 +182,6 @@ class Notifications extends React.Component {
             })
             // sorting items
             notifications.sort((a, b) => (a.alert_type_id > b.alert_type_id) ? 1 : -1)
-            console.log("okay dude")
-            console.log(notifications)
             const rowId = notifications[0].notification_id
             const emailValue = this.state.inputValueReferences[rowId] === ""
                 ? this.state.inputValueReferences[rowId]
