@@ -35,11 +35,22 @@ df_settings = pandas.read_csv('settings_TESS.csv',index_col=[0])
 
 # Token value
 
-token_value = efcts.get_token_value(df_settings,ind_b,ind_MVP_red) # without TESS
+# token_value = efcts.get_token_value(df_settings,ind_b,ind_MVP_red) # without TESS
+# token_value = efcts.get_token_value(df_settings,ind_b,ind_MVP_incr) # without TESS
+# token_value = efcts.get_token_value(df_settings,ind_b,ind_EIM) # without TESS
+
+# Customer bills
+
+#token_value = efcts.get_bills_baseline(df_settings,ind_b,ind_MVP_red) # without TESS
+token_value = efcts.get_bills_baseline(df_settings,ind_b,ind_MVP_incr) # without TESS
+import pdb; pdb.set_trace()
+
 token_value = efcts.get_token_value(df_settings,ind_b,ind_MVP_incr) # without TESS
 token_value = efcts.get_token_value(df_settings,ind_b,ind_EIM) # without TESS
-import pdb; pdb.set_trace()
-# Customer bills
+
+
+
+# HCE income
 
 get_retail_income(ind_b) # all customers pay RR + net-metering
 get_all_income(ind_MVP) # calculates retail income + tokens

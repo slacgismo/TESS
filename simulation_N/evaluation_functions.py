@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
 import matplotlib.pyplot as plt
 
 def get_data(folder,file,divide_by=1):
@@ -493,3 +494,79 @@ def get_token_value(df_settings,ind_b,ind_MVP):
 	print('Share of periods with negative equilibrium token price [%]: ' + str(100.*len(df_tokens.loc[(df_tokens['clearing_price']*df_tokens['clearing_quantity']) < 0.0])/len(df_tokens)))
 	print()
 	return token_value
+
+# Assembles table for all time steps of the simulation
+def assemble_data(folder,file):
+	for name in os.listdir(folder):
+		if file in name:
+			df = pd.read_csv(folder + '/' + name,index_col=[0],parse_dates=True)
+			try:
+				df_bids = df_bids.append(df,ignore_index=True)
+			except:
+				df_bids = df.copy()
+	return df_bids
+
+def get_bills_baseline(df_settings,ind_b,ind_MVP):
+
+	# Benchmark (net metering at fixed RR)
+	print('\nBenchmark\n')
+
+	# Price / RR
+	RR = df_settings['RR'].loc[ind_b]
+	print('Retail rate [USD/kWh]: ' + str(RR/1000.))
+
+	# Read in load
+	folder_b = df_settings['run'].loc[ind_b] + '/' + df_settings['run'].loc[ind_b]+'_'+"{:04d}".format(ind_b)
+	df_slack_b = get_data(folder_b,'load_node_149.csv',1000.)
+	df_houses_b = get_data(folder_b,'total_load_all.csv')
+	df_PV_b = get_data(folder_b,'total_P_Out.csv',1000.)
+	procurement_b = df_slack_b['measured_real_power'].sum()/12. # kWh
+
+	# Calculate net load and bill at RR
+	df_houses_b_consumption = pd.DataFrame(index=df_houses_b.index,columns=df_houses_b.columns,data=((df_houses_b.values - df_PV_b.values)/12.))
+	bills_b = df_houses_b_consumption.sum(axis=0)*RR/1000.
+	print('Retail bills in benchmark scenario for billing time [USD]: ' + str(df_slack_b.index[0]) + ' to ' + str(df_slack_b.index[-1]))
+	print(bills_b)
+
+	# MVP
+	print('\nTransactive system\n')
+
+	# Tokens traded
+
+	RR = df_settings['RR'].loc[ind_MVP]
+	print('Retail rate [USD/kWh]: ' + str(RR/1000.))
+	token_value = get_token_value(df_settings,ind_b,ind_MVP)
+	print('Token value [USD/kWh]: ' + str(token_value/1000.))
+
+	# MVP
+	folder_MVP = df_settings['run'].loc[ind_MVP] + '/' + df_settings['run'].loc[ind_MVP]+'_'+"{:04d}".format(ind_MVP)
+	df_slack_MVP = get_data(folder_MVP,'load_node_149.csv',1000.)
+	df_houses_MVP = get_data(folder_MVP,'total_load_all.csv')
+	df_PV_MVP = get_data(folder_MVP,'total_P_Out.csv',1000.)
+	procurement_MVP = df_slack_MVP['measured_real_power'].sum()/12. # kWh
+
+	df_tokens = pd.read_csv(folder_MVP + '/df_tokens.csv', parse_dates=True, index_col=[0])
+	df_awarded_bids = assemble_data(folder_MVP,'df_awarded_bids')
+	df_awarded_bids['timestamp'] = pd.to_datetime(df_awarded_bids['timestamp'])
+	df_awarded_bids.set_index('timestamp',inplace=True)
+	#df_supply_bids = assemble_data(folder_MVP,'df_supply_bids')
+
+	# Calculate net load and bill at RR
+	df_houses_MVP_consumption = pd.DataFrame(index=df_houses_MVP.index,columns=df_houses_MVP.columns,data=((df_houses_MVP.values - df_PV_MVP.values)/12.))
+	bills_MVP = df_houses_MVP_consumption.sum(axis=0)*RR/1000.
+	df_bills_MVP = pd.DataFrame(index=bills_MVP.index,columns=['Gross bills'],data=bills_MVP.values)
+	df_bills_MVP['No of tokens earned'] = 0.0
+	for appliance in df_bills_MVP.index:
+		appliance_name = 'PV_' + str(appliance.split('_')[1])
+		df_awarded_bids_i = df_awarded_bids.loc[df_awarded_bids['appliance_name'] == appliance_name]
+		df_awarded_bids_i.at[df_awarded_bids_i.index,'clearing_price'] = df_tokens['clearing_price'].loc[df_awarded_bids_i.index]
+		import sys; sys.exit('Fix the sign in token price')
+		token_house = (-df_awarded_bids_i['bid_quantity']*df_awarded_bids_i['clearing_price']/12./1000.).sum()
+		token_balance = token_house * token_value
+		df_bills_MVP.loc[appliance,'No of tokens earned'] = token_house
+		df_bills_MVP.loc[appliance,'Token balance [USD]'] = token_balance
+	df_bills_MVP['Net bills'] = df_bills_MVP['Gross bills'] - df_bills_MVP['Token balance [USD]']
+	print('Retail bills in benchmark scenario for billing time [USD]: ' + str(df_slack_MVP.index[0]) + ' to ' + str(df_slack_MVP.index[-1]))
+	print(df_bills_MVP)
+
+	return
