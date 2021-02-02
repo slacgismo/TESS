@@ -18,7 +18,7 @@ class Capacity extends React.Component {
     componentDidMount() {
         // if a user decides to navigate back and forth through the
         // browser arrows, the menu selection won't update accordingly,
-        // so we fix that by having each component do it, 😔, this is 
+        // so we fix that by having each component do it, 😔, this is
         // not great since the component shouldn't care about the menu
         this.props.dispatch(selectMenuOption('power-dispatch-capacity'));
         this.props.dispatch(action.getCapacitySystemLoadData());
@@ -26,7 +26,7 @@ class Capacity extends React.Component {
     }
 
     render() {
-        console.warn(this.props.resourcesData)
+        const { resourcesData } = this.props;
         return (
             <div className="power-dispatch-container">
                 <div className="power-dispatch-margin-fix">
@@ -35,20 +35,24 @@ class Capacity extends React.Component {
                             <SystemLoadChart
                                 id="pd-capacity-system-load-chart"
                                 ds={this.props.systemLoadData}
-                                xTitle="Hours" 
-                                yTitle="MW" 
+                                xTitle="Hours"
+                                yTitle="MW"
                                 chartTitle="System Load"
                                 chartSubtitle="Transformer Capacity" />
                         </div>
                         <div className="pd-chart-resource">
-                            <ResourcesChart
-                                id="pd-capacity-resources-chart"
-                                xTitle="" 
-                                yTitle=""
-                                datasets={this.props.resourcesData.datasets}
-                                finalDataSet={this.props.resourcesData.groupedDataset}
-                                chartTitle="Resources in the System"
-                                chartSubtitle="" />
+                            {
+                                resourcesData && resourcesData.datasets
+                                ? <ResourcesChart
+                                    id="pd-capacity-resources-chart"
+                                    xTitle=""
+                                    yTitle=""
+                                    datasets={this.props.resourcesData.datasets}
+                                    finalDataSet={this.props.resourcesData.groupedDataset}
+                                    chartTitle="Resources in the System"
+                                    chartSubtitle="" />
+                                : null
+                            }
                         </div>
                     </div>
 
@@ -57,7 +61,7 @@ class Capacity extends React.Component {
                             <div className="pd-form-title">
                                 <h3>Constraint and Alert Settings</h3>
                             </div>
-                            
+
                             <div>
                                 <h4>Nominal Feeder Capacity</h4>
                                 <div className="pd-form-row">
@@ -77,7 +81,7 @@ class Capacity extends React.Component {
                             </div>
 
                             <hr />
-                            
+
                             <div>
                                 <h4>Alarms</h4>
                                 <div className="pd-form-row">
@@ -95,9 +99,9 @@ class Capacity extends React.Component {
                                     <div className="pd-form-element-unit">%</div>
                                 </div>
                             </div>
-                            
+
                             <hr />
-                            
+
                             <div>
                                 <h4>Alerts</h4>
                                 <div className="pd-form-row">
@@ -115,16 +119,16 @@ class Capacity extends React.Component {
                                     <div className="pd-form-element-unit">hour(s)</div>
                                 </div>
                             </div>
-                            
+
                             <hr />
                             <div className="pd-form-button-container">
-                                <Button 
-                                    label="SET" 
+                                <Button
+                                    label="SET"
                                     onClick={this.addNewRow}
                                     outlined />
                             </div>
                         </div>
-                        
+
                         <div className="pd-form-container">
                             <div className="pd-form-title">
                                 <h3>Advanced Control</h3>
@@ -172,7 +176,6 @@ class Capacity extends React.Component {
         );
     }
 }
-
 const ConnectedCapacity = connect(state => ({
     systemLoadData: state.capacity.systemLoadData,
     resourcesData: state.capacity.resourcesData

@@ -13,9 +13,8 @@ function normalizeToPercentage(ds) {
 }
 
 class ResourcesChart extends React.Component {
-    componentDidMount() {
 
-        // normalize the data set for each device to 1.0
+    componentDidMount() {
         for (const property in this.props.datasets) {
             this.props.datasets[property] = normalizeToPercentage(this.props.datasets[property]);
         }
@@ -31,7 +30,7 @@ class ResourcesChart extends React.Component {
                 });
             }
         }
-        
+
         this.props.datasets["total"] = normalizeToPercentage(totalVals);
 
         for (const dsProp in this.props.datasets) {
@@ -45,98 +44,100 @@ class ResourcesChart extends React.Component {
                 this.props.finalDataSet["dispatched"].push(this.props.datasets[dsProp][2]);
             }
         }
-
         this.updateChart(this.props.finalDataSet);
     }
 
+
     updateChart = (ds) => {
         const ctx = document.getElementById(this.props.id);
-        new Chart(ctx, {
-            // The type of chart we want to create
-            type: 'bar',
+        if (ctx) {
+            new Chart(ctx, {
+                // The type of chart we want to create
+                type: 'bar',
 
-            // The data for our dataset
-            data: {
-                labels: ['Total', 'Battery', 'Chargers', 'PV', 'HVAC', 'Hot Water'],
-			    datasets: [
-                    {
-				        label: 'Dispatched',
-				        backgroundColor: '#f5f590',
-                        data: ds["dispatched"],
-                        hidden: this.props.hiddenDataSets && this.props.hiddenDataSets["dispatched"]
-                    },
-                    {
-                        label: 'Available',
-                        backgroundColor: '#426e2f',
-                        data: ds["available"],
-                        hidden: this.props.hiddenDataSets && this.props.hiddenDataSets["available"]
-                    },
-                    {
-                        label: 'Unavailable',
-                        backgroundColor: '#dbdbdb',
-                        data: ds["unavailable"],
-                        hidden: this.props.hiddenDataSets && this.props.hiddenDataSets["unavailable"]
-                    }
-                ]
-            },
-
-            // Configuration options go here
-            options: {
-                responsive: true,
-				title: {
-					display: true,
-					text: this.props.chartTitle
-				},
-				tooltips: {
-					mode: 'index',
-                    intersect: false,
-                    callbacks: {
-                        label: function(tooltipItem, data) {
-                            var label = data.datasets[tooltipItem.datasetIndex].label || '';
-        
-                            if (label) {
-                                label += ': ';
-                            }
-                            
-                            label += Math.round(tooltipItem.yLabel * 100) / 100;
-                            return label;
-                        }
-                    }
-				},
-				hover: {
-					mode: 'nearest',
-					intersect: true
-                },
-                legend: {
-                    position: 'bottom'
-                },
-				scales: {
-					xAxes: [{
-                        stacked: true,
-						display: true,
-						scaleLabel: {
-							display: true,
-							labelString: this.props.xTitle
-						}
-					}],
-					yAxes: [{
-                        stacked: true,
-						display: true,
-						scaleLabel: {
-							display: true,
-							labelString: this.props.yTitle
+                // The data for our dataset
+                data: {
+                    labels: ['Total', 'Battery', 'Chargers', 'PV', 'HVAC', 'Hot Water'],
+    			    datasets: [
+                        {
+    				        label: 'Dispatched',
+    				        backgroundColor: '#f5f590',
+                            data: ds["dispatched"],
+                            hidden: this.props.hiddenDataSets && this.props.hiddenDataSets["dispatched"]
                         },
-                        ticks: {
-                            min: 0,
-                            max: 100,
-                            callback: function(value, index, values) {
-                                return `${value}%`;
+                        {
+                            label: 'Available',
+                            backgroundColor: '#426e2f',
+                            data: ds["available"],
+                            hidden: this.props.hiddenDataSets && this.props.hiddenDataSets["available"]
+                        },
+                        {
+                            label: 'Unavailable',
+                            backgroundColor: '#dbdbdb',
+                            data: ds["unavailable"],
+                            hidden: this.props.hiddenDataSets && this.props.hiddenDataSets["unavailable"]
+                        }
+                    ]
+                },
+
+                // Configuration options go here
+                options: {
+                    responsive: true,
+    				title: {
+    					display: true,
+    					text: this.props.chartTitle
+    				},
+    				tooltips: {
+    					mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                var label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+                                if (label) {
+                                    label += ': ';
+                                }
+
+                                label += Math.round(tooltipItem.yLabel * 100) / 100;
+                                return label;
                             }
                         }
-					}]
-				}
-            }
-        });
+    				},
+    				hover: {
+    					mode: 'nearest',
+    					intersect: true
+                    },
+                    legend: {
+                        position: 'bottom'
+                    },
+    				scales: {
+    					xAxes: [{
+                            stacked: true,
+    						display: true,
+    						scaleLabel: {
+    							display: true,
+    							labelString: this.props.xTitle
+    						}
+    					}],
+    					yAxes: [{
+                            stacked: true,
+    						display: true,
+    						scaleLabel: {
+    							display: true,
+    							labelString: this.props.yTitle
+                            },
+                            ticks: {
+                                min: 0,
+                                max: 100,
+                                callback: function(value, index, values) {
+                                    return `${value}%`;
+                                }
+                            }
+    					}]
+    				}
+                }
+            });
+        }
     }
 
     render() {
