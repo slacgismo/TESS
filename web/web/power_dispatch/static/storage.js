@@ -48,6 +48,7 @@ class Storage extends React.Component {
                     <div className="power-dispatch-chart-container">
                         <div className="pd-chart-system-load">
                             {
+                                // to check if data exists when calling <SystemLoadChart>
                                 systemLoadData.length !== 0
                                 ?
                                 <SystemLoadChart
