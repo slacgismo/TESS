@@ -15,6 +15,8 @@ function normalizeToPercentage(ds) {
 class ResourcesChart extends React.Component {
 
     componentDidMount() {
+
+        // normalize the data set for each device to 1.0
         for (const property in this.props.datasets) {
             this.props.datasets[property] = normalizeToPercentage(this.props.datasets[property]);
         }
