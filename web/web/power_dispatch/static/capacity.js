@@ -42,6 +42,7 @@ class Capacity extends React.Component {
                         </div>
                         <div className="pd-chart-resource">
                             {
+                                // to check if data exists when calling <ResourcesChart>
                                 resourcesData && resourcesData.datasets
                                 ? <ResourcesChart
                                     id="pd-capacity-resources-chart"

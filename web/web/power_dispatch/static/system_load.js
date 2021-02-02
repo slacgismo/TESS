@@ -5,6 +5,7 @@ class SystemLoadChart extends React.Component {
 
     updateChart = () => {
         const ctx = document.getElementById(this.props.id);
+        // fixes child rendering before action dispatch for receiving data in parent
         if (ctx) {
             new Chart(ctx, {
                 // The type of chart we want to create
