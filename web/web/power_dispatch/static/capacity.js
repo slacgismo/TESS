@@ -26,24 +26,31 @@ class Capacity extends React.Component {
     }
 
     render() {
-        const { resourcesData } = this.props;
+        const { resourcesData, systemLoadData } = this.props;
         return (
             <div className="power-dispatch-container">
                 <div className="power-dispatch-margin-fix">
                     <div className="power-dispatch-chart-container">
                         <div className="pd-chart-system-load">
-                            <SystemLoadChart
-                                id="pd-capacity-system-load-chart"
-                                ds={this.props.systemLoadData}
-                                xTitle="Hours"
-                                yTitle="MW"
-                                chartTitle="System Load"
-                                chartSubtitle="Transformer Capacity" />
+                            {
+                                systemLoadData.length !== 0
+                                ?
+                                <SystemLoadChart
+                                    id="pd-capacity-system-load-chart"
+                                    ds={this.props.systemLoadData}
+                                    xTitle="Hours"
+                                    yTitle="MW"
+                                    chartTitle="System Load"
+                                    chartSubtitle="Transformer Capacity" />
+                                :
+                                null
+                            }
+
                         </div>
                         <div className="pd-chart-resource">
                             {
                                 // to check if data exists when calling <ResourcesChart>
-                                resourcesData && resourcesData.datasets
+                                resourcesData.datasets
                                 ? <ResourcesChart
                                     id="pd-capacity-resources-chart"
                                     xTitle=""

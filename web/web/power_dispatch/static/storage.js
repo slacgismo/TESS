@@ -41,19 +41,25 @@ class Storage extends React.Component {
     }
 
     render() {
-        console.warn(this.props.systemLoadData)
+        const { systemLoadData } = this.props;
         return (
             <div className="power-dispatch-container">
                 <div className="power-dispatch-margin-fix">
                     <div className="power-dispatch-chart-container">
                         <div className="pd-chart-system-load">
-                            <SystemLoadChart
-                                id="pd-capacity-system-load-chart"
-                                ds={this.props.systemLoadData}
-                                xTitle="Hours"
-                                yTitle="kWh"
-                                chartTitle="Energy Storage"
-                                chartSubtitle="Transformer Capacity" />
+                            {
+                                systemLoadData.length !== 0
+                                ?
+                                <SystemLoadChart
+                                    id="pd-capacity-system-load-chart"
+                                    ds={this.props.systemLoadData}
+                                    xTitle="Hours"
+                                    yTitle="kWh"
+                                    chartTitle="Energy Storage"
+                                    chartSubtitle="Transformer Capacity" />
+                                :
+                                null
+                            }
                         </div>
                         <div className="pd-chart-resource">
                             <ResourcesChart
