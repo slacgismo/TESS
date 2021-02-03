@@ -13,6 +13,7 @@ function normalizeToPercentage(ds) {
 }
 
 class ResourcesChart extends React.Component {
+
     componentDidMount() {
 
         // normalize the data set for each device to 1.0
@@ -31,7 +32,7 @@ class ResourcesChart extends React.Component {
                 });
             }
         }
-        
+
         this.props.datasets["total"] = normalizeToPercentage(totalVals);
 
         for (const dsProp in this.props.datasets) {
@@ -45,9 +46,9 @@ class ResourcesChart extends React.Component {
                 this.props.finalDataSet["dispatched"].push(this.props.datasets[dsProp][2]);
             }
         }
-
         this.updateChart(this.props.finalDataSet);
     }
+
 
     updateChart = (ds) => {
         const ctx = document.getElementById(this.props.id);
@@ -93,11 +94,11 @@ class ResourcesChart extends React.Component {
                     callbacks: {
                         label: function(tooltipItem, data) {
                             var label = data.datasets[tooltipItem.datasetIndex].label || '';
-        
+
                             if (label) {
                                 label += ': ';
                             }
-                            
+
                             label += Math.round(tooltipItem.yLabel * 100) / 100;
                             return label;
                         }

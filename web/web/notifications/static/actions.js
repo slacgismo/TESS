@@ -77,3 +77,13 @@ export function getAlertTypes() {
     })
   }
 }
+
+export function deleteNotifications(data) {
+    return dispatch => {
+        api.delete('notification', { json: { ...data } }, (response) => {
+            dispatch(getNotifications());
+        }, (error) => {
+            console.warn(error);
+        })
+    }
+}
