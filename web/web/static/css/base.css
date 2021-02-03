@@ -4,6 +4,102 @@ body {
 .top-app-bar {
     background-color: #404040 !important;
 }
+ul, li {
+    list-style-type: none;
+}
+
+/* SNACKBAR */
+.snackbar-center{
+    top: 5%;
+    left: 50%;
+}
+
+/* LOAD/PRICE NOTIFICATION CONTAINER */
+.load-price-notification-container {
+    overflow: auto;
+    padding: 10px 50px;
+    border-bottom: 1px solid #404040;
+}
+.lpn-spacer {
+    display: inline-block;
+    margin: 0 20px;
+}
+.lpn-pull-left {
+    float: left;
+}
+.lpn-pull-right {
+    float: right;
+}
+.lpn-hidden {
+    display: none;
+}
+
+/* ERROR PAGES */
+.four-oh-four {
+    background: url('../img/404.jpg') no-repeat center center fixed;
+    background-size: cover;
+    text-align: center;
+
+    /* Set rules to fill background */
+    min-height: 100%;
+    min-width: 1024px;
+        
+    /* Set up proportionate scaling */
+    width: 100%;
+    height: auto;
+        
+    /* Set up positioning */
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 200px;
+}
+
+/* LOGIN PAGE */
+.login-page-container,
+.create-account-page-container {
+    background: url('../img/bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    text-align: center;
+
+    /* Set rules to fill background */
+    min-height: 100%;
+    min-width: 1024px;
+        
+    /* Set up proportionate scaling */
+    width: 100%;
+    height: auto;
+        
+    /* Set up positioning */
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+.login-form-container {
+    height: 100%;
+    min-height: 1200px;
+    width: 500px;
+    background-color: rgba(255, 255, 255, 1);
+    padding: 250px 0 0 0;
+    float: left;
+}
+.create-account-form-container {
+    height: 100%;
+    min-height: 1200px;
+    width: 500px;
+    background-color: rgba(255, 255, 255, 1);
+    padding: 50px 0;
+    float: left;
+    text-align: left;
+}
+.create-account-button-container {
+    padding: 0 10px;
+}
+.login-form-container input,
+.create-account-form-container input,
+.login-form-container button { 
+    width: 400px;
+}
 
 /* COST REVENUE STYLES */
 .cost-revenue-main-content-container {
@@ -18,4 +114,120 @@ body {
 }
 .chart-divider {
     margin: 0 35px;
+}
+
+/* ALERTS AND NOTIFICATIONS DATA TABLE PAGE STYLES */
+.alerts-data-table,
+.notification-data-table {
+    width: 100%;
+}
+.alerts-search-bar {
+    padding: 0 !important;
+}
+.alerts-search-bar input {
+    width: 400px;
+}
+.alerts-text-wrap {
+    max-width: 400px;
+    overflow: scroll !important;
+}
+.notification-action-bar-container,
+.notification-search-bar,
+.notification-button-container {
+    height: 55px;
+}
+.notification-search-bar {
+    float: left;
+    padding: 0 !important;
+}
+.notification-search-bar input {
+    width: 400px;
+}
+.notification-button-container button{
+    height: 45px;
+    margin: 5px 0;
+}
+.notification-button-container {
+    float: right;
+    margin: 0 5px;
+}
+.notification-spacer {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+/* POWER DISPATCH */
+.power-dispatch-container {
+    margin: 10px;
+    text-align: center;
+    overflow: auto;
+}
+.power-dispatch-margin-fix {
+    margin: 0 auto;
+    display: inline-block;
+    overflow: auto;
+    height: 100%;
+}
+.power-dispatch-chart-container {
+    margin: 0 15px 0 0;
+}
+.power-dispatch-chart-container,
+.power-dispatch-forms-container {
+    float: left;
+    padding: 15px;
+    border: 1px solid #404040;
+    max-height: 1200px;
+    min-height: 720px;
+    min-width: 610px;
+}
+.pd-chart-system-load {
+    margin: 0 0 15px 0;
+}
+.power-dispatch-forms-container {
+    text-align: left;
+}
+.power-dispatch-forms-container h3 {
+    margin-top: 0;
+}
+.pd-form-title {
+    text-decoration: solid underline black;
+}
+.pd-form-row > div {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+.pd-form-element-label {
+    width: 250px;
+}
+.pd-form-element-input {
+    width: 200px;
+}
+.pd-form-element-unit {
+    width: 100px;
+    padding: 0 0 0 30px;
+}
+.pd-form-button-container {
+    margin: 24px auto 25px auto;
+    text-align: center;
+}
+.pd-form-button-container button {
+    height: 50px;
+    width: 300px
+}
+.first-unit,
+.second-unit {
+    width: 35px;
+}
+.pd-form-element-input > label{
+    height: 40px;
+}
+
+/* MARKETS */
+.markets-margin-override {
+    margin-bottom: 38px;
+}
+
+/* USER SETTINGS */
+.user-settings-container input{
+    width: 500px;
 }

@@ -1,4 +1,11 @@
-from web.models.address import Address
+from sqlalchemy.types import TIMESTAMP
+from sqlalchemy import text, func
+from marshmallow import fields
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+
+from web.models.home_hub import HomeHub
+from web.models.meter import Meter
+from web.models.address import Address, AddressSchema
 from web.database import (
     db,
     Model,
@@ -12,12 +19,56 @@ from web.database import (
 class ServiceLocation(Model):
     __tablename__ = 'service_locations'
 
-    service_location_id = Column(db.String(64), primary_key=True, nullable=False)
-    address_id = Column(db.Integer, db.ForeignKey('addresses.address_id'), nullable=False)
+    service_location_id = Column(db.Integer,
+                                 primary_key=True,
+                                 autoincrement=True,
+                                 nullable=False)
+
+    alternate_service_location_id = Column(db.String(64), unique=True)
+
+    address_id = Column(db.Integer,
+                        db.ForeignKey('addresses.address_id'),
+                        unique=True,
+                        nullable=False)
+
     map_location = Column(db.String(64), nullable=False)
 
-    #one-to-one service location per address
-    address = relationship('Address', backref=db.backref('service_locations'), uselist=False)
+    is_active = Column(db.Boolean(), default=False, nullable=False)
+
+    is_archived = Column(db.Boolean(), default=False, nullable=False)
+
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=False,
+        server_default=text('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'))
+
+    created_at = Column(TIMESTAMP, server_default=func.now())
 
     def __repr__(self):
         return f'<ServiceLocation service_location_id={self.service_location_id} address_id={self.address_id}>'
+
+    # Relationships
+    home_hub = relationship('HomeHub',
+                            backref=db.backref('service_location'),
+                            uselist=False)
+
+    meters = relationship('Meter', backref=db.backref('service_location'))
+
+
+# Relationships on other tables
+Address.service_location = relationship('ServiceLocation',
+                                        backref=db.backref('address'),
+                                        uselist=False)
+
+##########################
+### MARSHMALLOW SCHEMA ###
+##########################
+
+
+class ServiceLocationSchema(SQLAlchemyAutoSchema):
+    address = fields.Nested(AddressSchema(), dump_only=True)
+
+    class Meta:
+        model = ServiceLocation
+        load_instance = True
+        include_fk = True

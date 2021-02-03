@@ -26,6 +26,7 @@ Install the needed dependencies:
 ```bash
 yarn install
 cd ios
+# sudo gem install cocoapods - if don't have pods yet
 pod install
 ```
 

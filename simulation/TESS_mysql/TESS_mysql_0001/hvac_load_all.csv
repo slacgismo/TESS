@@ -1,0 +1,15 @@
+# file...... TESS_mysql/TESS_mysql_0001/hvac_load_all.csv
+# date...... Tue Apr 14 05:33:10 2020
+# user...... (null)
+# host...... (null)
+# group..... class=house
+# property.. hvac_load
+# limit..... 0
+# interval.. 60
+# timestamp,house_1,house_2,house_3,house_4,house_5,house_6
+2016-07-01 00:00:00 PDT,+0,+0,+0,+0,+0,+0
+2016-07-01 00:01:00 PDT,+0,+0,+0,+0,+0,+0
+2016-07-01 00:02:00 PDT,+0,+0,+0,+0,+0,+0
+2016-07-01 00:03:00 PDT,+0,+0,+0,+0,+0,+0
+2016-07-01 00:04:00 PDT,+0,+0,+0,+0,+0,+0
+2016-07-01 00:05:00 PDT,+0,+0,+0,+0,+0,+0

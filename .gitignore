@@ -1,6 +1,10 @@
-
 # Created by https://www.gitignore.io/api/node,macos,python,django,pycharm,reactnative,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=node,macos,python,django,pycharm,reactnative,visualstudiocode
+
+### PEM/CRT ###
+*.pem
+*.crt
+*.key
 
 ### Flask ###
 instance/*
@@ -234,7 +238,7 @@ typings/
 # nuxt.js build output
 .nuxt
 
-# react / gatsby 
+# react / gatsby
 public/
 
 # vuepress build output
@@ -472,7 +476,7 @@ buck-out/
 
 # nuxt.js build output
 
-# react / gatsby 
+# react / gatsby
 
 # vuepress build output
 
@@ -641,6 +645,10 @@ simulation_N/TESS/
 simulation_N/old/
 
 selftest/
+
+
+simulation/TESS/
+simulation/__pycache__/
 
 # ignoring the bundled file since regenerating this locally will change it everytime
 web/web/static/bundles/*

@@ -24,7 +24,7 @@ brew services start mysql
 # Alternatively, you can use the command line
 mysql -u root -p 'your root password'
 
-# Then, create the tess_user, something like: 
+# Then, create the tess_user, something like:
 # 👇 this user and password is for the development config
 # CREATE USER 'tess_user'@'localhost' IDENTIFIED BY 'tess_db_password_local';
 # FLUSH PRIVILEGES;
@@ -47,7 +47,7 @@ flask db upgrade
 # there are new models or changes to existing models!!
 ```
 
-## Our frontend is currently leveraging react and mdc to generate the whole experience 
+## Our frontend is currently leveraging react and mdc to generate the whole experience
 Everything gets bundled via webpack, however, for sake of speed (since I don't want to deal with routing on the web client) this is not a SPA, so we need to manually register every file to bundle in the webpack config. Anyways...
 ```bash
 # make sure you have node/nvm installed
@@ -57,12 +57,29 @@ yarn install # install all the dependencies in the package.json
 yarn build   # bundle and deploy all the assets referenced in the application
 ```
 
+## Starting the Redis Server
+```bash
+redis-server
+```
+
 ## Running the project
 ```bash
 flask run
 ```
 ... navigate to `localhost:5000`
 
+
+## Simulating a more production style application run:
+```bash
+# green unicorn is in the requirements.txt, so it should be installed already
+# if not, pip install gunicorn
+gunicorn web:app
+> Starting gunicorn 20.0.4
+> Listening at: http://127.0.0.1:8000 (30581)
+> Using worker: sync
+> Booting worker with pid: 30583
+# navigate to locahost:8000 and everything should work as normal
+```
 
 ----
 

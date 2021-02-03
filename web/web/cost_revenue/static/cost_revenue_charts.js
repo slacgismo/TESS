@@ -1,45 +1,78 @@
 import React from "react";
-import { Chart } from "react-google-charts";
+import Chart from 'chart.js';
 
-const CostRevenueChart = props => {
-    return (
-        <Chart
-            width={'500px'}
-            height={'400px'}
-            chartType="Line"
-            loader={<div>Loading Chart</div>}
-            data={[
-                [
-                    { type: props.type, label: props.xTitle }, 
-                    'Label One', 
-                    'Label Two'
-                ],
-                [0, 0, 0],
-                [1, 10, 5],
-                [2, 23, 15],
-                [3, 17, 9],
-                [4, 18, 10],
-                [5, 9, 5],
-                [6, 11, 3],
-                [7, 27, 19]
-            ]}
-            options={{
-                chart: {
-                    title: props.chartTitle,
-                    subtitle: props.chartSubtitle
-                },
-                series: {
-                    0: { axis: "yTitle" }, 
-                    1: { axis: "yTitle" }
-                },
-                axes: {                    
-                    y: {
-                        yTitle: { label: props.yTitle }
+class CostRevenueChart extends React.Component {
+    componentDidMount() {
+        this.updateChart();
+    }
+
+    updateChart = () => {
+        const ctx = document.getElementById(this.props.id);
+        new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+
+            // The data for our dataset
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [
+                    {
+                        label: 'My First dataset',
+                        fill: false,
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: [0, 10, 5, 2, 20, 30, 45]
+                    },
+                    {
+                        label: 'My Second dataset',
+                        fill: false,
+                        backgroundColor: 'rgb(55, 99, 255)',
+                        borderColor: 'rgb(55, 99, 255)',
+                        data: [0, 50, 3, 20, 20, 20, 15]
                     }
-                }
-            }}
-        />
-    );
+                ]
+            },
+
+            // Configuration options go here
+            options: {
+                responsive: true,
+				title: {
+					display: true,
+					text: this.props.chartTitle
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: this.props.xTitle
+						}
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: this.props.yTitle
+						}
+					}]
+				}
+            }
+        });
+    }
+
+    render() {
+        return (
+            <canvas id={this.props.id} width="500" height="400"></canvas>
+        );
+    }
 }
 
 export default CostRevenueChart;

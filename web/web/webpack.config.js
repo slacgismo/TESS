@@ -28,7 +28,17 @@ module.exports = {
                 loader: 'babel-loader',
                 exclude: /node_modules/,
                 query: {
-                    presets: ["@babel/preset-env", "@babel/preset-react"]
+                    presets: [
+                        [
+                            "@babel/preset-env",
+                            {
+                                "targets": {
+                                    "node": "12"
+                                }
+                            }
+                        ],
+                        "@babel/preset-react"
+                    ]
                 }                
             },
             {
@@ -54,6 +64,6 @@ module.exports = {
         ]
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
     ]
 };

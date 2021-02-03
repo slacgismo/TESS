@@ -5,24 +5,35 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --mode development --config webpack.config.js",
-    "build": "webpack --watch --mode production"
+    "build": "webpack --mode production",
+    "build-dev": "webpack --watch --mode development"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@rmwc/button": "^6.0.14",
+    "@rmwc/card": "^6.0.14",
+    "@rmwc/checkbox": "^6.0.14",
+    "@rmwc/data-table": "^6.0.14",
     "@rmwc/drawer": "^6.0.14",
+    "@rmwc/grid": "^6.0.14",
     "@rmwc/list": "^6.0.14",
+    "@rmwc/snackbar": "^6.0.14",
+    "@rmwc/switch": "^6.0.14",
+    "@rmwc/textfield": "^6.1.0",
     "@rmwc/top-app-bar": "^6.0.14",
+    "@rmwc/typography": "^6.0.14",
+    "chart.js": "^2.9.3",
+    "ky": "^0.19.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-google-charts": "^3.0.15",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
