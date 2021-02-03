@@ -8,55 +8,76 @@ import gridlabd_functions
 #from gridlabd_functions import p_max # ???????????????
 #import mysql_functions
 #from HH_global import *
+import requests
+
+#import battery_functions as Bfct
+#import EV_functions as EVfct
+import PV_functions as PVfct
 
 import datetime
 import numpy as np
 import pandas
 from dateutil import parser
 from datetime import timedelta
-from HH_global import results_folder
+from HH_global import results_folder, db_address
 
-import mysql_functions as myfct
+#import mysql_functions as myfct
 
 """NEW FUNCTIONS / MYSQL DATABASE AVAILABLE"""
 
 #HVAC
 from HH_global import flexible_houses, C, p_max, interval, prec, start_time_str
 
-def create_agent_house(house_name):
-	df_house_settings = myfct.get_values_td(house_name+'_settings')
-
+def create_agent_house(hh_id,flex_HVAC=False):
 	#Create agent
-	house = House(house_name)
+	house = House(hh_id)
 
 	#Create HVAC
-	hvac = HVAC(house_name)
-	hvac.k = df_house_settings['k'].iloc[-1]
-	hvac.T_max = df_house_settings['T_max'].iloc[-1]
-	hvac.cooling_setpoint = df_house_settings['cooling_setpoint'].iloc[-1]
-	hvac.T_min = df_house_settings['T_min'].iloc[-1]
-	hvac.heating_setpoint = df_house_settings['heating_setpoint'].iloc[-1]
-	hvac.T_des = (df_house_settings['heating_setpoint'].iloc[-1] + df_house_settings['cooling_setpoint'].iloc[-1])/2. #Default
-	house.HVAC = hvac
+	if flex_HVAC:
+		hvac = HVAC(house_name)
+		hvac.k = df_house_settings['k'].iloc[-1]
+		hvac.T_max = df_house_settings['T_max'].iloc[-1]
+		hvac.cooling_setpoint = df_house_settings['cooling_setpoint'].iloc[-1]
+		hvac.T_min = df_house_settings['T_min'].iloc[-1]
+		hvac.heating_setpoint = df_house_settings['heating_setpoint'].iloc[-1]
+		hvac.T_des = (df_house_settings['heating_setpoint'].iloc[-1] + df_house_settings['cooling_setpoint'].iloc[-1])/2. #Default
+		house.HVAC = hvac
 	#Other variables are related to continuously changing state and updated by update state: T_air, mode, cooling_demand, heating_demand
+
+	#Create and assign DER objects if exist
+	house = PVfct.get_PV(house,hh_id) # get PV table and checks if PV is associated with HH id
+	# house = Bfct.get_battery(house,house_name)
+	# house = EVfct.get_CP(house,house_name)
 
 	return house
 
 
 class House:
-	def __init__(self,name):
+	def __init__(self,hh_id):
 		#Str
-		self.name = name
+		self.hh_id = hh_id
 		#Objects
 		self.HVAC = None
 		self.PV = None
 		self.battery = None
-		self.EV = None
+		self.EVCP = None
 
 	def update_state(self,dt_sim_time):
-		df_state_in = myfct.get_values_td(self.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
-		#Get state and Short-term Storage
-		self.HVAC.update_state(df_state_in)
+		if self.HVAC:
+			df_state_in = myfct.get_values_td(self.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
+			self.HVAC.update_state(df_state_in)
+		if self.PV:
+			#import pdb; pdb.set_trace()
+			pv_interval = requests.get(db_address+'/meter_intervals?meter_id=1').json()['results']['data'][-1] #Use last measurement
+			self.PV.update_state(pv_interval)
+		if self.battery:
+			df_batt_state_in = myfct.get_values_td(self.battery.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
+			self.battery.update_state(df_batt_state_in)
+		if self.EVCP:
+			df_evcp_state_in = myfct.get_values_td('EV_'+self.EVCP.ID+'_state_in', begin=dt_sim_time, end=dt_sim_time)
+			if len(df_evcp_state_in):
+				self.EVCP.checkin_newEV(df_evcp_state_in,connected=True)
+			self.EVCP.update_state(dt_sim_time)
 		return
 
 	#GUSTAVO: If the customer changes the settings through the App or at a device, that needs to be pushed here
@@ -70,21 +91,36 @@ class House:
 	#According to
 	#https://github.com/slacgismo/TESS/blob/b99df97815465a964c7e5813ce7b7ef726751abd/agents/Bid%20and%20response%20strategy.ipynb
 	def bid(self,dt_sim_time,market):
+		# Derive reference prices
 		time_delta = 12*24
-		df_prices_lem = myfct.get_values_td('clearing_pq', begin=(dt_sim_time - pandas.Timedelta(minutes=time_delta)), end=dt_sim_time)
-		if len(df_prices_lem) > 0:
-			P_exp = df_prices_lem['p_cleared'].mean()
-			P_dev = df_prices_lem['p_cleared'].var()
-		else:
-			P_exp = market.Pmax/2.
-			P_dev = 1.
-		self.HVAC.bid(dt_sim_time,market,P_exp,P_dev)
+		try:
+			df_prices_lem = requests.get(db_address+'market_intervals').json()['results']['data'][-1]
+			# Price expectations, can be specified by household
+			P_exp, P_dev = self.get_reference_prices(df_prices_lem)
+		except:
+			# If price not available (in first period or bec of connection issues)
+			P_exp, P_dev = 0.02, 1.0
+		
+		# Bid household devices
+		#self.HVAC.bid(dt_sim_time,market,P_exp,P_dev)
+		self.PV.bid(dt_sim_time,market,P_exp,P_dev)
+		#self.battery.bid(dt_sim_time,market,P_exp,P_dev)
+		#self.EVCP.bid(dt_sim_time,market,P_exp,P_dev)
 		return
+
+	#Use centralized expected price average and variance
+	def get_reference_prices(self,df_prices_lem):
+		return df_prices_lem['p_exp'], df_prices_lem['p_dev']
 
 	def determine_dispatch(self,dt_sim_time):
 		#HH reads price from market DB
-		p_lem = myfct.get_values_td('clearing_pq', begin=dt_sim_time, end=dt_sim_time)['p_cleared'].iloc[0]
-		self.HVAC.dispatch(p_lem)
+		df_lem = requests.get(db_address+'market_intervals').json()['results']['data'][-1]
+		p_lem = df_lem['p_clear']
+		alpha = df_lem['alpha']
+		#self.HVAC.dispatch(dt_sim_time,p_lem,alpha)
+		self.PV.dispatch(dt_sim_time,p_lem,alpha)
+		#self.battery.dispatch(dt_sim_time,p_lem,alpha)
+		#self.EVCP.dispatch(dt_sim_time,p_lem,alpha)
 
 class HVAC:
 	def __init__(self,name,T_air=0.0,mode='OFF',k=0.0,T_max=None,cooling_setpoint=None,cooling_demand=None,T_min=None,heating_setpoint=None,heating_demand=None):
@@ -144,26 +180,28 @@ class HVAC:
 			m = 0
 			Q_bid = 0.0 
 		P_bid = P_exp - 3*np.sign(m)*P_dev*(self.T_air - self.T_des)/abs(T_ref - self.T_des)
+		self.P_bid = P_bid
+		self.Q_bid = Q_bid
 
 		#write P_bid, Q_bid to market DB
 		if (Q_bid > 0.0) and not (self.mode == 'OFF'):
 			timestamp_arrival = market.send_demand_bid(dt_sim_time, float(P_bid), float(Q_bid), 'HVAC_'+self.name) #Feedback: timestamp of arrival #C determined by market_operator
 		return
 
-	def dispatch(self,p_lem):
-		if (self.Q_bid > 0.0) and (self.P_bid >= p_lem):
+	def dispatch(self,dt_sim_time,p_lem,alpha):
+		if (self.Q_bid > 0.0) and (self.P_bid > p_lem):
 			gridlabd.set_value(self.name,'system_mode',self.mode)
+			operating_mode = self.mode
+		elif (self.Q_bid > 0.0) and (self.P_bid == p_lem):
+			print('This HVAC is marginal; no partial implementation yet: '+str(alpha))
+			gridlabd.set_value(self.name,'system_mode',self.mode)
+			operating_mode = self.mode
 		else:
 			gridlabd.set_value(self.name,'system_mode','OFF')
-
-
-
-
-
-	
-
-
-
+			operating_mode = 'OFF'
+		myfct.set_values(self.name+'_state_out', '(timedate, operating_mode, p_HVAC)', (dt_sim_time, operating_mode, str(self.P_bid)))
+		self.P_bid = 0.0
+		self.Q_bid = 0.0
 
 
 def get_settings_houses(houselist,interval,mysql=False):

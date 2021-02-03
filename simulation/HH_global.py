@@ -1,5 +1,7 @@
 import os
 
+db_address = 'http://host.docker.internal:5000/api/v1/'
+
 #Result file
 results_folder = 'TESS_mysql/TESS_mysql_0001'
 #glm parameters
@@ -41,4 +43,3 @@ include_SO = False
 #precision in bidding and clearing price
 prec = 4
 M = 10000 #large number
-ip_address = '192.168.1.67'

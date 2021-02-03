@@ -1,0 +1,222 @@
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////
+//
+// Electrification study simulation model
+// Copyright (C) 2016, Stanford University
+// Author: aivanova@slac.stanford.edu
+//
+///////////////////////////////////////////////////////
+
+//
+// Read the configuration file for this system
+// Assumes the model is run from parent of model folder
+//
+
+#set randomseed=5
+
+clock {
+	starttime "2016-07-01 00:00";
+	stoptime "2016-07-02 00:00";
+}
+
+
+///////////////////////////////////////////////////////
+//
+// WEATHER
+//
+///////////////////////////////////////////////////////
+
+module climate;
+object climate {
+        name weather;
+        tmyfile 722900TYA.tmy3;//"${WEATHER}";
+        interpolate QUADRATIC;
+}
+
+module powerflow{
+	solver_method FBS;
+}
+module tape;
+module residential{
+	implicit_enduses REFRIGERATOR|LIGHTS|PLUGS|WATERHEATER|RANGE|DRYER|CLOTHESWASHER|FREEZER|MICROWAVE|DISHWASHER;
+	implicit_enduse_source EIA2015;
+}
+
+class player {
+	double value;
+}
+
+object player {
+	name player_0;
+	file ps_d_17312016.player;
+}
+
+object meter {
+	name node_149;
+	nominal_voltage 24.941kV;
+	phases ABCN;
+	//bustype SWING;
+	object recorder {
+		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
+		property measured_real_power, measured_reactive_power; 
+		file load_node_149.csv;
+		interval 60;
+	};
+}
+
+object meter {
+	name feeder_node;
+	nominal_voltage 24.941kV;
+	phases ABCN;
+}
+
+//object overhead_line {
+//	name main_line;
+//	phases ABCN;
+//	from feeder_node;
+//	to main_node;
+//	length 3 mile;
+//	configuration lc301;
+//}
+
+//object regulator {
+//	name main_reg;
+//	phases ABCN;
+//	from node_149;
+//	to feeder_node;
+//	configuration rc502;
+//	sense_node main_node;
+//}
+
+//object regulator_configuration {
+//	name rc502;
+//	connect_type WYE_WYE;
+//	band_center 2400.000;
+//	band_width 40.0;
+//	time_delay 30.0;
+//	raise_taps 16;
+//	lower_taps 16;
+//	current_transducer_ratio 50;
+//	power_transducer_ratio 20;
+//	compensator_r_setting_A 0.4;
+//	compensator_x_setting_A 0.4;
+//	CT_phase "A";
+//	PT_phase "A";
+//	regulation 0.10;
+//	Control OUTPUT_VOLTAGE;
+//	Type A;
+//	tap_pos_A -1;
+//	tap_pos_B 0;
+//	tap_pos_C 0;
+//}
+
+//Line configurations
+//ABCN
+object overhead_line_conductor {
+	name olc301c;	//336,400 26/7 ACSR
+	geometric_mean_radius 0.0244;
+	resistance 0.306;
+	diameter 0.721;
+}
+
+object overhead_line_conductor {
+	name olc301n;	//4/0 6/1 ACSR
+	geometric_mean_radius 0.00814;
+	resistance 0.592;
+	diameter 0.563;
+}
+object line_configuration {
+	name lc301;
+	conductor_A olc301c;
+	conductor_B olc301c;
+	conductor_C olc301c;
+	conductor_N olc301n;
+	spacing ls500301;
+}
+//Line spacings
+//ABCN
+object line_spacing {
+	name ls500301;
+	distance_AB 2.5;
+	distance_AC 7.0;
+	distance_BC 4.5;
+	distance_CN 5.0;
+	distance_AN 5.65685424949;
+	distance_BN 4.27200187266;
+	distance_AE 28.0;
+	distance_BE 28.0;
+	distance_CE 28.0;
+	distance_NE 24.0;
+}
+
+//object meter {
+//	name main_node;
+//	nominal_voltage 24.941kV;
+//	phases ABCN;
+//}
+
+object meter {
+	name main_node_A;
+	parent node_149; //main_node;
+	nominal_voltage 24.941kV;
+	phases AN;
+}
+
+object meter {
+	name main_node_B;
+	parent node_149; //main_node;
+	nominal_voltage 24.941kV;
+	phases BN;
+}
+
+object meter {
+	name main_node_C;
+	parent node_149; //main_node;
+	nominal_voltage 24.941kV;
+	phases CN;
+}
+
+object transformer_configuration {
+	name xfmr_config_A;
+	connect_type SINGLE_PHASE_CENTER_TAPPED;
+	install_type POLETOP;
+	powerA_rating 1000;
+	primary_voltage 24.941kV;
+	secondary_voltage 120.000 V;
+	impedance 0.006+0.0136j;
+}
+object transformer_configuration {
+	name xfmr_config_B;
+	connect_type SINGLE_PHASE_CENTER_TAPPED;
+	install_type POLETOP;
+	powerB_rating 1000;
+	primary_voltage 24.941kV;
+	secondary_voltage 120.000 V;
+	impedance 0.006+0.0136j;
+}
+object transformer_configuration {
+	name xfmr_config_C;
+	connect_type SINGLE_PHASE_CENTER_TAPPED;
+	install_type POLETOP;
+	powerC_rating 1000;
+	primary_voltage 24.941kV;
+	secondary_voltage 120.000 V;
+	impedance 0.006+0.0136j;
+}
+global int32 SEQ_CUSTID 0;
+#set allow_reinclude=true
+
+#include using(LOADID=1,PHASE=A,COUNT=1) "house.glm"
+#include using(LOADID=1,PHASE=B,COUNT=1) "house.glm"
+#include using(LOADID=1,PHASE=C,COUNT=1) "house.glm"
+
+object group_recorder {
+	name rec_total_load;
+	group "class=house";
+	property total_load;
+	file total_load_all.csv;
+	interval 60;
+}

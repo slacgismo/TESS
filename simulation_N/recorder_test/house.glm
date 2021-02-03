@@ -1,0 +1,59 @@
+class house {
+	double k;
+	double T_max;
+	double T_min;
+}
+
+class battery {
+	char32 charging_type;
+	double k;
+	char32 est_departure;
+	double top_on;
+}
+
+object transformer {
+	name xfrm_${LOADID}${PHASE};
+	to node_${LOADID}${PHASE};
+	phases ${PHASE}S;
+	from main_node_${PHASE};
+	configuration xfmr_config_${PHASE};
+}
+
+object triplex_node {
+	name node_${LOADID}${PHASE};
+	phases ${PHASE}S;
+	nominal_voltage 120;
+}
+
+object triplex_meter:..${COUNT} { 
+	name `meter_{SEQ_CUSTID:INC}`;
+	phases ${PHASE}S;
+	nominal_voltage 120;
+	object house { 
+		name `house_{SEQ_CUSTID}`;
+		groupid group_houses;
+		floor_area random.triangle(1000,1500);
+		//thermostat_control NONE;
+		cooling_setpoint 76 degF;
+		heating_setpoint 65 degF;
+		T_min 60 degF;
+		T_max 72 degF;
+		//k random.uniform(2.,4.);
+		hvac_power_factor 0.75;
+		cooling_system_type HEAT_PUMP;	
+		gas_enduses "WATERHEATER|RANGE|DRYER";
+		thermal_integrity_level GOOD;
+		object ZIPload {
+			name `zip_GLD_{SEQ_CUSTID}`;
+			power_fraction 0.5;
+			impedance_fraction 0.5;
+			current_fraction 0.0;
+			power_pf 0.9;
+			current_pf 0.9;
+			impedance_pf 0.9;
+			heat_fraction 0.0;
+			base_power player_0.value;
+		};
+	};
+}
+

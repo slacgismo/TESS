@@ -21,8 +21,12 @@ from datetime import timedelta
 import gridlabd
 import pandas
 from HH_global import results_folder, C, p_max, interval, city, prec, ref_price, price_intervals, load_forecast, unresp_factor, month, which_price, EV_data
-import mysql_functions as myfct
+#import mysql_functions as myfct
 import time
+
+import requests
+from HH_global import db_address #, user_name, pw
+market_id = 1
 
 class MarketOperator:
     def __init__(self,interval,Pmax):
@@ -72,6 +76,7 @@ class Market :
         self.S_awarded = [] #awarded supply bids
         if surplusControl is not None:
             self.surplusControl = surplusControl
+        self.alpha = 1.0
 
     # Name a market
     def rename(self,name='') :
@@ -132,9 +137,26 @@ class Market :
         self.clear()
         Pd = self.Pd # cleared demand price
         Qd = self.Qd #in kW
+        alpha = self.alpha #self.alpha #partial clearing/tie break
 
-        parameters = '(timedate, operating_mode, capacity, unresp_load, p_cleared, q_cleared, tie_break)'
-        myfct.set_values('clearing_pq', parameters, (dt_sim_time, 'normal', float(C), 0.0, float(Pd), float(Qd), 1.0))
+        # Re-calculate expected price and variance
+        list_dict_lem = requests.get(db_address+'market_intervals').json()['results']['data'][-15:] # place holder
+        prices = []
+        for lem in list_dict_lem:
+            prices += [lem['p_clear']]
+        if len(prices) == 1:
+            P_exp = mean(prices)
+            P_dev = 1.
+        elif len(prices) > 1:
+            P_exp = mean(prices)
+            P_dev = var(prices)
+        else:
+            P_exp = self.Pmax/2.
+            P_dev = 1.
+
+        #import pdb; pdb.set_trace()
+        data = {'market_id':market_id,'p_exp':P_exp,'p_dev':P_dev,'p_clear':Pd,'q_clear':Qd,'alpha':alpha,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
+        requests.post(db_address+'market_interval',json=data)
         return 
 
     # Returns bid position in S array, 'message' if error
@@ -211,7 +233,8 @@ class Market :
 
         # NOTE: once the non-trivial solution works, the trivial solution is no longer necessary but it may be faster
         if self.m == 0 and abs(dQ) < self.Qprec and abs(dP) < self.Pprec : # trivial solution
-            Q,P,df_time = self.clear_trivial(dQ,dP,df_time)
+            #Q,P,df_time = self.clear_trivial(dQ,dP,df_time)
+            Q,P,partial,alpha = self.clear_trivial(dQ,dP)
         else : # non-trivial solution
             Q,P = self.clear_nontrivial(dQ,dP)
         #print "P is {}".format(P)
@@ -220,9 +243,10 @@ class Market :
         self.Pd = round(P,self.Pprec)
         self.Qs = round(Q,self.Qprec)
         self.Ps = round(P,self.Pprec)
+        self.partial = partial
         return self.status, df_time
 
-    def clear_trivial(self,dQ,dP,df_time) :
+    def clear_trivial(self,dQ,dP) :
         """
         returns the Quantity, Price clearing point of a market with all response levels at 0.
         """
@@ -294,14 +318,17 @@ class Market :
         nb = len(self.D)
         ns = len(self.S)
 
+        partial = 'S' # Default
         while ( i < nb ) and ( j < ns ) and ( D[i][0] >= S[j][0] ) : #loop until Price demand/supply is >= 1
             if D[i][1] > S[j][1] : #Quantity Demanded > Quantity Selling
                 Q = S[j][1]
+                partial = 'D' #Last supply bid full, last demand bid only partially served
                 a = b = D[i][0]
                 j = j+1
                 v = 0
             elif D[i][1] < S[j][1] : #Quantity Buying < Quantity Selling
                 Q = D[i][1]
+                partial = 'S' #Last demand bid full, last supply bid only partially served
                 a = b = S[j][0]
                 i = i+1
                 v = 0
@@ -312,6 +339,20 @@ class Market :
                 i = i+1
                 j = j+1
                 v = 1 #set flag once the two Quantities equal
+        if partial == 'D':
+            if D.shape[0] > 1:
+                alpha = (Q - D[i-1][1])/(D[i][1] - D[i-1][1])
+            else:
+                alpha = (Q)/(D[i][1])
+        elif partial == 'S':
+            if S.shape[0] > 1:
+                #import pdb; pdb.set_trace()
+                alpha = (Q - S[j-1][1])/(S[j][1] - S[j-1][1])
+            else:
+                alpha = (Q)/(S[j][1])
+        else:
+            alpha = 1.0 #Last bid can be 100%
+        
         t2 = time.time()
         self.D_awarded = self.D[1:max(i-1,0)+1,:] #First skipped because of axis interception
         self.S_awarded = self.S[:max(j-1,0)+1,:] #No infinite interception
@@ -339,12 +380,134 @@ class Market :
                 P = a
             else:  #surplus goes to the producer
                 P = b
-
-        if not df_time is None:
-            df_time.at[n,'sorting_time'] = t1-t0
-            df_time.at[n,'clearing_time'] = t2-t1
+        #import pdb; pdb.set_trace()
         self.status = 0
-        return Q,P,df_time
+        return Q,P,partial,alpha
+
+#Without alpha / partial clearing
+    # def clear_trivial(self,dQ,dP,df_time) :
+    #     """
+    #     returns the Quantity, Price clearing point of a market with all response levels at 0.
+    #     """
+    #     # sort the supply bids
+    #     #print "The length of D", len(self.D)
+    #     #print "The length of S", len(self.S)
+    #     isSZero = isDZero = False
+    #     #If return without setting status, data is "stale" is that what it should do?
+    #     if len(self.S) == 0 and len(self.D) == 0 :
+    #         return 0, 0
+    #     if len(self.S) == 0 :
+    #         #print "isSZero set"
+    #         isSZero = True
+    #     if len(self.D) == 0 :
+    #         #print "isDZero set"
+    #         isDZero = True
+
+    #     t0 = time.time()
+    #     if isSZero is False:
+    #         St = array([[0.0,0.0,0.0,None]]+self.S) #temporarily insert line to keep types of elements
+    #         St = St[1:,:]
+    #         S = St[argsort(St.T[0],0)]
+    #         self.S = S #substitute unordered by ordered supply after clearing
+
+    #         # rebuild supply curve
+    #         Sq = [0]
+    #         Sp = [self.Pmin]
+    #         for sell in S :
+    #             Sq = append(append(Sq, Sq[-1]),sell[1]+Sq[-1])
+    #             Sp = append(append(Sp, sell[0]), sell[0])
+    #             sell[1] = Sq[-1]
+    #         Sq = append(Sq, Sq[-1])
+    #         Sp = append(Sp, self.Pmax)
+    #         self.Sq = Sq
+    #         self.Sp = Sp
+
+    #     # sort the demand bids
+    #     if isDZero is False :
+    #         #Dt = array(self.D)
+    #         Dt = array([[0.0,0.0,0.0,None]]+self.D) #temporarily insert line to keep types of elements
+    #         Dt = Dt[1:,:]
+    #         D = Dt[argsort(Dt.T[0],0)[::-1]]
+    #         self.D = D #substitute unordered by ordered demand after clearing
+
+    #         # rebuild demand curve
+    #         Dq = [0]
+    #         Dp = [self.Pmax]
+    #         for n,m in enumerate(D) :
+    #             Dq = append(append(Dq, Dq[-1]),m[1]+Dq[-1])
+    #             Dp = append(append(Dp, m[0]),m[0])
+    #             m[1] = Dq[-1]
+
+    #         Dq = append(Dq, Dq[-1])
+    #         Dp = append(Dp, self.Pmin)
+    #         self.Dq = Dq
+    #         self.Dp = Dp
+    #     t1 = time.time()
+
+    #     # find the intersection
+    #     i = 0 # buyer index
+    #     j = 0 # seller index
+    #     v = 0 # verify flag
+    #     a = b = 0.0
+    #     if isDZero is False :
+    #         a = D[0][0]
+    #     if isSZero is False :
+    #         b = S[0][0]
+    #     Q = 0.0
+    #     nb = len(self.D)
+    #     ns = len(self.S)
+
+    #     while ( i < nb ) and ( j < ns ) and ( D[i][0] >= S[j][0] ) : #loop until Price demand/supply is >= 1
+    #         if D[i][1] > S[j][1] : #Quantity Demanded > Quantity Selling
+    #             Q = S[j][1]
+    #             a = b = D[i][0]
+    #             j = j+1
+    #             v = 0
+    #         elif D[i][1] < S[j][1] : #Quantity Buying < Quantity Selling
+    #             Q = D[i][1]
+    #             a = b = S[j][0]
+    #             i = i+1
+    #             v = 0
+    #         else :
+    #             Q = D[i][1]
+    #             a = D[i][0]
+    #             b = S[j][0]
+    #             i = i+1
+    #             j = j+1
+    #             v = 1 #set flag once the two Quantities equal
+    #     t2 = time.time()
+    #     self.D_awarded = self.D[1:max(i-1,0)+1,:] #First skipped because of axis interception
+    #     self.S_awarded = self.S[:max(j-1,0)+1,:] #No infinite interception
+    #     # print "D is {}".format(D)
+    #     # print "S is {}".format(S)
+    #     #print "nb and ns are {} {} ".format(nb, ns)
+    #     while v == 1 :
+    #         if ( i > 0 ) and ( i < nb ) and ( (a+b)/2 <= D[i][0] ) :
+    #             b = D[i][0]
+    #             i = i+1
+    #         elif ( j > 0 ) and ( j < ns ) and ( (a+b)/2 <= S[j][0] ) :
+    #             a = S[j][0]
+    #             j = j+1
+    #         else :
+    #             v = 0
+    #     #If there are no bids, the price is set equal to the supply price
+    #     if isDZero :
+    #         P = b
+    #     elif isSZero :
+    #         P = a
+    #     else: #If there are bids, then the price is set equal to the average decided on above
+    #         if self.surplusControl is 0: #split the surplus
+    #             P = (a+b)/2
+    #         elif self.surplusControl is 1: #surplus goes to the customer
+    #             P = a
+    #         else:  #surplus goes to the producer
+    #             P = b
+
+    #     if not df_time is None:
+    #         df_time.at[n,'sorting_time'] = t1-t0
+    #         df_time.at[n,'clearing_time'] = t2-t1
+    #     self.status = 0
+    #     return Q,P,df_time
 
     def clear_nontrivial(self,dQ,dP) :
         """

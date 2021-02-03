@@ -289,6 +289,7 @@ public/
 # .idea/modules
 # *.iml
 # *.ipr
+dump.rdb
 
 # CMake
 cmake-build-*/
@@ -629,6 +630,21 @@ lint/tmp/
 #mysql db connection
 models/secrets.sh
 
+#confidential data
+credentials.py
+simulation/data/
+simulation_N/data_test/
+
+#large data
+simulation_N/glm_generation_SanDiego/
+simulation/gridlabd.tarz
+
+#results
+simulation/TESS/
+simulation/TESS_mysql/
+simulation_N/TESS/
+simulation_N/old/
+
 selftest/
 
 
@@ -637,9 +653,3 @@ simulation/__pycache__/
 
 # ignoring the bundled file since regenerating this locally will change it everytime
 web/web/static/bundles/*
-
-# ignoring config files from edge_devices folder
-edge_devices/config.py
-edge_devices/certs/
-
-*dump.rdb

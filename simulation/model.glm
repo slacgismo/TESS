@@ -14,30 +14,41 @@
 // Read the configuration file for this system
 // Assumes the model is run from parent of model folder
 //
-#include "config/default.glm"
-#define CONFIGFILE=config/default.glm
-#ifexist config/local.glm
-#include "config/local.glm"
-#set CONFIGFILE=config/local.glm
-#endif
-#set suppress_repeat_messages=TRUE
-#ifdef TIMEZONE
-clock {
-	timezone ${TIMEZONE};
-#ifdef STARTTIME
-	starttime ${STARTTIME};
-#endif
-#ifdef STOPTIME
-	stoptime ${STOPTIME};
-#endif
-}
-#else
-#error TIMEZONE is not specified in ${CONFIGFILE}
-#endif // TIMEZONE
+
+// For non-RT simulation
+
+//#include "config/default.glm"
+//#define CONFIGFILE=config/default.glm
+//#ifexist config/local.glm
+//#include "config/local.glm"
+//#set CONFIGFILE=config/local.glm
+//#endif
+//#set suppress_repeat_messages=TRUE
+//#ifdef TIMEZONE
+//clock {
+//	timezone ${TIMEZONE};
+//#ifdef STARTTIME
+//	starttime ${STARTTIME};
+//#endif
+//#ifdef STOPTIME
+//	stoptime ${STOPTIME};
+//#endif
+//}
+//#else
+//#error TIMEZONE is not specified in ${CONFIGFILE}
+//#endif // TIMEZONE
+
+// For RT simulation
+
+#define TIMEZONE=${TIMEZONE:-US/CA/Los Angeles}
+#define WEATHER=${WEATHER:-722540TYA.tmy3}
 
 #define SOLAR=on
 
 #set randomseed=5 
+
+module gridlabd_functions;
+
 ///////////////////////////////////////////////////////
 //
 // WEATHER
@@ -66,8 +77,6 @@ module residential{
 	implicit_enduses REFRIGERATOR|LIGHTS|PLUGS|WATERHEATER|RANGE|DRYER|CLOTHESWASHER|FREEZER|MICROWAVE|DISHWASHER;
 	implicit_enduse_source EIA2015;
 }
-
-//module gridlabd_functions;
 
 class player {
 	double value;
@@ -313,10 +322,10 @@ object group_recorder {
 	interval 60;
 }
 
-object group_recorder {
-	name rec_batt_soc;
-	group "class=battery";
-	property state_of_charge;
-	file TESS/TESS_BC/battery_SOC.csv;
-	interval 60;
-}
+//object group_recorder {
+//	name rec_batt_soc;
+//	group "class=battery";
+//	property state_of_charge;
+//	file TESS/TESS_BC/battery_SOC.csv;
+//	interval 60;
+//}

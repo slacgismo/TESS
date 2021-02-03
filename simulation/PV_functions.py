@@ -15,10 +15,79 @@ import pandas
 from dateutil import parser
 from datetime import timedelta
 
+import requests
+from HH_global import db_address
+#import mysql_functions as myfct
+
 """NEW FUNCTIONS / MYSQL DATABASE AVAILABLE"""
 
 #HVAC
 from HH_global import flexible_houses, C, p_max, interval, prec, load_forecast, city, month
+
+class PV:
+      def __init__(self, pv_id, meter, Q_rated):
+            self.id = pv_id
+            self.meter = meter
+            self.Q_rated = Q_rated
+            self.Qmtp = 0.0 #Last measured power
+            self.E = 0.0 #Energy in past 15min
+            self.P_bid = 0.0
+            self.Q_bid = 0.0
+            self.alpha = 1.0
+            self.mode = 1
+
+      def update_state(self,pv_interval):
+            self.Qmtp = pv_interval['qmtp']
+            self.E = pv_interval['e']
+
+      def bid(self,dt_sim_time,market,P_exp,P_dev):
+            self.P_bid = 0.0
+            if self.alpha > 0.0:
+                  self.Q_bid = self.Qmtp / self.alpha
+            else:
+                  self.Q_bid = self.Q_rated
+            if (self.Q_bid > 0.0):
+                  #Send and receive directly
+                  market.sell(self.Q_bid ,self.P_bid,gen_name=self.id)
+                  #Send and receive with delay (in RT deployment)
+                  #timestamp_arrival = market.send_supply_bid(dt_sim_time, float(self.P_bid), float(self.Q_bid), self.name) #Feedback: timestamp of arrival #C determined by market_operator
+            self.alpha = 1.0
+            #Post state to TESS DB (simulation time) - should have an alpha_t
+            #import pdb; pdb.set_trace()
+            print('Jon is working on a better method for updating the last meter_interval')
+            last_meter_id = requests.get(db_address+'bids/?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][1][self.meter-1]['meter_interval_id']
+            data = {'meter_interval_id': last_meter_id,'rate_id':1,'meter_id':self.meter,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(minutes=5)),'e':self.E,'qmtp':self.Qmtp,'p_bid':self.P_bid,'q_bid':self.Q_bid,'is_bid':True}
+            requests.put(db_address+'meter_interval/'+str(last_meter_id),json=data)
+            #requests.get(db_address+'bids/?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][1][(self.meter-7)]
+            return
+
+      def dispatch(self,dt_sim_time,p_lem,alpha):
+            if self.P_bid < p_lem:
+                  self.mode = 1
+            elif numpy.abs(self.P_bid - p_lem) < 0.001:
+                  self.mode = alpha
+            else:
+                  self.mode = 0 #Curtailment during negative prices?
+            
+            #Post state to TESS DB (simulation time) - should have an alpha_t
+            #df_meter = requests.get(db_address+'meter_intervals/'+str(self.id))
+            #data = {'rate_id':1,'meter_id':PV.meter,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(minutes=5)),'e':E,'qmtp':Qmtp,'p_bid':0.,'q_bid':0.,'is_bid':True}
+            #requests.put(db_address+'meter_interval',json=data) #with dummy bid
+            
+
+def get_PV(house,hh_id):
+      pvs = requests.get(db_address+'pvs').json()['results']['data']
+      for pv in pvs:
+            if pv['home_hub_id'] == hh_id:
+                  pv = PV(pv['pv_id'],pv['meter_id'],pv['q_rated'])
+                  house.PV = pv
+                  return house
+      print('No PV installed by hh '+str(hh_id))
+      return house
+
+
+
+# OLD
 
 def get_settings(pvlist,interval,mysql=False):
       cols_PV = ['PV_name','house_name','inverter_name','rated_power','P_Out']

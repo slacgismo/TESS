@@ -1367,7 +1367,7 @@ object generators.battery {
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
 	charging_type "";
-	k "+0";
+	k "+10";
 }
 object powerflow.triplex_meter {
 	parent "node_1A";
@@ -1946,7 +1946,7 @@ object generators.battery {
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
 	charging_type "";
-	k "+0";
+	k "+5";
 }
 object powerflow.transformer {
 	parent "main_node_B";
@@ -2590,7 +2590,7 @@ object generators.battery {
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
 	charging_type "";
-	k "+0";
+	k "+7";
 }
 object powerflow.triplex_meter {
 	parent "node_1B";
@@ -3175,7 +3175,7 @@ object generators.battery {
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
 	charging_type "";
-	k "+0";
+	k "+9";
 }
 object powerflow.transformer {
 	parent "main_node_C";
@@ -3819,7 +3819,7 @@ object generators.battery {
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
 	charging_type "";
-	k "+0";
+	k "+12";
 }
 object powerflow.triplex_meter {
 	parent "node_1C";
@@ -4396,7 +4396,7 @@ object generators.battery {
 	round_trip_efficiency "+0.8 pu";
 	state_of_charge "+0.2 pu";
 	charging_type "";
-	k "+0";
+	k "+4";
 }
 object tape.group_recorder {
 	name "rec_meter_load_P";

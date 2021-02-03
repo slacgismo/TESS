@@ -1,0 +1,98 @@
+"""
+Defines functions for the HH
+
+Uses direct setting of system mode
+"""
+import gridlabd
+import gridlabd_functions
+#from gridlabd_functions import p_max # ???????????????
+import mysql_functions
+#from HH_global import *
+
+import datetime
+import numpy as np
+import pandas
+from dateutil import parser
+from datetime import timedelta
+
+"""NEW FUNCTIONS / MYSQL DATABASE AVAILABLE"""
+
+#HVAC
+from HH_global import flexible_houses, C, p_max, interval, prec
+
+def get_settings_houses(houselist,batterylist,EVlist,pvlist,interval,mysql=False):
+      #mydb, mycursor = connect()
+      dt = parser.parse(gridlabd.get_global('clock')) #Better: getstart time!
+      prev_timedate = dt - timedelta(minutes=interval/60)
+
+      cols_market_hvac = ['house_name','appliance_name','k','T_min','T_max','P_heat','P_cool']
+      df_market_hvac = pandas.DataFrame(columns=cols_market_hvac)
+      cols_market_hvac_meter = ['system_mode','av_power','heating_setpoint','cooling_setpoint','active','timedate','appliance_id']
+      df_market_hvac_meter = pandas.DataFrame(columns=cols_market_hvac_meter)
+      for house in houselist : 
+            if mysql:
+                  mysql_functions.set_values('market_houses', '(house_name)',(house,))
+            
+            #Fills TABLE market_appliances
+            house_obj = gridlabd.get_object(house)
+            k = float(house_obj['k'])
+            T_min = float(house_obj['T_min'])
+            T_max = float(house_obj['T_max'])
+            heat_q = float(house_obj['heating_demand']) #heating_demand is in kW
+            hvac_q = float(house_obj['cooling_demand']) #cooling_demand is in kW
+            if mysql:
+                  mysql_functions.set_values('market_HVAC', '(house_name,appliance_name,k,T_min,T_max,P_heat,P_cool)',(house,'HVAC_'+house[4:],k,T_min,T_max,heat_q,hvac_q,))
+            df_market_hvac = df_market_hvac.append(pandas.Series([house,'HVAC_'+house[4:],k,T_min,T_max,heat_q,hvac_q],index=cols_market_hvac),ignore_index=True)
+
+            #Fills TABLE market_appliance_meter
+            heating_setpoint = float(house_obj['heating_setpoint'])
+            cooling_setpoint = float(house_obj['cooling_setpoint'])
+            if mysql:
+                  mysql_functions.set_values('market_HVAC_meter', '(system_mode,av_power,heating_setpoint,cooling_setpoint,active,timedate,appliance_id)',('OFF',0.0,heating_setpoint,cooling_setpoint,0,prev_timedate,int(house.split('_')[-1]),))
+            df_market_hvac_meter = df_market_hvac_meter.append(pandas.Series(['OFF',0.0,heating_setpoint,cooling_setpoint,0,prev_timedate,int(house.split('_')[-1])],index=cols_market_hvac_meter),ignore_index=True)
+      #df_market_hvac.to_sql('market_HVAC',mycursor,if_exists='append') #, flavor='mysql')
+
+      for battery in batterylist:
+            house_name = 'GLD_'+battery[8:]
+            #Fills TABLE market_appliances
+            SOC_max = float(gridlabd_functions.get(battery,'battery_capacity')['value'][:-3])/1000 #Wh in Gridlabd -> kWh
+            str_i_max = gridlabd_functions.get(battery,'I_Max')['value'][:-2].replace('-','+')
+            i_max = str_i_max.split('+')[1]
+            u_max = float(gridlabd_functions.get(battery,'V_Max')['value'][:-2])*float(i_max)/1000 #W -> kW #better inverter?
+            eff = float(gridlabd_functions.get(battery,'base_efficiency')['value'][:-5])
+            mysql_functions.set_values('market_battery', '(house_name,appliance_name,appliance_id,SOC_max,u_max,eff)',(house_name,battery,int(battery.split('_')[-1]),SOC_max,u_max,eff,))
+            #Fills TABLE market_appliance_meter
+            SOC_0 = float(gridlabd_functions.get(battery,'state_of_charge')['value'][:-3])*SOC_max
+            mysql_functions.set_values('market_battery_meter', '(SOC,active,timedate,appliance_id)',(SOC_0,0,prev_timedate,int(battery.split('_')[-1]),))
+
+      for EV in EVlist:
+            house_name = 'GLD_'+EV[3:]
+            #Fills TABLE market_appliances
+            SOC_max = float(gridlabd_functions.get(EV,'battery_capacity')['value'][:-3])/1000 #Wh in Gridlabd -> kWh
+            str_i_max = gridlabd_functions.get(EV,'I_Max')['value'][:-2].replace('-','+')
+            i_max = str_i_max.split('+')[1]
+            u_max = float(gridlabd_functions.get(EV,'V_Max')['value'][:-2])*float(i_max)/1000 #W -> kW #better inverter?
+            eff = float(gridlabd_functions.get(EV,'base_efficiency')['value'][:-5])
+            charging_type = gridlabd_functions.get(EV,'charging_type')['value']
+            k = gridlabd_functions.get(EV,'k')['value'] #no market: always highest wllingsness to pay
+            mysql_functions.set_values('market_EV', '(house_name,appliance_name,appliance_id,SOC_max,u_max,eff,charging_type,k)',(house_name,EV,int(EV.split('_')[-1]),SOC_max,u_max,eff,charging_type,k,))
+            #Fills TABLE market_appliance_meter
+            mysql_functions.set_values('market_EV_meter', '(connected,SOC,active,timedate,appliance_id)',(0,0,0,prev_timedate,int(EV.split('_')[-1]),))
+            #Set all cars offline/disconnected in the beginning
+            gridlabd_functions.set(EV,'generator_status','OFFLINE')
+
+      if len(EVlist) > 0:
+            df_events = pandas.read_csv('EV_events_2016.csv',index_col=[0])
+            df_events.to_csv('EV_events_pop.csv')
+
+      for pv in pvlist:
+            house_name = 'GLD_'+pv[3:]
+            #Fills TABLE market_appliances
+            inverter_name = 'PV_inverter_' + pv[3:]
+            rated_power = float(gridlabd_functions.get(inverter_name,'rated_power')['value'][:-3])/1000
+            mysql_functions.set_values('market_pv', '(house_name,appliance_name,inverter_name,appliance_id,rated_power)',(house_name,pv,inverter_name,int(pv.split('_')[-1]),rated_power,))
+            #Fills TABLE market_appliance_meter
+            production = float(gridlabd_functions.get(inverter_name,'P_Out')['value'][:-3])/1000
+            mysql_functions.set_values('market_pv_meter', '(P_Out,timedate,appliance_id)',(production,prev_timedate,int(pv.split('_')[-1]),))
+      
+      return df_market_hvac,df_market_hvac_meter

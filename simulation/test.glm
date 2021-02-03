@@ -1,0 +1,9 @@
+#set run_realtime=1
+module test;
+class test{
+	randomvar x;
+}
+
+object test{
+	x "type:normal(0,1); refresh:4s";
+}
