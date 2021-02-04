@@ -1,8 +1,14 @@
-from flask import jsonify
+from flask import jsonify, redirect, url_for, Blueprint
 import redis
 from web import jwt
 
+
 revoked_store = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
+auth_bp = Blueprint('auth_bp',
+                    __name__,
+                    template_folder='templates',
+                    static_folder='static',
+                    static_url_path='assets')
 
 # https://github.com/vimalloc/flask-jwt-extended/blob/master/examples/redis_blacklist.py
 @jwt.token_in_blacklist_loader
@@ -13,19 +19,11 @@ def check_if_token_is_revoked(decrypted_token):
         return True
     return entry == 'true'
 
-@jwt.expired_token_loader
-def expired_token_callback():
-    return jsonify({
-        'description': 'The token has expired',
-        'error': 'token_expired'
-    }), 401
-
 @jwt.invalid_token_loader
-def invalid_token_callback(error):
-    return jsonify({
-        'description': 'Signature verification failed',
-        'error': 'invalid_token'
-    }), 401
+@jwt.expired_token_loader
+def error_token_callback(error):
+    # redirects to the login page when token is expired/invalid
+    return redirect(url_for('auth_bp.login'))
 
 @jwt.unauthorized_loader
 def missing_token_callback(error):
