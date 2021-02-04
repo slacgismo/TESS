@@ -1,14 +1,9 @@
-from flask import jsonify, redirect, url_for, Blueprint
+from flask import jsonify, redirect, url_for
 import redis
 from web import jwt
 
 
 revoked_store = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
-auth_bp = Blueprint('auth_bp',
-                    __name__,
-                    template_folder='templates',
-                    static_folder='static',
-                    static_url_path='assets')
 
 # https://github.com/vimalloc/flask-jwt-extended/blob/master/examples/redis_blacklist.py
 @jwt.token_in_blacklist_loader
