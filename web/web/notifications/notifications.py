@@ -14,5 +14,5 @@ def index():
     has_tokens = get_jwt_identity()
     if has_tokens:
         return render_template('notifications/index.html')
-    else: 
+    else:
         return redirect('/?access_denied=true')
