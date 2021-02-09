@@ -68,7 +68,6 @@ export function storageResourcesDataUpdated(data) {
     };
 }
 
-
 export function saveForm(data) {
     return dispatch => {
         dispatch(saveFormUpdated(data));
