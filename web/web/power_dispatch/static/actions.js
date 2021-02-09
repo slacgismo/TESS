@@ -34,7 +34,7 @@ export function storageSystemLoadDataUpdated(data) {
     };
 }
 
-export function getResourcesData() {
+export function getCapacityResourcesData() {
     return dispatch => {
         api.get('power/resources', (response) => {
             dispatch(capacityResourcesDataUpdated(response.results.data));
@@ -44,9 +44,40 @@ export function getResourcesData() {
     }
 }
 
+export function getStorageResourcesData() {
+    return dispatch => {
+        api.get('power/resources', (response) => {
+            dispatch(storageResourcesDataUpdated(response.results.data));
+        }, (error) => {
+            console.warn(error);
+        });
+    }
+}
+
 export function capacityResourcesDataUpdated(data) {
     return {
         type: 'CAPACITY_RESOURCES_DATA_UPDATED',
+        data
+    };
+}
+
+export function storageResourcesDataUpdated(data) {
+    return {
+        type: 'STORAGE_RESOURCES_DATA_UPDATED',
+        data
+    };
+}
+
+
+export function saveForm(data) {
+    return dispatch => {
+        dispatch(saveFormUpdated(data));
+    };
+}
+
+export function saveFormUpdated(data) {
+    return {
+        type: 'SAVE_FORM_DATA',
         data
     };
 }

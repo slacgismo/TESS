@@ -7,7 +7,7 @@ import constraints from "../../../constraints/static/reducer";
 import costRevenue from "../../../cost_revenue/static/reducer";
 import userSettings from "../../../user_settings/static/reducer";
 import notifications from "../../../notifications/static/reducer";
-import { storage, capacity } from "../../../power_dispatch/static/reducer";
+import { storage, capacity, formState } from "../../../power_dispatch/static/reducer";
 
 const appReducer = combineReducers({
     auth,
@@ -18,6 +18,7 @@ const appReducer = combineReducers({
     notifications,
     storage,
     capacity,
+    formState,
     userSettings,
     drawerNavigationMenu,
 });

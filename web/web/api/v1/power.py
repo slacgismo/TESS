@@ -37,8 +37,8 @@ def get_power_system_load():
 
     results = {
         'labels': date_time_range,
-        'one': [getRandomNumber() for _ in range(0, value_range)],
-        'two': [getRandomNumber() for _ in range(0, value_range)]
+        'one': [],
+        'two': []
     }
 
     return arw.to_json(results)
@@ -53,11 +53,11 @@ def get_resources_load():
     value_range = 3
     results = {
         'datasets': {
-            'battery': [getRandomNumber() for _ in range(0, value_range)],
-            'charger': [getRandomNumber() for _ in range(0, value_range)],
-            'pv': [getRandomNumber() for _ in range(0, value_range)],
-            'hvac': [getRandomNumber() for _ in range(0, value_range)],
-            'hotWater': [getRandomNumber() for _ in range(0, value_range)]
+            'battery': [],
+            'charger': [],
+            'pv': [],
+            'hvac': [],
+            'hotWater': []
         },
         'groupedDataset': {
             'unavailable': [],
