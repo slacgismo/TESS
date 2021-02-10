@@ -28,7 +28,9 @@ class Storage extends React.Component {
             betweenStart: "",
             betweenEnd: "",
             gridToHome: "",
-            homeToGrid: ""
+            gridToHomeSwitch: false,
+            homeToGrid: "",
+            homeToGridSwitch: false
         };
     }
 
@@ -45,6 +47,11 @@ class Storage extends React.Component {
 
     update = (field, event) => {
         this.setState({ [field]: event.currentTarget.value });
+    }
+
+    updateSwitch = (field, event) => {
+        this.setState({ [field]: !!event.currentTarget.checked});
+        this.props.dispatch(action.saveForm(this.state));
     }
 
     render() {
@@ -236,7 +243,11 @@ class Storage extends React.Component {
                                         kW
                                     </div>
                                     <div className="pd-form-element-unit second-unit">
-                                        <Switch>On/Off</Switch>
+                                        <Switch
+                                            label="Off/On"
+                                            checked={this.state.gridToHomeSwitch}
+                                            onChange={e => this.updateSwitch("gridToHomeSwitch", e)}
+                                        />
                                     </div>
                                 </div>
                                 <div className="pd-form-row">
@@ -254,7 +265,11 @@ class Storage extends React.Component {
                                         kW
                                     </div>
                                     <div className="pd-form-element-unit second-unit">
-                                        <Switch>On/Off</Switch>
+                                        <Switch
+                                            label="Off/On"
+                                            checked={this.state.homeToGridSwitch}
+                                            onChange={e => this.updateSwitch("homeToGridSwitch", e)}
+                                        />
                                     </div>
                                 </div>
                                 <hr />

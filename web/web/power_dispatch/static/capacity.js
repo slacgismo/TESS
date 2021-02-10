@@ -28,7 +28,9 @@ class Capacity extends React.Component {
             betweenStart: "",
             betweenEnd: "",
             gridToHome: "",
-            homeToGrid: ""
+            gridToHomeSwitch: false,
+            homeToGrid: "",
+            homeToGridSwitch: false
         };
     }
 
@@ -47,8 +49,12 @@ class Capacity extends React.Component {
         this.setState({ [field]: event.currentTarget.value });
     }
 
+    updateSwitch = (field, event) => {
+        this.setState({ [field]: !!event.currentTarget.checked});
+        this.props.dispatch(action.saveForm(this.state));
+    }
+
     render() {
-        // debugger;
         const { resourcesData, systemLoadData, formData } = this.props;
         return (
             <div className="power-dispatch-container">
@@ -100,11 +106,11 @@ class Capacity extends React.Component {
                                     <div className="pd-form-element-label">Day</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.day}
-                                        onChange={(e) =>
-                                            this.update("day", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.day}
+                                            onChange={(e) =>
+                                                this.update("day", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">MW</div>
@@ -132,11 +138,11 @@ class Capacity extends React.Component {
                                     <div className="pd-form-element-label">Yellow Alarm</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.yellowAlarm}
-                                        onChange={(e) =>
-                                            this.update("yellowAlarm", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.yellowAlarm}
+                                            onChange={(e) =>
+                                                this.update("yellowAlarm", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">%</div>
@@ -145,11 +151,11 @@ class Capacity extends React.Component {
                                     <div className="pd-form-element-label">Red Alarm</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.redAlarm}
-                                        onChange={(e) =>
-                                            this.update("redAlarm", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.redAlarm}
+                                            onChange={(e) =>
+                                                this.update("redAlarm", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">%</div>
@@ -164,11 +170,11 @@ class Capacity extends React.Component {
                                     <div className="pd-form-element-label">Capacity Bounds</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.capacityBounds}
-                                        onChange={(e) =>
-                                            this.update("capacityBounds", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.capacityBounds}
+                                            onChange={(e) =>
+                                                this.update("capacityBounds", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">kW</div>
@@ -177,11 +183,11 @@ class Capacity extends React.Component {
                                     <div className="pd-form-element-label">Resource Depletion (Battery)</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.resourcesDepletion}
-                                        onChange={(e) =>
-                                            this.update("resourcesDepletion", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.resourcesDepletion}
+                                            onChange={(e) =>
+                                                this.update("resourcesDepletion", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">hour(s)</div>
@@ -214,11 +220,11 @@ class Capacity extends React.Component {
                                     </div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.betweenEnd}
-                                        onChange={(e) =>
-                                            this.update("betweenEnd", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.betweenEnd}
+                                            onChange={(e) =>
+                                                this.update("betweenEnd", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                 </div>
@@ -226,36 +232,44 @@ class Capacity extends React.Component {
                                     <div className="pd-form-element-label">Grid to Home Constraint</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.gridToHome}
-                                        onChange={(e) =>
-                                            this.update("gridToHome", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.gridToHome}
+                                            onChange={(e) =>
+                                                this.update("gridToHome", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit first-unit">
                                         kW
                                     </div>
                                     <div className="pd-form-element-unit second-unit">
-                                        <Switch>On/Off</Switch>
+                                        <Switch
+                                            label="Off/On"
+                                            checked={this.state.gridToHomeSwitch}
+                                            onChange={e => this.updateSwitch("gridToHomeSwitch", e)}
+                                        />
                                     </div>
                                 </div>
                                 <div className="pd-form-row">
                                     <div className="pd-form-element-label">Home to Grid Constraint</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.homeToGrid}
-                                        onChange={(e) =>
-                                            this.update("homeToGrid", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.homeToGrid}
+                                            onChange={(e) =>
+                                                this.update("homeToGrid", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit first-unit">
                                         kW
                                     </div>
                                     <div className="pd-form-element-unit second-unit">
-                                        <Switch>On/Off</Switch>
+                                        <Switch
+                                            label="Off/On"
+                                            checked={this.state.homeToGridSwitch}
+                                            onChange={e => this.updateSwitch("homeToGridSwitch", e)}
+                                        />
                                     </div>
                                 </div>
                                 <hr />
