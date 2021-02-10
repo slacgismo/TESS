@@ -119,11 +119,11 @@ class Capacity extends React.Component {
                                     <div className="pd-form-element-label">Night</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.night}
-                                        onChange={(e) =>
-                                            this.update("night", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.night}
+                                            onChange={(e) =>
+                                                this.update("night", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">MW</div>
@@ -211,11 +211,11 @@ class Capacity extends React.Component {
                                     <div className="pd-form-element-label">Between</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.betweenStart}
-                                        onChange={(e) =>
-                                            this.update("betweenStart", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.betweenStart}
+                                            onChange={(e) =>
+                                                this.update("betweenStart", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-input">

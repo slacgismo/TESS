@@ -75,6 +75,7 @@ class Storage extends React.Component {
                                 :
                                 null
                             }
+
                         </div>
                         <div className="pd-chart-resource">
                             {
@@ -105,11 +106,11 @@ class Storage extends React.Component {
                                     <div className="pd-form-element-label">Day</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.day}
-                                        onChange={(e) =>
-                                            this.update("day", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.day}
+                                            onChange={(e) =>
+                                                this.update("day", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">MW</div>
@@ -118,11 +119,11 @@ class Storage extends React.Component {
                                     <div className="pd-form-element-label">Night</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.night}
-                                        onChange={(e) =>
-                                            this.update("night", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.night}
+                                            onChange={(e) =>
+                                                this.update("night", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">MW</div>
@@ -137,11 +138,11 @@ class Storage extends React.Component {
                                     <div className="pd-form-element-label">Yellow Alarm</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.yellowAlarm}
-                                        onChange={(e) =>
-                                            this.update("yellowAlarm", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.yellowAlarm}
+                                            onChange={(e) =>
+                                                this.update("yellowAlarm", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">%</div>
@@ -150,11 +151,11 @@ class Storage extends React.Component {
                                     <div className="pd-form-element-label">Red Alarm</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.redAlarm}
-                                        onChange={(e) =>
-                                            this.update("redAlarm", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.redAlarm}
+                                            onChange={(e) =>
+                                                this.update("redAlarm", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">%</div>
@@ -169,11 +170,11 @@ class Storage extends React.Component {
                                     <div className="pd-form-element-label">Capacity Bounds</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.capacityBounds}
-                                        onChange={(e) =>
-                                            this.update("capacityBounds", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.capacityBounds}
+                                            onChange={(e) =>
+                                                this.update("capacityBounds", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">kW</div>
@@ -182,11 +183,11 @@ class Storage extends React.Component {
                                     <div className="pd-form-element-label">Resource Depletion (Battery)</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.resourcesDepletion}
-                                        onChange={(e) =>
-                                            this.update("resourcesDepletion", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.resourcesDepletion}
+                                            onChange={(e) =>
+                                                this.update("resourcesDepletion", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit">hour(s)</div>
@@ -197,7 +198,6 @@ class Storage extends React.Component {
                             <div className="pd-form-button-container">
                                 <Button
                                     label="SET"
-                                    onClick={this.addNewRow}
                                     outlined />
                             </div>
                         </div>
@@ -211,20 +211,20 @@ class Storage extends React.Component {
                                     <div className="pd-form-element-label">Between</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.betweenStart}
-                                        onChange={(e) =>
-                                            this.update("betweenStart", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.betweenStart}
+                                            onChange={(e) =>
+                                                this.update("betweenStart", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.betweenEnd}
-                                        onChange={(e) =>
-                                            this.update("betweenEnd", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.betweenEnd}
+                                            onChange={(e) =>
+                                                this.update("betweenEnd", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                 </div>
@@ -232,11 +232,11 @@ class Storage extends React.Component {
                                     <div className="pd-form-element-label">Grid to Home Constraint</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.gridToHome}
-                                        onChange={(e) =>
-                                            this.update("gridToHome", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.gridToHome}
+                                            onChange={(e) =>
+                                                this.update("gridToHome", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit first-unit">
@@ -254,11 +254,11 @@ class Storage extends React.Component {
                                     <div className="pd-form-element-label">Home to Grid Constraint</div>
                                     <div className="pd-form-element-input">
                                         <TextField outlined
-                                        value={this.state.homeToGrid}
-                                        onChange={(e) =>
-                                            this.update("homeToGrid", e)
-                                        }
-                                        onBlur={this.props.dispatch(action.saveForm(this.state))}
+                                            value={this.state.homeToGrid}
+                                            onChange={(e) =>
+                                                this.update("homeToGrid", e)
+                                            }
+                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
                                     <div className="pd-form-element-unit first-unit">
