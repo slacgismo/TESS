@@ -58,7 +58,7 @@ class ResourcesChart extends React.Component {
 
             // The data for our dataset
             data: {
-                labels: ['Total', 'Battery', 'Chargers', 'PV', 'HVAC', 'Hot Water'],
+                labels: ['PV'],
 			    datasets: [
                     {
 				        label: 'Dispatched',

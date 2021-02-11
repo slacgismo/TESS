@@ -43,11 +43,11 @@ ul, li {
     /* Set rules to fill background */
     min-height: 100%;
     min-width: 1024px;
-        
+
     /* Set up proportionate scaling */
     width: 100%;
     height: auto;
-        
+
     /* Set up positioning */
     position: fixed;
     top: 0;
@@ -65,11 +65,11 @@ ul, li {
     /* Set rules to fill background */
     min-height: 100%;
     min-width: 1024px;
-        
+
     /* Set up proportionate scaling */
     width: 100%;
     height: auto;
-        
+
     /* Set up positioning */
     position: fixed;
     top: 0;
@@ -97,7 +97,7 @@ ul, li {
 }
 .login-form-container input,
 .create-account-form-container input,
-.login-form-container button { 
+.login-form-container button {
     width: 400px;
 }
 
@@ -220,6 +220,9 @@ ul, li {
 }
 .pd-form-element-input > label{
     height: 40px;
+}
+.pd-advanced-form-container{
+    padding-top: 50px;
 }
 
 /* MARKETS */
