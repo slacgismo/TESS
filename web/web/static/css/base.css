@@ -121,6 +121,10 @@ ul, li {
 .notification-data-table {
     width: 100%;
 }
+.alerts-data-table {
+  border-bottom: 1px solid #e0e0e0;
+  border-top: 1px solid #e0e0e0;
+}
 .alerts-search-bar {
     padding: 0 !important;
 }
@@ -218,13 +222,12 @@ ul, li {
 .second-unit {
     width: 35px;
 }
-.pd-form-element-input > label{
+.pd-form-element-input > label {
     height: 40px;
 }
-.pd-advanced-form-container{
+.pd-advanced-form-container {
     padding-top: 50px;
 }
-
 /* MARKETS */
 .markets-margin-override {
     margin-bottom: 38px;

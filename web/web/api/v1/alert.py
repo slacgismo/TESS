@@ -39,17 +39,16 @@ def get_alerts():
     return arw.to_json(results)
 
 
-@alerts_api_bp.route('/alert/<int:alert_id>', methods=['PUT'])
-def update_alert(alert_id):
+@alerts_api_bp.route('/alert', methods=['PUT'])
+def update_alert():
     '''
     Updates alert in database
     '''
     arw = ApiResponseWrapper()
-    alert_schema = AlertSchema(exclude=['created_at', 'updated_at'])
+    alert_schema = AlertSchema(exclude=['created_at', 'updated_at', 'context_id', 'context'])
     modified_alert = request.get_json()
 
     try:
-        Alert.query.filter_by(alert_id=alert_id).one()
         modified_alert = alert_schema.load(modified_alert, session=db.session)
         db.session.commit()
 

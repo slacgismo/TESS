@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom';
 import * as action from './actions';
 import { connect } from 'react-redux';
 import * as DT from '@rmwc/data-table';
+import { Select } from '@rmwc/select';
 import { TextField } from '@rmwc/textfield';
 import { selectMenuOption } from '../../static/js/actions';
 import ConnectedComponentWrapper from '../../static/js/base';
 
+import '@rmwc/select/styles';
 import '@rmwc/textfield/styles';
 import '@rmwc/data-table/styles';
 
@@ -17,17 +19,29 @@ class Alerts extends React.Component {
             inputValueReferences: {}
         };
     }
-    
-    handleChange = (e, id) => {        
+
+    handleChange = (e, id) => {
         let refs = this.state.inputValueReferences;
         refs[id] = e.target.value;
         this.setState({inputValueReferences: refs});
     }
 
+    handleStatusChange = (e, alert, resValue) => {
+        // add resolution change to this function or create a new one
+        this.props.dispatch(action.updateAlerts({
+            "alert_id" : alert.alert_id,
+            "alert_type_id" : alert.alert_type_id,
+            "assigned_to" : alert.assigned_to,
+            "description" : alert.description,
+            "status" : e.currentTarget.value,
+            "resolution" : resValue
+        }))
+    }
+
     componentDidMount() {
         // if a user decides to navigate back and forth through the
         // browser arrows, the menu selection won't update accordingly,
-        // so we fix that by having each component do it, 😔, this is 
+        // so we fix that by having each component do it, 😔, this is
         // not great since the component shouldn't care about the menu
         this.props.dispatch(selectMenuOption('alerts'));
         this.props.dispatch(action.getAlerts());
@@ -62,14 +76,19 @@ class Alerts extends React.Component {
                     <DT.DataTableCell>{item.time}</DT.DataTableCell>
                     <DT.DataTableCell>{item.alert_type}</DT.DataTableCell>
                     <DT.DataTableCell className="alerts-text-wrap">{item.description}</DT.DataTableCell>
-                    <DT.DataTableCell>{item.status}</DT.DataTableCell>
+                    <Select
+                        defaultValue={item.status}
+                        enhanced
+                        options={["open", "pending", "resolved"]}
+                        onChange={(e) => this.handleStatusChange(e, item, resolutionValue)}
+                    />
                     <DT.DataTableCell>{item.assigned_to}</DT.DataTableCell>
                     <DT.DataTableCell>
                         <TextField
                             onChange={(e) => this.handleChange(e, index)}
                             outlined={false}
                             fullwidth={true}
-                            align="start" 
+                            align="start"
                             value={resolutionValue} />
                     </DT.DataTableCell>
                 </DT.DataTableRow>
@@ -83,17 +102,17 @@ class Alerts extends React.Component {
         return (
             <div>
                 <div className="alerts-search-bar">
-                    <TextField 
+                    <TextField
                         icon="search"
                         trailingIcon="close"
                         label="Search" />
                 </div>
-                <DT.DataTable className="alerts-data-table">
+                <div className="alerts-data-table">
                     <DT.DataTableContent>
                         {this.getHeader()}
                         {this.getBody()}
                     </DT.DataTableContent>
-                </DT.DataTable>
+                </div>
             </div>
         );
     }
