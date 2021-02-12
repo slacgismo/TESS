@@ -36,7 +36,7 @@ class ConnectedComponentWrapper extends React.Component {
                         </div>
                         <div className="lpn-pull-right">
                             <Button
-                                label="LOAD"
+                                label="LOAD | G"
                                 trailingIcon={
                                     <div
                                         style={{
@@ -50,7 +50,7 @@ class ConnectedComponentWrapper extends React.Component {
                             />
                             <div className="lpn-spacer"></div>
                             <Button
-                                label="PRICE"
+                                label="PRICE | R"
                                 trailingIcon={
                                     <div
                                         style={{

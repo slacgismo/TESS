@@ -16,3 +16,13 @@ export function getAlerts() {
         })
     }
 }
+
+export function updateAlerts(data) {
+    return dispatch => {
+        api.put('alert', { json: { ...data } }, (response) => {
+            dispatch(getAlerts());
+        }, (error) => {
+            console.warn(error);
+        })
+    }
+}

@@ -187,7 +187,7 @@ def seed():
         at = AlertType(
             alert_type_id=1,
             utility_id=1,
-            name='price_alert',
+            name='YELLOW_ALARM_LOAD',
             limit=1.0,
             updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
             created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
@@ -201,7 +201,119 @@ def seed():
         at = AlertType(
             alert_type_id=2,
             utility_id=1,
-            name='YELLOW_ALARM_LOAD',
+            name='RED_ALARM_LOAD',
+            limit=3.0,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:32'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:35'))
+        db.session.add(at)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert type already exists')
+
+    try:
+        at = AlertType(
+            alert_type_id=3,
+            utility_id=1,
+            name='YELLOW_ALARM_PRICE',
+            limit=3.0,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(at)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert type already exists')
+
+    try:
+        at = AlertType(
+            alert_type_id=4,
+            utility_id=1,
+            name='RED_ALARM_PRICE',
+            limit=3.0,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(at)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert type already exists')
+
+    try:
+        at = AlertType(
+            alert_type_id=5,
+            utility_id=1,
+            name='PRICE_ALERT',
+            limit=3.0,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(at)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert type already exists')
+
+    try:
+        at = AlertType(
+            alert_type_id=6,
+            utility_id=1,
+            name='IMPORT_CAPACITY',
+            limit=3.0,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(at)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert type already exists')
+
+    try:
+        at = AlertType(
+            alert_type_id=7,
+            utility_id=1,
+            name='EXPORT_CAPACITY',
+            limit=3.0,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(at)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert type already exists')
+
+    try:
+        at = AlertType(
+            alert_type_id=8,
+            utility_id=1,
+            name='RESOURCE_DEPLETION',
+            limit=3.0,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(at)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert type already exists')
+
+    try:
+        at = AlertType(
+            alert_type_id=9,
+            utility_id=1,
+            name='TELECOMM_ALERT',
+            limit=3.0,
+            updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
+            created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
+        db.session.add(at)
+        db.session.commit()
+    except exc.IntegrityError:
+        db.session.rollback()
+        print('alert type already exists')
+
+    try:
+        at = AlertType(
+            alert_type_id=10,
+            utility_id=1,
+            name='PEAK_EVENT',
             limit=3.0,
             updated_at=datetime.datetime.fromisoformat('2020-01-01T00:05:00'),
             created_at=datetime.datetime.fromisoformat('2020-01-01T00:05:23'))
@@ -253,7 +365,7 @@ def seed():
             status='open',
             context='feeder',
             context_id='1',
-            resolution = 'fdjgh')
+            resolution='fdjgh')
         db.session.add(alert)
         db.session.commit()
     except exc.IntegrityError:
@@ -278,7 +390,7 @@ def seed():
     try:
         notification = Notification(
             notification_id=2,
-            alert_type_id=2,
+            alert_type_id=1,
             email="test@test.com",
             is_active=False,
             created_by=1,
