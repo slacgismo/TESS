@@ -1,4 +1,5 @@
 import { api } from '../../static/js/network_client';
+import { createPopup } from '../../static/js/helpers';
 
 function updateFetchedAlerts(data) {
     return {
@@ -12,7 +13,7 @@ export function getAlerts() {
         api.get('alerts', (response) => {
             dispatch(updateFetchedAlerts(response.results.data));
         }, (error) => {
-            console.warn(error);
+            createPopup('Check API connection')
         })
     }
 }
@@ -22,7 +23,7 @@ export function updateAlerts(data) {
         api.put('alert', { json: { ...data } }, (response) => {
             dispatch(getAlerts());
         }, (error) => {
-            console.warn(error);
+            createPopup('Check API connection')
         })
     }
 }
