@@ -4,6 +4,7 @@ from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
+from flask import jsonify
 
 from web.models.channel import Channel, ChannelSchema
 from web.models.meter_interval import MeterInterval
@@ -72,7 +73,7 @@ class Meter(Model):
 
     # Methods
     def get_interval_count(self, start, end):
-        '''Takes in start and end ISO8601 times, 
+        '''Takes in start and end ISO8601 times,
             returns the interval count (integer) between start / end times, inclusively'''
 
         self_intervals = self.meter_intervals
@@ -176,8 +177,12 @@ class MeterSchema(SQLAlchemyAutoSchema):
         return MeterInterval.get_interval_coverage(coverage)
 
     def get_user_id(self, obj):
-        if obj.service_location.address.user:
-            return obj.service_location.address.user
+        users = obj.service_location.address.users
+        if users:
+            user_ids = []
+            for user in users:
+                user_ids.append(vars(user)["id"])
+            return user_ids
         return
 
     class Meta:
