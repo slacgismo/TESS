@@ -4,7 +4,6 @@ from sqlalchemy.types import TIMESTAMP
 from sqlalchemy import text, func
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, ValidationError
-from flask import jsonify
 
 from web.models.channel import Channel, ChannelSchema
 from web.models.meter_interval import MeterInterval
