@@ -72,7 +72,7 @@ class Meter(Model):
 
     # Methods
     def get_interval_count(self, start, end):
-        '''Takes in start and end ISO8601 times, 
+        '''Takes in start and end ISO8601 times,
             returns the interval count (integer) between start / end times, inclusively'''
 
         self_intervals = self.meter_intervals
@@ -176,9 +176,11 @@ class MeterSchema(SQLAlchemyAutoSchema):
         return MeterInterval.get_interval_coverage(coverage)
 
     def get_user_id(self, obj):
-        if obj.service_location.address.user:
-            return obj.service_location.address.user
-        return
+        users = obj.service_location.address.users
+        if users:
+            user_ids = [ user.id for user in users ]
+            return user_ids
+        return []
 
     class Meta:
         model = Meter
