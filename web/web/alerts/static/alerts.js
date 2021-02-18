@@ -26,15 +26,25 @@ class Alerts extends React.Component {
         this.setState({inputValueReferences: refs});
     }
 
-    handleStatusChange = (e, alert, resValue) => {
-        // add resolution change to this function or create a new one
+    handleResolutionChange = (e, alert) => {
+        this.props.dispatch(action.updateAlerts({
+            "alert_id" : alert.alert_id,
+            "alert_type_id" : alert.alert_type_id,
+            "assigned_to" : alert.assigned_to,
+            "description" : alert.description,
+            "status" : alert.status,
+            "resolution" : e.target.value
+        }))
+    }
+
+    handleStatusChange = (e, alert) => {
         this.props.dispatch(action.updateAlerts({
             "alert_id" : alert.alert_id,
             "alert_type_id" : alert.alert_type_id,
             "assigned_to" : alert.assigned_to,
             "description" : alert.description,
             "status" : e.currentTarget.value,
-            "resolution" : resValue
+            "resolution" : alert.resolution
         }))
     }
 
@@ -80,12 +90,13 @@ class Alerts extends React.Component {
                         defaultValue={item.status}
                         enhanced
                         options={["open", "pending", "resolved"]}
-                        onChange={(e) => this.handleStatusChange(e, item, resolutionValue)}
+                        onChange={(e) => this.handleStatusChange(e, item)}
                     />
                     <DT.DataTableCell>{item.assigned_to}</DT.DataTableCell>
                     <DT.DataTableCell>
                         <TextField
                             onChange={(e) => this.handleChange(e, index)}
+                            onBlur={(e) => this.handleResolutionChange(e, item)}
                             outlined={false}
                             fullwidth={true}
                             align="start"

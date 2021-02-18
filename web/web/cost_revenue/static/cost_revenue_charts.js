@@ -21,14 +21,14 @@ class CostRevenueChart extends React.Component {
                         fill: false,
                         backgroundColor: 'rgb(255, 99, 132)',
                         borderColor: 'rgb(255, 99, 132)',
-                        data: [0, 10, 5, 2, 20, 30, 45]
+                        data: []
                     },
                     {
                         label: 'My Second dataset',
                         fill: false,
                         backgroundColor: 'rgb(55, 99, 255)',
                         borderColor: 'rgb(55, 99, 255)',
-                        data: [0, 50, 3, 20, 20, 20, 15]
+                        data: []
                     }
                 ]
             },

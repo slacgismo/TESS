@@ -19,17 +19,17 @@ class AuctionMarketChart extends React.Component {
                     {
                         label: 'Dataset 1',
                         backgroundColor: 'red',
-                        data: [1,2,3,4,5,6,7]
+                        data: []
                     },
                     {
                         label: 'Dataset 2',
                         backgroundColor: 'blue',
-                        data: [7,6,5,4,3,2,1]
+                        data: []
                     },
                     {
 				        label: 'Dataset 3',
 				        backgroundColor: 'green',
-                        data: [11,21,31,4,15,6,17]
+                        data: []
                     }
                 ]
             },
