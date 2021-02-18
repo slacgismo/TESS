@@ -178,11 +178,9 @@ class MeterSchema(SQLAlchemyAutoSchema):
     def get_user_id(self, obj):
         users = obj.service_location.address.users
         if users:
-            user_ids = []
-            for user in users:
-                user_ids.append(vars(user)["id"])
+            user_ids = [ user.id for user in users ]
             return user_ids
-        return
+        return []
 
     class Meta:
         model = Meter
