@@ -85,3 +85,61 @@ gunicorn web:app
 
 Some things worth noting and some resources
 - Our frontend is leveraging the React Wrapper for the Material Design Components (MDC) from Google: https://rmwc.io/ and https://material.io/develop/web/
+
+----
+
+## Setting up the AMI and getting the application running in EC2 
+These are the steps I took
+```bash
+sudo yum install python36 python36-pip
+sudo yum install git -y
+git clone https://github.com/slacgismo/TESS.git
+sudo yum install python36-devel
+
+# sudo yum install python36-setuptools
+# curl -O https://bootstrap.pypa.io/get-pip.py
+
+python3 get-pip.py
+python3 -m pip install Flask
+python3 -m pip install -r requirements.txt
+curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
+curl -sL https://rpm.nodesource.com/setup_12.x | sudo bash -
+sudo yum install -y nodejs
+sudo yum install yarn
+yarn install
+yarn build
+sudo yum install epel-release
+sudo yum install nginx
+sudo service nginx start
+python3 -m pip install supervisor
+supervisord
+cd /etc/nginx
+sudo mkdir sites-available
+sudo mkdir sites-enabled
+cd sites-available/
+sudo touch tess
+sudo nginx -t
+sudo service nginx restart
+
+# exported vars
+export FLASK_ENV="production"
+export FLASK_DEBUG="0"
+export DB_PASSWORD="add-the-actual-password-here!!!this is not it"
+export DB_SERVER="tess-dev.cudndiboutru.us-west-1.rds.amazonaws.com"
+export DB_USER="admin"
+
+# restart the process
+supervisorctl restart tess
+
+# TROUBLESHOOTING
+# did you pip install new dependencies?
+# did you yarn install new dependencies?
+# did you check the logs in /tmp/tess*?
+```
+To update the code with the latest changes:
+- SSH into the above machine
+- git pull --rebase the latest from master
+- install the new python/js dependencies if needed
+- run the new migrations if needed
+- supervisorctl restart tess
+
