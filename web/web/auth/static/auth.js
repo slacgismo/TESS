@@ -84,7 +84,7 @@ class Auth extends React.Component {
                         <TextField
                             onChange={(e) => this.handleUsernameChange(e)}
                             outlined={true}
-                            label="Username"
+                            label="Email"
                         />
                     </div>
                     <br />

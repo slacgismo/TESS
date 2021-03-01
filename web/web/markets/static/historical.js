@@ -14,21 +14,21 @@ class HistoricalChart extends React.Component {
 
             // The data for our dataset
             data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                labels: [],
                 datasets: [
                     {
                         label: 'My First dataset',
                         fill: false,
                         backgroundColor: 'rgb(255, 99, 132)',
                         borderColor: 'rgb(255, 99, 132)',
-                        data: []
+                        data: [2,4,55]
                     },
                     {
                         label: 'My Second dataset',
                         fill: false,
                         backgroundColor: 'rgb(55, 99, 255)',
                         borderColor: 'rgb(55, 99, 255)',
-                        data: []
+                        data: [5,4,7]
                     }
                 ]
             },

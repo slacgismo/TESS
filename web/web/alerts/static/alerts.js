@@ -65,9 +65,9 @@ class Alerts extends React.Component {
                     <DT.DataTableHeadCell>Time</DT.DataTableHeadCell>
                     <DT.DataTableHeadCell>Type</DT.DataTableHeadCell>
                     <DT.DataTableHeadCell>Description</DT.DataTableHeadCell>
-                    <DT.DataTableHeadCell>Status</DT.DataTableHeadCell>
                     <DT.DataTableHeadCell>Assigned To</DT.DataTableHeadCell>
                     <DT.DataTableHeadCell>Resolution</DT.DataTableHeadCell>
+                    <DT.DataTableHeadCell>Status</DT.DataTableHeadCell>
                 </DT.DataTableRow>
             </DT.DataTableHead>
         );
@@ -86,12 +86,6 @@ class Alerts extends React.Component {
                     <DT.DataTableCell>{item.time}</DT.DataTableCell>
                     <DT.DataTableCell>{item.alert_type}</DT.DataTableCell>
                     <DT.DataTableCell className="alerts-text-wrap">{item.description}</DT.DataTableCell>
-                    <Select
-                        defaultValue={item.status}
-                        enhanced
-                        options={["open", "pending", "resolved"]}
-                        onChange={(e) => this.handleStatusChange(e, item)}
-                    />
                     <DT.DataTableCell>{item.assigned_to}</DT.DataTableCell>
                     <DT.DataTableCell>
                         <TextField
@@ -102,6 +96,12 @@ class Alerts extends React.Component {
                             align="start"
                             value={resolutionValue} />
                     </DT.DataTableCell>
+                    <Select
+                        defaultValue={item.status}
+                        enhanced
+                        options={["open", "pending", "resolved"]}
+                        onChange={(e) => this.handleStatusChange(e, item)}
+                    />
                 </DT.DataTableRow>
             )
         });

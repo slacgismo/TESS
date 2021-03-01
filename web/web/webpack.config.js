@@ -10,7 +10,7 @@ module.exports = {
         auth: "./auth/static/auth.js",
         alerts: "./alerts/static/alerts.js",
         constraints: "./constraints/static/constraints.js",
-        cost_revenue: "./cost_revenue/static/cost_revenue.js",
+        net_revenue: "./net_revenue/static/net_revenue.js",
         markets: "./markets/static/markets.js",
         notifications: "./notifications/static/notifications.js",
         user_settings: "./user_settings/static/user_settings.js",
