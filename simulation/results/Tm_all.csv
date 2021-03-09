@@ -1,0 +1,12 @@
+# file...... results/Tm_all.csv
+# date...... Tue Mar  9 16:29:00 2021
+# user...... (null)
+# host...... (null)
+# group..... class=house
+# property.. mass_temperature
+# limit..... 0
+# interval.. 60
+# timestamp,house_1,house_2,house_3,house_4,house_5,house_6
+2021-03-09 16:29:03 UTC,+74.0005,+74.0006,+74.0006,+74.0006,+74.0006,+74.0006
+2021-03-09 16:30:03 UTC,+74.0299,+74.0328,+74.0314,+74.0307,+74.0312,+74.0322
+2021-03-09 16:31:03 UTC,+74.0531,+74.0587,+74.0561,+74.0547,+74.0557,+74.0576

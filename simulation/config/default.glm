@@ -1,5 +1,5 @@
 // this file is used if local.glm is not found
 #define TIMEZONE=${TIMEZONE:-US/CA/Los Angeles}
 #define WEATHER=${WEATHER:-722540TYA.tmy3}
-#define STARTTIME=${STARTTIME:-2020-09-26 00:00:00}
-#define STOPTIME=${STOPTIME:-2020-09-27 00:00:00}
+#define STARTTIME=${STARTTIME:-2021-03-09 00:00:00}
+#define STOPTIME=${STOPTIME:-2021-03-10 00:00:00}

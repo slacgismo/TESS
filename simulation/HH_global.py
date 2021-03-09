@@ -1,9 +1,20 @@
 import os
 
 db_address = 'http://host.docker.internal:5000/api/v1/'
+gld_simulation = True # True : uses gridlabd as representation of physical model
+dispatch_mode = True # True : implements dispatch decisions by writing them to the database
 
-#Result file
-results_folder = 'TESS_mysql/TESS_mysql_0001'
+# Result file
+results_folder = 'results'
+
+# Market settings
+interval = 15 # [s]; Normal operations: 300 s
+
+
+###
+# Probably not important (check before deleting)
+####
+
 #glm parameters
 city = 'Austin'
 month = 'Jan'
@@ -28,7 +39,6 @@ p_max = 100.0
 load_forecast = 'myopic'
 unresp_factor = 0.0
 FIXED_TARIFF = False
-interval = 300
 allocation_rule = 'by_award'
 
 #Appliance specifications

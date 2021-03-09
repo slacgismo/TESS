@@ -1,6 +1,5 @@
 #This is only for the minimum viable product (PV)
 import requests
-import gldimport_api_MVP as gldimport
 import os
 import random
 import pandas
@@ -25,13 +24,13 @@ from supply_functions import WSSupplier
 #import EV_functions as EVfct
 #import PV_functions as PVfct
 
-from HH_global import db_address #, user_name, pw
+from HH_global import db_address, gld_simulation, interval #, user_name, pw
 from HH_global import results_folder, flexible_houses, C, p_max, market_data, which_price, city, month
-from HH_global import interval, prec, price_intervals, allocation_rule, unresp_factor, load_forecast
+from HH_global import prec, price_intervals, allocation_rule, unresp_factor, load_forecast
 from HH_global import FIXED_TARIFF, include_SO, EV_data, start_time_str
 
-#True if physical model is simulated by GLD
-gld_simulation = True
+if gld_simulation:
+	import gldimport_api_MVP as gldimport
 
 ########
 #To Do
@@ -46,8 +45,7 @@ def on_init(t):
 	global t0;
 	t0 = time.time()
 
-	# Gets the list of active home hubs (active == in the TESS database)
-	import pdb; pdb.set_trace()
+	# Gets the list of active home hubs (!!!! does not filter for active == in the TESS database YET)
 	hh_list = requests.get(db_address+'home_hubs').json()['results']['data']
 	hh_ids = []
 	for hh in hh_list:
@@ -75,13 +73,12 @@ def on_init(t):
 
 # At each market interval : bidding, clearing, and dispatching
 def on_precommit(t):
-	import pdb; pdb.set_trace()
 
 	#Run market only every five minutes
 
 	dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None)
 	global LEM_operator;
-	if not ((dt_sim_time.second%15 == 0)): # and (dt_sim_time.minute % (LEM_operator.interval/60) == 0)):
+	if not ((dt_sim_time.second%interval == 0)): # and (dt_sim_time.minute % (LEM_operator.interval/60) == 0)):
 		return t
 	
 	else: #interval in minutes #is not start time
@@ -122,11 +119,6 @@ def on_precommit(t):
 			
 			gldimport.get_systemstate(dt_sim_time) # External information : system / grid # --> TABLE transformer_meter
 			gldimport.get_supplycosts(dt_sim_time) # External information : supply costs # --> TABLE transformer_meter
-		
-		# If simulation is run in lab/on-site : Real-world implementation --> DB
-		
-		else:
-			import sys; sys.exit('Physical data comes from lab/field: Not implemented yet')
 
 		############
 		#Market side / no phycial APIs involved
@@ -174,8 +166,5 @@ def on_precommit(t):
 				#gldimport.update_house_state(house.name,dt_sim_time)
 				if house.PV:
 					gldimport.dispatch_PV(house.PV,dt_sim_time)
-		# Real-world implementation --> DB
-		else:
-			import sys; sys.exit('Physical data comes from lab/field: Not implemented yet')
 
 		return t
