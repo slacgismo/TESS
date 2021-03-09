@@ -18,11 +18,11 @@ Interval: The interval determines how frequently the market will read out state 
 
 ## Physical representation: field data/other source of operations data
 
-The market can be started by executing main_TESS_HCE.py . The market code only interacts with the database TESS (**gridlabd_simulation = False**). Physical state information is read out and used to build appliance-based bids. The market clears and writes the result back to the DB. **Successful deployment** of the code prints out the resulting market allocation (price and quantity) at each market interval and subsequently fills in the DB (in particular the table "market_intervals"). 
+The market can be started by executing main_TESS_HCE.py . The market code only interacts with the database TESS (**gridlabd_simulation = False**). Physical state information is read out and used to build appliance-based bids. The market clears and writes the result back to the DB. **Successful deployment** of the code prints out the resulting market allocation (price and quantity) at each market interval on the terminal and subsequently fills in the DB (in particular the table "market_intervals"). 
 
 ## Physical representation: GridLAB-D
 
-First, main_TESS.py needs to be run to update the load files to the current time. After the file terminates, the GridLAB-D model should be started off by "gridlabd model_RT.glm". The market code consists of three parts: first, the code reads out the physical state from the GridLAB-D model and populates the DB. Then, the market is run (just as in the previous section/like in field deployment). Third, dispatch decisions determined by the market are implemented in the GridLAB-D model. **Successful deployment** of the code prints out the resulting market allocation (price and quantity) at each market interval and subsequently fills in the DB (in particular the table "market_intervals"). 
+First, main_TESS.py needs to be run to update the load files to the current time. After the file terminates, the GridLAB-D model should be started off by "gridlabd model_RT.glm". The market code consists of three parts: first, the code reads out the physical state from the GridLAB-D model and populates the DB. Then, the market is run (just as in the previous section/like in field deployment). Third, dispatch decisions determined by the market are implemented in the GridLAB-D model. **Successful deployment** of the code prints out the resulting market allocation (price and quantity) at each market interval on the terminal and subsequently fills in the DB (in particular the table "market_intervals"). 
 
 
 
