@@ -93,7 +93,6 @@ class Storage extends React.Component {
                             }
                         </div>
                     </div>
-
                     <div className="power-dispatch-forms-container">
                         <div className="pd-form-container">
                             <div className="pd-form-title">
