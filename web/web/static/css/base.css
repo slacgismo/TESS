@@ -180,9 +180,9 @@ ul, li {
     float: left;
     padding: 15px;
     border: 1px solid #404040;
+    margin-bottom: 15px;
     max-height: 1200px;
-    min-height: 720px;
-    min-width: 610px;
+    min-width: 650px;
 }
 .pd-chart-system-load {
     margin: 0 0 15px 0;

@@ -93,7 +93,6 @@ class Capacity extends React.Component {
                             }
                         </div>
                     </div>
-
                     <div className="power-dispatch-forms-container">
                         <div className="pd-form-container">
                             <div className="pd-form-title">
@@ -201,6 +200,8 @@ class Capacity extends React.Component {
                                     outlined />
                             </div>
                         </div>
+                    </div>
+                    <div className="power-dispatch-forms-container">
                         <div className="pd-advanced-form-container">
                             <div className="pd-form-title">
                                 <h3>Advanced Control</h3>
