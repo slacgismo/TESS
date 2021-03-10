@@ -202,7 +202,7 @@ class Storage extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="pd-form-container">
+                    <div className="power-dispatch-forms-container">
                         <div className="pd-advanced-form-container">
                             <div className="pd-form-title">
                                 <h3>Advanced Control</h3>
