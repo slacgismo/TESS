@@ -84,7 +84,7 @@ def register_blueprints(app):
     app.register_blueprint(markets_bp, url_prefix='/markets')
     app.register_blueprint(storage_bp, url_prefix='/power/storage')
     app.register_blueprint(constraints_bp, url_prefix='/constraints')
-    app.register_blueprint(cost_revenue_bp, url_prefix='/cost_revenue')
+    app.register_blueprint(net_revenue_bp, url_prefix='/net_revenue')
     app.register_blueprint(notifications_bp, url_prefix='/notifications')
     app.register_blueprint(user_settings_bp, url_prefix='/user_settings')
 

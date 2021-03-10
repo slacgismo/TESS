@@ -1,5 +1,5 @@
 #This supply function file specifies the specific bidding functions of HCE
-import gridlabd
+
 from HH_global import results_folder, flexible_houses, C, p_max, interval, prec, city, market_data
 import sys
 import pandas
@@ -63,7 +63,8 @@ class WSSupplier:
 			p_lem_prev = None # just a dummy, won't be needed (only for first simulation period)
 
 		current_load = db_transformer_meter['current_load'].loc[dt_sim_time]
-		local_supply_dict = requests.get(db_address+'bids/?is_supply=true&start_time='+str(dt_sim_time - pandas.Timedelta(minutes=5))).json()['results']['data'][1]
+
+		local_supply_dict = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time - pandas.Timedelta(minutes=5))).json()['results']['data'][1]
 		local_supply = 0.0
 		for loc in local_supply_dict:
 			if pandas.to_datetime(loc['start_time']) == dt_sim_time: # Only at first simulation period, otherwise earlier sim periods are available

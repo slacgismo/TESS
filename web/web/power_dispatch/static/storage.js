@@ -206,7 +206,7 @@ class Storage extends React.Component {
                                 <h3>Advanced Control</h3>
                             </div>
                             <div>
-                                <h4>Override the Available Energy Quantity</h4>
+                                <h4>Override the Maximum Power Demand</h4>
                                 <div className="pd-form-row">
                                     <div className="pd-form-element-label">Between</div>
                                     <div className="pd-form-element-input">

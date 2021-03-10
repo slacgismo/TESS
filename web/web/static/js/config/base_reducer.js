@@ -4,7 +4,7 @@ import drawerNavigationMenu from "../reducers";
 import alerts from "../../../alerts/static/reducer";
 import markets from "../../../markets/static/reducer";
 import constraints from "../../../constraints/static/reducer";
-import costRevenue from "../../../cost_revenue/static/reducer";
+import costRevenue from "../../../net_revenue/static/reducer";
 import userSettings from "../../../user_settings/static/reducer";
 import notifications from "../../../notifications/static/reducer";
 import { storage, capacity, formState } from "../../../power_dispatch/static/reducer";

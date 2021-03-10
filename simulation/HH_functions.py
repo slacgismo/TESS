@@ -3,8 +3,8 @@ Defines functions for the HH
 
 Uses direct setting of system mode
 """
-import gridlabd
-import gridlabd_functions
+#import gridlabd
+#import gridlabd_functions
 #from gridlabd_functions import p_max # ???????????????
 #import mysql_functions
 #from HH_global import *
@@ -19,7 +19,7 @@ import numpy as np
 import pandas
 from dateutil import parser
 from datetime import timedelta
-from HH_global import results_folder, db_address
+from HH_global import results_folder, db_address, dispatch_mode
 
 #import mysql_functions as myfct
 
@@ -63,21 +63,21 @@ class House:
 		self.EVCP = None
 
 	def update_state(self,dt_sim_time):
-		if self.HVAC:
-			df_state_in = myfct.get_values_td(self.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
-			self.HVAC.update_state(df_state_in)
+		# if self.HVAC:
+		# 	df_state_in = myfct.get_values_td(self.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
+		# 	self.HVAC.update_state(df_state_in)
 		if self.PV:
 			#import pdb; pdb.set_trace()
 			pv_interval = requests.get(db_address+'/meter_intervals?meter_id=1').json()['results']['data'][-1] #Use last measurement
 			self.PV.update_state(pv_interval)
-		if self.battery:
-			df_batt_state_in = myfct.get_values_td(self.battery.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
-			self.battery.update_state(df_batt_state_in)
-		if self.EVCP:
-			df_evcp_state_in = myfct.get_values_td('EV_'+self.EVCP.ID+'_state_in', begin=dt_sim_time, end=dt_sim_time)
-			if len(df_evcp_state_in):
-				self.EVCP.checkin_newEV(df_evcp_state_in,connected=True)
-			self.EVCP.update_state(dt_sim_time)
+		# if self.battery:
+		# 	df_batt_state_in = myfct.get_values_td(self.battery.name+'_state_in', begin=dt_sim_time, end=dt_sim_time)
+		# 	self.battery.update_state(df_batt_state_in)
+		# if self.EVCP:
+		# 	df_evcp_state_in = myfct.get_values_td('EV_'+self.EVCP.ID+'_state_in', begin=dt_sim_time, end=dt_sim_time)
+		# 	if len(df_evcp_state_in):
+		# 		self.EVCP.checkin_newEV(df_evcp_state_in,connected=True)
+		# 	self.EVCP.update_state(dt_sim_time)
 		return
 
 	#GUSTAVO: If the customer changes the settings through the App or at a device, that needs to be pushed here
@@ -117,8 +117,9 @@ class House:
 		df_lem = requests.get(db_address+'market_intervals').json()['results']['data'][-1]
 		p_lem = df_lem['p_clear']
 		alpha = df_lem['alpha']
-		#self.HVAC.dispatch(dt_sim_time,p_lem,alpha)
-		self.PV.dispatch(dt_sim_time,p_lem,alpha)
+		if dispatch_mode:
+			#self.HVAC.dispatch(dt_sim_time,p_lem,alpha)
+			self.PV.dispatch(dt_sim_time,p_lem,alpha)
 		#self.battery.dispatch(dt_sim_time,p_lem,alpha)
 		#self.EVCP.dispatch(dt_sim_time,p_lem,alpha)
 

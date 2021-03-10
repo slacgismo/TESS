@@ -155,6 +155,7 @@ class Market :
             P_dev = 1.
 
         #import pdb; pdb.set_trace()
+        print('Market result in ' + str(dt_sim_time) + ': ' + str(Pd) + ' USD/MWh, ' + str(Qd) + ' kW')
         data = {'market_id':market_id,'p_exp':P_exp,'p_dev':P_dev,'p_clear':Pd,'q_clear':Qd,'alpha':alpha,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
         requests.post(db_address+'market_interval',json=data)
         return 

@@ -32,7 +32,7 @@ class ConnectedComponentWrapper extends React.Component {
                         }`}
                     >
                         <div className="lpn-pull-left">
-                            {/* <Typography use="headline5">{this.props.pageTitle || ""}</Typography> */}
+                            {<Typography use="headline5">{this.props.pageTitle || ""}</Typography>}
                         </div>
                         <div className="lpn-pull-right">
                             <Button
