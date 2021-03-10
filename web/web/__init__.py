@@ -14,9 +14,9 @@ from web.power_dispatch.storage import storage_bp
 from web.power_dispatch.capacity import capacity_bp
 from web.constraints.constraints import constraints_bp
 from web.cost_revenue.cost_revenue import cost_revenue_bp
+from web.residential_sd.residential_sd import residential_sd_bp
 from web.notifications.notifications import notifications_bp
 from web.user_settings.user_settings import user_settings_bp
-
 # API V1 BP ROUTES
 from web.api.v1.pv import pv_api_bp
 from web.api.v1.sns import sns_api_bp
