@@ -69,7 +69,7 @@ class Capacity extends React.Component {
                                     id="pd-capacity-system-load-chart"
                                     ds={this.props.systemLoadData}
                                     xTitle="Hours"
-                                    yTitle="MW"
+                                    yTitle="kW"
                                     chartTitle="System Load"
                                     chartSubtitle="Transformer Capacity" />
                                 :
@@ -93,7 +93,6 @@ class Capacity extends React.Component {
                             }
                         </div>
                     </div>
-
                     <div className="power-dispatch-forms-container">
                         <div className="pd-form-container">
                             <div className="pd-form-title">
@@ -201,12 +200,14 @@ class Capacity extends React.Component {
                                     outlined />
                             </div>
                         </div>
+                    </div>
+                    <div className="power-dispatch-forms-container">
                         <div className="pd-advanced-form-container">
                             <div className="pd-form-title">
                                 <h3>Advanced Control</h3>
                             </div>
                             <div>
-                                <h4>Override the Available Energy Quantity</h4>
+                                <h4>Override the Maximum Power Demand</h4>
                                 <div className="pd-form-row">
                                     <div className="pd-form-element-label">Between</div>
                                     <div className="pd-form-element-input">

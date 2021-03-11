@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import CostRevenueChart from './cost_revenue_charts';
+import CostRevenueChart from './net_revenue_charts';
 import { selectMenuOption } from '../../static/js/actions';
 import ConnectedComponentWrapper from '../../static/js/base';
 
@@ -11,20 +11,20 @@ class CostRevenue extends React.Component {
     componentDidMount() {
         // if a user decides to navigate back and forth through the
         // browser arrows, the menu selection won't update accordingly,
-        // so we fix that by having each component do it, 😔, this is 
+        // so we fix that by having each component do it, 😔, this is
         // not great since the component shouldn't care about the menu
-        this.props.dispatch(selectMenuOption('cost-revenue'));        
+        this.props.dispatch(selectMenuOption('net-revenue'));
     }
 
     render() {
         return (
-            <div className="cost-revenue-main-content-container">
+            <div className="net-revenue-main-content-container">
                 <div className="chart-row-container">
-                    <div className="chart-container">                        
+                    <div className="chart-container">
                         <CostRevenueChart
                             id="cr-chart-cash-flow"
-                            xTitle="Time" 
-                            yTitle="$/h" 
+                            xTitle="Time"
+                            yTitle="$/h"
                             chartTitle="Cash Flow"
                             chartSubtitle="" />
                     </div>
@@ -32,7 +32,7 @@ class CostRevenue extends React.Component {
                     <div className="chart-container">
                         <CostRevenueChart
                             id="cr-chart-cash-flow-integral"
-                            xTitle="∫ Qdt" 
+                            xTitle="∫ Qdt"
                             yTitle="$"
                             chartTitle="Cash Flow (Integral)"
                             chartSubtitle="" />
@@ -43,8 +43,8 @@ class CostRevenue extends React.Component {
                     <div className="chart-container">
                         <CostRevenueChart
                             id="cr-chart-surplus-welfare"
-                            xTitle="Time" 
-                            yTitle="$/h" 
+                            xTitle="Time"
+                            yTitle="$/h"
                             chartTitle="Surplus / Welfare"
                             chartSubtitle="" />
                     </div>
@@ -52,8 +52,8 @@ class CostRevenue extends React.Component {
                     <div className="chart-container">
                         <CostRevenueChart
                             id="cr-chart-integral-target"
-                            xTitle="Time" 
-                            yTitle="$" 
+                            xTitle="Time"
+                            yTitle="$"
                             chartTitle="Integral W.R.T. Target"
                             chartSubtitle="" />
                     </div>
@@ -66,7 +66,7 @@ class CostRevenue extends React.Component {
 const ConnectedCostRevenue = connect(state => ({}))(CostRevenue);
 
 const costRevenueElement = (
-    <ConnectedComponentWrapper isVisible={true} pageTitle="COST REVENUE">
+    <ConnectedComponentWrapper isVisible={true} pageTitle="NET REVENUE">
         <ConnectedCostRevenue/>
     </ConnectedComponentWrapper>
 );

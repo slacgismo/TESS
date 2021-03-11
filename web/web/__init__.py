@@ -13,10 +13,10 @@ from web.markets.markets import markets_bp
 from web.power_dispatch.storage import storage_bp
 from web.power_dispatch.capacity import capacity_bp
 from web.constraints.constraints import constraints_bp
-from web.cost_revenue.cost_revenue import cost_revenue_bp
+from web.net_revenue.net_revenue import net_revenue_bp
+from web.residential_sd.residential_sd import residential_sd_bp
 from web.notifications.notifications import notifications_bp
 from web.user_settings.user_settings import user_settings_bp
-
 # API V1 BP ROUTES
 from web.api.v1.pv import pv_api_bp
 from web.api.v1.sns import sns_api_bp
@@ -84,7 +84,7 @@ def register_blueprints(app):
     app.register_blueprint(markets_bp, url_prefix='/markets')
     app.register_blueprint(storage_bp, url_prefix='/power/storage')
     app.register_blueprint(constraints_bp, url_prefix='/constraints')
-    app.register_blueprint(cost_revenue_bp, url_prefix='/cost_revenue')
+    app.register_blueprint(net_revenue_bp, url_prefix='/net_revenue')
     app.register_blueprint(notifications_bp, url_prefix='/notifications')
     app.register_blueprint(user_settings_bp, url_prefix='/user_settings')
 

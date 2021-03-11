@@ -20,9 +20,9 @@ export const menuRoutes = [
         path: '/markets'
     },
     {
-        id: 'cost-revenue',
-        label: 'Cost Revenue',
-        path: '/cost_revenue'
+        id: 'net-revenue',
+        label: 'Net Revenue',
+        path: '/net_revenue'
     },
     {
         id: 'alerts',
