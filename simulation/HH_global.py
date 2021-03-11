@@ -1,8 +1,11 @@
 import os
 
 db_address = 'http://host.docker.internal:5000/api/v1/'
-gld_simulation = True # True : uses gridlabd as representation of physical model
+gld_simulation = False # True : uses gridlabd as representation of physical model
 dispatch_mode = True # True : implements dispatch decisions by writing them to the database
+
+start_time_str = '2021-03-11 17:30:00' # simulation start at local computer (approximately in Greenwhich; if offline data is used, if not choose any)
+start_time_db = '2021-03-09 17:20:00' #start of db (if offline data is used, if not choose == start_time_str)
 
 # Result file
 results_folder = 'results'
@@ -18,7 +21,6 @@ interval = 15 # [s]; Normal operations: 300 s
 #glm parameters
 city = 'Austin'
 month = 'Jan'
-start_time_str = '2016-07-01 00:00:00'
 end_time_str = '2016-07-02 00:00:00'
 player_dir = 'players_SanDiego_2015'
 tmy_file = '722540TYA.tmy3'

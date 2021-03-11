@@ -27,10 +27,13 @@ from supply_functions import WSSupplier
 from HH_global import db_address, gld_simulation, interval #, user_name, pw
 from HH_global import results_folder, flexible_houses, C, p_max, market_data, which_price, city, month
 from HH_global import prec, price_intervals, allocation_rule, unresp_factor, load_forecast
-from HH_global import FIXED_TARIFF, include_SO, EV_data, start_time_str
+from HH_global import FIXED_TARIFF, include_SO, EV_data
+from HH_global import start_time_str, start_time_db
 
 if gld_simulation:
 	import gldimport_api_MVP as gldimport
+
+DeltaT = pandas.Timestamp(start_time_str) - pandas.Timestamp(start_time_db)
 
 ########
 #To Do
@@ -66,8 +69,9 @@ def on_init(t):
 	LEM_operator = MarketOperator(interval,p_max) #Does that need to be updated based on DB?
 
 	#Create db_transformer_meter (not yet as DB)
-	db_transformer_meter = pandas.DataFrame(columns=['system_state','supply_cost','available_capacity','current_load','unresp_demand'])
-	db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
+	if gld_simulation:
+		db_transformer_meter = pandas.DataFrame(columns=['system_state','supply_cost','available_capacity','current_load','unresp_demand'])
+		db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
 
 	return True
 
@@ -76,7 +80,11 @@ def on_precommit(t):
 
 	#Run market only every five minutes
 
-	dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None)
+	if gld_simulation:
+		dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None)
+	else:
+		dt_sim_time = pandas.Timestamp.now() - DeltaT
+
 	global LEM_operator;
 	if not ((dt_sim_time.second%interval == 0)): # and (dt_sim_time.minute % (LEM_operator.interval/60) == 0)):
 		return t

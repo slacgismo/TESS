@@ -31,9 +31,13 @@ class WSSupplier:
 
 		# Temporary solution
 		db_transformer_meter = pandas.read_csv(results_folder+'/db_transformer_meter.csv',index_col=[0],parse_dates=True)
-		p_bid = db_transformer_meter['supply_cost'].loc[dt_sim_time]
-		q_bid = db_transformer_meter['available_capacity'].loc[dt_sim_time]
-		
+		db_transformer_meter.index = db_transformer_meter.index + pandas.to_timedelta(db_transformer_meter['seconds'], unit='s')
+
+		try:
+			p_bid = db_transformer_meter['supply_cost'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
+			q_bid = db_transformer_meter['available_capacity'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
+		except:
+			import pdb; pdb.set_trace()
 		#Send and receive directly
 		market.sell(q_bid,p_bid,gen_name='WS_market')
 
@@ -56,13 +60,14 @@ class WSSupplier:
 		# requests.post(db_address+'hce_bids',json=data) #with dummy bid
 
 		db_transformer_meter = pandas.read_csv(results_folder+'/db_transformer_meter.csv',index_col=[0],parse_dates=True)
+		db_transformer_meter.index = db_transformer_meter.index + pandas.to_timedelta(db_transformer_meter['seconds'], unit='s')
 		p_bid = lem.Pmax
 		try:
 			p_lem_prev = requests.get(db_address+'market_intervals').json()['results']['data'][-1]['p_clear']
 		except:
 			p_lem_prev = None # just a dummy, won't be needed (only for first simulation period)
 
-		current_load = db_transformer_meter['current_load'].loc[dt_sim_time]
+		current_load = db_transformer_meter['current_load'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
 
 		local_supply_dict = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time - pandas.Timedelta(minutes=5))).json()['results']['data'][1]
 		local_supply = 0.0
@@ -75,7 +80,9 @@ class WSSupplier:
 		
 		local_flex_demand = 0.0 # Needs to be adjusted for more appliances participating
 		q_bid = current_load + local_supply - local_flex_demand # Calculate unresponsive load as residual
-		db_transformer_meter.at[dt_sim_time,'unresp_demand'] = q_bid
+
+		dt_sim_time_round = pandas.Timestamp(dt_sim_time.year,dt_sim_time.month,dt_sim_time.day,dt_sim_time.hour,dt_sim_time.minute,dt_sim_time.second)
+		db_transformer_meter.at[dt_sim_time_round,'unresp_demand'] = q_bid
 		db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
 		
 		#Send and receive directly
