@@ -4,7 +4,7 @@ db_address = 'http://host.docker.internal:5000/api/v1/'
 gld_simulation = False # True : uses gridlabd as representation of physical model
 dispatch_mode = True # True : implements dispatch decisions by writing them to the database
 
-start_time_str = '2021-03-11 17:30:00' # simulation start at local computer (approximately in Greenwhich; if offline data is used, if not choose any)
+start_time_str = '2021-03-12 16:55:00' # simulation start at local computer (approximately in Greenwhich; if offline data is used, if not choose any)
 start_time_db = '2021-03-09 17:20:00' #start of db (if offline data is used, if not choose == start_time_str)
 
 # Result file
