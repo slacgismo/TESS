@@ -34,8 +34,8 @@ class WSSupplier:
 		db_transformer_meter.index = db_transformer_meter.index + pandas.to_timedelta(db_transformer_meter['seconds'], unit='s')
 
 		try:
-			p_bid = db_transformer_meter['supply_cost'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
-			q_bid = db_transformer_meter['available_capacity'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
+			p_bid = 10. #db_transformer_meter['supply_cost'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
+			q_bid = 5. #db_transformer_meter['available_capacity'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
 		except:
 			import pdb; pdb.set_trace()
 		#Send and receive directly
@@ -67,7 +67,7 @@ class WSSupplier:
 		except:
 			p_lem_prev = None # just a dummy, won't be needed (only for first simulation period)
 
-		current_load = db_transformer_meter['current_load'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
+		current_load = 100. #db_transformer_meter['current_load'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
 
 		local_supply_dict = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time - pandas.Timedelta(minutes=5))).json()['results']['data'][1]
 		local_supply = 0.0
