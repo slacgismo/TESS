@@ -83,9 +83,9 @@ class WSSupplier:
 
 		dt_sim_time_round = pandas.Timestamp(dt_sim_time.year,dt_sim_time.month,dt_sim_time.day,dt_sim_time.hour,dt_sim_time.minute,dt_sim_time.second)
 		#import pdb; pdb.set_trace()
-		db_transformer_meter.at[dt_sim_time_round,'unresp_demand'] = q_bid
-		db_transformer_meter.index = db_transformer_meter.index - pandas.to_timedelta(db_transformer_meter['seconds'], unit='s')
-		db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
+		#db_transformer_meter.at[dt_sim_time_round,'unresp_demand'] = q_bid
+		#db_transformer_meter.index = db_transformer_meter.index - pandas.to_timedelta(db_transformer_meter['seconds'], unit='s')
+		#db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
 		
 		#Send and receive directly
 		lem.buy(q_bid,p_bid,appliance_name='unresp_load')
