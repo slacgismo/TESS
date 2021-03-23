@@ -61,12 +61,12 @@ def update_transformer(transformer_id):
     '''
     Updates transformer in database
     '''
-
     arw = ApiResponseWrapper()
     transformer_schema = TransformerSchema(
         exclude=['created_at', 'updated_at'])
     modified_transformer = request.get_json()
-
+    modified_transformer["transformer_id"] = transformer_id
+    print(modified_transformer)
     try:
         Transformer.query.filter_by(transformer_id=transformer_id).one()
         modified_transformer = transformer_schema.load(modified_transformer,
