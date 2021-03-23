@@ -34,27 +34,29 @@ for player in players:
 
 # Only with GridLAB-D : Re-write glm model to today's date
 
-config_path = 'config'
-original_default = open(config_path + '/default copy.glm', "r")
-#default = open(config_path + '/default.glm', "w+").close()
-default = open(config_path + '/default.glm', "w+")
-for line in original_default:
-	print(line)
-	if 'STARTTIME' in line:
-		default.write('#define STARTTIME=${STARTTIME:-' + str(date.today()) + ' 00:00:00}\n')
-	elif 'STOPTIME' in line:
-		default.write('#define STOPTIME=${STOPTIME:-' + str(date.today() + pd.Timedelta(days=1)) + ' 00:00:00}')
-	else:
-		default.write(line)
-default.close()
+# config_path = 'config'
+# original_default = open(config_path + '/default copy.glm', "r")
+# #default = open(config_path + '/default.glm', "w+").close()
+# default = open(config_path + '/default.glm', "w+")
+# for line in original_default:
+# 	print(line)
+# 	if 'STARTTIME' in line:
+# 		default.write('#define STARTTIME=${STARTTIME:-' + str(date.today()) + ' 00:00:00}\n')
+# 	elif 'STOPTIME' in line:
+# 		default.write('#define STOPTIME=${STOPTIME:-' + str(date.today() + pd.Timedelta(days=1)) + ' 00:00:00}')
+# 	else:
+# 		default.write(line)
+# default.close()
 
 # Adjust/Re-write
 
 # folders
 # interval (interval for markets should be identical with recorders)
 
-#Start simulation
+#Start simulation manually from command line
 
+print('Start simulation manually from command line')
+print('gridlabd model_RT.glm')
 gridlabd.command('model_RT.glm')
 #gridlabd.command('-D')
 #gridlabd.command('run_realtime=TRUE') # CHECK - locks in clock with real-time

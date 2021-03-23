@@ -1,18 +1,25 @@
 import os
+import pandas
+import requests
 
 db_address = 'http://host.docker.internal:5000/api/v1/'
-gld_simulation = False # True : uses gridlabd as representation of physical model
+gld_simulation = True # True : uses gridlabd as representation of physical model
 dispatch_mode = True # True : implements dispatch decisions by writing them to the database
 
-start_time_str = '2021-03-12 16:55:00' # simulation start at local computer (approximately in Greenwhich; if offline data is used, if not choose any)
+# Only needed if gld_simulation = False
+start_time_str = '2021-03-17 14:30:00' # GREENWICH simulation start at local computer (in Greenwhich; if offline data is used, if not choose any)
 start_time_db = '2021-03-09 17:20:00' #start of db (if offline data is used, if not choose == start_time_str)
+DeltaT = pandas.Timestamp(start_time_str) - pandas.Timestamp(start_time_db) # Time offset between DB and current computer time
+
+# Market settings
+market_id = 1
+interval = int(requests.get(db_address+'markets?market_id='+str(market_id)).json()['results']['data'][0]['ts'])
+transformer_id = 1
 
 # Result file
 results_folder = 'results'
 
-# Market settings
-interval = 15 # [s]; Normal operations: 300 s
-
+            
 
 ###
 # Probably not important (check before deleting)

@@ -8,7 +8,7 @@ import requests
 import market_functions as Mfct
 #import mysql_functions as myfct
 
-from HH_global import db_address
+from HH_global import db_address, transformer_id
 
 class WSSupplier:
 
@@ -30,15 +30,9 @@ class WSSupplier:
 		#q_bid = requests.get(db_address+'WS_supply')['results']['data']
 
 		# Temporary solution
-		db_transformer_meter = pandas.read_csv(results_folder+'/db_transformer_meter.csv',index_col=[0],parse_dates=True)
-		db_transformer_meter.index = db_transformer_meter.index + pandas.to_timedelta(db_transformer_meter['seconds'], unit='s')
-
-		try:
-			p_bid = 10. #db_transformer_meter['supply_cost'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
-			q_bid = 5. #db_transformer_meter['available_capacity'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
-		except:
-			import pdb; pdb.set_trace()
-		#Send and receive directly
+		import pdb; pdb.set_trace()
+		p_bid = requests.get(db_address + 'transformer_intervals?transformer_id='+str(transformer_id)).json()['results']['data']
+		q_bid = requests.get(db_address + 'transformer_intervals?transformer_id='+str(transformer_id)).json()['results']['data']
 		market.sell(q_bid,p_bid,gen_name='WS_market')
 
 		#Send and receive with delay (in RT deployment)

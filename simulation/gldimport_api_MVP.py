@@ -10,6 +10,8 @@ import gridlabd
 
 import requests
 
+from HH_global import transformer_id, market_id
+
 from HH_global import city, market_data, C, interval, db_address #, ip_address
 from HH_global import results_folder
 
@@ -195,13 +197,14 @@ def update_house_state(house_name,dt_sim_time):
 
 # Measures current power at PV inverter
 def update_PV_state(PV,dt_sim_time):
-	PV_obj = gridlabd.get_object('PV_'+str(PV.id))
+	PV_obj = gridlabd.get_object('PV_'+str(PV.id)) # In GLD, this is actually the state from one interval before
 
 	Qmtp = float(PV_obj['P_Out'][1:].split('+')[0])/1000. # W -> kW
 	E = Qmtp/(3600./interval)
 
 	#Post state to TESS DB (simulation time) - should have an alpha_t
-	data = {'rate_id':1,'meter_id':PV.meter,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(minutes=5)),'e':E,'qmtp':Qmtp,'p_bid':0.,'q_bid':0.,'is_bid':True}
+	data = {'rate_id':1,'meter_id':PV.meter,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(minutes=5)),
+		'e':E,'qmtp':Qmtp,'p_bid':-1000.,'q_bid':-1000.,'is_bid':True}
 	requests.post(db_address+'meter_interval',json=data) #with dummy bid
 
 def update_CP_state(CP_name,dt_sim_time):
@@ -277,45 +280,30 @@ def dispatch_PV(PV,dt_sim_time):
 #Get system state and available capacity
 
 def get_systemstate(dt_sim_time):
+	# Available capacity
+
+	available_capacity = 1000. + numpy.random.uniform(-100.,100.) # Should be an INPUT from control room
+	data = {'transformer_id':transformer_id,'feeder':'IEEE123','capacity':available_capacity}
+	#data = {'feeder':'IEEE123','capacity':available_capacity}
+	requests.put(db_address+'transformer/'+str(transformer_id), json=data)
+	
+	# Used capacity
+
 	load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'][:-2])/1000. # measured_real_power in [W] --> [kW]
-	available_capacity = 4000 # Should be an INPUT from control room
-	
-	# Save in TESS db through API
-	#data = {'feeder':'IEEE123','capacity':load_SLACK,'transformer_id':1}
-	#requests.put(db_address+'/transformer/1',json=data)
-	
-	# Temporary solution until db modified
-	db_transformer_meter = pandas.read_csv(results_folder+'/db_transformer_meter.csv',index_col=[0])
-	df = pandas.DataFrame(index=[dt_sim_time],columns=db_transformer_meter.columns,data=[[0.0]*len(db_transformer_meter.columns)])
-	df.at[dt_sim_time,'available_capacity'] = available_capacity 
-	df.at[dt_sim_time,'current_load'] = load_SLACK
-	db_transformer_meter = db_transformer_meter.append(df)
-	db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
+	data = {'transformer_id':transformer_id,'import_capacity':available_capacity,'export_capacity':0.,'q':load_SLACK,'unresp_load':load_SLACK,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
+	requests.post(db_address+'transformer_interval',json=data)
 
-	# Put into HCEBids
-	#import pdb; pdb.set_trace()
-	#data = {'p_bid':0.0,'q_bid':available_capacity,'is_supply': True,'comment':'WS_supply','market_id': 1}
-	#requests.post(db_address+'hce_bids',json=data)
-	#requests.get(db_address+'hce_bids')
-	return
+	# Supply cost : from WECS/control room
 
-###############
-# WHOLESALE SUPPLIER
-###############
+	p = numpy.random.uniform()
+	if p > 1.0/20.0:
+		supply_cost = 0.05
+	else:
+		supply_cost = 0.2
 
-#This should be coming from HCE's system or other real-time portal
-
-def get_supplycosts(dt_sim_time):
-	supply_cost = numpy.random.choice(a=[0.05,0.2],p=[0.95,0.05]) # Should be an INPUT from control room or WS market API
-
-	# Save in TESS db through API
-	#data = {dt_sim_time, C, load_SLACK}
-	#requests.post(db_address+'',json=data)
-
-	# Temporary solution until db modified
-	db_transformer_meter = pandas.read_csv(results_folder+'/db_transformer_meter.csv',index_col=[0],parse_dates=True)
-	db_transformer_meter.at[dt_sim_time,'supply_cost'] = supply_cost 
-	db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
+	import pdb; pdb.set_trace()
+	data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p,'q_bid':available_capacity,'is_supply':True,'comment':'','market_id':market_id}
+	requests.post(db_address+'hce_bids',json=data)
 	return
 
 ###############

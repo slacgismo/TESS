@@ -41,6 +41,7 @@ class PV:
             self.E = pv_interval['e']
 
       def bid(self,dt_sim_time,market,P_exp,P_dev):
+            #import pdb; pdb.set_trace()
             self.P_bid = 0.0
             if self.alpha > 0.0:
                   self.Q_bid = self.Qmtp / self.alpha
@@ -56,7 +57,7 @@ class PV:
             #import pdb; pdb.set_trace()
             #print('Jon is working on a better method for updating the last meter_interval')
             last_meter_id = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][1][self.meter-1]['meter_interval_id']
-            data = {'meter_interval_id': last_meter_id,'rate_id':1,'meter_id':self.meter,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(minutes=5)),'e':self.E,'qmtp':self.Qmtp,'p_bid':self.P_bid,'q_bid':self.Q_bid,'is_bid':True}
+            data = {'meter_interval_id': last_meter_id,'rate_id':1,'meter_id':self.meter,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'e':self.E,'qmtp':self.Qmtp,'p_bid':self.P_bid,'q_bid':self.Q_bid,'is_bid':True}
             requests.put(db_address+'meter_interval/'+str(last_meter_id),json=data)
             #requests.get(db_address+'bids/?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][1][(self.meter-7)]
             return

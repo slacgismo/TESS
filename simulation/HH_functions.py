@@ -103,6 +103,7 @@ class House:
 		
 		# Bid household devices
 		#self.HVAC.bid(dt_sim_time,market,P_exp,P_dev)
+		#import pdb; pdb.set_trace()
 		self.PV.bid(dt_sim_time,market,P_exp,P_dev)
 		#self.battery.bid(dt_sim_time,market,P_exp,P_dev)
 		#self.EVCP.bid(dt_sim_time,market,P_exp,P_dev)

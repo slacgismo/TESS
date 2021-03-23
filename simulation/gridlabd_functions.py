@@ -28,12 +28,10 @@ from HH_global import db_address, gld_simulation, interval #, user_name, pw
 from HH_global import results_folder, flexible_houses, C, p_max, market_data, which_price, city, month
 from HH_global import prec, price_intervals, allocation_rule, unresp_factor, load_forecast
 from HH_global import FIXED_TARIFF, include_SO, EV_data
-from HH_global import start_time_str, start_time_db
+from HH_global import start_time_str, start_time_db, DeltaT
 
 if gld_simulation:
 	import gldimport_api_MVP as gldimport
-
-DeltaT = pandas.Timestamp(start_time_str) - pandas.Timestamp(start_time_db)
 
 ########
 #To Do
@@ -69,9 +67,9 @@ def on_init(t):
 	LEM_operator = MarketOperator(interval,p_max) #Does that need to be updated based on DB?
 
 	#Create db_transformer_meter (not yet as DB)
-	if gld_simulation:
-		db_transformer_meter = pandas.DataFrame(columns=['system_state','supply_cost','available_capacity','current_load','unresp_demand'])
-		db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
+	# if gld_simulation:
+	# 	db_transformer_meter = pandas.DataFrame(columns=['system_state','supply_cost','available_capacity','current_load','unresp_demand'])
+	# 	db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
 
 	return True
 
@@ -96,6 +94,7 @@ def on_precommit(t):
 		#Imitates physical process of EV arrival - placeholder in MVP
 		############
 
+		# if gld_simulation:
 		# global houses;
 		# #Simulates arrival and disconnects EV upon departure - this function should be deleted in physical system
 		# for house in houses:
@@ -126,7 +125,6 @@ def on_precommit(t):
 			# Read out system information
 			
 			gldimport.get_systemstate(dt_sim_time) # External information : system / grid # --> TABLE transformer_meter
-			gldimport.get_supplycosts(dt_sim_time) # External information : supply costs # --> TABLE transformer_meter
 
 		############
 		#Market side / no phycial APIs involved
