@@ -25,78 +25,25 @@ class WSSupplier:
 	#Supply function
 	#This should include the whole supply curve, not only WS energy
 	def bid_supply(self,dt_sim_time,market):
-		# From DB through API
-		#p_bid = requests.get(db_address+'WS_supply')['results']['data']
-		#q_bid = requests.get(db_address+'WS_supply')['results']['data']
-
-		# Temporary solution
-		import pdb; pdb.set_trace()
-		p_bid = requests.get(db_address + 'transformer_intervals?transformer_id='+str(transformer_id)).json()['results']['data']
-		q_bid = requests.get(db_address + 'transformer_intervals?transformer_id='+str(transformer_id)).json()['results']['data']
+		p_bid = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][0][-1]['p_bid']
+		q_bid = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][0][-1]['q_bid']
 		market.sell(q_bid,p_bid,gen_name='WS_market')
-
-		#Send and receive with delay (in RT deployment)
-		#timestamp = send_supply_bid(self, dt_sim_time,p_bid,q_bid,name)
 		return
 
 	# Unresponsive load
 	def bid_unrespload(self,dt_sim_time,lem):
-		# From DB through API
-		#p_bid = lem.Pmax
-		#q_bid = requests.get(db_address+'WS_supply')['results']['data']
-
-		# Temporary solution with db_transformer_meter (should be through API)
-		# import pdb; pdb.set_trace()
-		# requests.get(db_address+'bids/?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][1][(self.meter-7)]
-		# requests.get(db_address+'HceBids')
-		# data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(minutes=5)),'p_bid':0.,'q_bid':0.,'is_supply':True,'comment':'','market_id':1}
-		# requests.post(db_address+'HceBids',json=data) #with dummy bid
-		# requests.post(db_address+'hce_bids',json=data) #with dummy bid
-
-		db_transformer_meter = pandas.read_csv(results_folder+'/db_transformer_meter.csv',index_col=[0],parse_dates=True)
-		db_transformer_meter.index = db_transformer_meter.index + pandas.to_timedelta(db_transformer_meter['seconds'], unit='s')
-		p_bid = lem.Pmax
+		load_SLACK = requests.get(db_address+'transformer_intervals?transformer_id=1&start_time='+str(dt_sim_time)).json()['results']['data'][-1]['q']
 		try:
-			p_lem_prev = requests.get(db_address+'market_intervals').json()['results']['data'][-1]['p_clear']
+			prev_cleared = requests.get(db_address+'market_intervals?market_id=1&start_time='+str(dt_sim_time - pandas.Timedelta(seconds=interval))).json()['results']['data'][-1]['q_clear']
+			prev_unresp = requests.get(db_address+'transformer_intervals?transformer_id=1&start_time='+str(dt_sim_time - pandas.Timedelta(seconds=interval))).json()['results']['data'][-1]['unresp_load']
 		except:
-			p_lem_prev = None # just a dummy, won't be needed (only for first simulation period)
+			prev_cleared = 0.0
+			prev_unresp = 0.0
 
-		current_load = 100. #db_transformer_meter['current_load'].loc[(db_transformer_meter.index >= (dt_sim_time - pandas.Timedelta(seconds=interval/2))) & (db_transformer_meter.index <= (dt_sim_time))].iloc[-1]
-
-		local_supply_dict = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time - pandas.Timedelta(minutes=5))).json()['results']['data'][1]
-		local_supply = 0.0
-		for loc in local_supply_dict:
-			if pandas.to_datetime(loc['start_time']) == dt_sim_time: # Only at first simulation period, otherwise earlier sim periods are available
-				break
-			else:
-				if loc['p_bid'] < p_lem_prev:
-					local_supply += loc['qmtp']
-		
-		local_flex_demand = 0.0 # Needs to be adjusted for more appliances participating
-		q_bid = current_load + local_supply - local_flex_demand # Calculate unresponsive load as residual
-
-		dt_sim_time_round = pandas.Timestamp(dt_sim_time.year,dt_sim_time.month,dt_sim_time.day,dt_sim_time.hour,dt_sim_time.minute,dt_sim_time.second)
-		#import pdb; pdb.set_trace()
-		#db_transformer_meter.at[dt_sim_time_round,'unresp_demand'] = q_bid
-		#db_transformer_meter.index = db_transformer_meter.index - pandas.to_timedelta(db_transformer_meter['seconds'], unit='s')
-		#db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
+		prev_traded = prev_cleared - prev_unresp
+		q_bid = load_SLACK - prev_traded # at the end of the market period
+		p_bid = lem.Pmax
 		
 		#Send and receive directly
 		lem.buy(q_bid,p_bid,appliance_name='unresp_load')
-
-		#Send and receive with delay (in RT deployment)
-		#timestamp = send_supply_bid(self, dt_sim_time,p_bid,q_bid,name)
-
-	#Demand function: unresponsive load
-	# def bid_unresp(self,dt_sim_time,market):
-	# 	P_bid = market.Pmax
-	# 	Q_bid = self.load_measured - self.prev_cleared
-	# 	#GUSTAVO: this part below should go to the database and not csv
-	# 	try:
-	# 		df_demand_bids = pandas.read_csv(results_folder + '/df_demand_bids.csv', index_col=[0], parse_dates=['t'])
-	# 		df_demand_bids = df_demand_bids.append(pandas.DataFrame(index=[len(df_demand_bids)],columns=['t','name','P_bid','Q_bid'],data=[[dt_sim_time,'unresp_load',P_bid,Q_bid]]))
-	# 		df_demand_bids.to_csv(results_folder + '/df_demand_bids.csv')
-	# 	except: #only for first time
-	# 		df_demand_bids = pandas.DataFrame(index=[0],columns=['t','name','P_bid','Q_bid'],data=[[dt_sim_time,'unresp_load',P_bid,Q_bid]])
-	# 		df_demand_bids.to_csv(results_folder + '/df_demand_bids.csv')
-	# 	return
+		return

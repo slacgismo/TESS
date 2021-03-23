@@ -301,9 +301,8 @@ def get_systemstate(dt_sim_time):
 	else:
 		supply_cost = 0.2
 
-	import pdb; pdb.set_trace()
 	data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p,'q_bid':available_capacity,'is_supply':True,'comment':'','market_id':market_id}
-	requests.post(db_address+'hce_bids',json=data)
+	requests.post(db_address+'bids',json=data)
 	return
 
 ###############
