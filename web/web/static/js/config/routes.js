@@ -35,6 +35,11 @@ export const menuRoutes = [
         path: '/notifications'
     },
     {
+        id: 'residential-sd',
+        label: 'Residential S&D',
+        path: '/residential_sd'
+    },
+    {
         id: 'user-settings',
         label: 'User Settings',
         path: '/user_settings'

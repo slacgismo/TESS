@@ -15,7 +15,8 @@ module.exports = {
         notifications: "./notifications/static/notifications.js",
         user_settings: "./user_settings/static/user_settings.js",
         storage: "./power_dispatch/static/storage.js",
-        capacity: "./power_dispatch/static/capacity.js"
+        capacity: "./power_dispatch/static/capacity.js",
+        residential_sd: "./residential_sd/static/residential_sd.js"
     },
     output: {
         path: __dirname + '/static/bundles',
@@ -39,7 +40,7 @@ module.exports = {
                         ],
                         "@babel/preset-react"
                     ]
-                }                
+                }
             },
             {
                 test: /\.css$/,

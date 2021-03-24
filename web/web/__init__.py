@@ -87,6 +87,7 @@ def register_blueprints(app):
     app.register_blueprint(net_revenue_bp, url_prefix='/net_revenue')
     app.register_blueprint(notifications_bp, url_prefix='/notifications')
     app.register_blueprint(user_settings_bp, url_prefix='/user_settings')
+    app.register_blueprint(residential_sd_bp, url_prefix='/residential_sd')
 
     # register api v1 blueprint routes
     app.register_blueprint(pv_api_bp, url_prefix='/api/v1/')

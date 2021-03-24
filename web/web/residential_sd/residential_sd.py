@@ -9,7 +9,6 @@ residential_sd_bp = Blueprint('residential_sd_bp',
 
 
 @residential_sd_bp.route('/')
-@residential_sd_bp.route('/residential_sd')
 @jwt_optional
 def index():
     has_tokens = get_jwt_identity()
