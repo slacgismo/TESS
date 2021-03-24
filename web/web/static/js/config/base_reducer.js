@@ -7,6 +7,7 @@ import constraints from "../../../constraints/static/reducer";
 import costRevenue from "../../../net_revenue/static/reducer";
 import userSettings from "../../../user_settings/static/reducer";
 import notifications from "../../../notifications/static/reducer";
+import residentialSD from "../../../residential_sd/static/reducer";
 import { storage, capacity, formState } from "../../../power_dispatch/static/reducer";
 
 const appReducer = combineReducers({
@@ -20,6 +21,7 @@ const appReducer = combineReducers({
     capacity,
     formState,
     userSettings,
+    residentialSD,
     drawerNavigationMenu,
 });
 
