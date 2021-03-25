@@ -61,13 +61,13 @@ class Alerts extends React.Component {
         return (
             <DT.DataTableHead>
                 <DT.DataTableRow>
-                    <DT.DataTableHeadCell>Date</DT.DataTableHeadCell>
-                    <DT.DataTableHeadCell>Time</DT.DataTableHeadCell>
-                    <DT.DataTableHeadCell>Type</DT.DataTableHeadCell>
-                    <DT.DataTableHeadCell>Description</DT.DataTableHeadCell>
-                    <DT.DataTableHeadCell>Assigned To</DT.DataTableHeadCell>
-                    <DT.DataTableHeadCell>Resolution</DT.DataTableHeadCell>
-                    <DT.DataTableHeadCell>Status</DT.DataTableHeadCell>
+                    <DT.DataTableHeadCell className="alerts-header">Date</DT.DataTableHeadCell>
+                    <DT.DataTableHeadCell className="alerts-header">Time</DT.DataTableHeadCell>
+                    <DT.DataTableHeadCell className="alerts-header">Type</DT.DataTableHeadCell>
+                    <DT.DataTableHeadCell className="alerts-header">Description</DT.DataTableHeadCell>
+                    <DT.DataTableHeadCell className="alerts-header">Assigned To</DT.DataTableHeadCell>
+                    <DT.DataTableHeadCell className="alerts-header">Resolution</DT.DataTableHeadCell>
+                    <DT.DataTableHeadCell className="alerts-header">Status</DT.DataTableHeadCell>
                 </DT.DataTableRow>
             </DT.DataTableHead>
         );

@@ -136,6 +136,11 @@ class Notifications extends React.Component {
         const headers = this.props.alertTypeEntries.length
             ? this.props.alertTypeEntries
             : defaultHeaders
+        const longest = headers.sort(
+            function (a, b) {
+                return b.name.length - a.name.length;
+            }
+        );
         return (
             <DT.DataTableHead>
                 <DT.DataTableRow>
@@ -144,7 +149,7 @@ class Notifications extends React.Component {
                     {
                         headers.map(item => {
                             return (
-                                <DT.DataTableHeadCell>{item.name}</DT.DataTableHeadCell>
+                                <DT.DataTableHeadCell className="text-center">{item.name}</DT.DataTableHeadCell>
                             );
                         })
                     }
@@ -211,7 +216,7 @@ class Notifications extends React.Component {
                                 checkboxSelection = this.state.checkboxReferences[id]
                             }
                             return (
-                                <DT.DataTableCell>
+                                <DT.DataTableCell className="text-center">
                                     <Checkbox
                                         checked={checkboxSelection}
                                         onChange={e => this.handleNotificationChange(e, id, notificationItem.notification_id, notificationItem.not_exist, item.email, notificationItem.alert_type_id)} />
@@ -258,7 +263,6 @@ class Notifications extends React.Component {
                         this.props.dispatch(action.deleteNotifications({notification_id : notificationId}));
                     })
                 }
-
             })
         })
     }

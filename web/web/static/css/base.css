@@ -135,6 +135,9 @@ ul, li {
     max-width: 400px;
     overflow: scroll !important;
 }
+.alerts-header {
+    width: 14.2%
+}
 .notification-action-bar-container,
 .notification-search-bar,
 .notification-button-container {
