@@ -162,6 +162,12 @@ ul, li {
     display: inline-block;
     margin: 0 10px;
 }
+.notifications-header {
+  /* only good for 10 header items */
+    padding-right: 0px !important;
+    max-width: 8vw;
+    width: 8vw;
+}
 
 /* POWER DISPATCH */
 .power-dispatch-container {

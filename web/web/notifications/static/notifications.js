@@ -136,11 +136,6 @@ class Notifications extends React.Component {
         const headers = this.props.alertTypeEntries.length
             ? this.props.alertTypeEntries
             : defaultHeaders
-        const longest = headers.sort(
-            function (a, b) {
-                return b.name.length - a.name.length;
-            }
-        );
         return (
             <DT.DataTableHead>
                 <DT.DataTableRow>
@@ -149,7 +144,7 @@ class Notifications extends React.Component {
                     {
                         headers.map(item => {
                             return (
-                                <DT.DataTableHeadCell className="text-center">{item.name}</DT.DataTableHeadCell>
+                                <DT.DataTableHeadCell className="notifications-header text-center">{item.name}</DT.DataTableHeadCell>
                             );
                         })
                     }
