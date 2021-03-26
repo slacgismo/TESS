@@ -144,7 +144,7 @@ class Notifications extends React.Component {
                     {
                         headers.map(item => {
                             return (
-                                <DT.DataTableHeadCell>{item.name}</DT.DataTableHeadCell>
+                                <DT.DataTableHeadCell className="notifications-header text-center">{item.name}</DT.DataTableHeadCell>
                             );
                         })
                     }
@@ -211,7 +211,7 @@ class Notifications extends React.Component {
                                 checkboxSelection = this.state.checkboxReferences[id]
                             }
                             return (
-                                <DT.DataTableCell>
+                                <DT.DataTableCell className="text-center">
                                     <Checkbox
                                         checked={checkboxSelection}
                                         onChange={e => this.handleNotificationChange(e, id, notificationItem.notification_id, notificationItem.not_exist, item.email, notificationItem.alert_type_id)} />
@@ -258,7 +258,6 @@ class Notifications extends React.Component {
                         this.props.dispatch(action.deleteNotifications({notification_id : notificationId}));
                     })
                 }
-
             })
         })
     }
