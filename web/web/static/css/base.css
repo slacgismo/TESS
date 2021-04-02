@@ -246,3 +246,9 @@ ul, li {
 .user-settings-container input{
     width: 500px;
 }
+
+/* RESIDENTIAL S&D */
+
+.pd-chart-energy-demand {
+  width: 800px;
+}

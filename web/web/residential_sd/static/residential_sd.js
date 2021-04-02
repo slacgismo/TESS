@@ -3,6 +3,8 @@ import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { selectMenuOption } from "../../static/js/actions";
 import ConnectedComponentWrapper from '../../static/js/base';
+import EnergyDemandChart from './energy_demand';
+import EnergySupplyChart from './energy_supply';
 
 import * as action from './actions';
 
@@ -16,12 +18,37 @@ class ResidentialSD extends React.Component {
     }
     render() {
         return (
-            <h1> This is the Residential SD page </h1>
+            <div className="power-dispatch-container">
+                <div className="power-dispatch-margin-fix">
+                    <div className="power-dispatch-chart-container">
+                        <div className="pd-chart-energy-demand">
+                            <EnergySupplyChart
+                                id="pd-capacity-system-load-chart"
+                                xTitle="Date"
+                                yTitle="kWh"
+                                chartTitle="Daily Energy Supply - per Resource"
+                                chartSubtitle="Transformer Capacity" />
+                        </div>
+                        <div className="pd-chart-resource">
+                            <EnergyDemandChart
+                                id="pd-capacity-resources-chart"
+                                xTitle="Date"
+                                yTitle="kWh"
+                                chartTitle="Daily Energy Supply - Whole Home"
+                                chartSubtitle="" />
+                        </div>
+                    </div>
+                </div>
+            </div>
         );
     }
 }
 
-const ConnectedResidentialSD = connect(state => ({}))(ResidentialSD);
+const ConnectedResidentialSD = connect(state => ({
+    systemLoadData: state.storage.systemLoadData,
+    resourcesData: state.storage.resourcesData,
+    formData: state.formState.formData
+}))(ResidentialSD);
 
 const residentialSDElement = (
     <ConnectedComponentWrapper isVisible={true} pageTitle="RESIDENTIAL S&D">
