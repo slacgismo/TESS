@@ -1,5 +1,5 @@
 # file...... results/T_all.csv
-# date...... Tue Mar 23 20:56:27 2021
+# date...... Tue Apr 13 15:25:34 2021
 # user...... (null)
 # host...... (null)
 # group..... class=house
@@ -7,5 +7,3 @@
 # limit..... 0
 # interval.. 60
 # timestamp,house_1,house_2,house_3,house_4,house_5,house_6
-2021-03-23 20:56:29 UTC,+74.0002,+74.0003,+74.0002,+74.0002,+74.0002,+74.0003
-2021-03-23 20:57:29 UTC,+74.0117,+74.0167,+74.0143,+74.0131,+74.014,+74.0157
