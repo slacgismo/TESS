@@ -1,0 +1,8 @@
+- Transformer table?
+- Are the values right?
+- NaN/communication lags?
+- main_TESS_HCE tested?
+- Check alpha/partial clearing
+- HH_functions: create_agent_house from db
+- Check unresp load
+

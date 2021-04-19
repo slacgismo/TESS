@@ -1,5 +1,5 @@
 # file...... results/meter_load_Q.csv
-# date...... Tue Mar 23 20:56:27 2021
+# date...... Tue Apr 13 15:25:34 2021
 # user...... (null)
 # host...... (null)
 # group..... class=triplex_meter
@@ -7,5 +7,3 @@
 # limit..... 0
 # interval.. 60
 # timestamp,meter_1,meter_2,meter_3,meter_4,meter_5,meter_6
-2021-03-23 20:56:29 UTC,+591.554,+591.554,+545.535,+545.535,+303.385,+303.385
-2021-03-23 20:57:29 UTC,+596.29,+596.29,+541.337,+541.337,+302.195,+302.195

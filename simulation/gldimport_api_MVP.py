@@ -1,9 +1,9 @@
-#import gridlabd_functions
+#These function descrbe the physical interface: read out of physical environment / API --> provide information / fill into DB
+
 import os
 import pandas
 import numpy
 import random
-#import pycurl
 from io import StringIO
 import json
 import gridlabd
@@ -11,11 +11,7 @@ import gridlabd
 import requests
 
 from HH_global import transformer_id, market_id
-
-from HH_global import city, market_data, C, interval, db_address #, ip_address
-from HH_global import results_folder
-
-#These function descrbe the physical interface: read out of physical environment / API --> provide information / fill into DB
+from HH_global import market_data, C, interval, db_address
 
 ###############
 # GENERAL functions for interaction of GLD and py
@@ -280,11 +276,14 @@ def dispatch_PV(PV,dt_sim_time):
 #Get system state and available capacity
 
 def get_systemstate(dt_sim_time):
-	# Available capacity
+	
+	# Simulate and save available capacity
 
-	available_capacity = 1000. + numpy.random.uniform(-100.,100.) # Should be an INPUT from control room
+	if C == 'random':
+		available_capacity = 1000. + numpy.random.uniform(-100.,100.) # Should be an INPUT from control room
+	else:
+		available_capacity = C
 	data = {'transformer_id':transformer_id,'feeder':'IEEE123','capacity':available_capacity}
-	#data = {'feeder':'IEEE123','capacity':available_capacity}
 	requests.put(db_address+'transformer/'+str(transformer_id), json=data)
 	
 	# Used capacity
@@ -295,75 +294,14 @@ def get_systemstate(dt_sim_time):
 
 	# Supply cost : from WECS/control room
 
-	p = numpy.random.uniform()
-	if p > 1.0/20.0:
-		supply_cost = 0.05
+	if market_data == 'random':
+		p = numpy.random.uniform()
+		if p > 1.0/20.0:
+			supply_cost = 0.05
+		else:
+			supply_cost = 0.2
 	else:
-		supply_cost = 0.2
-
+		import sys; sys.exit('External market data not implemented yet')
 	data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p,'q_bid':available_capacity,'is_supply':True,'comment':'','market_id':market_id}
 	requests.post(db_address+'bids',json=data)
 	return
-
-###############
-# NOT USED
-###############
-
-def sort_list(unsorted_list):
-	sorted_list = []
-	if unsorted_list:
-		no = [int(x.split('_')[-1]) for x in unsorted_list]
-		d = dict(zip(no,unsorted_list))
-		for i in range(1,max(no)+1):
-			try:
-				sorted_list.append(d[i])
-			except:
-				pass
-	return 
-
-def sort_batteries(batteries):
-	batterylist_unsorted = [] #;
-	EVlist_unsorted = []
-
-	#Batteries not ordered accoridng to house numbers
-	for battery in batteries:
-		#name = battery['name']
-		#if int(battery['name'].split('_')[-1]) < amount:
-		if 'Battery_' in battery:
-			batterylist_unsorted.append(battery)
-		elif 'EV_' in battery:
-			EVlist_unsorted.append(battery)
-
-	batterylist = batterylist_unsorted
-	#batterylist = sort_list(batterylist_unsorted)
-	EVlist = EVlist_unsorted
-	#EVlist = sort_list(EVlist_unsorted)
-
-	return batterylist, EVlist
-
-def sort_pvs(pvs):
-	pvlist_unsorted = [];
-
-	#Batteries not ordered accoridng to house numbers
-	for pv in pvs:
-		pvlist_unsorted.append(pv)
-
-	#Sort PVs
-	
-	pv_list = []
-	if pvlist_unsorted:
-		pvlist_no = [int(x.split('_')[-1]) for x in pvlist_unsorted]
-		d = dict(zip(pvlist_no,pvlist_unsorted))
-		for i in range(1,max(pvlist_no)+1):
-			try:
-				pv_list.append(d[i])
-			except:
-				pass
-
-	pvinv_list = []
-	for pv in pv_list:
-		#inverter_name = gridlabd_functions.get(pv,'parent')
-		inverter_name = 'PV_inverter_' + pv[3:]
-		pvinv_list += [inverter_name]
-
-	return pv_list, pvinv_list

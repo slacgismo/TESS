@@ -19,7 +19,6 @@ def get_power_system_load():
 
     is_capacity = request.args.get("is_capacity", "FALSE").upper() == "TRUE"
     is_storage = request.args.get("is_storage", "FALSE").upper() == "TRUE"
-
     if is_capacity and is_storage:
         arw.add_errors("Cannot generate both capacity and storage data")
         return arw.to_json(None, 400)

@@ -34,7 +34,7 @@ class ResidentialSD extends React.Component {
                                 id="pd-capacity-resources-chart"
                                 xTitle="Date"
                                 yTitle="kWh"
-                                chartTitle="Daily Energy Supply - Whole Home"
+                                chartTitle="Daily Energy Demand - Whole Home"
                                 chartSubtitle="" />
                         </div>
                     </div>

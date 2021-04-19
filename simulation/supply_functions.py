@@ -1,14 +1,12 @@
-#This supply function file specifies the specific bidding functions of HCE
+#This supply function file specifies the bidding functions of the retailer
 
-from HH_global import results_folder, flexible_houses, C, p_max, interval, prec, city, market_data
 import sys
 import pandas
 import requests
 
 import market_functions as Mfct
-#import mysql_functions as myfct
 
-from HH_global import db_address, transformer_id
+from HH_global import p_max, interval, market_data, db_address, transformer_id
 
 class WSSupplier:
 

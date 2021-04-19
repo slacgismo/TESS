@@ -5,14 +5,11 @@
 # Contributors (please append your name if you contribute to this code)
 # 1. dchassin@slac.stanford.edu
 # 2. donahuej@slac.stanford.edu
+# 3. mlarlt@slac.stanford.edu
 # History:
 # 2017-07-12: initial class implementation with basic functionality (dchassin@slac.stanford.edu)
 # 2017-07-19: full class implementation (dchassin@slac.stanford.edu)
-#
-# User Guide
-#
-# TODO
-#
+
 import uuid # provide UUID/GUID support
 from numpy import * # python array math
 from pylab import * # for plotting support
@@ -20,12 +17,11 @@ import datetime
 from datetime import timedelta
 import gridlabd
 import pandas
-from HH_global import results_folder, C, p_max, interval, city, prec, ref_price, price_intervals, load_forecast, unresp_factor, month, which_price, EV_data
-#import mysql_functions as myfct
+from HH_global import db_address, p_max, interval, ref_price, price_intervals
 import time
 
 import requests
-from HH_global import db_address #, user_name, pw
+
 market_id = 1
 
 class MarketOperator:
@@ -140,7 +136,7 @@ class Market :
         alpha = self.alpha #self.alpha #partial clearing/tie break
 
         # Re-calculate expected price and variance
-        list_dict_lem = requests.get(db_address+'market_intervals').json()['results']['data'][-15:] # place holder
+        list_dict_lem = requests.get(db_address+'market_intervals').json()['results']['data'][-price_intervals:] # place holder
         prices = []
         for lem in list_dict_lem:
             prices += [lem['p_clear']]
@@ -154,7 +150,7 @@ class Market :
             P_exp = self.Pmax/2.
             P_dev = 1.
 
-        #import pdb; pdb.set_trace()
+        # Post
         print('Market result in ' + str(dt_sim_time) + ': ' + str(Pd) + ' USD/MWh, ' + str(Qd) + ' kW')
         data = {'market_id':market_id,'p_exp':P_exp,'p_dev':P_dev,'p_clear':Pd,'q_clear':Qd,'alpha':alpha,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
         requests.post(db_address+'market_interval',json=data)
@@ -1148,65 +1144,3 @@ def create_market(df_WS,df_prices,p_max,prec,price_intervals,dt_sim_time):
         import sys; sys.exit('No such reference price')
 
     return retail, mean_p, var_p
-
-def include_unresp_load(dt_sim_time,retail,df_prices,df_buy_bids,df_awarded_bids):
-    load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'])/1000 #measured_real_power in [W]
-    print('Slack '+str(load_SLACK))
-    #Alternatively: All loads which have been bidding and active in prev period
-    dt = datetime.timedelta(seconds=interval)
-    if len(df_prices) == 0:
-        active_prev = inel_prev = unresp_load = 0.0
-    else:
-        prev_loc_supply = df_awarded_bids['bid_quantity'].loc[(df_awarded_bids['timestamp'] == (pandas.Timestamp(dt_sim_time) - pandas.Timedelta(str(int(interval/60))+' min'))) & (df_awarded_bids['S_D'] == 'S')].sum()
-        prev_loc_demand = df_awarded_bids['bid_quantity'].loc[(df_awarded_bids['timestamp'] == (pandas.Timestamp(dt_sim_time) - pandas.Timedelta(str(int(interval/60))+' min'))) & (df_awarded_bids['S_D'] == 'D')].sum()
-        
-        #For baseload calculation
-        #unresp_load = 0
-
-        #Myopic
-        if load_forecast == 'myopic':
-            active_prev = df_prices['clearing_quantity'].loc[dt_sim_time - dt]
-            inel_prev = df_prices['unresponsive_loads'].loc[dt_sim_time - dt]
-            unresp_load = (load_SLACK - max(active_prev - inel_prev,0)) * unresp_factor
-            
-            #Myopic based on awarded bids
-            #Works only if no WS market bids or unresp load in df_awarded!
-            unresp_load = (load_SLACK - prev_loc_demand + prev_loc_supply)*unresp_factor
-        #Perfect max forecast
-        elif load_forecast == 'perfect':
-            df_baseload = pandas.read_csv('glm_generation_'+city+'/perfect_baseload_forecast_'+month+'.csv')
-            df_baseload['# timestamp'] = df_baseload['# timestamp'].str.replace(r' UTC$', '')
-            df_baseload['# timestamp'] = pandas.to_datetime(df_baseload['# timestamp'])
-            df_baseload.set_index('# timestamp',inplace=True)
-            last_baseload = df_baseload['baseload'].loc[dt_sim_time - pandas.Timedelta('1 min')]
-            max_baseload = df_baseload['baseload'].loc[(df_baseload.index >= dt_sim_time) & (df_baseload.index < dt_sim_time + pandas.Timedelta(str(int(interval/60))+' min'))].max()
-            unresp_load = load_SLACK - prev_loc_demand + prev_loc_supply - last_baseload + max_baseload
-            if unresp_factor > 1.0:
-                import pdb; pdb.set_trace()
-                import sys
-                sys.exit('Add noise through unresp_factor')
-        else:
-            import sys; sys.exit('No such load forecast')
-
-        print('Unresp load: '+str(unresp_load))
-    retail.buy(unresp_load,appliance_name='unresp')
-    df_buy_bids = df_buy_bids.append(pandas.DataFrame(columns=df_buy_bids.columns,data=[[dt_sim_time,'unresponsive_loads',p_max,round(float(unresp_load),prec)]]),ignore_index=True)
-    #mysql_functions.set_values('buy_bids', '(bid_price,bid_quantity,timedate,appliance_name)',(p_max,round(float(unresp_load),prec),dt_sim_time,'unresponsive_loads',))
-    return retail, load_SLACK, unresp_load, df_buy_bids
-
-def include_unresp_load_control(dt_sim_time,retail,df_prices,df_buy_bids,df_awarded_bids):
-    load_SLACK = 0.0 #measured_real_power in [W]
-    print('Slack '+str(load_SLACK))
-    #Alternatively: All loads which have been bidding and active in prev period
-    dt = datetime.timedelta(seconds=interval)
-    if len(df_prices) == 0:
-        active_prev = inel_prev = unresp_load = 0.0
-    else:
-        #Myopic
-        active_prev = df_prices['clearing_quantity'].loc[dt_sim_time - dt]
-        inel_prev = df_prices['unresponsive_loads'].loc[dt_sim_time - dt]
-        unresp_load = (load_SLACK - max(active_prev - inel_prev,0)) * unresp_factor
-    retail.buy(unresp_load,appliance_name='unresp')
-    df_buy_bids = df_buy_bids.append(pandas.DataFrame(columns=df_buy_bids.columns,data=[[dt_sim_time,'unresponsive_loads',p_max,round(float(unresp_load),prec)]]),ignore_index=True)
-    #mysql_functions.set_values('buy_bids', '(bid_price,bid_quantity,timedate,appliance_name)',(p_max,round(float(unresp_load),prec),dt_sim_time,'unresponsive_loads',))
-    return retail, load_SLACK, unresp_load, df_buy_bids

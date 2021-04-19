@@ -10,8 +10,13 @@ from datetime import timedelta
 from dateutil import parser
 import time
 
+from HH_global import db_address, gld_simulation, dispatch_mode
+from HH_global import interval, start_time_str, start_time_db, DeltaT, p_max
+
 import HH_functions as HHfct
-# from HH_functions import House
+#import battery_functions as Bfct
+#import EV_functions as EVfct
+#import PV_functions as PVfct
 
 import market_functions as Mfct
 from market_functions import Market
@@ -20,26 +25,8 @@ from market_functions import MarketOperator
 import supply_functions as Sfcts
 from supply_functions import WSSupplier
 
-#import battery_functions as Bfct
-#import EV_functions as EVfct
-#import PV_functions as PVfct
-
-from HH_global import db_address, gld_simulation, interval #, user_name, pw
-from HH_global import results_folder, flexible_houses, C, p_max, market_data, which_price, city, month
-from HH_global import prec, price_intervals, allocation_rule, unresp_factor, load_forecast
-from HH_global import FIXED_TARIFF, include_SO, EV_data
-from HH_global import start_time_str, start_time_db, DeltaT
-
 if gld_simulation:
 	import gldimport_api_MVP as gldimport
-
-########
-#To Do
-#
-#- customers changing settings not considered yet
-#- include mode changes by Supplier or LEMoperator, e.g. into emergency mode
-#- check and update mode
-########
 
 #Sets up house agents/Home Hubs with settings
 def on_init(t):
@@ -66,47 +53,30 @@ def on_init(t):
 	global LEM_operator;
 	LEM_operator = MarketOperator(interval,p_max) #Does that need to be updated based on DB?
 
-	#Create db_transformer_meter (not yet as DB)
-	# if gld_simulation:
-	# 	db_transformer_meter = pandas.DataFrame(columns=['system_state','supply_cost','available_capacity','current_load','unresp_demand'])
-	# 	db_transformer_meter.to_csv(results_folder+'/db_transformer_meter.csv')
-
 	return True
 
 # At each market interval : bidding, clearing, and dispatching
 def on_precommit(t):
 
-	#Run market only every five minutes
+	# Get run time
 
 	if gld_simulation:
 		dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None)
 	else:
 		dt_sim_time = pandas.Timestamp.now() - DeltaT
 
+	# Run market only every interval
+
 	global LEM_operator;
 	if not ((dt_sim_time.second%interval == 0)): # and (dt_sim_time.minute % (LEM_operator.interval/60) == 0)):
 		return t
-	
+
 	else: #interval in minutes #is not start time
 		print('Start precommit: '+str(dt_sim_time))
 
 		############
-		#Imitates physical process of EV arrival - placeholder in MVP
-		############
-
-		# if gld_simulation:
-		# global houses;
-		# #Simulates arrival and disconnects EV upon departure - this function should be deleted in physical system
-		# for house in houses:
-		# 	gldimport.simulate_EVs(house.name,dt_sim_time)
-
-		############
 		# Physical info : physical model --> TESS DB
 		############
-
-		#gldimport.update_settings() #If user changes settings in API, this should be called
-
-		# If simulation is run in GridlabD : GLD --> DB
 
 		if gld_simulation:
 			
@@ -120,6 +90,7 @@ def on_precommit(t):
 				#if house.battery:
 				#	gldimport.update_battery_state(house.battery.name,dt_sim_time)
 				#if house.EVCP:
+				#	gldimport.simulate_EVs(house.name,dt_sim_time)
 				#	gldimport.update_CP_state(house.EVCP.name,dt_sim_time)
 			
 			# Read out system information
@@ -127,7 +98,7 @@ def on_precommit(t):
 			gldimport.get_systemstate(dt_sim_time) # External information : system / grid # --> TABLE transformer_meter
 
 		############
-		#Market side / no phycial APIs involved
+		# Market side / no phycial APIs involved
 		############
 
 		#Reads in information from DB and updates python objects (house + appliances)
@@ -156,8 +127,12 @@ def on_precommit(t):
 
 		#HHs determine dispatch based on price
 		
-		for house in houses:
-			house.determine_dispatch(dt_sim_time)
+		if dispatch_mode: # Applies market results to DB for implementation
+			for house in houses:
+				house.determine_dispatch(dt_sim_time)
+		else:
+			for house in houses:
+				house.default(dt_sim_time)
 
 		lem.reset()
 
