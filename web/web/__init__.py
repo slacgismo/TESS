@@ -29,6 +29,7 @@ from web.api.v1.power import power_api_bp
 from web.api.v1.group import group_api_bp
 from web.api.v1.alert import alerts_api_bp
 from web.api.v1.market import market_api_bp
+from web.api.v1.user_sd import user_sd_api_bp
 from web.api.v1.utility import utility_api_bp
 from web.api.v1.address import address_api_bp
 from web.api.v1.channel import channel_api_bp
@@ -102,6 +103,7 @@ def register_blueprints(app):
     app.register_blueprint(group_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(market_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(alerts_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(user_sd_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(utility_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(address_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(channel_api_bp, url_prefix='/api/v1/')
