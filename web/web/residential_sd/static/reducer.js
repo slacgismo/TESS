@@ -3,6 +3,7 @@ const initialState = {
     demandData: []
 }
 
+// need to be tested when backend for residential-sd is implemented
 export default function residentialSD(state = initialState, action) {
     switch (action.type) {
         case 'DAILY_ENERGY_SUPPLY_UPDATED':
