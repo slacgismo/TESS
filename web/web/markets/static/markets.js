@@ -19,9 +19,9 @@ class Markets extends React.Component {
     componentDidMount() {
         // if a user decides to navigate back and forth through the
         // browser arrows, the menu selection won't update accordingly,
-        // so we fix that by having each component do it, 😔, this is 
+        // so we fix that by having each component do it, 😔, this is
         // not great since the component shouldn't care about the menu
-        this.props.dispatch(selectMenuOption('markets'));        
+        this.props.dispatch(selectMenuOption('markets'));
     }
 
     render() {
@@ -32,7 +32,7 @@ class Markets extends React.Component {
                         <div className="pd-chart-system-load">
                             <AuctionMarketChart
                                 id="auction-market-chart"
-                                xTitle="Capacity (MW)" 
+                                xTitle="Capacity (MW)"
                                 yTitle="Price ($/MWh)"
                                 chartTitle="Auction Market"
                                 chartSubtitle="Transformer Capacity" />
@@ -40,7 +40,7 @@ class Markets extends React.Component {
                         <div className="pd-chart-resource">
                             <AuctionChart
                                 id="auction-chart"
-                                xTitle="Time" 
+                                xTitle="Time"
                                 yTitle="Price ($/MWh)"
                                 chartTitle="Auction"
                                 chartSubtitle="" />
@@ -70,9 +70,9 @@ class Markets extends React.Component {
                                     <div className="pd-form-element-unit">%</div>
                                 </div>
                             </div>
-                            
+
                             <hr />
-                            
+
                             <div>
                                 <h4>Alerts</h4>
                                 <div className="pd-form-row">
@@ -83,22 +83,23 @@ class Markets extends React.Component {
                                     <div className="pd-form-element-unit">Percentile</div>
                                 </div>
                             </div>
-                            
+
                             <hr />
-                            
+
                             <div className="pd-form-button-container markets-margin-override">
-                                <Button 
-                                    label="SET" 
+                                <Button
+                                    label="SET"
                                     onClick={this.addNewRow}
                                     outlined />
                             </div>
-                        </div>    
-                    
+                        </div>
+                    </div>
+                    <div className="power-dispatch-forms-container">
                         <div className="pd-form-container">
                             <div className="pd-chart-system-load">
                                 <HistoricalChart
                                     id="historical-market-chart"
-                                    xTitle="Time" 
+                                    xTitle="Time"
                                     yTitle="Price ($/MWh)"
                                     chartTitle="Historical Data" />
                             </div>

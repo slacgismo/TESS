@@ -112,7 +112,7 @@ class Storage extends React.Component {
                                             onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
-                                    <div className="pd-form-element-unit">MW</div>
+                                    <div className="pd-form-element-unit">kW</div>
                                 </div>
                                 <div className="pd-form-row">
                                     <div className="pd-form-element-label">Night</div>
@@ -125,7 +125,7 @@ class Storage extends React.Component {
                                             onBlur={this.props.dispatch(action.saveForm(this.state))}
                                         />
                                     </div>
-                                    <div className="pd-form-element-unit">MW</div>
+                                    <div className="pd-form-element-unit">kW</div>
                                 </div>
                             </div>
 
