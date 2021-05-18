@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import Timeout
 import config
 
 
@@ -19,12 +20,17 @@ class SonnenApiInterface:
         # This method does a request to sonnen api to get status
 
         try:
-            resp = requests.get(self.url + serial + self.status_endpoint, headers=self.headers)
+            print('Requesting info from sonnen')
+            resp = requests.get(self.url + serial + self.status_endpoint, headers=self.headers, timeout=config.TIMEOUT)
             resp.raise_for_status()
             data = resp.json()
             data['batt_id'] = serial
+            print('Done with sonnen')
             return data
 
+        except Timeout:
+            print('Sonnen timeout')
+            return 'Timeout'
         except requests.exceptions.HTTPError as err:
             print('Error get_battery_status_json: ', err)
             return None
@@ -34,33 +40,41 @@ class SonnenApiInterface:
 
     def enable_self_consumption(self, serial):
         try:
-            resp = requests.get(self.url + serial + self.sc_endpoint, headers=self.headers)
+            resp = requests.get(self.url + serial + self.sc_endpoint, headers=self.headers, timeout=config.TIMEOUT)
             resp.raise_for_status()
             return resp.json()
-
+        except Timeout:
+            print('Sonnen timeout')
+            return 'Timeout'
         except requests.exceptions.HTTPError as err:
             print('Error enable_self_consumption: ', err)
             return None
 
     def self_consumption_backup(self, serial, value='90'):
         try:
-            resp = requests.get(self.url + serial + self.scbk_endpoint + value, headers=self.headers)
+            resp = requests.get(self.url + serial + self.scbk_endpoint + value, headers=self.headers, timeout=config.TIMEOUT)
             resp.raise_for_status()
             return resp.json()
-
+        except Timeout:
+            print('Sonnen timeout')
+            return 'Timeout'
         except requests.exceptions.HTTPError as err:
             print('Error self_consumption_backup', err)
             return None
 
     def enable_manual_mode(self, serial):
         try:
-            resp = requests.get(self.url + serial + self.manual_endpoint, headers=self.headers)
+            resp = requests.get(self.url + serial + self.manual_endpoint, headers=self.headers, timeout=config.TIMEOUT)
             resp.raise_for_status()
             return resp.json()
 
         except requests.exceptions.HTTPError as err:
             print('Error enable_manual_mode: ', err)
             return None
+
+        except Timeout:
+            print('Sonnen timeout')
+            return 'Timeout'
 
     def manual_mode_control(self, serial, mode='charge', value='0'):
         # Checking if system is in off-grid mode
@@ -72,10 +86,16 @@ class SonnenApiInterface:
 
         try:
             resp = requests.get(self.url + serial + self.control_endpoint + mode + '/' + value,
-                                headers=self.headers)
+                                headers=self.headers, timeout=config.TIMEOUT)
             resp.raise_for_status()
             return resp.json()
 
         except requests.exceptions.HTTPError as err:
             print(err)
             return {'Error: ', err}
+
+        except Timeout:
+            print('Sonnen timeout')
+            return 'Timeout'
+
+batt = SonnenApiInterface()

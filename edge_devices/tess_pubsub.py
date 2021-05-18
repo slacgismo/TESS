@@ -89,17 +89,24 @@ myAWSIoTMQTTClient.connect()
 # subscribing to topic
 subscribe(myAWSIoTMQTTClient, TOPIC_SUBSCRIBE)
 
+# Initializing battery object
+sonnen_obj = sonnen.SonnenApiInterface()
+
+# Testing purpose:
+import datetime
+
 # publishing to topic
 while True:
     try:
         # Testing connection
         retval = requests.get('https://www.google.com/').status_code
         print('status code: ', retval)
-        sonnen_obj = sonnen.SonnenApiInterface()
         payload = [{'resource': 'solar', 'payload': hc.heila_update(url=url)},
                    {'resource': 'battery', 'payload': sonnen_obj.get_batteries_status_json(serial=config.SONNEN_BATT)},
                    {'resource': 'ev', 'payload': None}]
+        # print('all payload done! ')
         publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, payload, CLIENT_ID)
+        print('Published ', datetime.datetime.now())
 
     except requests.exceptions.RequestException as e:
         print('error: ', e)
@@ -107,4 +114,4 @@ while True:
         # to disable control from the power market, you need to send a POST request to the API endpoint /api/unsync .
         # To give back control, send a POST request to the API endpoint /api/sync
 
-    t.sleep(10) # Need to define how often to provide info updates
+    t.sleep(30) # Need to define how often to provide info updates
