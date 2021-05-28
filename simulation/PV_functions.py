@@ -47,6 +47,8 @@ class PV:
             if self.P_bid < p_lem:
                   self.mode = 1
             elif np.abs(self.P_bid - p_lem) < 0.001: # marginal bid
+                  if (alpha > 1.0) or (alpha < 0.0):
+                        alpha = 1.0
                   self.mode = alpha
             else:
                   self.mode = 0 #Curtailment during negative prices?
