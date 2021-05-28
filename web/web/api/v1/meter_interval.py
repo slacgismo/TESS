@@ -8,6 +8,7 @@ from web.models.meter_interval import MeterInterval, MeterIntervalSchema
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from web.market_dispatch.publish_to_iot import publish
 
 meter_interval_api_bp = Blueprint('meter_interval_api_bp', __name__)
 
@@ -17,7 +18,6 @@ def get_meter_intervals():
     '''
     Returns meter intervals
     '''
-
     arw = ApiResponseWrapper()
 
     fields_to_filter_on = request.args.getlist('fields')
@@ -148,7 +148,9 @@ def update_meter_interval(meter_interval_id):
         return arw.to_json(None, 400)
 
     results = meter_interval_schema.dump(modified_meter_interval)
-
+    # create a payload upon talking with gustavo - publishes data to TessEvents topic
+    # event 10 in the diagram
+    publish()
     return arw.to_json(results)
 
 
