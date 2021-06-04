@@ -4,10 +4,13 @@ from web.database import db
 from marshmallow import ValidationError
 from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
+
+from web.models.pv import Pv, PvSchema
 from web.models.meter_interval import MeterInterval, MeterIntervalSchema
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+
 from web.market_dispatch.publish_to_iot import publish
 
 meter_interval_api_bp = Blueprint('meter_interval_api_bp', __name__)
@@ -148,9 +151,18 @@ def update_meter_interval(meter_interval_id):
         return arw.to_json(None, 400)
 
     results = meter_interval_schema.dump(modified_meter_interval)
-    # create a payload upon talking with gustavo - publishes data to TessEvents topic
-    # event 10 in the diagram
-    publish()
+    # get homehub id from the PV table using meter_id
+    pv_schema = PvSchema()
+    pv = Pv.query.filter(Pv.meter_id==results["meter_id"]).one()
+    homehub_id = pv.home_hub_id
+    # TODO: implement battery and ev into the backend and fix hardcoded data below
+    payload = [
+                {"resource": "solar", "payload": {"mode_dispatch": results['mode']}},
+                {"resource": "battery", "payload": {"mode_dispatch": None}},
+                {"resource": "ev", "payload": {"mode_dispatch": None}}
+              ]
+    # publishes data to TessEvents topic
+    publish(payload=payload, device_id=homehub_id)
     return arw.to_json(results)
 
 
