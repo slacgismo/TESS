@@ -16,3 +16,4 @@ sendgrid==6.4.7
 redis==3.5.3
 Flask-JWT-Extended==3.25.0
 requests==2.25.0
+SQLAlchemy<1.4
