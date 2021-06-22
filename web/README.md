@@ -1,11 +1,27 @@
 # This is where the web platform will live!
 
+## Installing the correct command line programs (Please install if you don't already have it; Make sure to update if you do have it)
+```bash
+#Install conda @ https://conda.io/projects/conda/en/latest/user-guide/install/index.html
+#Install pip @ https://pip.pypa.io/en/stable/installing/
+#Install homebrew @ https://brew.sh/
+#Install curl @ https://help.ubidots.com/en/articles/2165289-learn-how-to-install-run-curl-on-windows-macosx-linux
+```      
+
 ## Creating the env
 ```bash
 conda create -n venv_tess python=3.8
 conda activate venv_tess
+#Navigate to the web file inside the web file inside the tess file
 pip install -r requirements.txt
 ```
+
+## Installing other apps (Please install if you don't already have it; Make sure to update if you do have it)
+```bash
+#Install node/nvm @ https://heynode.com/tutorial/install-nodejs-locally-nvm/
+#Install redis-server @ https://redis.io/topics/quickstart
+#Install table-plus @ https://tableplus.com/download
+```     
 
 ## Ensure you install mysql - first time only!
 ```bash
@@ -41,6 +57,8 @@ export FLASK_APP=web
 
 # the TESS DB now exists but its schema is still in the ether.
 # to ensure that our python models are reflected as tables, run
+# make sure that you have updated and ran the newest edition of requirements.txt through the above command "pip install -r requirements.txt" 
+
 flask db upgrade  
 
 # you only need to do this when first creating the DB or whenever
@@ -53,11 +71,12 @@ Everything gets bundled via webpack, however, for sake of speed (since I don't w
 # make sure you have node/nvm installed
 nvm use  # this will ensure that the node verison is loaded to the pegged version in the .nvmrc
 # make sure you have yarn installed, https://classic.yarnpkg.com/en/
+#navigate to the web file inside the web file inside the tess file
 yarn install # install all the dependencies in the package.json
 yarn build   # bundle and deploy all the assets referenced in the application
 ```
 
-## Starting the Redis Server
+## Starting the Redis Server 
 ```bash
 redis-server
 ```
@@ -66,7 +85,21 @@ redis-server
 ```bash
 flask run
 ```
-... navigate to `localhost:5000`
+... navigate to `localhost:5000`on your browser
+
+# Populating the database with a seed
+```bash
+#To populate the database with a seed, uncomment the last three lines in __init__.py in the web file in the web file in the tess file
+"""
+# IF YOU NEED TO SEED YOUR DB WITH SOME TEST DATA,
+# UNCOMMENT BELOW THIS LINE AND RUN THE APP. DELETE LATER!!
+# from web.seed_data import seed
+# with app.app_context():
+#     seed()
+"""
+
+
+```
 
 
 ## Simulating a more production style application run:

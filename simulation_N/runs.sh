@@ -1,1 +1,0 @@
-gridlabd main.glm

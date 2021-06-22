@@ -107,7 +107,13 @@ class House:
 		alpha = df_lem['alpha']
 		
 		#self.HVAC.dispatch(dt_sim_time,p_lem,alpha)
-		self.PV.dispatch(dt_sim_time,p_lem,alpha)
+		try:
+			self.PV.dispatch(dt_sim_time,p_lem,alpha)
+		except:
+			data = requests.get(db_address+'/meter_intervals?meter_id='+str(self.PV.meter)).json()['results']['data'][-1]
+            data['mode'] = 1.0 # default value
+            requests.put(db_address+'meter_interval/'+str(data['meter_interval_id']),json=data)
+			pass
 		#self.battery.dispatch(dt_sim_time,p_lem,alpha)
 		#self.EVCP.dispatch(dt_sim_time,p_lem,alpha)
 
