@@ -1,7 +1,7 @@
 # This is where the web platform will live!
 
-## Installing the correct command line programs (Install if you don't already have it; Update if you do have it)
-```basu
+## Installing the correct command line programs (Please install if you don't already have it; Make sure to update if you do have it)
+```bash
 #Install conda @ https://conda.io/projects/conda/en/latest/user-guide/install/index.html
 #Install pip @ https://pip.pypa.io/en/stable/installing/
 #Install homebrew @ https://brew.sh/
@@ -16,7 +16,7 @@ conda activate venv_tess
 pip install -r requirements.txt
 ```
 
-## Installing other apps (Install if you don't already have it; Update if you do have it)
+## Installing other apps (Please install if you don't already have it; Make sure to update if you do have it)
 ```bash
 #Install node/nvm @ https://heynode.com/tutorial/install-nodejs-locally-nvm/
 #Install redis-server @ https://redis.io/topics/quickstart
@@ -85,16 +85,20 @@ redis-server
 ```bash
 flask run
 ```
-... navigate to `localhost:5000`
+... navigate to `localhost:5000`on your browser
 
 # Populating the database with a seed
 ```bash
-#uncomment the last three lines in __init__.py
+#To populate the database with a seed, uncomment the last three lines in __init__.py in the web file in the web file in the tess file
+"""
 # IF YOU NEED TO SEED YOUR DB WITH SOME TEST DATA,
 # UNCOMMENT BELOW THIS LINE AND RUN THE APP. DELETE LATER!!
 # from web.seed_data import seed
 # with app.app_context():
 #     seed()
+"""
+
+
 ```
 
 
