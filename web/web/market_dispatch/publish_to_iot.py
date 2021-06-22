@@ -25,7 +25,7 @@ def publish(client=myAWSIoTMQTTClient, topic=TOPIC_PUBLISH, payload="payload", d
     Parameters:
         client (AWSIoTMQTTClient object): client configured above
         topic (string): topic devices subscribe to
-        payload (object): any object that is readible by the subscribing device
+        payload (object {[title: data]}): any object that is readible by the subscribing device
         device_id (string): corresponding device name that subscribes
 
     Returns:
@@ -36,4 +36,5 @@ def publish(client=myAWSIoTMQTTClient, topic=TOPIC_PUBLISH, payload="payload", d
         client.publish(topic, json.dumps(payload), 1)
     except Exception as e:
         print('Publish error: ', e.message)
+    return
     # client.disconnect() # Figure out if need to disconnect or not -> best pratices
