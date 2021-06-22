@@ -1,0 +1,7 @@
+ENDPOINT = "ahj7dwf3rk9hf-ats.iot.us-west-1.amazonaws.com"
+CLIENT_ID = "Tess_Gismo"
+PATH_TO_CERT = "web/market_dispatch/pem/0c94f8d4a6-certificate.pem.crt"
+PATH_TO_KEY = "web/market_dispatch/pem/0c94f8d4a6-private.pem.key"
+PATH_TO_ROOT = "web/market_dispatch/pem/root-ca.pem"
+TOPIC_PUBLISH = "TessEvents"
+TOPIC_SUBSCRIBE = "TessEvents"
