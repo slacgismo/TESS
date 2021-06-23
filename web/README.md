@@ -38,6 +38,7 @@ brew services start mysql
 # namely, localhost, username = root and password. You can leave the DB name blank for now
 
 # Alternatively, you can use the command line
+mysql -u root -p 
 mysql -u root -p 'your root password'
 
 # Then, create the tess_user, something like:
