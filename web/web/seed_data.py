@@ -130,7 +130,8 @@ def seed():
             qmtp=1.0,
             p_bid=1.0,
             q_bid=1.0,
-            mode=0,
+            mode_market=0,
+            mode_dispatch=0,
             is_bid=True)
         db.session.add(mi)
         db.session.commit()

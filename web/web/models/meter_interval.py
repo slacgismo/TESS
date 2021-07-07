@@ -40,15 +40,15 @@ class MeterInterval(Model):
 
     q_bid = Column(db.Float, default=0, nullable=False)
 
-    mode = Column(db.Boolean(create_constraint=True),
-                  default=0,
-                  nullable=False)
+    mode_market = Column(db.Float, default=0, nullable=False)
+
+    mode_dispatch = Column(db.Float, default=0, nullable=False)
 
     is_bid = Column(db.Boolean(), default=False, nullable=False)
 
     @staticmethod
     def get_interval_coverage(interval_id_list):
-        '''Takes in list of meter interval ids, 
+        '''Takes in list of meter interval ids,
             returns list of tuples for start and end times in ISO8601 format'''
 
         selected_intervals = MeterInterval.query.filter(
