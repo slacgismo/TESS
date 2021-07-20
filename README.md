@@ -60,6 +60,7 @@ SLAC National Accelerator Laboratory is operated for the U.S. Department of Ener
 
 ## Publications
 
+1. [M.L. Arlt, D.P. Chassin, L.L. Kiesling, "Opening Up Transactive Systems: Introducing TESS and Specification in a Field Deployment", *Energies* **2021**, 14(13), 3970](https://www.mdpi.com/1996-1073/14/13/3970). DOI: https://doi.org/10.3390/en14133970
 1. Arlt ML, DP Chassin, C Rivetta, and J Sweeney (2020): "Willingness to Pay for HVAC Operations for Automated Dispatch by Smart Home Systems", presented at the Wirtschaftsinformatik 2021, Community Workshop "Energy Informatics and Electro Mobility ICT", online, March 8, 2021.
 1. Arlt ML, DP Chassin, C Rivetta, and J Sweeney (2020): "Automated Bidding in and Welfare Effects of Local Electricity Markets", Working paper, March 5, 2021. URL: https://marielouisearlt.files.wordpress.com/2021/03/wp_lems_210305.pdf.
 
