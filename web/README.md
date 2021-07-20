@@ -17,6 +17,12 @@ redis-server
 cd TESS/web
 export FLASK_APP=web
 export FLASK_ENV=development
+
+# if testing simulation without AWS
+export AWS=False
+# if running IoTCore
+export AWS=True
+
 flask run
 ```
 
