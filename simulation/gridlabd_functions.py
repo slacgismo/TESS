@@ -1,5 +1,4 @@
 #This is only for the minimum viable product (PV)
-import requests
 import os
 import random
 import pandas
@@ -32,8 +31,10 @@ if gld_simulation:
 def on_init(t):
 	global t0;
 	t0 = time.time()
+	print('Initialize')
 
 	# Gets the list of active home hubs (!!!! does not filter for active == in the TESS database YET)
+	import requests
 	hh_list = requests.get(db_address+'home_hubs').json()['results']['data']
 	hh_ids = []
 	for hh in hh_list:
@@ -55,16 +56,23 @@ def on_init(t):
 
 	return True
 
-# At each market interval : bidding, clearing, and dispatching
 def on_precommit(t):
+	print('precommit')
+	return t
+
+# At each market interval : bidding, clearing, and dispatching
+def on_precommit_2(t):
 
 	# Get run time
+
+	print('Start precommit')
 
 	if gld_simulation:
 		dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None)
 	else:
 		dt_sim_time = pandas.Timestamp.now() - DeltaT
 
+	print('Got run time')
 	# Run market only every interval
 
 	global LEM_operator;

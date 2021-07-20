@@ -71,5 +71,6 @@ def get_PV(house,hh_id):
                   pv = PV(pv['pv_id'],pv['meter_id'],pv['q_rated'])
                   house.PV = pv
                   return house
+      import pdb; pdb.set_trace()
       print('No PV registered by hh '+str(hh_id))
       return house

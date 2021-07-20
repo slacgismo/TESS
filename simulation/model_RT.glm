@@ -48,7 +48,8 @@
 
 #set randomseed=5 
 
-module gridlabd_functions;
+//module gridlabd_functions;
+module gridlabd_fcts_test;
 
 ///////////////////////////////////////////////////////
 //
@@ -120,7 +121,7 @@ object meter {
 	object recorder {
 		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
 		property measured_real_power, measured_reactive_power; 
-		file TESS/TESS_API/load_node_149.csv;
+		file results/load_node_149.csv;
 		interval 1min;
 	};
 }
@@ -271,7 +272,7 @@ object group_recorder {
 	group "class=triplex_meter";
 	property measured_real_power; 
 	file results/meter_load_P.csv;
-	interval 1min;
+	interval 60;
 }
 
 object group_recorder {
@@ -302,7 +303,7 @@ object group_recorder {
 //	name rec_batt_soc;
 //	group "class=battery";
 //	property state_of_charge;
-//	file TESS/TESS_API/battery_SOC.csv;
+//	file results/battery_SOC.csv;
 //	interval 60;
 //}
 
@@ -329,6 +330,6 @@ object group_recorder {
 	group "class=inverter";
 	property P_Out;
 	file results/total_P_Out.csv;
-	interval 1min;
+	interval 60;
 }
 

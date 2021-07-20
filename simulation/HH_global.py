@@ -3,7 +3,7 @@ import pandas
 import requests
 
 db_address = 'http://host.docker.internal:5000/api/v1/'
-gld_simulation = False # True : uses gridlabd as representation of physical model
+gld_simulation = True # True : uses gridlabd as representation of physical model
 dispatch_mode = True # True : implements dispatch decisions by writing them to the database
 
 # Only needed if gld_simulation = False
@@ -13,7 +13,10 @@ DeltaT = pandas.Timestamp(start_time_str) - pandas.Timestamp(start_time_db) # Ti
 
 # Market settings
 market_id = 1
-interval = int(requests.get(db_address+'markets?market_id='+str(market_id)).json()['results']['data'][0]['ts'])
+try:
+	interval = int(requests.get(db_address+'markets?market_id='+str(market_id)).json()['results']['data'][0]['ts'])
+except:
+	interval = 60
 transformer_id = 1
 p_max = 100.0
 C = 'random' # for testing
