@@ -1,5 +1,33 @@
 # This is where the web platform will live!
 
+# Quick run for developer setup
+
+Open up 3 terminal windows and activate conda env in all
+```bash
+conda activate venv_tess
+```
+
+## First window
+```bash
+redis-server
+```
+
+## Second window (for flask)
+```bash
+cd TESS/web
+export FLASK_APP=web
+export FLASK_ENV=development
+flask run
+```
+
+## Third window (for react)
+```bash
+cd TESS/web/web
+yarn build-dev
+```
+
+# Installation
+
 ## Installing the correct command line programs (Please install if you don't already have it; Make sure to update if you do have it)
 ```bash
 #Install conda @ https://conda.io/projects/conda/en/latest/user-guide/install/index.html
@@ -57,7 +85,7 @@ export FLASK_APP=web
 
 # the TESS DB now exists but its schema is still in the ether.
 # to ensure that our python models are reflected as tables, run
-# make sure that you have updated and ran the newest edition of requirements.txt through the above command "pip install -r requirements.txt" 
+# make sure that you have updated and ran the newest edition of requirements.txt through the above command "pip install -r requirements.txt"
 
 flask db upgrade  
 
@@ -76,7 +104,7 @@ yarn install # install all the dependencies in the package.json
 yarn build   # bundle and deploy all the assets referenced in the application
 ```
 
-## Starting the Redis Server 
+## Starting the Redis Server
 ```bash
 redis-server
 ```
@@ -121,7 +149,7 @@ Some things worth noting and some resources
 
 ----
 
-## Setting up the AMI and getting the application running in EC2 
+## Setting up the AMI and getting the application running in EC2
 These are the steps I took
 ```bash
 sudo yum install python36 python36-pip
@@ -175,4 +203,3 @@ To update the code with the latest changes:
 - install the new python/js dependencies if needed
 - run the new migrations if needed
 - supervisorctl restart tess
-
