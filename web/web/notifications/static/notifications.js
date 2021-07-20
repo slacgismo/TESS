@@ -36,7 +36,6 @@ class Notifications extends React.Component {
             selectedRowIdsToDelete: [],
             currentEmail: "",
             userId: this.props.userData.user_id,
-            // toggle below var true/false to see changes
             searchEmailObj: null
         };
     }
