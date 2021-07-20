@@ -10,34 +10,6 @@
 //
 ///////////////////////////////////////////////////////
 
-//
-// Read the configuration file for this system
-// Assumes the model is run from parent of model folder
-//
-
-// For non-RT simulation
-
-//#include "config/default.glm"
-//#define CONFIGFILE=config/default.glm
-//#ifexist config/local.glm
-//#include "config/local.glm"
-//#set CONFIGFILE=config/local.glm
-//#endif
-//#set suppress_repeat_messages=TRUE
-//#ifdef TIMEZONE
-//clock {
-//	timezone ${TIMEZONE};
-//#ifdef STARTTIME
-//	starttime ${STARTTIME};
-//#endif
-//#ifdef STOPTIME
-//	stoptime ${STOPTIME};
-//#endif
-//}
-//#else
-//#error TIMEZONE is not specified in ${CONFIGFILE}
-//#endif // TIMEZONE
-
 // For RT simulation
 #set run_realtime=1
 
