@@ -50,10 +50,6 @@ class Notifications extends React.Component {
         this.props.dispatch(action.getAlertTypes());
     }
 
-    updateState = (field, value) => {
-        this.setState({ [field]: value });
-    }
-
     handleEmailChange = (e, id) => {
         let refs = this.state.inputValueReferences;
         refs[id] = e.target.value;
