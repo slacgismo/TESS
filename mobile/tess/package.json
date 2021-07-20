@@ -13,7 +13,7 @@
     "@react-native-community/async-storage": "1.5.0",
     "crypto-js": "3.1.9-1",
     "react": "16.12.0",
-    "react-native": "0.61.5",
+    "react-native": "0.62.3",
     "react-native-geolocation-service": "^3.1.0",
     "react-native-gesture-handler": "^1.5.2",
     "react-native-keychain": "4.0.2",
