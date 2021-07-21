@@ -236,9 +236,9 @@ object transformer_configuration {
 global int32 SEQ_CUSTID 0;
 #set allow_reinclude=true
 
-#include using(LOADID=1,PHASE=A,COUNT=2) "house.glm"
-#include using(LOADID=1,PHASE=B,COUNT=2) "house.glm"
-#include using(LOADID=1,PHASE=C,COUNT=2) "house.glm"
+#include using(LOADID=1,PHASE=A,COUNT=2) "house_woPV.glm"
+#include using(LOADID=1,PHASE=B,COUNT=2) "house_woPV.glm"
+#include using(LOADID=1,PHASE=C,COUNT=2) "house_woPV.glm"
 
 object group_recorder {
 	name rec_meter_load_P;
@@ -272,16 +272,6 @@ object group_recorder {
 	interval 60;
 }
 
-//object group_recorder {
-//	name rec_batt_soc;
-//	group "class=battery";
-//	property state_of_charge;
-//	file results/battery_SOC.csv;
-//	interval 60;
-//}
-
-// This should be saved through DB
-
 object group_recorder {
 	name rec_toal_load;
 	group "class=house";
@@ -298,11 +288,4 @@ object group_recorder {
 	interval 60;
 }
 
-//object group_recorder {
-//	name rec_pv_infeed;
-//	group "class=inverter";
-//	property P_Out;
-//	file results/total_P_Out.csv;
-//	interval 60;
-//}
 
