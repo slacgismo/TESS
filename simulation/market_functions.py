@@ -15,10 +15,11 @@ from numpy import * # python array math
 from pylab import * # for plotting support
 import datetime
 from datetime import timedelta
-import gridlabd
 import pandas
-from HH_global import db_address, p_max, interval, ref_price, price_intervals
+from HH_global import db_address, p_max, interval, ref_price, price_intervals, gld_simulation
 import time
+if gld_simulation:
+    import gridlabd
 
 import requests
 
