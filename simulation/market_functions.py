@@ -15,7 +15,6 @@ from numpy import * # python array math
 from pylab import * # for plotting support
 import datetime
 from datetime import timedelta
-import gridlabd
 import pandas
 from HH_global import db_address, p_max, interval, ref_price, price_intervals
 import time
