@@ -1,6 +1,6 @@
 #This is only for the minimum viable product (PV)
-import os
-import random
+#import os
+#import random
 
 # If imported here, it does not work
 import requests

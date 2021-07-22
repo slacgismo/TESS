@@ -15,7 +15,7 @@ import requests
 #import EV_functions as EVfct
 import PV_functions as PVfct
 
-from HH_global import db_address, dispatch_mode, p_max, interval, start_time_str
+from HH_global import db_address, dispatch_mode, p_max, interval
 
 # Creates one agent per house and includes flexible appliances as children
 def create_agent_house(hh_id,flex_HVAC=False):

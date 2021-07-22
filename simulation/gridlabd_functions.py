@@ -10,7 +10,7 @@ from dateutil import parser
 import time
 
 from HH_global import db_address, gld_simulation, dispatch_mode
-from HH_global import interval, start_time_str, start_time_db, DeltaT, p_max
+from HH_global import interval, start_time_db, p_max
 
 import HH_functions as HHfct
 #import battery_functions as Bfct
@@ -31,6 +31,11 @@ if gld_simulation:
 def on_init(t):
 	global t0;
 	t0 = time.time()
+
+	# Calculate DeltaT
+	dt_start = pandas.Timestamp.now()
+	global DeltaT;
+	DeltaT = dt_start - pandas.Timestamp(start_time_db) # Time offset between DB and current computer time
 	print('Initialize')
 
 	# Gets the list of active home hubs (!!!! does not filter for active == in the TESS database YET)
@@ -56,23 +61,17 @@ def on_init(t):
 
 	return True
 
-def on_precommit(t):
-	print('precommit')
-	return t
-
 # At each market interval : bidding, clearing, and dispatching
-def on_precommit_2(t):
+def on_precommit(t):
 
 	# Get run time
-
-	print('Start precommit')
 
 	if gld_simulation:
 		dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None)
 	else:
+		#import pdb; pdb.set_trace()
 		dt_sim_time = pandas.Timestamp.now() - DeltaT
 
-	print('Got run time')
 	# Run market only every interval
 
 	global LEM_operator;
@@ -81,6 +80,7 @@ def on_precommit_2(t):
 
 	else: #interval in minutes #is not start time
 		print('Start precommit: '+str(dt_sim_time))
+		import pdb; pdb.set_trace()
 
 		############
 		# Physical info : physical model --> TESS DB

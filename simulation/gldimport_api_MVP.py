@@ -288,7 +288,10 @@ def get_systemstate(dt_sim_time):
 	
 	# Used capacity
 
-	load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'][:-2])/1000. # measured_real_power in [W] --> [kW]
+	try:
+		load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'][:-2])/1000. # measured_real_power in [W] --> [kW]
+	except:
+		load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'])/1000. # measured_real_power in [W] --> [kW]
 	data = {'transformer_id':transformer_id,'import_capacity':available_capacity,'export_capacity':0.,'q':load_SLACK,'unresp_load':load_SLACK,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
 	requests.post(db_address+'transformer_interval',json=data)
 

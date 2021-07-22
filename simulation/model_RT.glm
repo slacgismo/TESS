@@ -1,8 +1,7 @@
 ///////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////
 
-
-///////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 //
 // Electrification study simulation model
 // Copyright (C) 2016, Stanford University
@@ -10,18 +9,26 @@
 //
 ///////////////////////////////////////////////////////
 
-// For RT simulation
-#set run_realtime=1
+// No RT simulation
+clock {
+ 	starttime "2021-07-22 09:00";
+	stoptime "2021-07-22 12:00";
+}
 
-#define TIMEZONE=${TIMEZONE:-US/CA/Los Angeles}
+// For RT simulation
+// #set run_realtime=1
+// #define TIMEZONE=${TIMEZONE:-US/CA/Los Angeles}
+
+///////////////////////////////////////////////////////
+
 #define WEATHER=${WEATHER:-722540TYA.tmy3}
 
 //#define SOLAR=on
 
 #set randomseed=5 
 
-//module gridlabd_functions;
-module gridlabd_fcts_test;
+module gridlabd_functions;
+//module gridlabd_fcts_test;
 
 ///////////////////////////////////////////////////////
 //

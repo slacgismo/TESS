@@ -24,6 +24,7 @@ class PV:
 
       # Updates Python object with physical state
       def update_state(self):
+            import pdb; pdb.set_trace()
             pv_interval = requests.get(db_address+'/meter_intervals?meter_id='+str(self.meter)).json()['results']['data'][-1] #Use last measurement
             self.Qmtp = pv_interval['qmtp']
             self.E = pv_interval['e']
