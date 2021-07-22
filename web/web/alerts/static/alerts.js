@@ -17,6 +17,7 @@ class Alerts extends React.Component {
         super(props);
         this.state = {
             inputValueReferences: {}
+            searchEmailObj: null
         };
     }
 
@@ -73,8 +74,8 @@ class Alerts extends React.Component {
         );
     }
 
-    getBody = () => {
-        const dataTableBody = this.props.alerts.map((item, index) => {
+    getBody = (emailObj) => {
+        const dataTableBody = emailObj.map((item, index) => {
             // if there's a value and the user removes it, we want to persist
             // the removal, so we check if it's an empty string
             const resolutionValue = this.state.inputValueReferences[index] === ""
@@ -103,10 +104,22 @@ class Alerts extends React.Component {
                         onChange={(e) => this.handleStatusChange(e, item)}
                     />
                 </DT.DataTableRow>
+
             )
         });
 
         return (<DT.DataTableBody>{dataTableBody}</DT.DataTableBody>);
+    }
+
+    handleEmailSearch = async (e) => {
+      const searchValue = e.target.value
+      let newEmailObj = await this.props.alertEntries.map((alert) => {
+         if (alert.assigned_to.slice(0, searchValue.length) === searchValue){
+             return alert
+         }
+      })
+       let filteredEmailObj = await newEmailObj.filter(x => x !== undefined)
+       this.setState({["searchEmailObj"]: filteredEmailObj})
     }
 
     render() {
@@ -116,12 +129,20 @@ class Alerts extends React.Component {
                     <TextField
                         icon="search"
                         trailingIcon="close"
-                        label="Search" />
+                        label="Search"
+                        onChange={e => this.handleEmailSearch(e) }
+                    />
                 </div>
                 <div className="alerts-data-table">
                     <DT.DataTableContent>
-                        {this.getHeader()}
-                        {this.getBody()}
+                        { this.getHeader() }
+                        {
+                          (this.state.searchEmailObj !== null)
+                          ?
+                          this.getBody(this.state.searchEmailObj)
+                          :
+                          this.getBody(this.props.alertEntries)
+                        }
                     </DT.DataTableContent>
                 </div>
             </div>
