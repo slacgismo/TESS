@@ -16,7 +16,7 @@ class Alerts extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            inputValueReferences: {}
+            inputValueReferences: {},
             searchEmailObj: null
         };
     }
@@ -130,7 +130,7 @@ class Alerts extends React.Component {
                         icon="search"
                         trailingIcon="close"
                         label="Search"
-                        onChange={e => this.handleEmailSearch(e) }
+                        onChange={ e => this.handleEmailSearch(e) }
                     />
                 </div>
                 <div className="alerts-data-table">
