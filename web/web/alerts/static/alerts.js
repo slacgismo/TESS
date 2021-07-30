@@ -113,7 +113,7 @@ class Alerts extends React.Component {
 
     handleEmailSearch = async (e) => {
       const searchValue = e.target.value
-      let newEmailObj = await alert.alertEntries.map((alert) => {
+      let newEmailObj = await alert.map((alert) => {
          if (alert.assigned_to.slice(0, searchValue.length) === searchValue){
              return alert
          }
@@ -141,7 +141,7 @@ class Alerts extends React.Component {
                           ?
                           this.getBody(this.state.searchEmailObj)
                           :
-                          this.getBody(alert.alertEntries)
+                          this.getBody(alert)
                         }
                     </DT.DataTableContent>
                 </div>
