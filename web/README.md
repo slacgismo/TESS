@@ -46,7 +46,7 @@ yarn build-dev
 ```bash
 conda create -n venv_tess python=3.8
 conda activate venv_tess
-#Navigate to the web file inside the web file inside the tess file
+#Navigate to the web file inside the tess file
 pip install -r requirements.txt
 ```
 
