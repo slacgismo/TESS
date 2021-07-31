@@ -34,7 +34,7 @@ yarn build-dev
 
 # Installation
 
-## Installing the correct command line programs (Install if you don't already have it; update if you)
+## Installing the correct command line programs (Install if you don't already have it; update if you do)
 ```bash
 # Install conda @ https://conda.io/projects/conda/en/latest/user-guide/install/index.html
 # Install pip @ https://pip.pypa.io/en/stable/installing/
@@ -42,7 +42,7 @@ yarn build-dev
 # Install curl @ https://help.ubidots.com/en/articles/2165289-learn-how-to-install-run-curl-on-windows-macosx-linux
 ```     
 
-## Installing other apps (Install if you don't already have it; update if you)
+## Installing other apps (Install if you don't already have it; update if you do)
 ```bash
 # Install node/nvm @ https://heynode.com/tutorial/install-nodejs-locally-nvm/
 # Install redis-server @ https://redis.io/topics/quickstart
