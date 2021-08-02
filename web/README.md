@@ -34,28 +34,29 @@ yarn build-dev
 
 # Installation
 
-## Installing the correct command line programs (Please install if you don't already have it; Make sure to update if you do have it)
+## Installing the correct command line programs (Install if you don't already have it; update if you do)
 ```bash
-#Install conda @ https://conda.io/projects/conda/en/latest/user-guide/install/index.html
-#Install pip @ https://pip.pypa.io/en/stable/installing/
-#Install homebrew @ https://brew.sh/
-#Install curl @ https://help.ubidots.com/en/articles/2165289-learn-how-to-install-run-curl-on-windows-macosx-linux
-```      
+# Install conda @ https://conda.io/projects/conda/en/latest/user-guide/install/index.html
+# Install pip @ https://pip.pypa.io/en/stable/installing/
+# Install homebrew @ https://brew.sh/
+# Install curl @ https://help.ubidots.com/en/articles/2165289-learn-how-to-install-run-curl-on-windows-macosx-linux
+```     
+
+## Installing other apps (Install if you don't already have it; update if you do)
+```bash
+# Install node/nvm @ https://heynode.com/tutorial/install-nodejs-locally-nvm/
+# Install redis-server @ https://redis.io/topics/quickstart
+# Install table-plus @ https://tableplus.com/download
+```     
 
 ## Creating the env
 ```bash
 conda create -n venv_tess python=3.8
 conda activate venv_tess
-#Navigate to the web file inside the tess file
+# Navigate to the web file inside the tess file
+cd TESS/web
 pip install -r requirements.txt
 ```
-
-## Installing other apps (Please install if you don't already have it; Make sure to update if you do have it)
-```bash
-#Install node/nvm @ https://heynode.com/tutorial/install-nodejs-locally-nvm/
-#Install redis-server @ https://redis.io/topics/quickstart
-#Install table-plus @ https://tableplus.com/download
-```     
 
 ## Ensure you install mysql - first time only!
 ```bash
@@ -102,10 +103,11 @@ flask db upgrade
 ## Our frontend is currently leveraging react and mdc to generate the whole experience
 Everything gets bundled via webpack, however, for sake of speed (since I don't want to deal with routing on the web client) this is not a SPA, so we need to manually register every file to bundle in the webpack config. Anyways...
 ```bash
-# make sure you have node/nvm installed
+# Check if you have node/nvm installed
 nvm use  # this will ensure that the node verison is loaded to the pegged version in the .nvmrc
-# make sure you have yarn installed, https://classic.yarnpkg.com/en/
-#navigate to the web file inside the web file inside the tess file
+# Check if you have yarn installed, https://classic.yarnpkg.com/en/
+# Navigate to the web file inside the web file inside the tess file
+cd TESS/web/web
 yarn install # install all the dependencies in the package.json
 yarn build   # bundle and deploy all the assets referenced in the application
 ```
