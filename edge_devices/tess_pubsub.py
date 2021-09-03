@@ -97,13 +97,17 @@ sonnen_obj = sonnen.SonnenApiInterface()
 is_submitted = False
 next_5min = (int(datetime.now().minute / 5) * 5) + 5
 while True:
+    print('next5min: ', next_5min)
     if datetime.now().minute == next_5min:
         is_submitted = False
+        print('submitted is False')
         next_5min = (int(datetime.now().minute / 5) * 5) + 5
         if next_5min == 60:
             next_5min = 0
+        print('next5min: ', next_5min)
     if datetime.now().minute == next_5min - 1:
         if not is_submitted:
+            print('Call publish method and submitted is True now')
             is_submitted = True
             try:
                 # Testing connection
@@ -123,12 +127,12 @@ while True:
                     pv_info = payload["DeviceInformation"][0]['payload']["sunnyboy_inverter.calc_ac_power_kw"]
                     pv_power = pv_info['value']
                     pv_time = datetime.fromtimestamp(pv_info['timestamp'] / 1000)
-                    tessPV_payload = {'rate_id': 1, 'meter_id': 1, 'start_time': pv_time, 'end_time': 'end_market',
+                    tessPV_payload = {'rate_id': 1, 'meter_id': 1, 'start_time': str(pv_time), 'end_time': str(datetime.fromtimestamp(int(t.time()))+60),
                                       'e': pv_power / 12,
                                       'qmtp': pv_power, 'p_bid': 0, 'q_bid': 0, 'is_bid': 1, 'mode_dispatch': 0,
                                       'mode_market': 0}
-                publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, pv_info, CLIENT_ID)
-                print('Published ', datetime.datetime.now())
+                publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, tessPV_payload, CLIENT_ID)
+                print('Published ', datetime.now())
             except requests.exceptions.RequestException as e:
                 print('error: ', e)
                 print('Transfer control back to HEILA... Implement function - TBD')
