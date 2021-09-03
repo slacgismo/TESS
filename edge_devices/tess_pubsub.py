@@ -5,6 +5,7 @@ import heila_comms as hc
 import config
 import sonnen_comms as sonnen
 import requests
+from datetime import datetime
 
 # Expected payload to be received by edge devices when subscribing to a topic:
 # {
@@ -92,26 +93,45 @@ subscribe(myAWSIoTMQTTClient, TOPIC_SUBSCRIBE)
 # Initializing battery object
 sonnen_obj = sonnen.SonnenApiInterface()
 
-# Testing purpose:
-import datetime
-
 # publishing to topic
+is_submitted = False
+next_5min = (int(datetime.now().minute / 5) * 5) + 5
 while True:
-    try:
-        # Testing connection
-        retval = requests.get('https://www.google.com/').status_code
-        print('status code: ', retval)
-        payload = [{'resource': 'solar', 'payload': hc.heila_update(url=url)},
-                   {'resource': 'battery', 'payload': sonnen_obj.get_batteries_status_json(serial=config.SONNEN_BATT)},
-                   {'resource': 'ev', 'payload': None}]
-        # print('all payload done! ')
-        publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, payload, CLIENT_ID)
-        print('Published ', datetime.datetime.now())
+    if datetime.now().minute == next_5min:
+        is_submitted = False
+        next_5min = (int(datetime.now().minute / 5) * 5) + 5
+        if next_5min == 60:
+            next_5min = 0
+    if datetime.now().minute == next_5min - 1:
+        if not is_submitted:
+            is_submitted = True
+            try:
+                # Testing connection
+                retval = requests.get('https://www.google.com/').status_code
+                print('status code: ', retval)
+                ### Below code is for adding other resources
+                # payload = [{'resource': 'solar', 'payload': hc.heila_update(url=url)},
+                #            {'resource': 'battery', 'payload': sonnen_obj.get_batteries_status_json(serial=config.SONNEN_BATT)},
+                #            {'resource': 'ev', 'payload': None}]
+                # print('all payload done! ')
+                ### DONE ###
 
-    except requests.exceptions.RequestException as e:
-        print('error: ', e)
-        print('Transfer control back to HEILA... Implement function - TBD')
-        # to disable control from the power market, you need to send a POST request to the API endpoint /api/unsync .
-        # To give back control, send a POST request to the API endpoint /api/sync
-
-    t.sleep(30) # Need to define how often to provide info updates
+                payload = hc.heila_update(url=url)
+                if payload == None:
+                    tessPV_payload = None
+                else:
+                    pv_info = payload["DeviceInformation"][0]['payload']["sunnyboy_inverter.calc_ac_power_kw"]
+                    pv_power = pv_info['value']
+                    pv_time = datetime.fromtimestamp(pv_info['timestamp'] / 1000)
+                    tessPV_payload = {'rate_id': 1, 'meter_id': 1, 'start_time': pv_time, 'end_time': 'end_market',
+                                      'e': pv_power / 12,
+                                      'qmtp': pv_power, 'p_bid': 0, 'q_bid': 0, 'is_bid': 1, 'mode_dispatch': 0,
+                                      'mode_market': 0}
+                publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, pv_info, CLIENT_ID)
+                print('Published ', datetime.datetime.now())
+            except requests.exceptions.RequestException as e:
+                print('error: ', e)
+                print('Transfer control back to HEILA... Implement function - TBD')
+                # to disable control from the power market, you need to send a POST request to the API endpoint /api/unsync .
+                # To give back control, send a POST request to the API endpoint /api/sync
+    t.sleep(10)
