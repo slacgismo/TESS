@@ -38,7 +38,7 @@ def on_init(t):
 	hh_ids = []
 	for hh in hh_list:
 		hh_ids += [hh['home_hub_id']]
-	
+
 	# Creates house objects for each active home hub
 	global houses;
 	houses = []
@@ -63,89 +63,90 @@ def on_precommit(t):
 	if gld_simulation:
 		dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None)
 	else:
-		dt_sim_time = pandas.Timestamp.now() - DeltaT
+		# dt_sim_time = pandas.Timestamp.now() - DeltaT
+		dt_sim_time = start_time_str
 
 	# Run market only every interval
 
 	global LEM_operator;
-	if not ((dt_sim_time.second%interval == 0)): # and (dt_sim_time.minute % (LEM_operator.interval/60) == 0)):
-		return t
+	# if not ((dt_sim_time.second%interval == 0)): # and (dt_sim_time.minute % (LEM_operator.interval/60) == 0)):
+	# 	return t
+	#
+	# else: #interval in minutes #is not start time
+	print('Start precommit: '+str(dt_sim_time))
 
-	else: #interval in minutes #is not start time
-		print('Start precommit: '+str(dt_sim_time))
+	############
+	# Physical info : physical model --> TESS DB
+	############
 
-		############
-		# Physical info : physical model --> TESS DB
-		############
+	if gld_simulation:
 
-		if gld_simulation:
-			
-			# Read out states of house / appliances
+		# Read out states of house / appliances
 
-			for house in houses: # only for PV so far - other appliances placeholder in MVP
-				#if house.HVAC:
-				#	gldimport.update_house_state(house.name,dt_sim_time) #For HVAC systems
-				if house.PV:
-					gldimport.update_PV_state(house.PV,dt_sim_time)
-				#if house.battery:
-				#	gldimport.update_battery_state(house.battery.name,dt_sim_time)
-				#if house.EVCP:
-				#	gldimport.simulate_EVs(house.name,dt_sim_time)
-				#	gldimport.update_CP_state(house.EVCP.name,dt_sim_time)
-			
-			# Read out system information
-			
-			gldimport.get_systemstate(dt_sim_time) # External information : system / grid # --> TABLE transformer_meter
+		for house in houses: # only for PV so far - other appliances placeholder in MVP
+			#if house.HVAC:
+			#	gldimport.update_house_state(house.name,dt_sim_time) #For HVAC systems
+			if house.PV:
+				gldimport.update_PV_state(house.PV,dt_sim_time)
+			#if house.battery:
+			#	gldimport.update_battery_state(house.battery.name,dt_sim_time)
+			#if house.EVCP:
+			#	gldimport.simulate_EVs(house.name,dt_sim_time)
+			#	gldimport.update_CP_state(house.EVCP.name,dt_sim_time)
 
-		############
-		# Market side / no phycial APIs involved
-		############
+		# Read out system information
 
-		#Reads in information from DB and updates python objects (house + appliances)
+		gldimport.get_systemstate(dt_sim_time) # External information : system / grid # --> TABLE transformer_meter
 
+	############
+	# Market side / no phycial APIs involved
+	############
+
+	#Reads in information from DB and updates python objects (house + appliances)
+
+	for house in houses:
+		house.update_state(dt_sim_time)
+
+	#Market Operator creates market for t
+
+	lem = LEM_operator.create_market(name='LEM')
+
+	#Retailer: unresponsive load and supply function
+
+	retailer.bid_supply(dt_sim_time,lem)
+	retailer.bid_unrespload(dt_sim_time,lem)
+
+	#Houses form bids and submit them to the market IS (central market DB)
+
+	for house in houses:
+		house.bid(dt_sim_time,lem)
+
+	#Market processes bids and clears the market
+	#lem.process_bids(dt_sim_time) # only needed if separate sending and processing of bids (not the case if identical DB for meter_interval and market)
+
+	lem.clear_lem(dt_sim_time)
+
+	#HHs determine dispatch based on price
+
+	if dispatch_mode: # Applies market results to DB for implementation
 		for house in houses:
-			house.update_state(dt_sim_time)
-
-		#Market Operator creates market for t
-
-		lem = LEM_operator.create_market(name='LEM')
-
-		#Retailer: unresponsive load and supply function
-
-		retailer.bid_supply(dt_sim_time,lem)
-		retailer.bid_unrespload(dt_sim_time,lem)
-
-		#Houses form bids and submit them to the market IS (central market DB)
-
+			house.determine_dispatch(dt_sim_time)
+	else:
 		for house in houses:
-			house.bid(dt_sim_time,lem)
+			house.default(dt_sim_time)
 
-		#Market processes bids and clears the market
-		#lem.process_bids(dt_sim_time) # only needed if separate sending and processing of bids (not the case if identical DB for meter_interval and market)
-		
-		lem.clear_lem(dt_sim_time)
+	lem.reset()
 
-		#HHs determine dispatch based on price
-		
-		if dispatch_mode: # Applies market results to DB for implementation
-			for house in houses:
-				house.determine_dispatch(dt_sim_time)
-		else:
-			for house in houses:
-				house.default(dt_sim_time)
+	############
+	# Implement dispatch : TESS DB physical --> model
+	############
 
-		lem.reset()
+	# GLD --> DB
+	if gld_simulation:
+		for house in houses:
+			#gldimport.update_settings() #If user changes settings in API, this should be called
+			#gldimport.update_house_state(house.name,dt_sim_time)
+			if house.PV:
+				gldimport.dispatch_PV(house.PV,dt_sim_time)
 
-		############
-		# Implement dispatch : TESS DB physical --> model
-		############
-
-		# GLD --> DB
-		if gld_simulation:
-			for house in houses:
-				#gldimport.update_settings() #If user changes settings in API, this should be called
-				#gldimport.update_house_state(house.name,dt_sim_time)
-				if house.PV:
-					gldimport.dispatch_PV(house.PV,dt_sim_time)
-
-		return t
+	return t

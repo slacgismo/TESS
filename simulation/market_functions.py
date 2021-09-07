@@ -15,7 +15,6 @@ from numpy import * # python array math
 from pylab import * # for plotting support
 import datetime
 from datetime import timedelta
-import gridlabd
 import pandas
 from HH_global import db_address, p_max, interval, ref_price, price_intervals
 import time
@@ -98,7 +97,7 @@ class Market :
         #import pdb; pdb.set_trace()
         myfct.set_values('buy_bids', '(p_bid, q_bid, arrival_time, appliance_name)', (p_bid, q_bid, str(timestamp_arrival), name))
         return timestamp_arrival
-    
+
     def process_bids(self,dt_sim_time):
         #Market characteristics
         df_system = myfct.get_values_td('system_load', dt_sim_time, dt_sim_time)
@@ -154,7 +153,7 @@ class Market :
         print('Market result in ' + str(dt_sim_time) + ': ' + str(Pd) + ' USD/MWh, ' + str(Qd) + ' kW')
         data = {'market_id':market_id,'p_exp':P_exp,'p_dev':P_dev,'p_clear':Pd,'q_clear':Qd,'alpha':alpha,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
         requests.post(db_address+'market_interval',json=data)
-        return 
+        return
 
     # Returns bid position in S array, 'message' if error
     def sell(self,quantity,price=[],response=0.0,gen_name=None) :
@@ -194,7 +193,7 @@ class Market :
             self.D.append([round(price,self.Pprec),round(quantity,self.Qprec),response,appliance_name])
         self.m |= ( response != 0 )
         self.status = 1
-        
+
         if active == 1:
              self.D_active += round(quantity,self.Qprec)
         elif active == -1:
@@ -223,7 +222,7 @@ class Market :
         if 0 > self.Pmax :
             self.status = 2
             raise ValueError('Pmax has not been set or is negative')
-            
+
         if self.Pmin >= self.Pmax :
             self.status = 2
             raise ValueError('market Pmin is not less than Pmax')
@@ -349,7 +348,7 @@ class Market :
                 alpha = (Q)/(S[j][1])
         else:
             alpha = 1.0 #Last bid can be 100%
-        
+
         t2 = time.time()
         self.D_awarded = self.D[1:max(i-1,0)+1,:] #First skipped because of axis interception
         self.S_awarded = self.S[:max(j-1,0)+1,:] #No infinite interception
@@ -1122,7 +1121,7 @@ def create_market(df_WS,df_prices,p_max,prec,price_intervals,dt_sim_time):
     retail.Pmin = 0.0
     retail.Pmax = p_max
     retail.Pprec = prec
-    
+
     #historical prices
     if ref_price == 'historical':
         if len(df_prices) > 0:
