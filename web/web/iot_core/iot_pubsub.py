@@ -51,7 +51,7 @@ def sub_meter_intervals_data(client=myAWSIoTMQTTClient, topic=TOPIC_SUBSCRIBE):
     Returns:
         N/A: callBack function
     """
-    client.subscribe("DeviceEvents", 1, meter_intervals_data_insert)
+    client.subscribe(topic, 1, meter_intervals_data_insert)
     return
 
 
