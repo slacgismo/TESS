@@ -1,7 +1,7 @@
 import time as t
 import json
 import AWSIoTPythonSDK.MQTTLib as AWSIoTPyMQTT
-import web.market_dispatch.config as config
+import web.iot_core.config as config
 import requests
 
 # AWS Info
@@ -32,7 +32,6 @@ def publish(client=myAWSIoTMQTTClient, topic=TOPIC_PUBLISH, payload="payload", d
         N/A: publishes the data to given topic
     """
     payload = {'DeviceID': device_id, 'DeviceInformation': payload}
-    print(payload)
     try:
         client.publish(topic, json.dumps(payload), 1)
     except Exception as e:
