@@ -34,22 +34,32 @@ def subscribe(client, topic):
 
 
 def customCallback(client, userdata, message):
+    # payload = {'DeviceID': device_id,
+    #            'DeviceInformation': [
+    #                {"resource": "solar", "payload": {"mode_dispatch": 1.0, "qmtp": qmtp}},
+    #                {"resource": "battery", "payload": {"mode_dispatch": None, "q_bid": None}},
+    #                {"resource": "ev", "payload": {"mode_dispatch": None, "q_bid": None}}
+    #            ]
+    #            }
     payload = json.loads(message.payload)
-    if payload['DeviceID'] == CLIENT_ID:
-        # Generalize by including available resources in config file
-        resources = payload['information']
-        for r in resources:
-            if r['resource'] == 'solar':
-                retval = hc.heila_set_real_power(url=url, val=int(r['real_power']))
+    resources = payload['DeviceInformation']
+    for r in resources:
+        if r['resource'] == 'solar':
+            try:
+                retval = hc.heila_set_real_power(url='http://'+resource_map['DeviceID'], val=int(r['real_power']))
                 print(retval)
-                print("Received a new message: ")
-                print('Real Power = ', r['real_power'])
-            elif r['resource'] == 'ev':
-                print('Call EV method to control real power to: ', r['real_power'])
-            elif r['resource'] == 'battery':
-                print('Call battery method to control real power to: ', r['real_power'])
-            else:
-                print('Not a valid resource for this edge device: ', r['resource'])
+            except Exception as e:
+                print('Error writing in Heila', e)
+
+            print("Received a new message: ")
+            print('Real Power = ', r['real_power'])
+        elif r['resource'] == 'ev':
+            print('Call EV method to control real power to: ', r['real_power'])
+        elif r['resource'] == 'battery':
+            print('Call battery method to control real power to: ', r['real_power'])
+        else:
+            print('Not a valid resource for this edge device: ', r['resource'])
+
     print("--------------\n\n")
 
 
@@ -69,6 +79,9 @@ PATH_TO_KEY = config.PATH_TO_KEY
 PATH_TO_ROOT = config.PATH_TO_ROOT
 TOPIC_PUBLISH = config.TOPIC_PUBLISH
 TOPIC_SUBSCRIBE = config.TOPIC_SUBSCRIBE
+
+#TODO: Include all Heilas IP and configure based on the meter_id in the meter_intervals table
+resource_map = {'1':config.IP_ADDRESS}
 
 # Edge Device Info
 url = config.URL
@@ -124,14 +137,15 @@ while True:
                 if payload == None:
                     tessPV_payload = None
                 else:
-                    pv_info = payload["DeviceInformation"][0]['payload']["sunnyboy_inverter.calc_ac_power_kw"]
+                    pv_info = payload["sunnyboy_inverter.calc_ac_power_kw"]
                     pv_power = pv_info['value']
                     pv_time = datetime.fromtimestamp(pv_info['timestamp'] / 1000)
-                    tessPV_payload = {'rate_id': 1, 'meter_id': 1, 'start_time': str(pv_time), 'end_time': str(datetime.fromtimestamp(int(t.time()))+60),
+                    tessPV_payload = {'rate_id': 1, 'meter_id': 1, 'start_time': str(pv_time), 'end_time': str(datetime.fromtimestamp(int(t.time())+60)),
                                       'e': pv_power / 12,
                                       'qmtp': pv_power, 'p_bid': 0, 'q_bid': 0, 'is_bid': 1, 'mode_dispatch': 0,
                                       'mode_market': 0}
                 publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, tessPV_payload, CLIENT_ID)
+                # print(payload)
                 print('Published ', datetime.now())
             except requests.exceptions.RequestException as e:
                 print('error: ', e)
