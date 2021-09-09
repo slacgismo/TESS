@@ -19,6 +19,7 @@ from datetime import datetime
 
 
 def publish(client, topic, payload, Device_ID):
+    #TODO: Automate assignment of deviceID
     payload = {'DeviceID': Device_ID, 'DeviceInformation': payload}
     try:
         client.publish(topic, json.dumps(payload), 1)
@@ -34,33 +35,28 @@ def subscribe(client, topic):
 
 
 def customCallback(client, userdata, message):
-    # payload = {'DeviceID': device_id,
-    #            'DeviceInformation': [
-    #                {"resource": "solar", "payload": {"mode_dispatch": 1.0, "qmtp": qmtp}},
-    #                {"resource": "battery", "payload": {"mode_dispatch": None, "q_bid": None}},
-    #                {"resource": "ev", "payload": {"mode_dispatch": None, "q_bid": None}}
-    #            ]
-    #            }
+    # {'DeviceID': 1, 'DeviceInformation': [{"resource": "solar", "payload": {"mode_dispatch": 1.0, "qmtp": 2.0}}, {"resource": "battery", "payload": {"mode_dispatch": 'None', "q_bid": 'None'}},{"resource": "ev", "payload": {"mode_dispatch": 'None', "q_bid": 'None'}}]}
+    # print(message.payload)
+    print("Received a new message: ")
     payload = json.loads(message.payload)
     resources = payload['DeviceInformation']
     for r in resources:
         if r['resource'] == 'solar':
+            pwr = float(r['payload']['qmtp'])*float(r['payload']['mode_dispatch'])*1000
             try:
-                retval = hc.heila_set_real_power(url='http://'+resource_map['DeviceID'], val=int(r['real_power']))
+                retval = hc.heila_set_real_power(url='http://'+resource_map[str(payload['DeviceID'])], val=pwr)
                 print(retval)
             except Exception as e:
                 print('Error writing in Heila', e)
-
-            print("Received a new message: ")
-            print('Real Power = ', r['real_power'])
         elif r['resource'] == 'ev':
-            print('Call EV method to control real power to: ', r['real_power'])
+            print('Call EV method to control real power')
         elif r['resource'] == 'battery':
-            print('Call battery method to control real power to: ', r['real_power'])
+            print('Call battery method to control real power')
         else:
             print('Not a valid resource for this edge device: ', r['resource'])
 
     print("--------------\n\n")
+
 
 
 def request():
@@ -144,7 +140,8 @@ while True:
                                       'e': pv_power / 12,
                                       'qmtp': pv_power, 'p_bid': 0, 'q_bid': 0, 'is_bid': 1, 'mode_dispatch': 0,
                                       'mode_market': 0}
-                publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, tessPV_payload, CLIENT_ID)
+
+                publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, tessPV_payload, 1) # deviceID = 1 -> see TODO on def publish(): to automate this part
                 # print(payload)
                 print('Published ', datetime.now())
             except requests.exceptions.RequestException as e:
