@@ -124,11 +124,9 @@ def update_meter_interval(meter_interval_id):
     '''
     Updates meter interval in database
     '''
-
     arw = ApiResponseWrapper()
     meter_interval_schema = MeterIntervalSchema()
     modified_meter_interval = request.get_json()
-
     try:
         MeterInterval.query.filter_by(
             meter_interval_id=meter_interval_id).one()
@@ -150,6 +148,7 @@ def update_meter_interval(meter_interval_id):
         return arw.to_json(None, 400)
 
     results = meter_interval_schema.dump(modified_meter_interval)
+    print(results)
     # have to export AWS envvar as True
     # within an if statement for ease of simulation testing
     if (os.getenv('AWS')=="True"):
@@ -160,9 +159,9 @@ def update_meter_interval(meter_interval_id):
         homehub_id = pv.home_hub_id
         # TODO: implement battery and ev into the backend and fix hardcoded data below
         payload = [
-                    {"resource": "solar", "payload": {"mode_dispatch": results['mode']}},
-                    {"resource": "battery", "payload": {"mode_dispatch": None}},
-                    {"resource": "ev", "payload": {"mode_dispatch": None}}
+                    {"resource": "solar", "payload": {"mode_dispatch": results['mode_dispatch'], "qmtp" : results["qmtp"]}},
+                    {"resource": "battery", "payload": {"mode_dispatch": None, "qmtp" : None}},
+                    {"resource": "ev", "payload": {"mode_dispatch": None, "qmtp" : None}}
                   ]
 
         # publishes data to TessEvents topic
