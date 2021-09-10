@@ -166,7 +166,7 @@ def update_meter_interval(meter_interval_id):
                   ]
 
         # publishes data to TessEvents topic
-        from web.market_dispatch.publish_to_iot import publish
+        from web.iot_core.iot_pubsub import publish
         publish(payload=payload, device_id=homehub_id)
     return arw.to_json(results)
 

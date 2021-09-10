@@ -4,8 +4,6 @@ import redis
 from web.config import *
 from web.extensions import db, bcrypt, migrate, ma, jwt
 
-from web.models import transformer
-
 # FRONT-END TEMPLATE BP ROUTES
 from web.auth.auth import auth_bp
 from web.alerts.alerts import alerts_bp
@@ -124,6 +122,9 @@ else:
     config = DevelopmentConfig()
 
 app = create_app(config)
+
+from web.iot_core.iot_pubsub import sub_meter_intervals_data
+sub_meter_intervals_data()
 
 # IF YOU NEED TO SEED YOUR DB WITH SOME TEST DATA,
 # UNCOMMENT BELOW THIS LINE AND RUN THE APP. DELETE LATER!!
