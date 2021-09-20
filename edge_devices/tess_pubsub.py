@@ -94,7 +94,10 @@ myAWSIoTMQTTClient.configureCredentials(PATH_TO_ROOT, PATH_TO_KEY, PATH_TO_CERT)
 # myAWSIoTMQTTClient.configureConnectDisconnectTimeout(10)  # 10 sec
 # myAWSIoTMQTTClient.configureMQTTOperationTimeout(5)  # 5 sec
 
-myAWSIoTMQTTClient.connect()
+mqtt_connect = False
+while not (mqtt_connect):
+    mqtt_connect = myAWSIoTMQTTClient.connect()
+    print('mqq_connect: ', mqtt_connect)
 
 # subscribing to topic
 subscribe(myAWSIoTMQTTClient, TOPIC_SUBSCRIBE)
@@ -102,10 +105,15 @@ subscribe(myAWSIoTMQTTClient, TOPIC_SUBSCRIBE)
 # Initializing battery object
 sonnen_obj = sonnen.SonnenApiInterface()
 
+# Testing purpose:
+import datetime
+
+
 # publishing to topic
 is_submitted = False
 next_5min = (int(datetime.now().minute / 5) * 5) + 5
 while True:
+
     print('next5min: ', next_5min)
     if datetime.now().minute == next_5min:
         is_submitted = False
@@ -150,3 +158,23 @@ while True:
                 # to disable control from the power market, you need to send a POST request to the API endpoint /api/unsync .
                 # To give back control, send a POST request to the API endpoint /api/sync
     t.sleep(10)
+
+    try:
+        # Testing connection
+        retval = requests.get('https://www.google.com/').status_code
+        print('status code: ', retval)
+        payload = [{'resource': 'solar', 'payload': hc.heila_update(url=url)},
+                   {'resource': 'battery', 'payload': sonnen_obj.get_batteries_status_json(serial=config.SONNEN_BATT)},
+                   {'resource': 'ev', 'payload': None}]
+        # print('all payload done! ')
+        publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, payload, CLIENT_ID)
+        print('Published ', datetime.datetime.now())
+
+    except requests.exceptions.RequestException as e:
+        print('error: ', e)
+        print('Transfer control back to HEILA... Implement function - TBD')
+        # to disable control from the power market, you need to send a POST request to the API endpoint /api/unsync .
+        # To give back control, send a POST request to the API endpoint /api/sync
+
+    t.sleep(30) # Need to define how often to provide info updates
+
