@@ -3,6 +3,9 @@ from requests.exceptions import Timeout
 import json
 import config
 
+# If resource is generating, sign is positive (i.e. solar, battery discharge)
+# If resource is consuming, sign is negative (i.e. battery charging, loads)
+
 
 def heila_set_real_power(url, val=10000):
     # val default value is set to 10000 so it does not curtail
