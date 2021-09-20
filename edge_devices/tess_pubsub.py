@@ -29,6 +29,7 @@ def publish(client, topic, payload, Device_ID):
     print(payload)
     # client.disconnect() # Figure out if need to disconnect or not -> best pratices
 
+#TODO Add transformer info -> taken from egauge (see code from the lab)
 
 def subscribe(client, topic):
     client.subscribe(topic, 1, customCallback)

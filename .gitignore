@@ -658,4 +658,5 @@ web/web/static/bundles/*
 
 # Certs files Edge Devices
 edge_devices/certs
+edge_devices/config.py
 .idea/
