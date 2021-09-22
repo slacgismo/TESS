@@ -1,7 +1,7 @@
 import React from "react";
 import Chart from 'chart.js';
 
-class HistoricalChart extends React.Component {
+class ClearingPriceChart extends React.Component {
     componentDidMount() {
         this.updateChart();
     }
@@ -14,21 +14,21 @@ class HistoricalChart extends React.Component {
 
             // The data for our dataset
             data: {
-                labels: [],
+                labels: this.props.ds ? this.props.ds.labels : [],
                 datasets: [
                     {
                         label: 'My First dataset',
                         fill: false,
                         backgroundColor: 'rgb(255, 99, 132)',
                         borderColor: 'rgb(255, 99, 132)',
-                        data: [2,4,55]
+                        data: this.props.ds ? this.props.ds.one : []
                     },
                     {
                         label: 'My Second dataset',
                         fill: false,
                         backgroundColor: 'rgb(55, 99, 255)',
                         borderColor: 'rgb(55, 99, 255)',
-                        data: [5,4,7]
+                        data: this.props.ds ? this.props.ds.one : []
                     }
                 ]
             },
@@ -75,4 +75,4 @@ class HistoricalChart extends React.Component {
     }
 }
 
-export default HistoricalChart;
+export default ClearingPriceChart;

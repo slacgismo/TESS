@@ -15,22 +15,17 @@ class AuctionMarketChart extends React.Component {
             // The data for our dataset
             data: {
                 labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-			    datasets: [
+      			    datasets: [
                     {
                         label: 'Dataset 1',
                         backgroundColor: 'red',
-                        data: []
+                        data: this.props.ds ? this.props.ds.one : []
                     },
                     {
                         label: 'Dataset 2',
                         backgroundColor: 'blue',
-                        data: []
+                        data: this.props.ds ? this.props.ds.two : []
                     },
-                    {
-				        label: 'Dataset 3',
-				        backgroundColor: 'green',
-                        data: []
-                    }
                 ]
             },
 
@@ -51,7 +46,7 @@ class AuctionMarketChart extends React.Component {
 				},
 				scales: {
 					xAxes: [{
-                        stacked: true,
+            stacked: true,
 						display: true,
 						scaleLabel: {
 							display: true,
@@ -59,7 +54,7 @@ class AuctionMarketChart extends React.Component {
 						}
 					}],
 					yAxes: [{
-                        stacked: true,
+            stacked: true,
 						display: true,
 						scaleLabel: {
 							display: true,
