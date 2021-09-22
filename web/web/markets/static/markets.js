@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as action from './actions';
-import AuctionChart from './auction';
+import ClearingPriceChart from './clearing_price';
 import { connect } from 'react-redux';
 import { Switch } from '@rmwc/switch';
 import { Button } from '@rmwc/button';
-import HistoricalChart from './historical';
+import EnergyDemandChart from './energy_demand';
 import { TextField } from '@rmwc/textfield';
 import AuctionMarketChart from './auction_market';
 import { selectMenuOption } from '../../static/js/actions';
@@ -22,9 +22,14 @@ class Markets extends React.Component {
         // so we fix that by having each component do it, 😔, this is
         // not great since the component shouldn't care about the menu
         this.props.dispatch(selectMenuOption('markets'));
+        this.props.dispatch(action.getAuctionMarketData());
+        this.props.dispatch(action.getClearingPriceData());
+        this.props.dispatch(action.getEnergyDemandData());
     }
 
     render() {
+        console.log(this.props.energyDemandData)
+
         return (
             <div className="power-dispatch-container">
                 <div className="power-dispatch-margin-fix">
@@ -35,15 +40,17 @@ class Markets extends React.Component {
                                 xTitle="Capacity (MW)"
                                 yTitle="Price ($/MWh)"
                                 chartTitle="Auction Market"
-                                chartSubtitle="Transformer Capacity" />
+                                chartSubtitle="Transformer Capacity"
+                                ds={this.props.auctionMarketData} />
                         </div>
                         <div className="pd-chart-resource">
-                            <AuctionChart
+                            <ClearingPriceChart
                                 id="auction-chart"
                                 xTitle="Time"
                                 yTitle="Price ($/MWh)"
-                                chartTitle="Auction"
-                                chartSubtitle="" />
+                                chartTitle="Clearing Price"
+                                chartSubtitle=""
+                                ds={this.props.clearingPriceData} />
                         </div>
                     </div>
 
@@ -97,11 +104,12 @@ class Markets extends React.Component {
                     <div className="power-dispatch-forms-container">
                         <div className="pd-form-container">
                             <div className="pd-chart-system-load">
-                                <HistoricalChart
+                                <EnergyDemandChart
                                     id="historical-market-chart"
                                     xTitle="Time"
                                     yTitle="Price ($/MWh)"
-                                    chartTitle="Historical Data" />
+                                    chartTitle="Energy Demand"
+                                    ds={this.props.energyDemandData} />
                             </div>
                         </div>
                     </div>
@@ -111,7 +119,11 @@ class Markets extends React.Component {
     }
 }
 
-const ConnectedMarkets = connect(state => ({}))(Markets);
+const ConnectedMarkets = connect(state => ({
+  auctionMarketData: state.markets.auctionMarketData,
+  clearingPriceData: state.markets.clearingPriceData,
+  energyDemandData: state.markets.energyDemandData,
+}))(Markets);
 
 const marketsElement = (
     <ConnectedComponentWrapper isVisible={true} pageTitle="MARKETS">
