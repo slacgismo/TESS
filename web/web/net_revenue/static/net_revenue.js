@@ -14,6 +14,7 @@ class CostRevenue extends React.Component {
         // so we fix that by having each component do it, 😔, this is
         // not great since the component shouldn't care about the menu
         this.props.dispatch(selectMenuOption('net-revenue'));
+        this.props.dispatch(action.getCashFlowData());
     }
 
     render() {
@@ -26,7 +27,8 @@ class CostRevenue extends React.Component {
                             xTitle="Time"
                             yTitle="$/h"
                             chartTitle="Cash Flow"
-                            chartSubtitle="" />
+                            chartSubtitle=""
+                            ds={this.props.cashFlowData} />
                     </div>
                     <div className="chart-container chart-divider"></div>
                     <div className="chart-container">
@@ -63,7 +65,9 @@ class CostRevenue extends React.Component {
     }
 }
 
-const ConnectedCostRevenue = connect(state => ({}))(CostRevenue);
+const ConnectedCostRevenue = connect(state => ({
+    cashFlowData: state.netRevenue.cashFlowData,
+}))(CostRevenue);
 
 const costRevenueElement = (
     <ConnectedComponentWrapper isVisible={true} pageTitle="NET REVENUE">

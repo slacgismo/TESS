@@ -4,7 +4,7 @@ import drawerNavigationMenu from "../reducers";
 import alerts from "../../../alerts/static/reducer";
 import markets from "../../../markets/static/reducer";
 import constraints from "../../../constraints/static/reducer";
-import costRevenue from "../../../net_revenue/static/reducer";
+import netRevenue from "../../../net_revenue/static/reducer";
 import userSettings from "../../../user_settings/static/reducer";
 import notifications from "../../../notifications/static/reducer";
 import residentialSD from "../../../residential_sd/static/reducer";
@@ -15,7 +15,7 @@ const appReducer = combineReducers({
     alerts,
     markets,
     constraints,
-    costRevenue,
+    netRevenue,
     notifications,
     storage,
     capacity,
