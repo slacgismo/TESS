@@ -28,7 +28,7 @@ def get_cash_flow():
     market_interval = MarketInterval.query.order_by(asc('start_time')).filter(MarketInterval.start_time > one_day_ago)
     market_interval = MarketInterval.query.order_by(asc('start_time')).all()
     market_interval_result = market_interval_schema.dump(market_interval, many=True)
-    df = pd.DataFrame(market_interval_result).to_csv('web/charts_development/cash_flow_market_interval.csv')
+    df = pd.DataFrame(market_interval_result).to_csv('web/charts_development/data/cash_flow_market_interval.csv')
 
     start_times = [value["start_time"] for value in market_interval_result]
     p_clear = [value["p_clear"] for value in market_interval_result]
@@ -36,7 +36,7 @@ def get_cash_flow():
     meter_interval_schema = MeterIntervalSchema()
     meter_intervals = MeterInterval.query.filter(MeterInterval.start_time >= start_times[0])
     meter_interval_result = meter_interval_schema.dump(meter_intervals, many=True)
-    df = pd.DataFrame(meter_interval_result).to_csv('web/charts_development/cash_flow_meter_interval.csv')
+    df = pd.DataFrame(meter_interval_result).to_csv('web/charts_development/data/cash_flow_meter_interval.csv')
     # Calculate payments to PV owners: Sum all ((qmtp in TABLE meter_intervals for which p_bid <= p_clear))*p_clear
     payment_to_pv_owners = []
     for index, p in enumerate(p_clear):
@@ -46,13 +46,13 @@ def get_cash_flow():
     transformer_interval_schema = TransformerIntervalSchema()
     transformer_intervals = TransformerInterval.query.filter(start_times[0] <= TransformerInterval.start_time)
     transformer_interval_result = transformer_interval_schema.dump(transformer_intervals, many=True)
-    df = pd.DataFrame(transformer_interval_result).to_csv('web/cash_flow_transformer_interval.csv')
+    df = pd.DataFrame(transformer_interval_result).to_csv('web/charts_development/data/cash_flow_transformer_interval.csv')
     transformer_q = [value["q"] for value in transformer_interval_result]
 
     hce_bids_schema = HceBidsSchema()
     hce_bids = HceBids.query.filter(start_times[0] <= HceBids.start_time)
     hce_bid_result = hce_bids_schema.dump(hce_bids, many=True)
-    df = pd.DataFrame(hce_bid_result).to_csv('web/charts_development/cash_flow_hce_bid.csv')
+    df = pd.DataFrame(hce_bid_result).to_csv('web/charts_development/data/cash_flow_hce_bid.csv')
     # Use p_bid for which is_supply = 1 if q >= 0
     # Use p_bid for which is_supply = 0 if q < 0
     for q in transformer_q:
