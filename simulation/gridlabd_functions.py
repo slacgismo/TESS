@@ -1,4 +1,6 @@
-#This is only for the minimum viable product (PV)
+# This code implements the market operations for TESS
+# The code is tailored to the minimum viable product (i.e. PV)
+
 import os
 import random
 import pandas
@@ -29,21 +31,23 @@ if gld_simulation:
 
 #Sets up house agents/Home Hubs with settings
 def on_init(t):
+	print('Initialize')
 	global t0;
 	t0 = time.time()
 
 	# Calculate DeltaT
-	dt_start = pandas.Timestamp.now()
-	global DeltaT;
-	DeltaT = dt_start - pandas.Timestamp(start_time_db) # Time offset between DB and current computer time
-	print('Initialize')
+	if not gld_simulation:
+		dt_start = pandas.Timestamp.now()
+		global DeltaT;
+		DeltaT = dt_start - pandas.Timestamp(start_time_db) # Time offset between DB and current computer time
 
 	# Gets the list of active home hubs (!!!! does not filter for active == in the TESS database YET)
 	import requests
 	hh_list = requests.get(db_address+'home_hubs').json()['results']['data']
 	hh_ids = []
 	for hh in hh_list:
-		hh_ids += [hh['home_hub_id']]
+		if hh['is_active'] == True:
+			hh_ids += [hh['home_hub_id']]
 	
 	# Creates house objects for each active home hub
 	global houses;
@@ -65,22 +69,22 @@ def on_init(t):
 def on_precommit(t):
 
 	# Get run time
-
 	if gld_simulation:
 		dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None)
 	else:
-		#import pdb; pdb.set_trace()
+		global DeltaT;
 		dt_sim_time = pandas.Timestamp.now() - DeltaT
 
+	##############
 	# Run market only every interval
+	##############
 
-	global LEM_operator;
-	if not ((dt_sim_time.second%interval == 0)): # and (dt_sim_time.minute % (LEM_operator.interval/60) == 0)):
+	if not ((dt_sim_time.second == 0) and (dt_sim_time.minute%int(interval/60) == 0)): # and (dt_sim_time.minute % (LEM_operator.interval/60) == 0)):
 		return t
 
 	else: #interval in minutes #is not start time
 		print('Start precommit: '+str(dt_sim_time))
-		import pdb; pdb.set_trace()
+		global LEM_operator;
 
 		############
 		# Physical info : physical model --> TESS DB
@@ -88,22 +92,34 @@ def on_precommit(t):
 
 		if gld_simulation:
 			
-			# Read out states of house / appliances
+			# Read out states of house for each appliances
 
 			for house in houses: # only for PV so far - other appliances placeholder in MVP
+				# HVAC
 				#if house.HVAC:
 				#	gldimport.update_house_state(house.name,dt_sim_time) #For HVAC systems
+				# PV
 				if house.PV:
 					gldimport.update_PV_state(house.PV,dt_sim_time)
+				# Battery
 				#if house.battery:
 				#	gldimport.update_battery_state(house.battery.name,dt_sim_time)
+				# EV
 				#if house.EVCP:
 				#	gldimport.simulate_EVs(house.name,dt_sim_time)
 				#	gldimport.update_CP_state(house.EVCP.name,dt_sim_time)
-			
-			# Read out system information
+
+			# Get control room settings : capacity constraints
+
+			gldimport.get_controlroom(dt_sim_time)
+
+			# Read out system information (transformer load)
 			
 			gldimport.get_systemstate(dt_sim_time) # External information : system / grid # --> TABLE transformer_meter
+
+			# Get information from market system : RT price
+
+			gldimport.get_marketdata(dt_sim_time)
 
 		############
 		# Market side / no phycial APIs involved
@@ -121,6 +137,7 @@ def on_precommit(t):
 		#Retailer: unresponsive load and supply function
 
 		retailer.bid_supply(dt_sim_time,lem)
+		retailer.bid_export(dt_sim_time,lem)
 		retailer.bid_unrespload(dt_sim_time,lem)
 
 		#Houses form bids and submit them to the market IS (central market DB)
@@ -156,4 +173,6 @@ def on_precommit(t):
 				if house.PV:
 					gldimport.dispatch_PV(house.PV,dt_sim_time)
 
+		time.sleep(5)
+		import pdb; pdb.set_trace()
 		return t

@@ -273,29 +273,43 @@ def dispatch_PV(PV,dt_sim_time):
 # System Operator
 ###############
 
-#Get system state and available capacity
+# Get control room setting
 
-def get_systemstate(dt_sim_time):
-	
-	# Simulate and save available capacity
+def get_controlroom(dt_sim_time):
 
 	if C == 'random':
 		available_capacity = 1000. + numpy.random.uniform(-100.,100.) # Should be an INPUT from control room
 	else:
 		available_capacity = C
-	data = {'transformer_id':transformer_id,'feeder':'IEEE123','capacity':available_capacity}
-	requests.put(db_address+'transformer/'+str(transformer_id), json=data)
+	data = {'transformer_id':transformer_id,'import_capacity':available_capacity,'export_capacity':available_capacity,'q':-1000.0,'unresp_load':-1000.,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
+	requests.post(db_address+'transformer_interval',json=data)
+
+	return
+
+#Get system state / transformer load
+
+def get_systemstate(dt_sim_time):
 	
-	# Used capacity
+	data = requests.get(db_address+'/transformer_intervals').json()['results']['data'][-1]
+	if not pandas.Timestamp(data['start_time']) == dt_sim_time:
+		print('Last entry in transformer_intervals does not correspond to current time')
+	available_import_capacity = data['import_capacity']
+	available_export_capacity = data['export_capacity']
 
 	try:
 		load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'][:-2])/1000. # measured_real_power in [W] --> [kW]
 	except:
 		load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'])/1000. # measured_real_power in [W] --> [kW]
-	data = {'transformer_id':transformer_id,'import_capacity':available_capacity,'export_capacity':0.,'q':load_SLACK,'unresp_load':load_SLACK,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
-	requests.post(db_address+'transformer_interval',json=data)
+	data = {'transformer_id':transformer_id,'import_capacity':available_import_capacity,'export_capacity':available_export_capacity,'q':load_SLACK,'unresp_load':load_SLACK,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
+	requests.put(db_address+'transformer_interval',json=data)
 
-	# Supply cost : from WECS/control room
+	return
+
+# Coincident peak / market price
+
+def get_marketdata(dt_sim_time):
+
+	# WS cost : from WECS/control room
 
 	if market_data == 'random':
 		p = numpy.random.uniform()
@@ -305,6 +319,19 @@ def get_systemstate(dt_sim_time):
 			supply_cost = 0.2
 	else:
 		import sys; sys.exit('External market data not implemented yet')
-	data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p,'q_bid':available_capacity,'is_supply':True,'comment':'','market_id':market_id}
+
+	data_transformer = requests.get(db_address+'/transformer_intervals').json()['results']['data'][-1]
+
+	# export
+	export_constraint = data_transformer['export_capacity']
+	data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p,'q_bid':export_constraint,'is_supply':False,'comment':'export','market_id':market_id}
 	requests.post(db_address+'bids',json=data)
+
+	# import
+	import_constraint = data_transformer['import_capacity']
+	data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p,'q_bid':import_constraint,'is_supply':True,'comment':'import','market_id':market_id}
+	requests.post(db_address+'bids',json=data)
+	
 	return
+
+

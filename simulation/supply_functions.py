@@ -6,7 +6,7 @@ import requests
 
 import market_functions as Mfct
 
-from HH_global import p_max, interval, market_data, db_address, transformer_id
+from HH_global import p_max, interval, market_data, market_id, db_address, transformer_id
 
 class WSSupplier:
 
@@ -25,7 +25,14 @@ class WSSupplier:
 	def bid_supply(self,dt_sim_time,market):
 		p_bid = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][0][-1]['p_bid']
 		q_bid = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time)).json()['results']['data'][0][-1]['q_bid']
-		market.sell(q_bid,p_bid,gen_name='WS_market')
+		market.sell(q_bid,p_bid,gen_name='WS_market_import')
+		return
+
+	# Export function
+	def bid_export(self,dt_sim_time,market):
+		p_bid = requests.get(db_address+'bids?is_supply=false&start_time='+str(dt_sim_time)).json()['results']['data'][0][-1]['p_bid']
+		q_bid = requests.get(db_address+'bids?is_supply=false&start_time='+str(dt_sim_time)).json()['results']['data'][0][-1]['q_bid']
+		market.buy(q_bid,p_bid*1.01,appliance_name='WS_market_export') # +1% of cost for prefer import over export
 		return
 
 	# Unresponsive load
@@ -41,6 +48,8 @@ class WSSupplier:
 		prev_traded = prev_cleared - prev_unresp
 		q_bid = load_SLACK - prev_traded # at the end of the market period
 		p_bid = lem.Pmax
+		data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p_bid,'q_bid':q_bid,'is_supply':False,'comment':'unresp_load','market_id':market_id}
+		requests.post(db_address+'bids',json=data)
 		
 		#Send and receive directly
 		lem.buy(q_bid,p_bid,appliance_name='unresp_load')
