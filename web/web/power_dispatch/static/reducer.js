@@ -11,7 +11,7 @@ export function storage(state = initialStorageState, action) {
 
         case 'STORAGE_RESOURCES_DATA_UPDATED':
             return { ...state, resourcesData: action.data };
-
+            
         default:
             return state;
     }
