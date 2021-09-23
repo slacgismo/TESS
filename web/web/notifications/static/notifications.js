@@ -36,6 +36,7 @@ class Notifications extends React.Component {
             selectedRowIdsToDelete: [],
             currentEmail: "",
             userId: this.props.userData.user_id,
+            searchEmailObj: null
         };
     }
 
@@ -47,10 +48,6 @@ class Notifications extends React.Component {
         this.props.dispatch(selectMenuOption('notifications'));
         this.props.dispatch(action.getNotifications());
         this.props.dispatch(action.getAlertTypes());
-    }
-
-    update = (field, event) => {
-        this.setState({ [field]: event.currentTarget.value });
     }
 
     handleEmailChange = (e, id) => {
@@ -153,9 +150,9 @@ class Notifications extends React.Component {
         );
     }
 
-    getBody = () => {
+    getBody = (emailObj) => {
         const numAlertTypes = this.props.alertTypeEntries.length
-        const dataTableBody = this.props.notificationEntries.map((item, index) => {
+        const dataTableBody = emailObj.map((item, index) => {
             const numNotifications = item.notifications.length
             let alertTypes = []
             let notifications = []
@@ -262,6 +259,17 @@ class Notifications extends React.Component {
         })
     }
 
+    handleEmailSearch = async (e) => {
+        const searchValue = e.target.value
+        let newEmailObj = await this.props.notificationEntries.map((notification) => {
+            if (notification.email.slice(0, searchValue.length) === searchValue) {
+                return notification
+            }
+        })
+        let filteredEmailObj = await newEmailObj.filter(x => x !== undefined)
+        this.setState({["searchEmailObj"]: filteredEmailObj})
+    }
+
     render() {
         return (
             <div>
@@ -270,7 +278,9 @@ class Notifications extends React.Component {
                         <TextField
                             icon="search"
                             trailingIcon="close"
-                            label="Search" />
+                            label="Search"
+                            onChange={e => this.handleEmailSearch(e) }
+                        />
                     </div>
                     <div className="notification-button-container">
                         <Button
@@ -288,8 +298,14 @@ class Notifications extends React.Component {
                 </div>
                 <DT.DataTable className="notification-data-table">
                     <DT.DataTableContent>
-                        {this.getHeader()}
-                        {this.getBody()}
+                        { this.getHeader() }
+                        {
+                            (this.state.searchEmailObj !== null)
+                            ?
+                            this.getBody(this.state.searchEmailObj)
+                            :
+                            this.getBody(this.props.notificationEntries)
+                        }
                     </DT.DataTableContent>
                 </DT.DataTable>
             </div>
