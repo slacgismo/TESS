@@ -31,7 +31,7 @@ def get_bids():
         if is_supply.lower() == 'false':
             hb = hb.filter(HceBids.is_supply.is_(False))
             if start_time:
-                hb = hb.filter(HceBids.start_time >= start_time)
+                hb = hb.filter(HceBids.start_time == start_time)
             results.append(hb_schema.dump(hb, many=True))
 
         elif is_supply.lower() == 'true':
@@ -40,8 +40,9 @@ def get_bids():
             mi_schema = MeterIntervalSchema()
             mi = MeterInterval.query.filter()
             if start_time:
-                hb = hb.filter(HceBids.start_time >= start_time)
-                mi = mi.filter(MeterInterval.start_time >= start_time)
+                hb = hb.filter(HceBids.start_time == start_time)
+                mi = mi.filter(MeterInterval.start_time == start_time)
+            # todo make this return more robust
             results.append(hb_schema.dump(hb, many=True))
             results.append(mi_schema.dump(mi, many=True))
 
