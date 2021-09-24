@@ -92,34 +92,18 @@ def on_precommit(t):
 
 		if gld_simulation:
 			
-			# Read out states of house for each appliances
+			# Read out states of house for each appliances and update DB
 
 			for house in houses: # only for PV so far - other appliances placeholder in MVP
-				# HVAC
-				#if house.HVAC:
-				#	gldimport.update_house_state(house.name,dt_sim_time) #For HVAC systems
-				# PV
-				if house.PV:
-					gldimport.update_PV_state(house.PV,dt_sim_time)
-				# Battery
-				#if house.battery:
-				#	gldimport.update_battery_state(house.battery.name,dt_sim_time)
-				# EV
-				#if house.EVCP:
-				#	gldimport.simulate_EVs(house.name,dt_sim_time)
-				#	gldimport.update_CP_state(house.EVCP.name,dt_sim_time)
+				gldimport.update_state(house,dt_sim_time)
 
-			# Get control room settings : capacity constraints
+			# Get system information
+			# control room settings : capacity constraints, 
+			# transformer load, unresponsive load,
+			# cost of supply
+			# --> should be split up in later versions of TESS
 
-			gldimport.get_controlroom(dt_sim_time)
-
-			# Read out system information (transformer load)
-			
-			gldimport.get_systemstate(dt_sim_time) # External information : system / grid # --> TABLE transformer_meter
-
-			# Get information from market system : RT price
-
-			gldimport.get_marketdata(dt_sim_time)
+			gldimport.get_systeminformation(dt_sim_time)
 
 		############
 		# Market side / no phycial APIs involved
@@ -136,9 +120,9 @@ def on_precommit(t):
 
 		#Retailer: unresponsive load and supply function
 
-		retailer.bid_supply(dt_sim_time,lem)
-		retailer.bid_export(dt_sim_time,lem)
-		retailer.bid_unrespload(dt_sim_time,lem)
+		lem = retailer.bid_supply(dt_sim_time,lem)
+		lem = retailer.bid_export(dt_sim_time,lem)
+		lem = retailer.bid_unrespload(dt_sim_time,lem)
 
 		#Houses form bids and submit them to the market IS (central market DB)
 
@@ -149,15 +133,13 @@ def on_precommit(t):
 		#lem.process_bids(dt_sim_time) # only needed if separate sending and processing of bids (not the case if identical DB for meter_interval and market)
 		
 		lem.clear_lem(dt_sim_time)
+		if lem.Qd > 100.:
+			import pdb; pdb.set_trace()
 
 		#HHs determine dispatch based on price
 		
-		if dispatch_mode: # Applies market results to DB for implementation
-			for house in houses:
-				house.determine_dispatch(dt_sim_time)
-		else:
-			for house in houses:
-				house.default(dt_sim_time)
+		for house in houses:
+			house.determine_dispatch(dt_sim_time)
 
 		lem.reset()
 
@@ -170,9 +152,8 @@ def on_precommit(t):
 			for house in houses:
 				#gldimport.update_settings() #If user changes settings in API, this should be called
 				#gldimport.update_house_state(house.name,dt_sim_time)
-				if house.PV:
-					gldimport.dispatch_PV(house.PV,dt_sim_time)
+				gldimport.dispatch_appliances(house,dt_sim_time)
 
 		time.sleep(5)
-		import pdb; pdb.set_trace()
+		#import pdb; pdb.set_trace()
 		return t

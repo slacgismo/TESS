@@ -172,6 +172,23 @@ def simulate_EVs(house_name,dt_sim_time):
 #
 ###########################
 
+# Updates state for all appliances
+def update_state(house,dt_sim_time):
+    # HVAC
+    #if house.HVAC:
+    #   update_house_state(house.name,dt_sim_time) #For HVAC systems
+    # PV
+    if house.PV:
+        update_PV_state(house.PV,dt_sim_time)
+    # Battery
+    #if house.battery:
+    #   update_battery_state(house.battery.name,dt_sim_time)
+    # EV
+    #if house.EVCP:
+    #   simulate_EVs(house.name,dt_sim_time)
+    #   update_CP_state(house.EVCP.name,dt_sim_time)
+    return
+
 def update_house_state(house_name,dt_sim_time):
 	#Get information from physical representation
 	house_obj = gridlabd.get_object(house_name)
@@ -258,13 +275,28 @@ def update_EV_state(battery_name,dt_sim_time):
 #
 ###########################
 
+def dispatch_appliances(house,dt_sim_time):
+	# HVAC
+    #if house.HVAC:
+    #   dispatch_HVAC(house.name,dt_sim_time) #For HVAC systems
+    # PV
+	if house.PV:
+		dispatch_PV(house.PV,dt_sim_time)
+    # Battery
+    #if house.battery:
+    #   dispatch_battery(house.battery.name,dt_sim_time)
+    # EV
+    #if house.EVCP:
+    #   dispatch_EV(house.EVCP.name,dt_sim_time)
+	return
+
 def dispatch_PV(PV,dt_sim_time):
-	#import pdb; pdb.set_trace()
 	#Should refer to DB and not to python object
-	if PV.mode == 1:
+	data = requests.get(db_address+'/meter_intervals?meter_id='+str(PV.meter)).json()['results']['data'][-1]
+	if data['mode_dispatch'] == 1:
 		# No constraint
 		gridlabd.set_value('PV_'+str(PV.id),'P_Out',str(PV.Q_bid)) #What if larger?
-	elif PV.mode > 0:
+	elif data['mode_dispatch'] > 0:
 		gridlabd.set_value('PV_'+str(PV.id),'P_Out',str(PV.Q_bid*PV.mode))
 	else:
 		gridlabd.set_value('PV_'+str(PV.id),'P_Out','0.0')
@@ -273,65 +305,69 @@ def dispatch_PV(PV,dt_sim_time):
 # System Operator
 ###############
 
-# Get control room setting
+def get_systeminformation(dt_sim_time):
 
-def get_controlroom(dt_sim_time):
+	# Control room: system constraint
 
 	if C == 'random':
-		available_capacity = 1000. + numpy.random.uniform(-100.,100.) # Should be an INPUT from control room
+		available_import_capacity = 1000. + numpy.random.uniform(-100.,100.) # Should be an INPUT from control room
 	else:
-		available_capacity = C
-	data = {'transformer_id':transformer_id,'import_capacity':available_capacity,'export_capacity':available_capacity,'q':-1000.0,'unresp_load':-1000.,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
-	requests.post(db_address+'transformer_interval',json=data)
-
-	return
-
-#Get system state / transformer load
-
-def get_systemstate(dt_sim_time):
+		available_import_capacity = C
+	available_export_capacity = available_import_capacity*0.5
 	
-	data = requests.get(db_address+'/transformer_intervals').json()['results']['data'][-1]
-	if not pandas.Timestamp(data['start_time']) == dt_sim_time:
-		print('Last entry in transformer_intervals does not correspond to current time')
-	available_import_capacity = data['import_capacity']
-	available_export_capacity = data['export_capacity']
+	# Transformer load
 
 	try:
 		load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'][:-2])/1000. # measured_real_power in [W] --> [kW]
 	except:
 		load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'])/1000. # measured_real_power in [W] --> [kW]
-	data = {'transformer_id':transformer_id,'import_capacity':available_import_capacity,'export_capacity':available_export_capacity,'q':load_SLACK,'unresp_load':load_SLACK,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
-	requests.put(db_address+'transformer_interval',json=data)
 
-	return
+	# Unresponsive load
 
-# Coincident peak / market price
+	try:
+		# Get previous clearing price
+		p_t1 = requests.get(db_address+'market_intervals').json()['results']['data'][-1]['p_clear']
+		# Get clear supply bids
+		#bids_t1 = requests.get(db_address+'/meter_intervals?start_time='+str(dt_sim_time - pandas.Timedelta(seconds=interval))).json()['results']['data'] #Use last measurement
+		cleared_flex_supply = 0.0
+		supply_bids_all = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time - pandas.Timedelta(seconds=interval))).json()['results']['data'][1]
+		supply_bids = []
+		for supply in supply_bids_all:
+			if pandas.Timestamp(supply['start_time']) == (dt_sim_time - pandas.Timedelta(seconds=interval)):
+				supply_bids += [supply]
+		for bid in supply_bids:
+			if bid['p_bid'] <= p_t1:
+				cleared_flex_supply += bid['q_bid']
+		# Get cleared demand bids
+		cleared_flex_demand = 0.0 # in MVP
+		# Compute
+		unresp_load = load_SLACK - cleared_flex_demand + cleared_flex_supply
+	except:
+		unresp_load = load_SLACK
 
-def get_marketdata(dt_sim_time):
+	# Supply cost (simulate coincident peak)
 
-	# WS cost : from WECS/control room
-
-	if market_data == 'random':
-		p = numpy.random.uniform()
-		if p > 1.0/20.0:
-			supply_cost = 0.05
-		else:
-			supply_cost = 0.2
+	p = numpy.random.uniform()
+	if p > 1.0/20.0:
+		supply_cost = 0.05
 	else:
-		import sys; sys.exit('External market data not implemented yet')
+		supply_cost = 0.2
 
-	data_transformer = requests.get(db_address+'/transformer_intervals').json()['results']['data'][-1]
+	# Post to database
+
+	# Transformer data
+	data = {'transformer_id':transformer_id,'import_capacity':available_import_capacity,'export_capacity':available_export_capacity,'q':load_SLACK,
+		'unresp_load':unresp_load,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
+	requests.post(db_address+'transformer_interval',json=data)
 
 	# export
-	export_constraint = data_transformer['export_capacity']
-	data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p,'q_bid':export_constraint,'is_supply':False,'comment':'export','market_id':market_id}
+	export_penalty = 0.01 # needs to be > 0.0 to avoid arbitrage of import and export
+	data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p-export_penalty,'q_bid':available_export_capacity,'is_supply':False,'comment':'export','market_id':market_id}
 	requests.post(db_address+'bids',json=data)
 
 	# import
-	import_constraint = data_transformer['import_capacity']
-	data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p,'q_bid':import_constraint,'is_supply':True,'comment':'import','market_id':market_id}
+	data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p,'q_bid':available_import_capacity,'is_supply':True,'comment':'import','market_id':market_id}
 	requests.post(db_address+'bids',json=data)
-	
-	return
 
+	return
 

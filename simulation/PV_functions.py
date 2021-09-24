@@ -8,7 +8,7 @@ from dateutil import parser
 from datetime import timedelta
 import requests
 
-from HH_global import db_address, p_max, interval, load_forecast
+from HH_global import db_address, p_max, interval, load_forecast, dispatch_mode
 
 class PV:
       def __init__(self, pv_id, meter, Q_rated):
@@ -55,7 +55,11 @@ class PV:
                   self.mode = 0 #Curtailment during negative prices?
 
             data = requests.get(db_address+'/meter_intervals?meter_id='+str(self.meter)).json()['results']['data'][-1]
-            data['mode'] = self.mode
+            data['mode_market'] = self.mode
+            if dispatch_mode:
+                  data['mode_dispatch'] = self.mode
+            else:
+                  data['mode_dispatch'] = 1.0 # set default : full PV feed-in
             requests.put(db_address+'meter_interval/'+str(data['meter_interval_id']),json=data)
 
       # For testing - PV should always be on (unless explicitly disconnected by control room)
