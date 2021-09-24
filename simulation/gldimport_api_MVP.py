@@ -322,29 +322,6 @@ def get_systeminformation(dt_sim_time):
 	except:
 		load_SLACK = float(gridlabd.get_object('node_149')['measured_real_power'])/1000. # measured_real_power in [W] --> [kW]
 
-	# Unresponsive load
-
-	try:
-		# Get previous clearing price
-		p_t1 = requests.get(db_address+'market_intervals').json()['results']['data'][-1]['p_clear']
-		# Get clear supply bids
-		#bids_t1 = requests.get(db_address+'/meter_intervals?start_time='+str(dt_sim_time - pandas.Timedelta(seconds=interval))).json()['results']['data'] #Use last measurement
-		cleared_flex_supply = 0.0
-		supply_bids_all = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time - pandas.Timedelta(seconds=interval))).json()['results']['data'][1]
-		supply_bids = []
-		for supply in supply_bids_all:
-			if pandas.Timestamp(supply['start_time']) == (dt_sim_time - pandas.Timedelta(seconds=interval)):
-				supply_bids += [supply]
-		for bid in supply_bids:
-			if bid['p_bid'] <= p_t1:
-				cleared_flex_supply += bid['q_bid']
-		# Get cleared demand bids
-		cleared_flex_demand = 0.0 # in MVP
-		# Compute
-		unresp_load = load_SLACK - cleared_flex_demand + cleared_flex_supply
-	except:
-		unresp_load = load_SLACK
-
 	# Supply cost (simulate coincident peak)
 
 	p = numpy.random.uniform()
@@ -357,7 +334,7 @@ def get_systeminformation(dt_sim_time):
 
 	# Transformer data
 	data = {'transformer_id':transformer_id,'import_capacity':available_import_capacity,'export_capacity':available_export_capacity,'q':load_SLACK,
-		'unresp_load':unresp_load,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
+		'unresp_load':-9999.9,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
 	requests.post(db_address+'transformer_interval',json=data)
 
 	# export

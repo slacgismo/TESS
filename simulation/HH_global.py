@@ -5,19 +5,20 @@ import requests
 db_address = 'http://host.docker.internal:5000/api/v1/'
 gld_simulation = True # True : uses gridlabd as representation of physical model
 dispatch_mode = True # True : implements dispatch decisions by writing them to the database
+field_simulation = False # True : real-time field simulation, does not use a time offset
 
 # Only needed if gld_simulation = False
 #start_time_str = '2021-07-22 15:23:45' # GREENWICH simulation start at local computer (in Greenwhich; if offline data is used, if not choose any)
-start_time_db = '2021-07-22 09:00:00' #start of db (if offline data is used, if not choose == start_time_str)
+start_time_db = '2021-09-22 09:00:00' #start of db (if offline data is used, if not choose == start_time_str)
 #DeltaT = pandas.Timestamp(start_time_str) - pandas.Timestamp(start_time_db) # Time offset between DB and current computer time
 
 # Market settings
 market_id = 1
 try:
 	interval = int(requests.get(db_address+'markets?market_id='+str(market_id)).json()['results']['data'][0]['ts'])
-	print(interval)
+	print('Market interval is ' + str(interval) + ' (as indicated in markets table)')
 except:
-	interval = 60
+	interval = 300
 transformer_id = 1
 p_max = 100.0
 

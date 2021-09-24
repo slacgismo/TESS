@@ -37,13 +37,39 @@ class WSSupplier:
 
 	# Unresponsive load
 	def bid_unrespload(self,dt_sim_time,lem):
+
+		# Calculate unresponsive load
+		data_new = requests.get(db_address+'transformer_intervals').json()['results']['data'][-1]
+		load_SLACK = data_new['q']
+		try:
+			# Get previous clearing price
+			p_t1 = requests.get(db_address+'market_intervals').json()['results']['data'][-1]['p_clear']
+			# Get clear supply bids
+			#bids_t1 = requests.get(db_address+'/meter_intervals?start_time='+str(dt_sim_time - pandas.Timedelta(seconds=interval))).json()['results']['data'] #Use last measurement
+			cleared_flex_supply = 0.0
+			supply_bids_all = requests.get(db_address+'bids?is_supply=true&start_time='+str(dt_sim_time - pandas.Timedelta(seconds=interval))).json()['results']['data'][1]
+			supply_bids = []
+			for supply in supply_bids_all:
+				if pandas.Timestamp(supply['start_time']) == (dt_sim_time - pandas.Timedelta(seconds=interval)):
+					supply_bids += [supply]
+			for bid in supply_bids:
+				if bid['p_bid'] <= p_t1:
+					cleared_flex_supply += bid['q_bid']
+			# Get cleared demand bids
+			cleared_flex_demand = 0.0 # in MVP
+			# Compute
+			unresp_load = load_SLACK - cleared_flex_demand + cleared_flex_supply
+		except:
+			unresp_load = load_SLACK
 		#import pdb; pdb.set_trace()
-		unresp_load = requests.get(db_address+'transformer_intervals?transformer_id=1&start_time='+str(dt_sim_time)).json()['results']['data'][-1]['unresp_load']
+		# Update database with unresponsive load
+		data_new['unresp_load'] = unresp_load
+		requests.put(db_address+'transformer_interval/'+str(transformer_id),json=data_new)
+
+		# Place and save unresponsive load bid
 		q_bid = unresp_load
 		p_bid = lem.Pmax
 		data = {'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'p_bid':p_bid,'q_bid':q_bid,'is_supply':False,'comment':'unresp_load','market_id':market_id}
 		requests.post(db_address+'bids',json=data)
-		
-		#Send and receive directly
 		lem.buy(q_bid,p_bid,appliance_name='unresp_load')
 		return lem

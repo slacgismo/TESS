@@ -11,7 +11,7 @@ from datetime import timedelta
 from dateutil import parser
 import time
 
-from HH_global import db_address, gld_simulation, dispatch_mode
+from HH_global import db_address, gld_simulation, dispatch_mode, field_simulation
 from HH_global import interval, start_time_db, p_max
 
 import HH_functions as HHfct
@@ -70,10 +70,12 @@ def on_precommit(t):
 
 	# Get run time
 	if gld_simulation:
-		dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None)
+		dt_sim_time = parser.parse(gridlabd.get_global('clock')).replace(tzinfo=None) # uses time of local machine
+	elif field_simulation == True:
+		dt_sim_time = pandas.Timestamp.now() # Uses current time when operating in the field
 	else:
 		global DeltaT;
-		dt_sim_time = pandas.Timestamp.now() - DeltaT
+		dt_sim_time = pandas.Timestamp.now() - DeltaT # Uses a time offset when working with an offline database for testing
 
 	##############
 	# Run market only every interval
@@ -122,7 +124,7 @@ def on_precommit(t):
 
 		lem = retailer.bid_supply(dt_sim_time,lem)
 		lem = retailer.bid_export(dt_sim_time,lem)
-		lem = retailer.bid_unrespload(dt_sim_time,lem)
+		lem = retailer.bid_unrespload(dt_sim_time,lem) # includes calculation of unresponsive load
 
 		#Houses form bids and submit them to the market IS (central market DB)
 
@@ -154,6 +156,6 @@ def on_precommit(t):
 				#gldimport.update_house_state(house.name,dt_sim_time)
 				gldimport.dispatch_appliances(house,dt_sim_time)
 
-		time.sleep(5)
+		time.sleep(1)
 		#import pdb; pdb.set_trace()
 		return t
