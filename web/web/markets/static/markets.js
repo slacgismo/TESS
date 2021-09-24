@@ -28,7 +28,7 @@ class Markets extends React.Component {
     }
 
     render() {
-        console.log(this.props.energyDemandData)
+        console.log("AM", this.props.auctionMarketData)
 
         return (
             <div className="power-dispatch-container">

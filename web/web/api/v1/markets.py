@@ -28,20 +28,32 @@ def get_auction_market():
     hce_bids = HceBids.query.filter(HceBids.created_at > latest_market_interval_start_time).filter(HceBids.created_at < latest_market_interval_end_time)
     hce_bids = HceBids.query.all()
     hce = hce_bids_schema.dump(hce_bids, many=True)
-    df = pd.DataFrame(hce)
-    df.to_csv('web/charts_development/data/hce_bids.csv')
+    hce_bids = pd.DataFrame(hce)
+    hce_bids.to_csv('web/charts_development/data/hce_bids.csv')
 
     meter_interval_schema = MeterIntervalSchema()
     meter_intervals = MeterInterval.query.all()
     result = meter_interval_schema.dump(meter_intervals, many=True)
-    df = pd.DataFrame(result)
-    df.to_csv('web/meter_intervals.csv')
-    one = [value["qmtp"] for value in result]
+    meter_intervals = pd.DataFrame(result)
+    meter_intervals.to_csv('web/charts_development/data/meter_intervals.csv')
+
+    # merge both data to match the x-axis
+    data = hce_bids.merge(meter_intervals, on="q_bid", how="left")
+    print(data)
+    labels = list(data["q_bid"])
+    # hce_bids
+    one = list(data["p_bid_x"])
+    # meter_intervals
+    two = list(data["p_bid_y"])
+
+    print("labels")
+    print(type(labels))
+    print(labels[0])
 
     results = {
-        'labels': [],
+        'labels': labels,
         'one': one,
-        'two': []
+        'two': two,
     }
     return arw.to_json(results)
 

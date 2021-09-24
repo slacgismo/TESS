@@ -4,6 +4,7 @@ import { api } from '../../static/js/network_client';
 export function getAuctionMarketData() {
     return dispatch => {
         api.get('markets/auction_market', (response) => {
+          console.log("Auction", response.results.data)
             dispatch(auctionMarketDataUpdated(response.results.data));
         }, (error) => {
             console.warn(error);

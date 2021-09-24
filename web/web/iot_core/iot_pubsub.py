@@ -57,7 +57,6 @@ def sub_meter_intervals_data(client=myAWSIoTMQTTClient, topic=TOPIC_SUBSCRIBE):
 from web.models.meter_interval import MeterInterval
 from web.config import *
 from web.extensions import db
-import pyodbc
 import sqlalchemy as sal
 from sqlalchemy import insert
 from sqlalchemy import create_engine

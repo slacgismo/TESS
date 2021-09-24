@@ -31,8 +31,11 @@ def get_cash_flow():
     df = pd.DataFrame(market_interval_result).to_csv('web/charts_development/data/cash_flow_market_interval.csv')
 
     start_times = [value["start_time"] for value in market_interval_result]
+    # list[value["start_time"]]
     p_clear = [value["p_clear"] for value in market_interval_result]
 
+    # try except for meter_intervals
+    # return nothing in exception
     meter_interval_schema = MeterIntervalSchema()
     meter_intervals = MeterInterval.query.filter(MeterInterval.start_time >= start_times[0])
     meter_interval_result = meter_interval_schema.dump(meter_intervals, many=True)
@@ -40,6 +43,7 @@ def get_cash_flow():
     # Calculate payments to PV owners: Sum all ((qmtp in TABLE meter_intervals for which p_bid <= p_clear))*p_clear
     payment_to_pv_owners = []
     for index, p in enumerate(p_clear):
+        # clean this up
         payment_to_pv_owners.append(np.sum([value["qmtp"] for value in meter_interval_result if value["start_time"] == start_times[index] and value["p_bid"] <= p])*p)
 
     # Calculate import costs: (q from TABLE transformer_intervals at start_time == t) * (p_bid in TABLE hce_bids at start_time == t)
