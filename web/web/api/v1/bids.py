@@ -42,6 +42,7 @@ def get_bids():
             if start_time:
                 hb = hb.filter(HceBids.start_time == start_time)
                 mi = mi.filter(MeterInterval.start_time == start_time)
+            # todo make this return more robust
             results.append(hb_schema.dump(hb, many=True))
             results.append(mi_schema.dump(mi, many=True))
 
