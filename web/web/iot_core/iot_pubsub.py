@@ -116,7 +116,7 @@ def transformer_interval_hce_bid_insert(client, userdata, message):
     latest_transformer_interval_data = json.loads(latest_transformer_interval.content)["results"]["data"]
 
     # will be answered by Dave
-    export_capacity =  None
+    export_capacity =  999
 
     data_transformer_interval = {
         "import_capacity": latest_transformer_interval_data["import_capacity"],

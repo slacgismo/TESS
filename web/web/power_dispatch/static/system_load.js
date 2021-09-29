@@ -10,7 +10,7 @@ class SystemLoadChart extends React.Component {
         const ctx = document.getElementById(this.props.id);
         new Chart(ctx, {
             // The type of chart we want to create
-            type: 'line',
+            type: 'scatter',
 
             // The data for our dataset
             data: {
@@ -23,13 +23,6 @@ class SystemLoadChart extends React.Component {
                         borderColor: 'rgb(255, 99, 132)',
                         data: this.props.ds ? this.props.ds.one : []
                     },
-                    {
-                        label: 'DS 02',
-                        fill: false,
-                        backgroundColor: 'rgb(55, 99, 255)',
-                        borderColor: 'rgb(55, 99, 255)',
-                        data: this.props.ds ? this.props.ds.two : []
-                    }
                 ]
             },
 
