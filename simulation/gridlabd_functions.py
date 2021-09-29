@@ -86,76 +86,85 @@ def on_precommit(t):
 
 	else: #interval in minutes #is not start time
 		print('Start precommit: '+str(dt_sim_time))
-		global LEM_operator;
-
-		############
-		# Physical info : physical model --> TESS DB
-		############
-
-		if gld_simulation:
-			
-			# Read out states of house for each appliances and update DB
-
-			for house in houses: # only for PV so far - other appliances placeholder in MVP
-				gldimport.update_state(house,dt_sim_time)
-
-			# Get system information
-			# control room settings : capacity constraints, 
-			# transformer load, unresponsive load,
-			# cost of supply
-			# --> should be split up in later versions of TESS
-
-			gldimport.get_systeminformation(dt_sim_time)
-
-		############
-		# Market side / no phycial APIs involved
-		############
-
-		#Reads in information from DB and updates python objects (house + appliances)
-
-		for house in houses:
-			house.update_state(dt_sim_time)
-
-		#Market Operator creates market for t
-
-		lem = LEM_operator.create_market(name='LEM')
-
-		#Retailer: unresponsive load and supply function
-
-		lem = retailer.bid_supply(dt_sim_time,lem)
-		lem = retailer.bid_export(dt_sim_time,lem)
-		lem = retailer.bid_unrespload(dt_sim_time,lem) # includes calculation of unresponsive load
-
-		#Houses form bids and submit them to the market IS (central market DB)
-
-		for house in houses:
-			house.bid(dt_sim_time,lem)
-
-		#Market processes bids and clears the market
-		#lem.process_bids(dt_sim_time) # only needed if separate sending and processing of bids (not the case if identical DB for meter_interval and market)
 		
-		lem.clear_lem(dt_sim_time)
-		if lem.Qd > 100.:
-			import pdb; pdb.set_trace()
-
-		#HHs determine dispatch based on price
-		
-		for house in houses:
-			house.determine_dispatch(dt_sim_time)
-
-		lem.reset()
-
-		############
-		# Implement dispatch : TESS DB physical --> model
-		############
-
-		# GLD --> DB
-		if gld_simulation:
-			for house in houses:
-				#gldimport.update_settings() #If user changes settings in API, this should be called
-				#gldimport.update_house_state(house.name,dt_sim_time)
-				gldimport.dispatch_appliances(house,dt_sim_time)
+		try:
+			run_market(dt_sim_time)
+		except:
+			print('Time out')
 
 		time.sleep(1)
 		#import pdb; pdb.set_trace()
 		return t
+
+def run_market(dt_sim_time):
+	global LEM_operator;
+
+	############
+	# Physical info : physical model --> TESS DB
+	############
+
+	if gld_simulation:
+		
+		# Read out states of house for each appliances and update DB
+
+		for house in houses: # only for PV so far - other appliances placeholder in MVP
+			gldimport.update_state(house,dt_sim_time)
+
+		# Get system information
+		# control room settings : capacity constraints, 
+		# transformer load, unresponsive load,
+		# cost of supply
+		# --> should be split up in later versions of TESS
+
+		gldimport.get_systeminformation(dt_sim_time)
+
+	############
+	# Market side / no phycial APIs involved
+	############
+
+	#Reads in information from DB and updates python objects (house + appliances)
+
+	for house in houses:
+		house.update_state(dt_sim_time)
+
+	#Market Operator creates market for t
+
+	lem = LEM_operator.create_market(name='LEM')
+
+	#Retailer: unresponsive load and supply function
+
+	lem = retailer.bid_supply(dt_sim_time,lem)
+	lem = retailer.bid_export(dt_sim_time,lem)
+	lem = retailer.bid_unrespload(dt_sim_time,lem) # includes calculation of unresponsive load
+
+	#Houses form bids and submit them to the market IS (central market DB)
+
+	for house in houses:
+		house.bid(dt_sim_time,lem)
+
+	#Market processes bids and clears the market
+	#lem.process_bids(dt_sim_time) # only needed if separate sending and processing of bids (not the case if identical DB for meter_interval and market)
+	
+	lem.clear_lem(dt_sim_time)
+	if lem.Qd > 100.:
+		import pdb; pdb.set_trace()
+
+	#HHs determine dispatch based on price
+	
+	for house in houses:
+		house.determine_dispatch(dt_sim_time)
+
+	lem.reset()
+
+	############
+	# Implement dispatch : TESS DB physical --> model
+	############
+
+	# GLD --> DB
+	if gld_simulation:
+		for house in houses:
+			#gldimport.update_settings() #If user changes settings in API, this should be called
+			#gldimport.update_house_state(house.name,dt_sim_time)
+			gldimport.dispatch_appliances(house,dt_sim_time)
+
+	return

@@ -254,7 +254,7 @@ class Market :
         isSZero = isDZero = False
         #If return without setting status, data is "stale" is that what it should do?
         if len(self.S) == 0 and len(self.D) == 0 :
-            return 0, 0
+            return 0, 0, '', 1.
         if len(self.S) == 0 :
             #print "isSZero set"
             isSZero = True

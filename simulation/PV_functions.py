@@ -36,7 +36,7 @@ class PV:
                   self.Q_bid = self.Qmtp / self.alpha
             else:
                   self.Q_bid = self.Q_rated
-            if (self.Q_bid > 0.0):
+            if (round(self.Q_bid,market.Qprec) > 0.0):
                   market.sell(self.Q_bid ,self.P_bid,gen_name=self.id)
             last_meter_id = requests.get(db_address+'/meter_intervals?meter_id='+str(self.meter)).json()['results']['data'][-1]['meter_interval_id']
             data = {'meter_interval_id': last_meter_id,'rate_id':1,'meter_id':self.meter,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'e':self.E,'qmtp':self.Qmtp,'p_bid':self.P_bid,'q_bid':self.Q_bid,'is_bid':True}
