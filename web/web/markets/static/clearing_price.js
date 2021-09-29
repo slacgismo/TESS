@@ -22,13 +22,6 @@ class ClearingPriceChart extends React.Component {
                         backgroundColor: 'rgb(255, 99, 132)',
                         borderColor: 'rgb(255, 99, 132)',
                         data: this.props.ds ? this.props.ds.one : []
-                    },
-                    {
-                        label: 'My Second dataset',
-                        fill: false,
-                        backgroundColor: 'rgb(55, 99, 255)',
-                        borderColor: 'rgb(55, 99, 255)',
-                        data: this.props.ds ? this.props.ds.one : []
                     }
                 ]
             },

@@ -6,6 +6,7 @@ from flask import jsonify, request, Blueprint
 from .response_wrapper import ApiResponseWrapper
 from web.models.transformer_interval import TransformerInterval, TransformerIntervalSchema
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import desc
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 transformer_interval_api_bp = Blueprint('transformer_interval_api_bp', __name__)
@@ -88,9 +89,33 @@ def show_transformer_interval_info(transformer_interval_id):
     return arw.to_json(results)
 
 
-@transformer_interval_api_bp.route('/transformer_interval/<int:transformer_interval_id>',
+@transformer_interval_api_bp.route('/transformer_interval/latest',
+                              methods=['GET'])
+def show_latest_transformer_interval_info():
+    '''
+    Returns latest transformer interval information as json object
+    '''
+
+    arw = ApiResponseWrapper()
+    transformer_schema = TransformerIntervalSchema()
+
+    try:
+        transformer_interval = TransformerInterval.query.order_by(desc('transformer_interval_id')).first()
+
+    except (MultipleResultsFound, NoResultFound):
+        arw.add_errors('No result found or multiple results found')
+
+    if arw.has_errors():
+        return arw.to_json(None, 400)
+
+    results = transformer_schema.dump(transformer_interval)
+
+    return arw.to_json(results)
+
+
+@transformer_interval_api_bp.route('/transformer_interval',
                               methods=['PUT'])
-def update_transformer_interval(transformer_interval_id):
+def update_transformer_interval():
     '''
     Updates transformer interval in database
     '''
@@ -98,10 +123,8 @@ def update_transformer_interval(transformer_interval_id):
     arw = ApiResponseWrapper()
     transformer_interval_schema = TransformerIntervalSchema()
     modified_transformer_interval = request.get_json()
-
+    print(modified_transformer_interval)
     try:
-        TransformerInterval.query.filter_by(
-            transformer_interval_id=transformer_interval_id).one()
         modified_transformer_interval = transformer_interval_schema.load(
             modified_transformer_interval, session=db.session)
         db.session.commit()

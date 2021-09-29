@@ -63,12 +63,12 @@ def get_cash_flow():
         import_costs = [value["p_bid"] for value in hce_bid_result if ((value["is_supply"] == 1 and q >= 0) or (value["is_supply"] == 0 and q < 0))]
 
 
-    # labels = [value["end_time"] for value in result]
-    # one = [value["p_clear"] for value in result]
+    labels = [value["end_time"] for value in result]
+    one = [value["p_clear"] for value in result]
 
     results = {
-        'labels': [],
-        'one': [],
+        'labels': labels,
+        'one': one,
         'two': []
     }
     return arw.to_json(results)

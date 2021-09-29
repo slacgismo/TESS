@@ -42,7 +42,9 @@ class Capacity extends React.Component {
         this.props.dispatch(selectMenuOption('power-dispatch-capacity'));
         this.props.dispatch(action.getCapacitySystemLoadData());
         this.props.dispatch(action.getCapacityResourcesData());
+        this.props.dispatch(action.getTransformerData());
         this.setState(this.props.formData);
+        this.setState({day: this.props.transformerData["import_capacity"]})
     }
 
     update = (field, event) => {
@@ -52,6 +54,19 @@ class Capacity extends React.Component {
     updateSwitch = (field, event) => {
         this.setState({ [field]: !!event.currentTarget.checked});
         this.props.dispatch(action.saveForm(this.state));
+    }
+
+    updateTransformerImportCapacity = () => {
+        let data = {
+          "import_capacity": this.state.day,
+          "end_time": null,
+          "export_capacity": null,
+          "q": null,
+          "start_time": null,
+          "transformer_id": 1,
+          "unresp_load": null
+        }
+        this.props.dispatch(action.postTransformerIntervalData(data))
     }
 
     render() {
@@ -98,7 +113,6 @@ class Capacity extends React.Component {
                             <div className="pd-form-title">
                                 <h3>Constraint and Alert Settings</h3>
                             </div>
-
                             <div>
                                 <h4>Nominal Feeder Capacity</h4>
                                 <div className="pd-form-row">
@@ -197,88 +211,8 @@ class Capacity extends React.Component {
                             <div className="pd-form-button-container">
                                 <Button
                                     label="SET"
-                                    outlined />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="power-dispatch-forms-container">
-                        <div className="pd-advanced-form-container">
-                            <div className="pd-form-title">
-                                <h3>Advanced Control</h3>
-                            </div>
-                            <div>
-                                <h4>Override the Maximum Power Demand</h4>
-                                <div className="pd-form-row">
-                                    <div className="pd-form-element-label">Between</div>
-                                    <div className="pd-form-element-input">
-                                        <TextField outlined
-                                            value={this.state.betweenStart}
-                                            onChange={(e) =>
-                                                this.update("betweenStart", e)
-                                            }
-                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
-                                        />
-                                    </div>
-                                    <div className="pd-form-element-input">
-                                        <TextField outlined
-                                            value={this.state.betweenEnd}
-                                            onChange={(e) =>
-                                                this.update("betweenEnd", e)
-                                            }
-                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="pd-form-row">
-                                    <div className="pd-form-element-label">Grid to Home Constraint</div>
-                                    <div className="pd-form-element-input">
-                                        <TextField outlined
-                                            value={this.state.gridToHome}
-                                            onChange={(e) =>
-                                                this.update("gridToHome", e)
-                                            }
-                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
-                                        />
-                                    </div>
-                                    <div className="pd-form-element-unit first-unit">
-                                        kW
-                                    </div>
-                                    <div className="pd-form-element-unit second-unit">
-                                        <Switch
-                                            label="Off/On"
-                                            checked={this.state.gridToHomeSwitch}
-                                            onChange={e => this.updateSwitch("gridToHomeSwitch", e)}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="pd-form-row">
-                                    <div className="pd-form-element-label">Home to Grid Constraint</div>
-                                    <div className="pd-form-element-input">
-                                        <TextField outlined
-                                            value={this.state.homeToGrid}
-                                            onChange={(e) =>
-                                                this.update("homeToGrid", e)
-                                            }
-                                            onBlur={this.props.dispatch(action.saveForm(this.state))}
-                                        />
-                                    </div>
-                                    <div className="pd-form-element-unit first-unit">
-                                        kW
-                                    </div>
-                                    <div className="pd-form-element-unit second-unit">
-                                        <Switch
-                                            label="Off/On"
-                                            checked={this.state.homeToGridSwitch}
-                                            onChange={e => this.updateSwitch("homeToGridSwitch", e)}
-                                        />
-                                    </div>
-                                </div>
-                                <hr />
-                                <div className="pd-form-button-container">
-                                    <Button
-                                        label="SET"
-                                        outlined />
-                                </div>
+                                    outlined
+                                    onClick={this.updateTransformerImportCapacity} />
                             </div>
                         </div>
                     </div>
@@ -290,7 +224,8 @@ class Capacity extends React.Component {
 const ConnectedCapacity = connect(state => ({
     systemLoadData: state.capacity.systemLoadData,
     resourcesData: state.capacity.resourcesData,
-    formData: state.formState.formData
+    formData: state.formState.formData,
+    transformerData: state.transformerDataState.transformerData,
 }))(Capacity);
 
 const capacityElement = (

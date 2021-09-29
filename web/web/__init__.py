@@ -127,8 +127,9 @@ else:
 
 app = create_app(config)
 
-from web.iot_core.iot_pubsub import sub_meter_intervals_data
+from web.iot_core.iot_pubsub import sub_meter_intervals_data, sub_transformer_intervals_data
 sub_meter_intervals_data()
+sub_transformer_intervals_data()
 
 # IF YOU NEED TO SEED YOUR DB WITH SOME TEST DATA,
 # UNCOMMENT BELOW THIS LINE AND RUN THE APP. DELETE LATER!!
