@@ -72,7 +72,9 @@ def get_resources_load():
     pv_schema = PvSchema()
     pv = Pv.query.filter_by(is_active = 1)
     result = pv_schema.dump(pv, many=True)
-    hundred_percent = sum([value["q_rated"] for value in result])
+    pd.DataFrame(data=result).to_csv('/Users/derins/Documents/gismo/TESS/web/web/charts_development/data/pv.csv')
+    hundred_percent = sum([value["q_rated"] for value in result])/1000
+    print(hundred_percent)
 
     market_interval = MarketInterval.query.order_by(desc('start_time')).first()
     latest_price = market_interval.p_clear
@@ -81,13 +83,14 @@ def get_resources_load():
     meter_intervals = MeterInterval.query.filter(MeterInterval.start_time == market_interval.start_time)
     result = meter_interval_schema.dump(meter_intervals, many=True)
     data = pd.DataFrame(result)
-
     available_resources = data["q_bid"].sum()
     unavailable_resources = hundred_percent - available_resources
 
     price = latest_price
     cleared_bids = data.loc[data.p_bid <= price]
     dispatched_resources = cleared_bids["q_bid"].sum()
+
+
     # market_interval_schema = MarketIntervalSchema()
     # # todo take the latest only in the below query
     # df = pd.DataFrame(market_interval_result)
@@ -99,7 +102,7 @@ def get_resources_load():
         'datasets': {
             'battery': [],
             'charger': [],
-            'pv': [available_resources, unavailable_resources, dispatched_resources],
+            'pv': [unavailable_resources, available_resources - dispatched_resources, dispatched_resources],
             'hvac': [],
             'hotWater': []
         },

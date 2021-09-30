@@ -61,7 +61,8 @@ def get_cash_flow():
     for i, time in enumerate(start_times):
         cash_flow.append(get_cash_flow_from_data(time, transformer_intervals_df, meter_intervals_df, market_intervals_df, market_df, hce_bids_df))
         if i == 0:
-            pass
+            cash_flow_integral.append(cash_flow[i])
+            continue
         cash_flow_integral.append(cash_flow_integral[i-1] + cash_flow[i])
 
     results = {

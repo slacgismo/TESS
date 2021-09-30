@@ -60,6 +60,8 @@ class PV:
                   data['mode_dispatch'] = self.mode
             else:
                   data['mode_dispatch'] = 1.0 # set default : full PV feed-in
+
+            # make IOT Core publish here
             requests.put(db_address+'meter_interval/'+str(data['meter_interval_id']),json=data)
 
       # For testing - PV should always be on (unless explicitly disconnected by control room)

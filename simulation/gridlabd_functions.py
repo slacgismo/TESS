@@ -91,7 +91,9 @@ def on_precommit(t):
 		try:
 			run_market(dt_sim_time)
 		except:
-			print('Time out')
+			print('Data failed to update')
+		#
+		# run_market(dt_sim_time)
 
 		time.sleep(1)
 		#import pdb; pdb.set_trace()
