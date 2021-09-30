@@ -10,26 +10,19 @@ class EnergyDemandChart extends React.Component {
         const ctx = document.getElementById(this.props.id);
         new Chart(ctx, {
             // The type of chart we want to create
-            type: 'line',
+            type: 'scatter',
 
             // The data for our dataset
             data: {
                 labels: this.props.ds ? this.props.ds.labels : [],
                 datasets: [
                     {
-                        label: 'My First dataset',
+                        label: 'DS 01',
                         fill: false,
                         backgroundColor: 'rgb(255, 99, 132)',
                         borderColor: 'rgb(255, 99, 132)',
                         data: this.props.ds ? this.props.ds.one : []
                     },
-                    {
-                        label: 'My Second dataset',
-                        fill: false,
-                        backgroundColor: 'rgb(55, 99, 255)',
-                        borderColor: 'rgb(55, 99, 255)',
-                        data: this.props.ds ? this.props.ds.one : []
-                    }
                 ]
             },
 
@@ -39,7 +32,10 @@ class EnergyDemandChart extends React.Component {
 				title: {
 					display: true,
 					text: this.props.chartTitle
-				},
+                },
+                legend: {
+                    display: false
+                },
 				tooltips: {
 					mode: 'index',
 					intersect: false,
@@ -50,6 +46,10 @@ class EnergyDemandChart extends React.Component {
 				},
 				scales: {
 					xAxes: [{
+            type: 'time',
+            time: {
+                unit: 'day'
+            },
 						display: true,
 						scaleLabel: {
 							display: true,
@@ -70,7 +70,7 @@ class EnergyDemandChart extends React.Component {
 
     render() {
         return (
-            <canvas id={this.props.id} width="500px" height="350px"></canvas>
+            <canvas id={this.props.id} width="500" height="350"></canvas>
         );
     }
 }

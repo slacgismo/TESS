@@ -29,14 +29,6 @@ class ResidentialSD extends React.Component {
                                 chartTitle="Daily Energy Supply - per Resource"
                                 chartSubtitle="Transformer Capacity" />
                         </div>
-                        <div className="pd-chart-resource">
-                            <EnergyDemandChart
-                                id="pd-capacity-resources-chart"
-                                xTitle="Date"
-                                yTitle="kWh"
-                                chartTitle="Daily Energy Demand - Whole Home"
-                                chartSubtitle="" />
-                        </div>
                     </div>
                 </div>
             </div>

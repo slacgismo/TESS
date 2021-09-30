@@ -8,7 +8,7 @@ from dateutil import parser
 from datetime import timedelta
 import requests
 
-from HH_global import db_address, p_max, interval, load_forecast
+from HH_global import db_address, p_max, interval, load_forecast, dispatch_mode
 
 class PV:
       def __init__(self, pv_id, meter, Q_rated):
@@ -24,7 +24,8 @@ class PV:
 
       # Updates Python object with physical state
       def update_state(self):
-            pv_interval = requests.get(db_address+'/meter_intervals?meter_id='+str(self.meter)).json()['results']['data'][-1] #Use last measurement
+            #import pdb; pdb.set_trace()
+            pv_interval = requests.get(db_address+'meter_intervals?meter_id='+str(self.meter)).json()['results']['data'][-1] #Use last measurement
             self.Qmtp = pv_interval['qmtp']
             self.E = pv_interval['e']
 
@@ -35,9 +36,9 @@ class PV:
                   self.Q_bid = self.Qmtp / self.alpha
             else:
                   self.Q_bid = self.Q_rated
-            if (self.Q_bid > 0.0):
+            if (round(self.Q_bid,market.Qprec) > 0.0):
                   market.sell(self.Q_bid ,self.P_bid,gen_name=self.id)
-            last_meter_id = requests.get(db_address+'/meter_intervals?meter_id='+str(self.meter)).json()['results']['data'][-1]['meter_interval_id']
+            last_meter_id = requests.get(db_address+'meter_intervals?meter_id='+str(self.meter)).json()['results']['data'][-1]['meter_interval_id']
             data = {'meter_interval_id': last_meter_id,'rate_id':1,'meter_id':self.meter,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval)),'e':self.E,'qmtp':self.Qmtp,'p_bid':self.P_bid,'q_bid':self.Q_bid,'is_bid':True}
             requests.put(db_address+'meter_interval/'+str(last_meter_id),json=data)
             return
@@ -53,16 +54,20 @@ class PV:
             else:
                   self.mode = 0 #Curtailment during negative prices?
 
-            data = requests.get(db_address+'/meter_intervals?meter_id='+str(self.meter)).json()['results']['data'][-1]
-            data['mode'] = self.mode
+            data = requests.get(db_address+'meter_intervals?meter_id='+str(self.meter)).json()['results']['data'][-1]
+            data['mode_market'] = self.mode
+            if dispatch_mode:
+                  data['mode_dispatch'] = self.mode
+            else:
+                  data['mode_dispatch'] = 1.0 # set default : full PV feed-in
             requests.put(db_address+'meter_interval/'+str(data['meter_interval_id']),json=data)
 
       # For testing - PV should always be on (unless explicitly disconnected by control room)
       def default(self,dt_sim_time,p_lem,alpha):
-            data = requests.get(db_address+'/meter_intervals?meter_id='+str(self.meter)).json()['results']['data'][-1]
+            data = requests.get(db_address+'meter_intervals?meter_id='+str(self.meter)).json()['results']['data'][-1]
             data['mode'] = 1 # Is on / generates at full power
             requests.put(db_address+'meter_interval/'+str(data['meter_interval_id']),json=data)
-            
+
 # Checks pv table if there is a PV associated with the home hub
 def get_PV(house,hh_id):
       pvs = requests.get(db_address+'pvs').json()['results']['data']
@@ -71,5 +76,6 @@ def get_PV(house,hh_id):
                   pv = PV(pv['pv_id'],pv['meter_id'],pv['q_rated'])
                   house.PV = pv
                   return house
+      #import pdb; pdb.set_trace()
       print('No PV registered by hh '+str(hh_id))
       return house

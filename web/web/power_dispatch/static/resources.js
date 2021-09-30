@@ -35,16 +35,26 @@ class ResourcesChart extends React.Component {
 
         this.props.datasets["total"] = normalizeToPercentage(totalVals);
 
-        for (const dsProp in this.props.datasets) {
-            if("unavailable" in this.props.finalDataSet) {
-                this.props.finalDataSet["unavailable"].push(this.props.datasets[dsProp][0]);
-            }
-            if("available" in this.props.finalDataSet) {
-                this.props.finalDataSet["available"].push(this.props.datasets[dsProp][1]);
-            }
-            if("dispatched" in this.props.finalDataSet) {
-                this.props.finalDataSet["dispatched"].push(this.props.datasets[dsProp][2]);
-            }
+        // TODO: will be usefull for v1.0
+        // for (const dsProp in this.props.datasets) {
+        //     if("unavailable" in this.props.finalDataSet) {
+        //         this.props.finalDataSet["unavailable"].push(this.props.datasets[dsProp][0]);
+        //     }
+        //     if("available" in this.props.finalDataSet) {
+        //         this.props.finalDataSet["available"].push(this.props.datasets[dsProp][1]);
+        //     }
+        //     if("dispatched" in this.props.finalDataSet) {
+        //         this.props.finalDataSet["dispatched"].push(this.props.datasets[dsProp][2]);
+        //     }
+        // }
+        if("unavailable" in this.props.finalDataSet) {
+            this.props.finalDataSet["unavailable"].push(this.props.datasets['pv'][0]);
+        }
+        if("available" in this.props.finalDataSet) {
+            this.props.finalDataSet["available"].push(this.props.datasets['pv'][1]);
+        }
+        if("dispatched" in this.props.finalDataSet) {
+            this.props.finalDataSet["dispatched"].push(this.props.datasets['pv'][2]);
         }
         this.updateChart(this.props.finalDataSet);
     }

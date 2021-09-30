@@ -15,7 +15,7 @@ import requests
 #import EV_functions as EVfct
 import PV_functions as PVfct
 
-from HH_global import db_address, dispatch_mode, p_max, interval, start_time_str
+from HH_global import db_address, dispatch_mode, p_max, interval
 
 # Creates one agent per house and includes flexible appliances as children
 def create_agent_house(hh_id,flex_HVAC=False):
@@ -32,7 +32,7 @@ def create_agent_house(hh_id,flex_HVAC=False):
 		hvac.heating_setpoint = df_house_settings['heating_setpoint'].iloc[-1]
 		hvac.T_des = (df_house_settings['heating_setpoint'].iloc[-1] + df_house_settings['cooling_setpoint'].iloc[-1])/2. #Default
 		house.HVAC = hvac
-	
+
 	#Create and assign DER objects if exist
 	house = PVfct.get_PV(house,hh_id) # get PV table and checks if PV is associated with HH id
 	# house = Bfct.get_battery(house,house_name)
@@ -86,7 +86,7 @@ class House:
         except:
 			# If price not available (in first period or bec of connection issues)
             P_exp, P_dev = 0.02, 1.0
-		
+
 		# Bid household devices
 		#self.HVAC.bid(dt_sim_time,market,P_exp,P_dev)
 		#import pdb; pdb.set_trace()
@@ -105,16 +105,20 @@ class House:
         df_lem = requests.get(db_address+'market_intervals').json()['results']['data'][-1]
         p_lem = df_lem['p_clear']
         alpha = df_lem['alpha']
+
+        # Dispatch of flexible appliances
 		#self.HVAC.dispatch(dt_sim_time,p_lem,alpha)
         try:
             self.PV.dispatch(dt_sim_time,p_lem,alpha)
         except:
-            data = requests.get(db_address+'/meter_intervals?meter_id='+str(self.PV.meter)).json()['results']['data'][-1]
-            data['mode'] = 1.0
+            data = requests.get(db_address+'meter_intervals?meter_id='+str(self.PV.meter)).json()['results']['data'][-1]
+            #data['mode_market'] = -9999. # mode_dispatch is set to default == full dispatch of PV
+            data['mode_dispatch'] = 1.0 # mode_dispatch is set to default == full dispatch of PV
             requests.put(db_address+'meter_interval/'+str(data['meter_interval_id']),json=data)
             pass
 		#self.battery.dispatch(dt_sim_time,p_lem,alpha)
 		#self.EVCP.dispatch(dt_sim_time,p_lem,alpha)
+        return
 
 	# If market signals shouldn't be implemented (e.g. because of testing)
     def default(self,dt_sim_time):
@@ -210,4 +214,3 @@ class HVAC:
         myfct.set_values(self.name+'_state_out', '(timedate, operating_mode, p_HVAC)', (dt_sim_time, operating_mode, str(self.P_bid)))
         self.P_bid = 0.0
         self.Q_bid = 0.0
-

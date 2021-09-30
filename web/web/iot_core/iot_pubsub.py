@@ -156,8 +156,8 @@ def transformer_interval_hce_bid_insert(client, userdata, message):
     }
 
     if (latest_transformer_interval_data["start_time"] == None):
-        data_transformer_interval["transformer_interval_id"] = latest_transformer_interval_data["transformer_interval_id"]
-        requests.put(f'{server_link}/api/v1/transformer_interval', json=data_transformer_interval)
+        transformer_interval_id = latest_transformer_interval_data["transformer_interval_id"]
+        requests.put(f'{server_link}/api/v1/transformer_interval/{transformer_interval_id}', json=data_transformer_interval)
     else:
         requests.post(f'{server_link}/api/v1/transformer_interval', json=data_transformer_interval)
 

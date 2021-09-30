@@ -5,7 +5,6 @@ class SystemLoadChart extends React.Component {
     componentDidMount() {
         this.updateChart();
     }
-
     updateChart = () => {
         const ctx = document.getElementById(this.props.id);
         new Chart(ctx, {
@@ -46,10 +45,10 @@ class SystemLoadChart extends React.Component {
 				},
 				scales: {
 					xAxes: [{
-                        type: 'time',
-                        time: {
-                            unit: 'day'
-                        },
+            type: 'time',
+            time: {
+                unit: 'day'
+            },
 						display: true,
 						scaleLabel: {
 							display: true,

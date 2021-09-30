@@ -148,7 +148,7 @@ def update_meter_interval(meter_interval_id):
         return arw.to_json(None, 400)
 
     results = meter_interval_schema.dump(modified_meter_interval)
-    print(results)
+    print(modified_meter_interval)
     # have to export AWS envvar as True
     # within an if statement for ease of simulation testing
     if (os.getenv('AWS')=="True"):

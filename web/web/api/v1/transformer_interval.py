@@ -113,9 +113,9 @@ def show_latest_transformer_interval_info():
     return arw.to_json(results)
 
 
-@transformer_interval_api_bp.route('/transformer_interval',
+@transformer_interval_api_bp.route('/transformer_interval/<int:transformer_interval_id>',
                               methods=['PUT'])
-def update_transformer_interval():
+def update_transformer_interval(transformer_interval_id):
     '''
     Updates transformer interval in database
     '''
@@ -123,8 +123,10 @@ def update_transformer_interval():
     arw = ApiResponseWrapper()
     transformer_interval_schema = TransformerIntervalSchema()
     modified_transformer_interval = request.get_json()
-    print(modified_transformer_interval)
+
     try:
+        TransformerInterval.query.filter_by(
+            transformer_interval_id=transformer_interval_id).one()
         modified_transformer_interval = transformer_interval_schema.load(
             modified_transformer_interval, session=db.session)
         db.session.commit()

@@ -1,0 +1,7 @@
+meter_id,utility_id,service_location_id,home_hub_id,alternate_meter_id,feeder,substation,meter_type,is_active,is_archived,updated_at,created_at,transformer_id
+1,1,1,1,,IEEE123,HCE-Xcel,RESIDENTIAL,0,0,2021-07-20 21:59:37,2021-07-20 21:59:37,
+2,1,2,2,,IEEE123,HCE-Xcel,RESIDENTIAL,0,0,2021-07-20 21:59:37,2021-07-20 21:59:37,
+3,1,3,3,,IEEE123,HCE-Xcel,RESIDENTIAL,0,0,2021-07-20 21:59:37,2021-07-20 21:59:37,
+4,1,4,4,,IEEE123,HCE-Xcel,RESIDENTIAL,0,0,2021-07-20 21:59:37,2021-07-20 21:59:37,
+5,1,5,5,,IEEE123,HCE-Xcel,RESIDENTIAL,0,0,2021-07-20 21:59:37,2021-07-20 21:59:37,
+6,1,6,6,,IEEE123,HCE-Xcel,RESIDENTIAL,0,0,2021-07-20 21:59:37,2021-07-20 21:59:37,

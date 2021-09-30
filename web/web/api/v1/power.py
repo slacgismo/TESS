@@ -51,7 +51,7 @@ def get_power_system_load():
     result = transformer_interval_schema.dump(transformer_interval, many=True)
     labels = [value["end_time"] for value in result]
     one = [value["q"] for value in result]
-    # TODO: lable not printing
+    # TODO: label not printing
     results = {
         'labels': labels,
         'one': one
@@ -75,16 +75,19 @@ def get_resources_load():
     hundred_percent = sum([value["q_rated"] for value in result])
 
     market_interval = MarketInterval.query.order_by(desc('start_time')).first()
-
     latest_price = market_interval.p_clear
-    print(latest_price)
 
     meter_interval_schema = MeterIntervalSchema()
     meter_intervals = MeterInterval.query.filter(MeterInterval.start_time == market_interval.start_time)
     result = meter_interval_schema.dump(meter_intervals, many=True)
-    df = pd.DataFrame(result)
-    df.to_csv('web/charts_development/data/meter_intervals.csv')
+    data = pd.DataFrame(result)
 
+    available_resources = data["q_bid"].sum()
+    unavailable_resources = hundred_percent - available_resources
+
+    price = latest_price
+    cleared_bids = data.loc[data.p_bid <= price]
+    dispatched_resources = cleared_bids["q_bid"].sum()
     # market_interval_schema = MarketIntervalSchema()
     # # todo take the latest only in the below query
     # df = pd.DataFrame(market_interval_result)
@@ -96,7 +99,7 @@ def get_resources_load():
         'datasets': {
             'battery': [],
             'charger': [],
-            'pv': [],
+            'pv': [available_resources, unavailable_resources, dispatched_resources],
             'hvac': [],
             'hotWater': []
         },

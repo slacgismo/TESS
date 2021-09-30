@@ -39,16 +39,11 @@ def get_auction_market():
 
     # merge both data to match the x-axis
     data = hce_bids.merge(meter_intervals, on="q_bid", how="left")
-    print(data)
     labels = list(data["q_bid"])
     # hce_bids
     one = list(data["p_bid_x"])
     # meter_intervals
     two = list(data["p_bid_y"])
-
-    print("labels")
-    print(type(labels))
-    print(labels[0])
 
     results = {
         'labels': labels,
