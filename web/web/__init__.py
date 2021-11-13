@@ -33,11 +33,12 @@ from web.api.v1.utility import utility_api_bp
 from web.api.v1.address import address_api_bp
 from web.api.v1.channel import channel_api_bp
 from web.api.v1.home_hub import home_hub_api_bp
-from web.api.v1.net_revenue import net_revenue_api_bp
 from web.api.v1.alert_type import alert_types_api_bp
+from web.api.v1.net_revenue import net_revenue_api_bp
 from web.api.v1.device_event_source import des_api_bp
 from web.api.v1.transformer import transformer_api_bp
 from web.api.v1.notification import notifications_api_bp
+from web.api.v1.alert_setting import alert_setting_api_bp
 from web.api.v1.meter_interval import meter_interval_api_bp
 from web.api.v1.market_interval import market_interval_api_bp
 from web.api.v1.service_location import service_location_api_bp
@@ -112,6 +113,7 @@ def register_blueprints(app):
     app.register_blueprint(net_revenue_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(transformer_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(alert_types_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(alert_setting_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(notifications_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(meter_interval_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(market_interval_api_bp, url_prefix='/api/v1/')

@@ -43,8 +43,19 @@ class Capacity extends React.Component {
         this.props.dispatch(action.getCapacitySystemLoadData());
         this.props.dispatch(action.getCapacityResourcesData());
         this.props.dispatch(action.getTransformerData());
+        this.props.dispatch(action.getAlertSettings());
         this.setState(this.props.formData);
-        this.setState({day: this.props.transformerData["import_capacity"]})
+        if (typeof this.props.transformerData!=="undefined") {
+            this.setState({day: this.props.transformerData["import_capacity"]})
+        }
+        if (typeof this.props.alertSettings!=="undefined") {
+            this.setState({
+                yellowAlarm: this.props.alertSettings["yellow_alarm_percentage"],
+                redAlarm: this.props.alertSettings["red_alarm_percentage"],
+                capacityBounds: this.props.alertSettings["capacity_bound"],
+                resourcesDepletion: this.props.alertSettings["resource_depletion"]
+            })
+        }
     }
 
     update = (field, event) => {
@@ -56,17 +67,27 @@ class Capacity extends React.Component {
         this.props.dispatch(action.saveForm(this.state));
     }
 
-    updateTransformerImportCapacity = () => {
-        let data = {
-          "import_capacity": this.state.day,
-          "end_time": null,
-          "export_capacity": null,
-          "q": null,
-          "start_time": null,
-          "transformer_id": 1,
-          "unresp_load": null
+    updateFormData = () => {
+        let transformerData = {
+            "import_capacity": this.state.day,
+            "end_time": null,
+            "export_capacity": null,
+            "q": null,
+            "start_time": null,
+            "transformer_id": 1,
+            "unresp_load": null
         }
-        this.props.dispatch(action.postTransformerIntervalData(data))
+        this.props.dispatch(action.postTransformerIntervalData(transformerData))
+
+        let alertSettings = {
+            "capacity_bound": this.state.capacityBounds,
+            "red_alarm_percentage": this.state.redAlarm,
+            "resource_depletion": this.state.resourcesDepletion,
+            "utility_id": 1,
+            "yellow_alarm_percentage": this.state.yellowAlarm
+        }
+        this.props.dispatch(action.postAlertSettingsData(alertSettings))
+
     }
 
     render() {
@@ -212,7 +233,7 @@ class Capacity extends React.Component {
                                 <Button
                                     label="SET"
                                     outlined
-                                    onClick={this.updateTransformerImportCapacity} />
+                                    onClick={this.updateFormData} />
                             </div>
                         </div>
                     </div>
@@ -226,6 +247,7 @@ const ConnectedCapacity = connect(state => ({
     resourcesData: state.capacity.resourcesData,
     formData: state.formState.formData,
     transformerData: state.transformerDataState.transformerData,
+    alertSettings: state.alertSettingsState.alertSettings
 }))(Capacity);
 
 const capacityElement = (

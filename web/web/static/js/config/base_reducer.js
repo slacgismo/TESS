@@ -8,7 +8,7 @@ import netRevenue from "../../../net_revenue/static/reducer";
 import userSettings from "../../../user_settings/static/reducer";
 import notifications from "../../../notifications/static/reducer";
 import residentialSD from "../../../residential_sd/static/reducer";
-import { storage, capacity, formState, transformerDataState } from "../../../power_dispatch/static/reducer";
+import { storage, capacity, formState, transformerDataState, alertSettingsState } from "../../../power_dispatch/static/reducer";
 
 const appReducer = combineReducers({
     auth,
@@ -21,6 +21,7 @@ const appReducer = combineReducers({
     capacity,
     formState,
     transformerDataState,
+    alertSettingsState,
     userSettings,
     residentialSD,
     drawerNavigationMenu,

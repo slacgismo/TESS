@@ -36,8 +36,9 @@ def get_cash_flow():
     market_interval_result = market_interval_schema.dump(market_interval, many=True)
     market_intervals_df = pd.DataFrame(market_interval_result)
 
+    print(market_interval_result)
     start_times = [value["start_time"] for value in market_interval_result]
-
+    print(start_times)
     # meter_intervals
     meter_interval_schema = MeterIntervalSchema()
     meter_intervals = MeterInterval.query.filter(MeterInterval.start_time >= start_times[0])

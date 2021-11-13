@@ -57,7 +57,7 @@ class CostRevenue extends React.Component {
                             id="cr-chart-integral-target"
                             xTitle="Time"
                             yTitle="$"
-                            chartTitle="Integral W.R.T. Target"
+                            chartTitle="Target Surplus / Welfare"
                             chartSubtitle="" />
                     </div>
                 </div>

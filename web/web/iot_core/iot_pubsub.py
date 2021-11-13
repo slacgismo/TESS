@@ -87,6 +87,7 @@ def sub_transformer_intervals_data(client=myAWSIoTMQTTClient, topic=TOPIC_SUBSCR
 
 def meter_intervals_data_insert(client, userdata, message):
     # publish data to the db when received
+    print("HEY")
     engine = create_engine('mysql+pymysql://' + db_config.DB_USER + ":" + db_config.DB_PASSWORD + "@" + db_config.DB_SERVER + '/tess')
     conn = engine.connect()
 
@@ -108,26 +109,58 @@ def meter_intervals_data_insert(client, userdata, message):
 
 
 def transformer_interval_hce_bid_insert(client, userdata, message):
-
     payload = json.loads(message.payload)["DeviceInformation"]
     # TODO: fix server link to production (remove 5000)
     server_link = f'http://{db_config.DB_SERVER}:5000'
-    latest_transformer_interval = requests.get(f'{server_link}/api/v1//transformer_interval/latest')
+    latest_transformer_interval = requests.get(f'{server_link}/api/v1/transformer_interval/latest')
     latest_transformer_interval_data = json.loads(latest_transformer_interval.content)["results"]["data"]
-
+    load = float(payload["q"])
+    try:
+        import_capacity = latest_transformer_interval_data["import_capacity"]
+    except:
+        import_capacity = None
+        pass
     # will be answered by Dave
     export_capacity =  999
-
     data_transformer_interval = {
-        "import_capacity": latest_transformer_interval_data["import_capacity"],
+        "import_capacity": import_capacity,
         "end_time": payload["end_time"],
         "export_capacity": export_capacity,
-        "q": payload["q"],
+        "q": load,
         "start_time": payload["start_time"],
         "transformer_id": payload["transformer_id"],
         "unresp_load": None
     }
 
+    # alert generation
+    alert_settings = requests.get(f'{server_link}/api/v1/alert_setting')
+    latest_alert_settings = json.loads(alert_settings.content)["results"]["data"]
+    capacity_bound = latest_alert_settings["capacity_bound"]
+    yellow_threshold = latest_alert_settings["yellow_alarm_percentage"]/100
+    red_threshold = latest_alert_settings["red_alarm_percentage"]/100
+    # if alert
+    if (load*red_threshold > capacity_bound):
+        alert = {
+            "alert_type_id" : 2,
+            "assigned_to" : "test@test.com",
+            "description" : "Red Alert - capacity bound: {capacity_bound}, load: {load}",
+            "status" : "open",
+            "context" : "Feeder",
+            "context_id" : "hey",
+            "resolution" : ""
+        }
+        requests.post(f'{server_link}/api/v1/alert', json=alert)
+    elif (load*yellow_threshold > capacity_bound):
+        alert = {
+            "alert_type_id" : 2,
+            "assigned_to" : "test@test.com",
+            "description" : f"Yellow Alert - capacity bound: {capacity_bound}, load: {load}",
+            "status" : "open",
+            "context" : "Feeder",
+            "context_id" : "hey",
+            "resolution" : ""
+        }
+        requests.post(f'{server_link}/api/v1/alert', json=alert)
     # p_bid needs to be coming in from HCE
     p_bid = 1
     # market_id needs to be coming in from somewhere, fine for MVP

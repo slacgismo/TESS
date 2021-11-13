@@ -21,7 +21,8 @@ const initialCapacityState = {
     systemLoadData: [],
     resourcesData: [],
     transformerData: {},
-    formData: {}
+    formData: {},
+    alertSettings: {}
 }
 
 export function capacity(state = initialCapacityState, action) {
@@ -50,6 +51,15 @@ export function transformerDataState(state = initialCapacityState, action) {
     switch (action.type) {
         case 'TRANSFORMER_DATA_UPDATED':
             return { ...state, transformerData: action.data };
+        default:
+            return state;
+    }
+}
+
+export function alertSettingsState(state = initialCapacityState, action) {
+    switch (action.type) {
+        case 'ALERT_SETTINGS_UPDATED':
+            return { ...state, alertSettings: action.data };
         default:
             return state;
     }

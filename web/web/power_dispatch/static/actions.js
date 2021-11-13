@@ -108,3 +108,30 @@ export function postTransformerIntervalData(data) {
       })
     };
 }
+
+export function getAlertSettings() {
+    return dispatch => {
+        api.get('/alert_setting', (response) => {
+            dispatch(alertSettingsUpdated(response.results.data));
+        }, (error) => {
+            console.warn(error);
+        });
+    };
+}
+
+export function alertSettingsUpdated(data) {
+    return {
+        type: 'ALERT_SETTINGS_UPDATED',
+        data
+    };
+}
+
+export function postAlertSettingsData(data) {
+    return dispatch => {
+      api.post('alert_setting', { json: { ...data } }, (response) => {
+          dispatch(getAlertSettings());
+      }, (error) => {
+          console.warn(error);
+      })
+    };
+}
