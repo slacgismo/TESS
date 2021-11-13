@@ -148,25 +148,23 @@ def update_meter_interval(meter_interval_id):
         return arw.to_json(None, 400)
 
     results = meter_interval_schema.dump(modified_meter_interval)
-    print(modified_meter_interval)
     # have to export AWS envvar as True
     # within an if statement for ease of simulation testing
-    if (os.getenv('AWS')=="True"):
 
-        # get homehub id from the PV table using meter_id
-        pv_schema = PvSchema()
-        pv = Pv.query.filter_by(meter_id=results["meter_id"]).one()
-        homehub_id = pv.home_hub_id
-        # TODO: implement battery and ev into the backend and fix hardcoded data below
-        payload = [
-                    {"resource": "solar", "payload": {"mode_dispatch": results['mode_dispatch'], "qmtp" : results["qmtp"]}},
-                    {"resource": "battery", "payload": {"mode_dispatch": None, "qmtp" : None}},
-                    {"resource": "ev", "payload": {"mode_dispatch": None, "qmtp" : None}}
-                  ]
+    # get homehub id from the PV table using meter_id
+    pv_schema = PvSchema()
+    pv = Pv.query.filter_by(meter_id=results["meter_id"]).one()
+    homehub_id = pv.home_hub_id
+    # TODO: implement battery and ev into the backend and fix hardcoded data below
+    payload = [
+                {"resource": "solar", "payload": {"mode_dispatch": results['mode_dispatch'], "qmtp" : results["qmtp"]}},
+                {"resource": "battery", "payload": {"mode_dispatch": None, "qmtp" : None}},
+                {"resource": "ev", "payload": {"mode_dispatch": None, "qmtp" : None}}
+              ]
 
-        # publishes data to TessEvents topic
-        from web.iot_core.iot_pubsub import publish
-        publish(payload=payload, device_id=homehub_id)
+    # publishes data to TessEvents topic
+    from web.iot_core.iot_pubsub import publish
+    publish(payload=payload, device_id=homehub_id)
     return arw.to_json(results)
 
 
