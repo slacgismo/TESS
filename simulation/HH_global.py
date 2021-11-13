@@ -6,7 +6,7 @@ FLASK_ENV = os.environ.get('FLASK_ENV')
 if FLASK_ENV == "development":
 	db_address = 'http://localhost:5000/api/v1/'
 elif FLASK_ENV == "production":
-	db_address = 'ec2-54-176-103-69.us-west-1.compute.amazonaws.com/api/v1/'
+	db_address = 'http://ec2-54-176-103-69.us-west-1.compute.amazonaws.com/api/v1/'
 gld_simulation = False # True : uses gridlabd as representation of physical model
 dispatch_mode = True # True : implements dispatch decisions by writing them to the database
 field_simulation = True # True : real-time field simulation, does not use a time offset
