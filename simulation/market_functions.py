@@ -12,7 +12,6 @@
 
 import uuid # provide UUID/GUID support
 from numpy import * # python array math
-from pylab import * # for plotting support
 import datetime
 from datetime import timedelta
 import pandas
@@ -99,7 +98,7 @@ class Market :
         #import pdb; pdb.set_trace()
         myfct.set_values('buy_bids', '(p_bid, q_bid, arrival_time, appliance_name)', (p_bid, q_bid, str(timestamp_arrival), name))
         return timestamp_arrival
-    
+
     def process_bids(self,dt_sim_time):
         #Market characteristics
         df_system = myfct.get_values_td('system_load', dt_sim_time, dt_sim_time)
@@ -155,7 +154,7 @@ class Market :
         print('Market result in ' + str(dt_sim_time) + ': ' + str(Pd) + ' USD/MWh, ' + str(Qd) + ' kW')
         data = {'market_id':market_id,'p_exp':P_exp,'p_dev':P_dev,'p_clear':Pd,'q_clear':Qd,'alpha':alpha,'start_time':str(dt_sim_time),'end_time':str(dt_sim_time+pandas.Timedelta(seconds=interval))}
         requests.post(db_address+'market_interval',json=data)
-        return 
+        return
 
     # Returns bid position in S array, 'message' if error
     def sell(self,quantity,price=[],response=0.0,gen_name=None) :
@@ -195,7 +194,7 @@ class Market :
             self.D.append([round(price,self.Pprec),round(quantity,self.Qprec),response,appliance_name])
         self.m |= ( response != 0 )
         self.status = 1
-        
+
         if active == 1:
              self.D_active += round(quantity,self.Qprec)
         elif active == -1:
@@ -224,7 +223,7 @@ class Market :
         if 0 > self.Pmax :
             self.status = 2
             raise ValueError('Pmax has not been set or is negative')
-            
+
         if self.Pmin >= self.Pmax :
             self.status = 2
             raise ValueError('market Pmin is not less than Pmax')
@@ -350,7 +349,7 @@ class Market :
                 alpha = (Q)/(S[j][1])
         else:
             alpha = 1.0 #Last bid can be 100%
-        
+
         t2 = time.time()
         self.D_awarded = self.D[1:max(i-1,0)+1,:] #First skipped because of axis interception
         self.S_awarded = self.S[:max(j-1,0)+1,:] #No infinite interception
@@ -1092,38 +1091,13 @@ class Market :
     def __repr__(self) :
         return 'Market ( name: {}, status: {}, Qd: {}, Pd: {}, Qs: {}, Ps: {}, S: {}, D: {}, m: {}, Pmin: {}, Pmax: {}, Qmin: {}, Qmax: {} )'.format(self.name, self.status, self.Qd, self.Pd, self.Qs, self.Ps, self.S, self.D, self.m, self.Pmin, self.Pmax, self.Qmin, self.Qmax)
 
-    def plot(self,caption='',save_name=None) :
-        import pdb; pdb.set_trace()
-        figure(1)
-        print("self.Dq: {} \nself.Dp: {} \nself.Sq: {} \nself.Sp: {}".format(self.Dq,self.Dp,self.Sq,self.Sp))
-        print("self.Qd: {} \nself.Pd: {} \nself.Qs: {} \nself.Ps: {}".format(self.Qd,self.Pd,self.Qs,self.Ps))
-        plot(self.Dq,self.Dp,'b')
-        plot(self.Sq,self.Sp,'r')
-        if self.Qd == self.Qs and self.Pd == self.Ps :
-            plot(self.Qd,self.Pd,'ok')
-        else :
-            plot(self.Qd,self.Pd,'ob')
-            plot(self.Qs,self.Ps,'or')
-        xlabel(self.Qlabel)
-        ylabel(self.Plabel)
-        grid('on')
-        show()
-        if self.status > 0 :
-            print('Market {}: Error {}'.format(self.name, self.status))
-        elif caption != '' :
-            print('Market {}: {}'.format(self.name,caption))
-        if save_name:
-            savefig(save_name)
-        else:
-            savefig('figure.png')
-
 def create_market(df_WS,df_prices,p_max,prec,price_intervals,dt_sim_time):
     retail = Market()
     retail.reset()
     retail.Pmin = 0.0
     retail.Pmax = p_max
     retail.Pprec = prec
-    
+
     #historical prices
     if ref_price == 'historical':
         if len(df_prices) > 0:
