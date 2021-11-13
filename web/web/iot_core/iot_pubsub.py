@@ -87,7 +87,7 @@ def sub_transformer_intervals_data(client=myAWSIoTMQTTClient, topic=TOPIC_SUBSCR
 
 def meter_intervals_data_insert(client, userdata, message):
     # publish data to the db when received
-    print("HEY")
+    print("Meter data received")
     engine = create_engine('mysql+pymysql://' + db_config.DB_USER + ":" + db_config.DB_PASSWORD + "@" + db_config.DB_SERVER + '/tess')
     conn = engine.connect()
 
@@ -105,10 +105,12 @@ def meter_intervals_data_insert(client, userdata, message):
                 payload["mode_dispatch"], payload["is_bid"]
             )
     )
+    print("Meter Data Updated DB")
     conn.close()
 
 
 def transformer_interval_hce_bid_insert(client, userdata, message):
+    print("Transformer data received")
     payload = json.loads(message.payload)["DeviceInformation"]
     # TODO: fix server link to production (remove 5000)
     server_link = f'http://{db_config.DB_SERVER}:5000'
@@ -196,5 +198,5 @@ def transformer_interval_hce_bid_insert(client, userdata, message):
 
     requests.post(f'{server_link}/api/v1/bids', json=data_hce_bids_export)
     requests.post(f'{server_link}/api/v1/bids', json=data_hce_bids_import)
-
+    print("Transformer Data Updated DB")
     return
