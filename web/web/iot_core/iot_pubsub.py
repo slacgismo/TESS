@@ -142,7 +142,7 @@ def transformer_interval_hce_bid_insert(client, userdata, message):
     if (load*red_threshold > capacity_bound):
         alert = {
             "alert_type_id" : 2,
-            "assigned_to" : "test@test.com",
+            "assigned_to" : "",
             "description" : "Red Alert - capacity bound: {capacity_bound}, load: {load}",
             "status" : "open",
             "context" : "Feeder",
@@ -153,7 +153,7 @@ def transformer_interval_hce_bid_insert(client, userdata, message):
     elif (load*yellow_threshold > capacity_bound):
         alert = {
             "alert_type_id" : 2,
-            "assigned_to" : "test@test.com",
+            "assigned_to" : "",
             "description" : f"Yellow Alert - capacity bound: {capacity_bound}, load: {load}",
             "status" : "open",
             "context" : "Feeder",

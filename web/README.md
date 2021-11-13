@@ -193,6 +193,7 @@ sudo service nginx restart
 # exported vars
 export FLASK_ENV="production"
 export FLASK_DEBUG="0"
+export AWS=True
 export DB_PASSWORD="add-the-actual-password-here!!!this is not it"
 export DB_SERVER="tess-dev.cudndiboutru.us-west-1.rds.amazonaws.com"
 export DB_USER="admin"
