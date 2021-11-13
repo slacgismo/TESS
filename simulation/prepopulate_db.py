@@ -6,33 +6,37 @@ import time
 from datetime import date
 import requests
 
-from HH_global import start_time_str, end_time_str
-from HH_global import db_address #, user_name, pw
-
-# Reminder for cleaning up data
-# Mysql - manually delete interval data
-
-# mysql -u root -p pw
-# DELETE FROM tess.market_intervals;
-# DELETE FROM tess.meter_intervals;
-# exit;
+from HH_global import db_address
 
 # Number of customers
 
 no_users = 6
 
+#Address
+for user_no in range(1,no_users+1):
+	#Meter
+	data = {'utility_id':1,'service_location_id':user_no,'home_hub_id':user_no,'feeder':'IEEE123','substation':'HCE-Xcel','meter_type':'Residential'}
+	requests.post(db_address+'meter',json=data)
+	#meters = requests.get(db_address+'meters').json()
+	#PV
+	data = {'home_hub_id':user_no,'meter_id':user_no,'q_rated':4000,'is_active':True}
+	requests.post(db_address+'pv',json=data)
+	#pvs = requests.get(db_address+'pvs').json()
+
+import pdb; pdb.set_trace()
+
 #Set up market
 
 data = {'source': 'Ercot', 'ts': 5, 'p_max': 10000}
-market = requests.post(db_address+'market',json=data,auth=(user_name,pw))
+market = requests.post(db_address+'market',json=data)
 #market = requests.get(db_address+'markets').json()
 #Set up utility
-data = {'name':'HCE','subscription_start':str(pd.Timestamp(start_time_str)),'subscription_end':str(pd.Timestamp(end_time_str))}
-requests.post(db_address+'utility',json=data,auth=(user_name,pw))
+data = {'name':'HCE','subscription_start':str(pd.Timestamp('2010-01-01 00:00:00')),'subscription_end':str(pd.Timestamp('2030-12-31 23:59:59'))}
+requests.post(db_address+'utility',json=data)
 #utility = requests.get(db_address+'utilities').json()
 #Set up rate
 data = {'description':'net_metering'}
-requests.post(db_address+'rate',json=data,auth=(user_name,pw))
+requests.post(db_address+'rate',json=data)
 #rate = requests.get(db_address+'rates').json()
 #Set up transformer
 data = {'feeder':'IEEE123','capacity':4000}
@@ -45,23 +49,23 @@ requests.post(db_address+'transformer',json=data)
 #Address
 for user_no in range(1,no_users+1):
 	data = {'address':'Main Street '+str(user_no),'city':'Aspen','country':'US','postal_code':'00000'}
-	requests.post(db_address+'address',json=data,auth=(user_name,pw))
+	requests.post(db_address+'address',json=data)
 	#address = requests.get(db_address+'addresses').json()
 	#Service location
 	data = {'address_id':user_no,'map_location':'somewhere'}
-	requests.post(db_address+'service_location',json=data,auth=(user_name,pw))
+	requests.post(db_address+'service_location',json=data)
 	#service_locations = requests.get(db_address+'service_locations').json()
 	#Home hub
 	data = {'service_location_id':user_no,'market_id':1}
-	requests.post(db_address+'home_hub',json=data,auth=(user_name,pw))
+	requests.post(db_address+'home_hub',json=data)
 	#hhs = requests.get(db_address+'home_hubs').json()
 	#Meter
 	data = {'utility_id':1,'service_location_id':user_no,'home_hub_id':user_no,'feeder':'IEEE123','substation':'HCE-Xcel','meter_type':'Residential'}
-	requests.post(db_address+'meter',json=data,auth=(user_name,pw))
+	requests.post(db_address+'meter',json=data)
 	#meters = requests.get(db_address+'meters').json()
 	#PV
 	data = {'home_hub_id':user_no,'meter_id':user_no,'q_rated':4000,'is_active':True}
-	requests.post(db_address+'pv',json=data,auth=(user_name,pw))
+	requests.post(db_address+'pv',json=data)
 	#pvs = requests.get(db_address+'pvs').json()
 
 # Meter interval data only gets written during operations. The following lines are just a reminder for commands to be used with requests.

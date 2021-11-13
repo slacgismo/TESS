@@ -14,6 +14,7 @@ class CostRevenue extends React.Component {
         // so we fix that by having each component do it, 😔, this is
         // not great since the component shouldn't care about the menu
         this.props.dispatch(selectMenuOption('net-revenue'));
+        this.props.dispatch(action.getCashFlowData());
     }
 
     render() {
@@ -26,7 +27,8 @@ class CostRevenue extends React.Component {
                             xTitle="Time"
                             yTitle="$/h"
                             chartTitle="Cash Flow"
-                            chartSubtitle="" />
+                            chartSubtitle=""
+                            ds={this.props.cashFlowData.cashFlow} />
                     </div>
                     <div className="chart-container chart-divider"></div>
                     <div className="chart-container">
@@ -35,7 +37,8 @@ class CostRevenue extends React.Component {
                             xTitle="∫ Qdt"
                             yTitle="$"
                             chartTitle="Cash Flow (Integral)"
-                            chartSubtitle="" />
+                            chartSubtitle=""
+                            ds={this.props.cashFlowData.cashFlowIntegral} />
                     </div>
                 </div>
                 <br />
@@ -54,7 +57,7 @@ class CostRevenue extends React.Component {
                             id="cr-chart-integral-target"
                             xTitle="Time"
                             yTitle="$"
-                            chartTitle="Integral W.R.T. Target"
+                            chartTitle="Target Surplus / Welfare"
                             chartSubtitle="" />
                     </div>
                 </div>
@@ -63,7 +66,9 @@ class CostRevenue extends React.Component {
     }
 }
 
-const ConnectedCostRevenue = connect(state => ({}))(CostRevenue);
+const ConnectedCostRevenue = connect(state => ({
+    cashFlowData: state.netRevenue.cashFlowData,
+}))(CostRevenue);
 
 const costRevenueElement = (
     <ConnectedComponentWrapper isVisible={true} pageTitle="NET REVENUE">

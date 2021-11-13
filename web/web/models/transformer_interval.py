@@ -26,15 +26,15 @@ class TransformerInterval(Model):
 
     import_capacity = Column(db.Float, nullable=False)
 
-    export_capacity = Column(db.Float, nullable=False)
+    export_capacity = Column(db.Float, nullable=True)
 
-    q = Column(db.Float, nullable=False)
+    q = Column(db.Float, nullable=True)
 
-    unresp_load = Column(db.Float, nullable=False)
+    unresp_load = Column(db.Float, nullable=True)
 
-    start_time = Column(TIMESTAMP, nullable=False)
+    start_time = Column(TIMESTAMP, nullable=True)
 
-    end_time = Column(TIMESTAMP, nullable=False)
+    end_time = Column(TIMESTAMP, nullable=True)
 
     # Methods
     def __repr__(self):

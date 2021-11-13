@@ -1,13 +1,15 @@
 import requests
 from datetime import datetime
 import pandas
+import time
 
 def run_market(db_address):
 	while True:
 		local_time = datetime.now()
-		if (local_time.second%15 == 0) & (local_time.microsecond == 0):
-			import pdb; pdb.set_trace()
+		if (local_time.second%15 == 0): # & (local_time.microsecond == 0):
+			#import pdb; pdb.set_trace()
 			print(local_time)
+			time.sleep(1)
 
 			print('Last solar measurement')
 			print(requests.get(db_address+'meter_intervals').json()['results']['data'][-1])

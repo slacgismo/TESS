@@ -1,0 +1,2 @@
+notification_id,alert_type_id,email,is_active,created_by,updated_at,created_at
+1,1,test@test.com,0,1,2020-01-01 00:05:00,2020-01-01 00:05:23

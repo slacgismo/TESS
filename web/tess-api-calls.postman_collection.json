@@ -1,0 +1,336 @@
+{
+	"info": {
+		"_postman_id": "882e1430-bc05-468b-b901-bd6019ba66ab",
+		"name": "tess-api-calls",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "transformer put",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"feeder\": \"IEEE123\",\n    \"capacity\": 1119.2596435546875\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5000/api/v1/transformer/1",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"transformer",
+						"1"
+					]
+				},
+				"description": "Receives all the meters info"
+			},
+			"response": []
+		},
+		{
+			"name": "tess_live_api_test",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "ec2-54-176-103-69.us-west-1.compute.amazonaws.com/api/v1/users",
+					"host": [
+						"ec2-54-176-103-69",
+						"us-west-1",
+						"compute",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post_market_interval",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\n    \"meter_id\": 1,\n    \"rate_id\": 1,\n    \"start_time\": \"2020-01-01 00:05:00\",\n    \"end_time\": \"2020-01-01 00:05:23\",\n    \"e\": 1,\n    \"qmtp\": 1,\n    \"p_bid\": 1,\n    \"q_bid\": 1,\n    \"is_bid\": 1,\n    \"mode_dispatch\": 0,\n    \"mode_market\": 0\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/v1/meter_interval/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"meter_interval",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "capacity - system load",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:5000/api/v1/power/system_load/?is_capacity=true",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"power",
+						"system_load",
+						""
+					],
+					"query": [
+						{
+							"key": "is_capacity",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "capacity - resources in the system",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/v1/power/resources",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"power",
+						"resources"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "markets - auction_market",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/v1/markets/auction_market",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"markets",
+						"auction_market"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "markets - clearing_price",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/v1/markets/clearing_price",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"markets",
+						"clearing_price"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "net_revenue - cash_flow",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/v1/net_revenue/cash_flow",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"net_revenue",
+						"cash_flow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "transformer_interval - form",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"import_capacity\": 0,\n    \"end_time\": null,\n    \"export_capacity\": null,\n    \"q\": null,\n    \"start_time\": null,\n    \"transformer_id\": 1,\n    \"unresp_load\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/transformer_interval",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"transformer_interval"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "transformer_interval - iot",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"import_capacity\": 4.52, \"end_time\": \"2021-09-28 23:50:00\", \"export_capacity\": null, \"q\": \"0.029\", \"start_time\": \"2021-09-28 23:45:00\", \"transformer_id\": \"1\", \"unresp_load\": null, \"transformer_interval_id\": 53}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/v1/transformer_interval",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"transformer_interval"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "transformer_interval - latest",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/v1/transformer_interval/latest",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"transformer_interval",
+						"latest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "alert_settings - capacity",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/v1/alert_setting",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"v1",
+						"alert_setting"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

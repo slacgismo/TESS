@@ -1,7 +1,15 @@
 import random
-import datetime
+from datetime import datetime, timedelta
 from flask import Blueprint, request
 from .response_wrapper import ApiResponseWrapper
+from sqlalchemy import desc
+import pandas as pd
+
+
+from web.models.transformer_interval import TransformerInterval, TransformerIntervalSchema
+from web.models.pv import Pv, PvSchema
+from web.models.meter_interval import MeterInterval, MeterIntervalSchema
+from web.models.market_interval import MarketInterval, MarketIntervalSchema
 
 power_api_bp = Blueprint('power_api_bp', __name__)
 
@@ -29,15 +37,24 @@ def get_power_system_load():
         return arw.to_json(None, 400)
 
     value_range = 30
-    base = datetime.datetime.today()
+    base = datetime.today()
     date_time_range = [
-        base + datetime.timedelta(days=x) for x in range(value_range)
+        base + timedelta(days=x) for x in range(value_range)
     ]
 
+    transformer_interval_schema = TransformerIntervalSchema()
+    # latest dattime - 1 day calculated
+    # improve this
+    last_transformer_interval = TransformerInterval.query.order_by(desc('start_time')).first()
+    earliest = last_transformer_interval.start_time - timedelta(days = 1)
+    transformer_interval = TransformerInterval.query.filter(TransformerInterval.start_time >= earliest)
+    result = transformer_interval_schema.dump(transformer_interval, many=True)
+    labels = [value["end_time"] for value in result]
+    one = [value["q"] for value in result]
+    # TODO: label not printing
     results = {
-        'labels': date_time_range,
-        'one': [],
-        'two': []
+        'labels': labels,
+        'one': one
     }
 
     return arw.to_json(results)
@@ -50,11 +67,42 @@ def get_resources_load():
     '''
     arw = ApiResponseWrapper()
     value_range = 3
+
+    # calculate 100% on y axis
+    pv_schema = PvSchema()
+    pv = Pv.query.filter_by(is_active = 1)
+    result = pv_schema.dump(pv, many=True)
+    pd.DataFrame(data=result).to_csv('/Users/derins/Documents/gismo/TESS/web/web/charts_development/data/pv.csv')
+    hundred_percent = sum([value["q_rated"] for value in result])/1000
+    print(hundred_percent)
+
+    market_interval = MarketInterval.query.order_by(desc('start_time')).first()
+    latest_price = market_interval.p_clear
+
+    meter_interval_schema = MeterIntervalSchema()
+    meter_intervals = MeterInterval.query.filter(MeterInterval.start_time == market_interval.start_time)
+    result = meter_interval_schema.dump(meter_intervals, many=True)
+    data = pd.DataFrame(result)
+    available_resources = data["q_bid"].sum()
+    unavailable_resources = hundred_percent - available_resources
+
+    price = latest_price
+    cleared_bids = data.loc[data.p_bid <= price]
+    dispatched_resources = cleared_bids["q_bid"].sum()
+
+
+    # market_interval_schema = MarketIntervalSchema()
+    # # todo take the latest only in the below query
+    # df = pd.DataFrame(market_interval_result)
+    # df.to_csv('web/charts_development/data/power_market_intervals.csv')
+
+
+
     results = {
         'datasets': {
             'battery': [],
             'charger': [],
-            'pv': [],
+            'pv': [unavailable_resources, available_resources - dispatched_resources, dispatched_resources],
             'hvac': [],
             'hotWater': []
         },
