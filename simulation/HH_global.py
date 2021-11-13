@@ -2,7 +2,7 @@ import os
 import pandas
 import requests
 
-FLASK_ENV = os.environ.get('FLASK_ENV'))
+FLASK_ENV = os.environ.get('FLASK_ENV')
 if FLASK_ENV == "development":
 	db_address = 'http://localhost:5000/api/v1/'
 elif FLASK_ENV == "production":
