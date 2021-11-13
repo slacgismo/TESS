@@ -1,7 +1,7 @@
 import React from "react";
 import Chart from 'chart.js';
 
-class AuctionChart extends React.Component {
+class AuctionMarketChart extends React.Component {
     componentDidMount() {
         this.updateChart();
     }
@@ -11,28 +11,26 @@ class AuctionChart extends React.Component {
         new Chart(ctx, {
             // The type of chart we want to create
             type: 'line',
-
             // The data for our dataset
             data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                labels: this.props.ds ? this.props.ds.labels : [],
                 datasets: [
                     {
                         label: 'My First dataset',
                         fill: false,
                         backgroundColor: 'rgb(255, 99, 132)',
                         borderColor: 'rgb(255, 99, 132)',
-                        data: []
+                        data: this.props.ds ? this.props.ds.one : []
                     },
                     {
                         label: 'My Second dataset',
                         fill: false,
                         backgroundColor: 'rgb(55, 99, 255)',
                         borderColor: 'rgb(55, 99, 255)',
-                        data: []
+                        data: this.props.ds ? this.props.ds.one : []
                     }
                 ]
             },
-
             // Configuration options go here
             options: {
                 responsive: true,
@@ -50,6 +48,7 @@ class AuctionChart extends React.Component {
 				},
 				scales: {
 					xAxes: [{
+            stacked: true,
 						display: true,
 						scaleLabel: {
 							display: true,
@@ -57,6 +56,7 @@ class AuctionChart extends React.Component {
 						}
 					}],
 					yAxes: [{
+            stacked: true,
 						display: true,
 						scaleLabel: {
 							display: true,
@@ -75,4 +75,4 @@ class AuctionChart extends React.Component {
     }
 }
 
-export default AuctionChart;
+export default AuctionMarketChart;

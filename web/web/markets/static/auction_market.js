@@ -10,30 +10,27 @@ class AuctionMarketChart extends React.Component {
         const ctx = document.getElementById(this.props.id);
         new Chart(ctx, {
             // The type of chart we want to create
-            type: 'bar',
-
+            type: 'line',
             // The data for our dataset
             data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-			    datasets: [
+                labels: this.props.ds ? this.props.ds.labels : [],
+                datasets: [
                     {
-                        label: 'Dataset 1',
-                        backgroundColor: 'red',
-                        data: []
+                        label: 'My First dataset',
+                        fill: false,
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: this.props.ds ? this.props.ds.one : []
                     },
                     {
-                        label: 'Dataset 2',
-                        backgroundColor: 'blue',
-                        data: []
-                    },
-                    {
-				        label: 'Dataset 3',
-				        backgroundColor: 'green',
-                        data: []
+                        label: 'My Second dataset',
+                        fill: false,
+                        backgroundColor: 'rgb(55, 99, 255)',
+                        borderColor: 'rgb(55, 99, 255)',
+                        data: this.props.ds ? this.props.ds.one : []
                     }
                 ]
             },
-
             // Configuration options go here
             options: {
                 responsive: true,
@@ -51,7 +48,7 @@ class AuctionMarketChart extends React.Component {
 				},
 				scales: {
 					xAxes: [{
-                        stacked: true,
+            stacked: true,
 						display: true,
 						scaleLabel: {
 							display: true,
@@ -59,7 +56,7 @@ class AuctionMarketChart extends React.Component {
 						}
 					}],
 					yAxes: [{
-                        stacked: true,
+            stacked: true,
 						display: true,
 						scaleLabel: {
 							display: true,

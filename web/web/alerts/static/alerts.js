@@ -130,7 +130,8 @@ class Alerts extends React.Component {
 }
 
 const ConnectedAlerts = connect(state => ({
-    alerts: state.alerts.alertEntries
+    alerts: state.alerts.alertEntries,
+    alertSettings: state.alertSettingsState.alertSettings
 }))(Alerts);
 
 const alertsElement = (

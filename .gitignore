@@ -646,6 +646,7 @@ simulation/TESS/
 simulation/TESS_mysql/
 simulation_N/TESS/
 simulation_N/old/
+simulation/results/
 
 selftest/
 

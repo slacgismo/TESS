@@ -1,0 +1,7 @@
+address_id,address,address2,district,city,country,postal_code,phone,updated_at,created_at
+1,Main Street 1,,,Aspen,US,00000,,2021-07-20 21:44:48,2021-07-20 21:44:48
+2,Main Street 2,,,Aspen,US,00000,,2021-07-20 21:44:48,2021-07-20 21:44:48
+3,Main Street 3,,,Aspen,US,00000,,2021-07-20 21:44:48,2021-07-20 21:44:48
+4,Main Street 4,,,Aspen,US,00000,,2021-07-20 21:44:48,2021-07-20 21:44:48
+5,Main Street 5,,,Aspen,US,00000,,2021-07-20 21:44:48,2021-07-20 21:44:48
+6,Main Street 6,,,Aspen,US,00000,,2021-07-20 21:44:48,2021-07-20 21:44:48

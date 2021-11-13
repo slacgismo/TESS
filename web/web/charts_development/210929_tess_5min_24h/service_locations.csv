@@ -1,0 +1,7 @@
+service_location_id,alternate_service_location_id,address_id,map_location,is_active,is_archived,updated_at,created_at
+1,,1,somewhere,0,0,2021-07-20 21:44:48,2021-07-20 21:44:48
+2,,2,somewhere,0,0,2021-07-20 21:44:48,2021-07-20 21:44:48
+3,,3,somewhere,0,0,2021-07-20 21:44:48,2021-07-20 21:44:48
+4,,4,somewhere,0,0,2021-07-20 21:44:48,2021-07-20 21:44:48
+5,,5,somewhere,0,0,2021-07-20 21:44:48,2021-07-20 21:44:48
+6,,6,somewhere,0,0,2021-07-20 21:44:48,2021-07-20 21:44:48

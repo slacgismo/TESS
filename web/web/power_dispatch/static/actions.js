@@ -70,6 +70,7 @@ export function storageResourcesDataUpdated(data) {
 
 export function saveForm(data) {
     return dispatch => {
+        api.post
         dispatch(saveFormUpdated(data));
     };
 }
@@ -78,5 +79,59 @@ export function saveFormUpdated(data) {
     return {
         type: 'SAVE_FORM_DATA',
         data
+    };
+}
+
+export function getTransformerData() {
+    return dispatch => {
+        api.get('/transformer_intervals', (response) => {
+            dispatch(transformerDataUpdated(response.results.data[response.results.data.length - 1]));
+        }, (error) => {
+            console.warn(error);
+        });
+    };
+}
+
+export function transformerDataUpdated(data) {
+    return {
+        type: 'TRANSFORMER_DATA_UPDATED',
+        data
+    };
+}
+
+export function postTransformerIntervalData(data) {
+    return dispatch => {
+      api.post('transformer_interval', { json: { ...data } }, (response) => {
+          dispatch(getTransformerData());
+      }, (error) => {
+          console.warn(error);
+      })
+    };
+}
+
+export function getAlertSettings() {
+    return dispatch => {
+        api.get('/alert_setting', (response) => {
+            dispatch(alertSettingsUpdated(response.results.data));
+        }, (error) => {
+            console.warn(error);
+        });
+    };
+}
+
+export function alertSettingsUpdated(data) {
+    return {
+        type: 'ALERT_SETTINGS_UPDATED',
+        data
+    };
+}
+
+export function postAlertSettingsData(data) {
+    return dispatch => {
+      api.post('alert_setting', { json: { ...data } }, (response) => {
+          dispatch(getAlertSettings());
+      }, (error) => {
+          console.warn(error);
+      })
     };
 }

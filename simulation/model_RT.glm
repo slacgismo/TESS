@@ -1,8 +1,7 @@
 ///////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////
 
-
-///////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 //
 // Electrification study simulation model
 // Copyright (C) 2016, Stanford University
@@ -10,45 +9,26 @@
 //
 ///////////////////////////////////////////////////////
 
-//
-// Read the configuration file for this system
-// Assumes the model is run from parent of model folder
-//
-
-// For non-RT simulation
-
-//#include "config/default.glm"
-//#define CONFIGFILE=config/default.glm
-//#ifexist config/local.glm
-//#include "config/local.glm"
-//#set CONFIGFILE=config/local.glm
-//#endif
-//#set suppress_repeat_messages=TRUE
-//#ifdef TIMEZONE
-//clock {
-//	timezone ${TIMEZONE};
-//#ifdef STARTTIME
-//	starttime ${STARTTIME};
-//#endif
-//#ifdef STOPTIME
-//	stoptime ${STOPTIME};
-//#endif
-//}
-//#else
-//#error TIMEZONE is not specified in ${CONFIGFILE}
-//#endif // TIMEZONE
+// No RT simulation
+clock {
+ 	starttime "2021-09-22 00:00";
+	stoptime "2021-09-23 00:00";
+}
 
 // For RT simulation
-#set run_realtime=1
+// #set run_realtime=1
+// #define TIMEZONE=${TIMEZONE:-US/CA/Los Angeles}
 
-#define TIMEZONE=${TIMEZONE:-US/CA/Los Angeles}
+///////////////////////////////////////////////////////
+
 #define WEATHER=${WEATHER:-722540TYA.tmy3}
 
-#define SOLAR=on
+//#define SOLAR=on
 
 #set randomseed=5 
 
 module gridlabd_functions;
+//module gridlabd_fcts_test;
 
 ///////////////////////////////////////////////////////
 //
@@ -66,9 +46,10 @@ object climate {
 //#error WEATHER is not specified in ${CONFIGFILE}
 //#endif // exist WEATHER
 
-#ifdef SOLAR
+//#ifdef SOLAR
 module generators;
-#endif // SOLAR
+//#endif // SOLAR
+
 module powerflow{
 	solver_method FBS;
 }
@@ -120,7 +101,7 @@ object meter {
 	object recorder {
 		//property measured_real_power[kW], measured_reactive_power[kVAr]; 
 		property measured_real_power, measured_reactive_power; 
-		file TESS/TESS_API/load_node_149.csv;
+		file results/load_node_149.csv;
 		interval 1min;
 	};
 }
@@ -271,7 +252,7 @@ object group_recorder {
 	group "class=triplex_meter";
 	property measured_real_power; 
 	file results/meter_load_P.csv;
-	interval 1min;
+	interval 60;
 }
 
 object group_recorder {
@@ -302,7 +283,7 @@ object group_recorder {
 //	name rec_batt_soc;
 //	group "class=battery";
 //	property state_of_charge;
-//	file TESS/TESS_API/battery_SOC.csv;
+//	file results/battery_SOC.csv;
 //	interval 60;
 //}
 
@@ -324,11 +305,11 @@ object group_recorder {
 	interval 60;
 }
 
-object group_recorder {
-	name rec_pv_infeed;
-	group "class=inverter";
-	property P_Out;
-	file results/total_P_Out.csv;
-	interval 1min;
-}
+//object group_recorder {
+//	name rec_pv_infeed;
+//	group "class=inverter";
+//	property P_Out;
+//	file results/total_P_Out.csv;
+//	interval 60;
+//}
 

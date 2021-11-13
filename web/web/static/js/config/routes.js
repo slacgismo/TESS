@@ -4,11 +4,11 @@ export const menuRoutes = [
         label: 'Power Dispatch - Capacity',
         path: '/power/capacity'
     },
-    {
-        id: 'power-dispatch-storage',
-        label: 'Power Dispatch - Storage',
-        path: '/power/storage'
-    },
+    // {
+    //     id: 'power-dispatch-storage',
+    //     label: 'Power Dispatch - Storage',
+    //     path: '/power/storage'
+    // },
     // {
     //     id: 'constraints',
     //     label: 'Constraints',
@@ -29,11 +29,11 @@ export const menuRoutes = [
         label: 'Alerts',
         path: '/alerts'
     },
-    {
-        id: 'notifications',
-        label: 'Notifications',
-        path: '/notifications'
-    },
+    // {
+    //     id: 'notifications',
+    //     label: 'Notifications',
+    //     path: '/notifications'
+    // },
     {
         id: 'residential-sd',
         label: 'Residential S&D',

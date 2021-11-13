@@ -27,15 +27,18 @@ from web.api.v1.power import power_api_bp
 from web.api.v1.group import group_api_bp
 from web.api.v1.alert import alerts_api_bp
 from web.api.v1.market import market_api_bp
+from web.api.v1.markets import markets_api_bp
 from web.api.v1.user_sd import user_sd_api_bp
 from web.api.v1.utility import utility_api_bp
 from web.api.v1.address import address_api_bp
 from web.api.v1.channel import channel_api_bp
 from web.api.v1.home_hub import home_hub_api_bp
 from web.api.v1.alert_type import alert_types_api_bp
+from web.api.v1.net_revenue import net_revenue_api_bp
 from web.api.v1.device_event_source import des_api_bp
 from web.api.v1.transformer import transformer_api_bp
 from web.api.v1.notification import notifications_api_bp
+from web.api.v1.alert_setting import alert_setting_api_bp
 from web.api.v1.meter_interval import meter_interval_api_bp
 from web.api.v1.market_interval import market_interval_api_bp
 from web.api.v1.service_location import service_location_api_bp
@@ -101,13 +104,16 @@ def register_blueprints(app):
     app.register_blueprint(group_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(market_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(alerts_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(markets_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(user_sd_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(utility_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(address_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(channel_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(home_hub_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(net_revenue_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(transformer_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(alert_types_api_bp, url_prefix='/api/v1/')
+    app.register_blueprint(alert_setting_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(notifications_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(meter_interval_api_bp, url_prefix='/api/v1/')
     app.register_blueprint(market_interval_api_bp, url_prefix='/api/v1/')
@@ -123,8 +129,9 @@ else:
 
 app = create_app(config)
 
-from web.iot_core.iot_pubsub import sub_meter_intervals_data
+from web.iot_core.iot_pubsub import sub_meter_intervals_data, sub_transformer_intervals_data
 sub_meter_intervals_data()
+sub_transformer_intervals_data()
 
 # IF YOU NEED TO SEED YOUR DB WITH SOME TEST DATA,
 # UNCOMMENT BELOW THIS LINE AND RUN THE APP. DELETE LATER!!
