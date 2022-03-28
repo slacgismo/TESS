@@ -6,6 +6,7 @@ import config
 import sonnen_comms as sonnen
 import requests
 from datetime import datetime
+import egauge_local_api as eg
 
 # Expected payload to be received by edge devices when subscribing to a topic:
 # {
@@ -74,6 +75,7 @@ PATH_TO_CERT = config.PATH_TO_CERT
 PATH_TO_KEY = config.PATH_TO_KEY
 PATH_TO_ROOT = config.PATH_TO_ROOT
 TOPIC_PUBLISH = config.TOPIC_PUBLISH
+TOPIC_PUBLISH_TX = config.TOPIC_PUBLISH_TX
 TOPIC_SUBSCRIBE = config.TOPIC_SUBSCRIBE
 
 #TODO: Include all Heilas IP and configure based on the meter_id in the meter_intervals table
@@ -81,6 +83,9 @@ resource_map = {'1':config.IP_ADDRESS}
 
 # Edge Device Info
 url = config.URL
+# Egauge Info
+mode = 'ip'
+ip = config.egauge_ip
 
 # AWS IoT client config
 myAWSIoTMQTTClient = AWSIoTPyMQTT.AWSIoTMQTTClient(CLIENT_ID)
@@ -94,10 +99,7 @@ myAWSIoTMQTTClient.configureCredentials(PATH_TO_ROOT, PATH_TO_KEY, PATH_TO_CERT)
 # myAWSIoTMQTTClient.configureConnectDisconnectTimeout(10)  # 10 sec
 # myAWSIoTMQTTClient.configureMQTTOperationTimeout(5)  # 5 sec
 
-mqtt_connect = False
-while not (mqtt_connect):
-    mqtt_connect = myAWSIoTMQTTClient.connect()
-    print('mqq_connect: ', mqtt_connect)
+myAWSIoTMQTTClient.connect()
 
 # subscribing to topic
 subscribe(myAWSIoTMQTTClient, TOPIC_SUBSCRIBE)
@@ -105,16 +107,10 @@ subscribe(myAWSIoTMQTTClient, TOPIC_SUBSCRIBE)
 # Initializing battery object
 sonnen_obj = sonnen.SonnenApiInterface()
 
-# Testing purpose:
-import datetime
-
-
 # publishing to topic
 is_submitted = False
 next_5min = (int(datetime.now().minute / 5) * 5) + 5
 while True:
-
-    print('next5min: ', next_5min)
     if datetime.now().minute == next_5min:
         is_submitted = False
         print('submitted is False')
@@ -126,6 +122,8 @@ while True:
         if not is_submitted:
             print('Call publish method and submitted is True now')
             is_submitted = True
+            time_start = (int(t.time()/300)+1)*300
+            time_end = (int(t.time()/300)+2)*300
             try:
                 # Testing connection
                 retval = requests.get('https://www.google.com/').status_code
@@ -136,15 +134,15 @@ while True:
                 #            {'resource': 'ev', 'payload': None}]
                 # print('all payload done! ')
                 ### DONE ###
-
                 payload = hc.heila_update(url=url)
                 if payload == None:
                     tessPV_payload = None
                 else:
                     pv_info = payload["sunnyboy_inverter.calc_ac_power_kw"]
                     pv_power = pv_info['value']
-                    pv_time = datetime.fromtimestamp(pv_info['timestamp'] / 1000)
-                    tessPV_payload = {'rate_id': 1, 'meter_id': 1, 'start_time': str(pv_time), 'end_time': str(datetime.fromtimestamp(int(t.time())+60)),
+                    # pv_time = datetime.fromtimestamp(pv_info['timestamp'] / 1000)
+                    pv_time = datetime.fromtimestamp(time_start) # This is a temporary fix until figure out why heila is giving a time 5min ahead of current time
+                    tessPV_payload = {'rate_id': 1, 'meter_id': 1, 'start_time': str(pv_time), 'end_time': str(datetime.fromtimestamp(time_end)),
                                       'e': pv_power / 12,
                                       'qmtp': pv_power, 'p_bid': 0, 'q_bid': 0, 'is_bid': 1, 'mode_dispatch': 0,
                                       'mode_market': 0}
@@ -157,24 +155,17 @@ while True:
                 print('Transfer control back to HEILA... Implement function - TBD')
                 # to disable control from the power market, you need to send a POST request to the API endpoint /api/unsync .
                 # To give back control, send a POST request to the API endpoint /api/sync
-    t.sleep(10)
+            payloadTransformer = eg.EgaugeInterface(mode=mode,endpoint=ip).processing_egauge_data()
+            if payloadTransformer == None:
+                tessTX_payload = None
+            else:
+                tx_power = -payloadTransformer["tess.Transformer"]
+                tx_time = datetime.fromtimestamp(time_start) # This is a temporary fix until figure out why heila is giving a time 5min ahead of current time
+                tessTX_payload = {'transformer_id':str(1),'q':str(tx_power), 'start_time': str(tx_time), 'end_time': str(datetime.fromtimestamp(time_end))}
 
-    try:
-        # Testing connection
-        retval = requests.get('https://www.google.com/').status_code
-        print('status code: ', retval)
-        payload = [{'resource': 'solar', 'payload': hc.heila_update(url=url)},
-                   {'resource': 'battery', 'payload': sonnen_obj.get_batteries_status_json(serial=config.SONNEN_BATT)},
-                   {'resource': 'ev', 'payload': None}]
-        # print('all payload done! ')
-        publish(myAWSIoTMQTTClient, TOPIC_PUBLISH, payload, CLIENT_ID)
-        print('Published ', datetime.datetime.now())
-
-    except requests.exceptions.RequestException as e:
-        print('error: ', e)
-        print('Transfer control back to HEILA... Implement function - TBD')
-        # to disable control from the power market, you need to send a POST request to the API endpoint /api/unsync .
-        # To give back control, send a POST request to the API endpoint /api/sync
-
-    t.sleep(30) # Need to define how often to provide info updates
+            print('Transformer payload: ', tessTX_payload)
+            publish(myAWSIoTMQTTClient, TOPIC_PUBLISH_TX, tessTX_payload, 1) # deviceID = 1 -> see TODO on def publish(): to automate this part
+            # print(payload)
+            print('Published ', datetime.now())
+            t.sleep(10)
 
