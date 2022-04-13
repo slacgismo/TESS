@@ -18,7 +18,6 @@ Some of the research questions the project seeks to address include the followin
 ---------------|---------------------------------------------------------------
 |[/agents](../master/agents)         | agent code for participation in bidding|
 |[/analysis](../master/analysis)     | 'add description here'            |
-|[/api](../master/api)               | Service Application directory     |
 |[/cloud](../master/cloud)           | Infrastructure and container orchestration deployments configurations and templates                   |
 |[/control](../master/control)       | Control Room app                  |
 |[/docs](../master/docs)             | User docs                         |
