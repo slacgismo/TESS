@@ -131,7 +131,6 @@ object triplex_meter:..${NHOMES}
 			use_override ON;
 			override "override";
 			control_mode DOUBLE_RAMP;
-			schedule_skew -10;
 			bid_mode ON;
 			heating_base_setpoint 60;
 			cooling_base_setpoint 80;
