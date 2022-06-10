@@ -1,6 +1,10 @@
-// Model of Vista Basalt system
+// Model of Vista Basalt system at HCE
 // Author: DP Chassin
 // Update: 2022-06-10
+//
+// Run command:
+//
+//   $ gridlabd [-D NHOMES=4] [-D FEEDER=60] vista.glm
 //
 // TODO:
 //
@@ -20,8 +24,13 @@
 
 #set suppress_repeat_messages=FALSE
 
+#ifndef NHOMES
 #define NHOMES=4
-#define FEEDER=60
+#endif
+
+#ifndef FEEDER
+#define FEEDER=60 // kW
+#endif
 
 ///////////
 // CLOCK //
@@ -162,6 +171,7 @@ class auction
 object auction
 {
 	name "auction_1";
+	flags WARNING;
 	unit "kW";
 	verbose TRUE;
 	init_price 20;
@@ -184,6 +194,11 @@ object auction
 //////////
 // SAVE //
 //////////
+
 #set dumpfile=gridlabd.json
+
+//////////
+// PLOT //
+//////////
 
 #on_exit 0 gridlabd plot -i=auction.csv --plot:grid
