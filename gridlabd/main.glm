@@ -21,6 +21,7 @@
 #set suppress_repeat_messages=FALSE
 
 #define NHOMES=4
+#define FEEDER=60
 
 ///////////
 // CLOCK //
@@ -74,7 +75,7 @@ object stub_bidder
 		file "caiso.csv";
 		property "price";
 	};
-	quantity 60 kW;
+	quantity ${FEEDER};
 }
 
 ///////////
