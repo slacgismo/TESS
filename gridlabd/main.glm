@@ -166,3 +166,5 @@ object auction
 // SAVE //
 //////////
 #set dumpfile=gridlabd.json
+
+#on_exit 0 gridlabd plot -i=auction.csv --plot:grid
