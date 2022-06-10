@@ -4,7 +4,7 @@
 //
 // Run command:
 //
-//   $ gridlabd [-D NHOMES=4] [-D FEEDER=60] vista.glm
+//   $ gridlabd [-D NHOMES=4] [-D FEEDER=60] [-D USETMY={yes,no}] vista.glm
 //
 // TODO:
 //
@@ -23,13 +23,18 @@
 // 7. Auction (local power price)
 
 #set suppress_repeat_messages=FALSE
+#set keep_progress=TRUE
 
 #ifndef NHOMES
-#define NHOMES=4
+
+	#define NHOMES=4
+
 #endif
 
 #ifndef FEEDER
-#define FEEDER=60 // kW
+
+	#define FEEDER=60 // kW
+
 #endif
 
 ///////////
@@ -47,13 +52,30 @@ clock
 // WEATHER //
 /////////////
 
-module climate;
-#weather get CO-Aspen_Pitkin_Co_Sar.tmy3
-object climate
-{
-	name "weather";
-	tmyfile "CO-Aspen_Pitkin_Co_Sar.tmy3";
-}
+#if ${USETMY:-yes}==yes
+
+	module climate;
+	#weather get CO-Aspen_Pitkin_Co_Sar.tmy3
+	object climate
+	{
+		name "weather";
+		tmyfile "CO-Aspen_Pitkin_Co_Sar.tmy3";
+	}
+
+#else
+
+	#if ${USETMY:-no}!=no
+
+		#error USETMY=${USETMY} is invalid
+
+	#endif
+
+	#ifmissing weather.glm
+	#python -m nsrdb_weather -p=39.3558,-107.0391 -y=2020 -g=weather.glm -c=weather.csv
+	#endif
+	#include "weather.glm"
+
+#endif
 
 ////////////////
 // CAISO DATA //
@@ -61,7 +83,9 @@ object climate
 
 // download CAISO market data for feeder (this can take a while)
 #ifmissing caiso.glm
-#python -m market_data -m=CAISO -d=0096WD_7_N001 -s=20200101 -e=20210101 -g=caiso.glm -c=caiso.csv
+
+	#python -m market_data -m=CAISO -d=0096WD_7_N001 -s=20200101 -e=20210101 -g=caiso.glm -c=caiso.csv
+
 #endif
 
 ///////////////////
@@ -100,6 +124,7 @@ object triplex_meter:..${NHOMES}
 	nominal_voltage 120 V;
 	object house
 	{
+		weather ${WEATHER};
 		object controller {
 			market "auction_1";
 			use_override ON;
@@ -171,7 +196,6 @@ class auction
 object auction
 {
 	name "auction_1";
-	flags WARNING;
 	unit "kW";
 	verbose TRUE;
 	init_price 20;

@@ -1,0 +1,33 @@
+class weather
+{
+	double solar_global[W/sf];
+	double solar_horizontal[W/sf];
+	double solar_direct[W/sf];
+	double clouds;
+	double dewpoint[degF];
+	double temperature[degF];
+	double ground_reflectivity[pu];
+	double wind_speed[m/s];
+	double wind_dir[rad];
+	double solar_altitude[deg];
+	double humidity[%];
+	double pressure[mbar];
+	double heat_index[degF];
+}
+module tape;
+#ifdef WEATHER
+#set WEATHER=$WEATHER weather@9wgzux
+#else
+#define WEATHER=weather@9wgzux
+#endif
+object weather
+{
+	name "weather@9wgzux";
+	latitude 39.37;
+	longitude -107.02;
+	object player
+	{
+		file "weather.csv";
+		property "solar_global,solar_horizontal,solar_direct,clouds,dewpoint,temperature,ground_reflectivity,wind_speed,wind_dir,solar_altitude,humidity,pressure,heat_index";
+	};
+}
