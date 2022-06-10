@@ -1,0 +1,168 @@
+// Model of Vista Basalt system
+// Author: DP Chassin
+// Update: 2022-06-10
+//
+// TODO:
+//
+// 1. Add solar panels
+// 2. Add batteries
+// 3. Add EV chargers
+// 4. Add waterheaters
+//
+// Model components:
+//
+// 1. Clock is set to 1 year (2020)
+// 2. Weather data is for Aspen CO (typical meteorological year)
+// 3. CAISO wholesale price data (2020)
+// 4. Feeder bidder receives CAISO price data from caiso.csv
+// 5. Homes (thermostat, PV, batteries, EV, waterheater)
+// 6. Trend (24h mean and stdev of clearing prices)
+// 7. Auction (local power price)
+
+#set suppress_repeat_messages=FALSE
+
+#define NHOMES=4
+
+///////////
+// CLOCK //
+///////////
+
+clock
+{
+	timezone "MST+7MDT";
+	starttime "2020-01-01 00:00:00 MST";
+	stoptime "2021-01-01 00:00:00 MST";
+}
+
+/////////////
+// WEATHER //
+/////////////
+
+module climate;
+#weather get CO-Aspen_Pitkin_Co_Sar.tmy3
+object climate
+{
+	name "weather";
+	tmyfile "CO-Aspen_Pitkin_Co_Sar.tmy3";
+}
+
+////////////////
+// CAISO DATA //
+////////////////
+
+// download CAISO market data for feeder (this can take a while)
+#ifmissing caiso.glm
+#python -m market_data -m=CAISO -d=0096WD_7_N001 -s=20200101 -e=20210101 -g=caiso.glm -c=caiso.csv
+#endif
+
+///////////////////
+// FEEDER BIDDER //
+///////////////////
+
+module market;
+module tape
+{
+	csv_header_type NAME;
+}
+
+object stub_bidder
+{
+	bid_period 300;
+	market "auction_1";
+	role SELLER;
+	object player
+	{
+		file "caiso.csv";
+		property "price";
+	};
+	quantity 60 kW;
+}
+
+///////////
+// HOMES //
+///////////
+
+module powerflow;
+module residential;
+
+object triplex_meter:..${NHOMES}
+{
+	phases AS;
+	nominal_voltage 120 V;
+	object house
+	{
+		object controller {
+			use_override ON;
+			override override;
+			market "auction_1";
+			control_mode DOUBLE_RAMP;
+			schedule_skew -10;
+			bid_mode ON;
+			heating_base_setpoint 60;
+			cooling_base_setpoint 80;
+			target air_temperature;
+			deadband thermostat_deadband;
+			use_predictive_bidding true;
+			average_target current_price_mean_24h;
+			standard_deviation_target current_price_stdev_24h;
+			period 300;
+			cooling_setpoint cooling_setpoint;
+			heating_setpoint heating_setpoint;
+			heating_demand heating_demand;
+			cooling_demand cooling_demand;
+			bid_delay 1;
+			heating_range_high 3.000;
+			cooling_range_high 2.000;
+			heating_range_low -2.000;
+			cooling_range_low -3.000;
+			heating_ramp_high -2.400;
+			cooling_ramp_high 2.400;
+			heating_ramp_low -2.400;
+			cooling_ramp_low 2.400;
+			total total_load;
+			load hvac_load;
+			state power_state;
+		};
+	};
+}
+
+///////////
+// TREND //
+///////////
+
+class auction 
+{
+ 	 double current_price_mean_24h;
+     double current_price_stdev_24h;
+}
+
+/////////////
+// AUCTION //
+/////////////
+
+object auction
+{
+	name "auction_1";
+	unit "kW";
+	verbose TRUE;
+	init_price 20;
+	init_stdev 0.1;
+	period 300;
+	verbose 0;
+	object player
+	{
+		property "fixed_price";
+		file "caiso.csv";
+	};
+	transaction_log_file "transactions.csv";
+	object recorder
+	{
+		property "current_market.clearing_price,current_market.clearing_quantity";
+		file "auction.csv";
+	};
+}
+
+//////////
+// SAVE //
+//////////
+#set dumpfile=gridlabd.json
