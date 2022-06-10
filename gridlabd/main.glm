@@ -7,7 +7,6 @@
 // 1. Add solar panels
 // 2. Add batteries
 // 3. Add EV chargers
-// 4. Add waterheaters
 //
 // Model components:
 //
@@ -92,24 +91,24 @@ object triplex_meter:..${NHOMES}
 	object house
 	{
 		object controller {
-			use_override ON;
-			override override;
 			market "auction_1";
+			use_override ON;
+			override "override";
 			control_mode DOUBLE_RAMP;
 			schedule_skew -10;
 			bid_mode ON;
 			heating_base_setpoint 60;
 			cooling_base_setpoint 80;
 			target air_temperature;
-			deadband thermostat_deadband;
-			use_predictive_bidding true;
-			average_target current_price_mean_24h;
-			standard_deviation_target current_price_stdev_24h;
+			deadband "thermostat_deadband";
+			use_predictive_bidding TRUE;
+			average_target "current_price_mean_24h";
+			standard_deviation_target "current_price_stdev_24h";
 			period 300;
-			cooling_setpoint cooling_setpoint;
-			heating_setpoint heating_setpoint;
-			heating_demand heating_demand;
-			cooling_demand cooling_demand;
+			cooling_setpoint "cooling_setpoint";
+			heating_setpoint "heating_setpoint";
+			heating_demand "heating_demand";
+			cooling_demand "cooling_demand";
 			bid_delay 1;
 			heating_range_high 3.000;
 			cooling_range_high 2.000;
@@ -119,9 +118,28 @@ object triplex_meter:..${NHOMES}
 			cooling_ramp_high 2.400;
 			heating_ramp_low -2.400;
 			cooling_ramp_low 2.400;
-			total total_load;
-			load hvac_load;
-			state power_state;
+			total "total_load";
+			load "hvac_load";
+			state "power_state";
+		};
+		object waterheater
+		{
+			tank_volume 80 gal;
+			tank_diameter 36 in;
+			object controller
+			{
+				market "auction_1";
+				average_target "current_price_mean_24h";
+				standard_deviation_target "current_price_stdev_24h";
+				period 300;
+				bid_mode ON;
+				simple_mode WATERHEATER;
+				control_mode RAMP;
+				base_setpoint 120;
+				setpoint "tank_setpoint";
+				target "temperature";
+				load "actual_load";
+			};
 		};
 	};
 }
