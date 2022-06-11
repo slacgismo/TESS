@@ -34,7 +34,7 @@
 
 #ifndef FEEDER
 
-	#define FEEDER=60 // kW
+	#define FEEDER=100 // kW
 
 #endif
 
@@ -46,7 +46,7 @@ clock
 {
 	timezone "MST+7MDT";
 	starttime "2020-01-01 00:00:00 MST";
-	stoptime "2021-01-01 00:00:00 MST";
+	stoptime "2020-02-01 00:00:00 MST";
 }
 
 /////////////
@@ -101,6 +101,7 @@ module tape
 
 object stub_bidder
 {
+	name "agent_0";
 	bid_period 300;
 	market "auction_1";
 	role SELLER;
@@ -109,7 +110,7 @@ object stub_bidder
 		file "caiso.csv";
 		property "price";
 	};
-	quantity ${FEEDER};
+	quantity (${FEEDER}*0.8);
 }
 
 ///////////
@@ -118,15 +119,57 @@ object stub_bidder
 
 module powerflow;
 module residential;
+module generators;
 
+object meter 
+{
+	name "main";
+	bustype SWING;
+	nominal_voltage 2401 V;
+	phases ABC;	
+}
+
+object transformer
+{
+	phases AS;
+	name "feeder";
+	from "main";
+	to "main_A";
+	configuration "transformer_A";
+}
+
+object transformer_configuration {
+	name "transformer_A";
+	connect_type SINGLE_PHASE_CENTER_TAPPED;
+	install_type PADMOUNT;
+	powerA_rating ${FEEDER};
+	primary_voltage 2401;
+	secondary_voltage 120.000 V;
+	impedance 0.006+0.0136j;
+}
+
+object triplex_node
+{
+	name "main_A";
+	nominal_voltage 120 V;
+	phases AS;
+}
+
+global int32 SEQ_ID 0;
 object triplex_meter:..${NHOMES}
 {
+	name `meter_{SEQ_ID:INC}`;
+	parent "main_A";
 	phases AS;
 	nominal_voltage 120 V;
 	object house
 	{
+		name `house_{SEQ_ID}`;
+#ifdef WEATHER
 		weather ${WEATHER};
+#endif
 		object controller {
+			name `agent_{SEQ_ID}`;
 			market "auction_1";
 			use_override ON;
 			override "override";
@@ -174,6 +217,28 @@ object triplex_meter:..${NHOMES}
 				setpoint "tank_setpoint";
 				target "temperature";
 				load "actual_load";
+			};
+		};
+	};
+	object triplex_meter
+	{
+		name `pvmeter_{SEQ_ID}`;
+		nominal_voltage 120 V;
+		phases AS;
+		object inverter
+		{
+			phases AS;
+			rated_power 25 kW;
+			generator_mode CONSTANT_PF;
+			generator_status ONLINE;
+			inverter_efficiency 0.9;
+			inverter_type PWM;
+			object solar
+			{
+				area 350 sf;
+				generator_status ONLINE;
+				generator_mode SUPPLY_DRIVEN;
+				panel_type SINGLE_CRYSTAL_SILICON;
 			};
 		};
 	};
