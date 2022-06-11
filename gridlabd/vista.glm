@@ -8,14 +8,13 @@
 //
 // TODO:
 //
-// 1. Add solar panels
-// 2. Add batteries
-// 3. Add EV chargers
-// 4. Fix historical weather data input
+// - Add batteries
+// - Add EV chargers
+// - Fix historical weather data input
 //
 // Model components:
 //
-// 1. Clock is set to 1 year (2020)
+// 1. Clock is set to 1 month (Jan 2020)
 // 2. Weather data is for Aspen CO (typical meteorological year)
 // 3. CAISO wholesale price data (2020)
 // 4. Feeder bidder receives CAISO price data from caiso.csv
