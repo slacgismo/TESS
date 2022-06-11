@@ -2,28 +2,46 @@
 // Author: DP Chassin
 // Update: 2022-06-10
 //
-// Run command:
-//
-//   $ gridlabd [-D NHOMES=4] [-D FEEDER=60] [-D USETMY={yes,no}] vista.glm
-//
 // TODO:
 //
-// - Add batteries
-// - Add EV chargers
-// - Fix historical weather data input
+//   - Add batteries and agents
+//   - Add EV chargers and agents
+//   - Fix historical weather data input
+//
+// Run command:
+//
+//   $ gridlabd [-D NHOMES=n] [-D FEEDER=kw] [-D USETMY={yes,no}] [-D WITH{DR,EV}={yes,no}] [config.csv] vista.glm
+//
+// Options:
+//
+//   - NHOMES: number of homes on feeder (default 4)
+//   - FEEDER: feeder capacity (default 100 kW)
+//   - USETMY: use TMY data instead of actual weather (default yes)
+//   - WITHDR: include DR in TESS (default yes)
+//   - WITHEV: include EV in TESS (default no)
+//
+//   The file `config.csv` is automatically loaded if found.
 //
 // Model components:
 //
-// 1. Clock is set to 1 month (Jan 2020)
-// 2. Weather data is for Aspen CO (typical meteorological year)
-// 3. CAISO wholesale price data (2020)
-// 4. Feeder bidder receives CAISO price data from caiso.csv
-// 5. Homes (thermostat, PV, batteries, EV, waterheater)
-// 6. Trend (24h mean and stdev of clearing prices)
-// 7. Auction (local power price)
+//   [CLOCK]   Clock is set to 1 month (Jan 2020)
+//   [WEATHER] Weather data is for Aspen CO (typical meteorological year)
+//   [CAISO]   CAISO wholesale price data (2020)
+//   [FEEDER]  Feeder bidder receives CAISO price data from caiso.csv
+//   [HOMES]   Homes (thermostat, PV, batteries, EV, waterheater)
+//   [TREND]   Trend (24h mean and stdev of clearing prices)
+//   [MARKET]  Auction (local power price)
+//   [SAVE]    Save results to JSON file
+//   [PLOT]    Plot results as PNG file
+
+#version check -ge 4.3.1 // required for TESS models
 
 #set suppress_repeat_messages=FALSE
 #set keep_progress=TRUE
+
+#ifexist "config.csv"
+#include "config.csv"
+#endif
 
 #ifndef NHOMES
 
@@ -77,9 +95,9 @@ clock
 
 #endif
 
-////////////////
-// CAISO DATA //
-////////////////
+///////////
+// CAISO //
+///////////
 
 // download CAISO market data for feeder (this can take a while)
 #ifmissing caiso.glm
@@ -88,9 +106,9 @@ clock
 
 #endif
 
-///////////////////
-// FEEDER BIDDER //
-///////////////////
+////////////
+// FEEDER //
+////////////
 
 module market;
 module tape
@@ -116,8 +134,25 @@ object stub_bidder
 // HOMES //
 ///////////
 
+schedule residential-evcharter-default
+{
+	* * * * * 0;
+}
+
 module powerflow;
-module residential;
+module residential
+{
+#define BASE_ENDUSES=DRYER|CLOTHESWASHER|RANGE|REFRIGERATOR|FREEZER|MICROWAVE|DISHWASHER|PLUGS|LIGHTS
+#if ${WITHDR:-yes}==no
+#set BASE_ENDUSES=${BASE_ENDUSES}|WATERHEATER
+#endif
+#if ${WITHEV:-no}==no
+#set BASE_ENDUSES=${BASE_ENDUSES} // TODO: add |EVCHARGER
+#endif
+	implicit_enduses ${BASE_ENDUSES};
+	implicit_enduse_source EIA2015;
+}
+
 module generators;
 
 object meter 
@@ -167,6 +202,7 @@ object triplex_meter:..${NHOMES}
 #ifdef WEATHER
 		weather ${WEATHER};
 #endif
+#if ${WITHDR:-yes}==yes
 		object controller {
 			name `agent_{SEQ_ID}`;
 			market "auction_1";
@@ -218,6 +254,7 @@ object triplex_meter:..${NHOMES}
 				load "actual_load";
 			};
 		};
+#endif
 	};
 	object triplex_meter
 	{
@@ -253,9 +290,9 @@ class auction
      double current_price_stdev_24h;
 }
 
-/////////////
-// AUCTION //
-/////////////
+////////////
+// MARKET //
+////////////
 
 object auction
 {
