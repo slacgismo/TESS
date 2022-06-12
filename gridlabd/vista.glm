@@ -10,7 +10,7 @@
 //
 // Run command:
 //
-//   $ gridlabd [-D NHOMES=n] [-D FEEDER=kw] [-D USETMY={yes,no}] [-D WITH{DR,EV}={yes,no}] [config.csv] vista.glm
+//   $ gridlabd [-D NHOMES=n] [-D FEEDER=kw] [-D USETMY={yes,no}] [-D WITH{DR,ES,EV,PV}={yes,no}] [config.csv] vista.glm
 //
 // Options:
 //
@@ -43,16 +43,35 @@
 #include "config.csv"
 #endif
 
+//
+// Default options
+//
 #ifndef NHOMES
-
 	#define NHOMES=4
-
 #endif
 
 #ifndef FEEDER
-
 	#define FEEDER=250 // kW
+#endif
 
+#ifndef WITHDR
+	#define WITHDR=yes
+#endif
+
+#ifndef WITHPV
+	#define WITHPV=yes
+#endif
+
+#ifndef WITHEV
+	#define WITHEV=no
+#endif
+
+#ifndef WITHES
+	#define WITHES=no
+#endif
+
+#ifndef USETMY
+	#define USETMY=yes
 #endif
 
 ///////////
@@ -73,7 +92,7 @@ clock
 #if ${USETMY:-yes}==yes
 
 	module climate;
-	#weather get CO-Aspen_Pitkin_Co_Sar.tmy3
+	#weather get "CO-Aspen_Pitkin_Co_Sar.tmy3"
 	object climate
 	{
 		name "weather";
@@ -117,43 +136,6 @@ module tape
 	csv_header_type NAME;
 }
 
-object stub_bidder
-{
-	name "agent_0";
-	bid_period 300;
-	market "auction_1";
-	role SELLER;
-	object player
-	{
-		file "caiso.csv";
-		property "price";
-	};
-	quantity (${FEEDER}*0.8);
-}
-
-///////////
-// HOMES //
-///////////
-
-schedule residential-evcharter-default
-{
-	* 18-22 * * * 6.7;
-	* 23-17 * * * 0;
-}
-module residential
-{
-#define BASE_ENDUSES=DRYER|CLOTHESWASHER|RANGE|REFRIGERATOR|FREEZER|MICROWAVE|DISHWASHER|PLUGS|LIGHTS
-#if ${WITHDR:-yes}==no
-#set BASE_ENDUSES=${BASE_ENDUSES}|WATERHEATER
-#endif
-#if ${WITHEV:-no}==no
-#set BASE_ENDUSES=${BASE_ENDUSES} // TODO: add |EVCHARGER
-#endif
-	implicit_enduses ${BASE_ENDUSES};
-	implicit_enduse_source EIA2015;
-}
-module generators;
-
 object meter 
 {
 	name "main";
@@ -162,6 +144,43 @@ object meter
 	phases ABC;	
 }
 
+///////////
+// HOMES //
+///////////
+
+//
+// EV charging loadshape
+//
+schedule residential-evcharter-default
+{
+	* 18-22 * * * 6.7;
+	* 23-17 * * * 0;
+}
+
+//
+// Enable implicit enduses
+//
+module residential
+{
+#define BASE_ENDUSES=DRYER|CLOTHESWASHER|RANGE|REFRIGERATOR|FREEZER|MICROWAVE|DISHWASHER|PLUGS|LIGHTS
+#if ${WITHDR}==no
+#set BASE_ENDUSES=${BASE_ENDUSES}|WATERHEATER
+#endif
+#if ${WITHEV}==no
+#set BASE_ENDUSES=${BASE_ENDUSES} // TODO: add |EVCHARGER
+#endif
+	implicit_enduses ${BASE_ENDUSES};
+	implicit_enduse_source EIA2015;
+}
+
+//
+// Distribution generation support
+//
+module generators;
+
+//
+// House ID numbering
+//
 global int32 SEQ_ID 0;
 
 #for PHASE in A B C
@@ -204,7 +223,7 @@ object triplex_meter:..${NHOMES}
 #ifdef WEATHER
 		weather ${WEATHER};
 #endif
-#if ${WITHDR:-yes}==yes
+#if ${WITHDR}==yes
 		object controller {
 			name `agent_{SEQ_ID}`;
 			market "auction_1";
@@ -258,6 +277,7 @@ object triplex_meter:..${NHOMES}
 		};
 #endif
 	};
+#if ${WITHPV}==yes
 	object triplex_meter
 	{
 		name `pvmeter_{SEQ_ID}`;
@@ -280,6 +300,7 @@ object triplex_meter:..${NHOMES}
 			};
 		};
 	};
+#endif
 }
 #done
 
@@ -312,6 +333,9 @@ object auction
 	init_stdev 0.1;
 	period 300;
 	verbose 0;
+	capacity_reference_object "main";
+	capacity_reference_property "measured_real_power";
+	max_capacity_reference_bid_quantity (${FEEDER}*0.8);
 	object player
 	{
 		property "fixed_price";
