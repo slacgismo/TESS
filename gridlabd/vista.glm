@@ -225,7 +225,7 @@ object triplex_meter:..${NHOMES}
 #endif
 #if ${WITHDR}==yes
 		object controller {
-			name `agent_{SEQ_ID}`;
+			name `hvac_{SEQ_ID}`;
 			market "auction_1";
 			use_override ON;
 			override "override";
@@ -262,6 +262,7 @@ object triplex_meter:..${NHOMES}
 			tank_diameter 36 in;
 			object controller
 			{
+				name `waterheater_{SEQ_ID}`;
 				market "auction_1";
 				average_target "current_price_mean_24h";
 				standard_deviation_target "current_price_stdev_24h";
@@ -333,12 +334,14 @@ object auction
 	init_stdev 0.1;
 	period 300;
 	verbose 0;
+	warmup 0;
+	price_cap 1000;
 	capacity_reference_object "main";
 	capacity_reference_property "measured_real_power";
 	max_capacity_reference_bid_quantity (${FEEDER}*0.8);
 	object player
 	{
-		property "fixed_price";
+		property "capacity_reference_bid_price";
 		file "caiso.csv";
 	};
 	transaction_log_file "transactions.csv";
