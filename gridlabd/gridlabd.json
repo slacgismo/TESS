@@ -5,15 +5,15 @@
 			"major" : "4",
 			"minor" : "3"
 		},
+		"powerflow" : {
+			"major" : "4",
+			"minor" : "3"
+		},
 		"market" : {
 			"major" : "4",
 			"minor" : "3"
 		},
 		"tape" : {
-			"major" : "4",
-			"minor" : "3"
-		},
-		"powerflow" : {
 			"major" : "4",
 			"minor" : "3"
 		},
@@ -1168,2393 +1168,6 @@
 				"type" : "char256",
 				"access" : "PUBLIC",
 				"description" : "filename"
-			}
-		},
-		"auction" : {
-			"object_size" : "82336",
-			"trl" : "8",
-			"module" : "market",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"unit" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "unit of quantity"
-			},
-			"period" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "interval of time between market clearings"
-			},
-			"latency" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "latency between market clearing and delivery"
-			},
-			"market_id" : {
-				"type" : "int64",
-				"access" : "REFERENCE",
-				"description" : "unique identifier of market clearing"
-			},
-			"network" : {
-				"type" : "object",
-				"access" : "PUBLIC",
-				"description" : "the comm network used by object to talk to the market (if any)"
-			},
-			"verbose" : {
-				"type" : "bool",
-				"access" : "PUBLIC",
-				"description" : "enable verbose auction operations"
-			},
-			"price_cap" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "the maximum price (magnitude) allowed"
-			},
-			"special_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"BUYERS_ONLY" : "0x2",
-					"SELLERS_ONLY" : "0x1",
-					"NONE" : "0x0"
-				}
-			},
-			"statistic_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"OFF" : "0x1",
-					"ON" : "0x0"
-				}
-			},
-			"fixed_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"fixed_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"capacity_reference_object" : {
-				"type" : "object",
-				"access" : "PUBLIC"
-			},
-			"capacity_reference_property" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"capacity_reference_bid_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"max_capacity_reference_bid_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"capacity_reference_bid_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"init_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"init_stdev" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"future_mean_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"use_future_mean_price" : {
-				"type" : "bool",
-				"access" : "PUBLIC"
-			},
-			"current_market.start_time" : {
-				"type" : "timestamp",
-				"access" : "PUBLIC"
-			},
-			"current_market.end_time" : {
-				"type" : "timestamp",
-				"access" : "PUBLIC"
-			},
-			"current_market.clearing_price" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "$"
-			},
-			"current_market.clearing_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"current_market.clearing_type" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"NULL" : "0x0",
-					"FAILURE" : "0x5",
-					"EXACT" : "0x4",
-					"MARGINAL_PRICE" : "0x3",
-					"MARGINAL_BUYER" : "0x2",
-					"MARGINAL_SELLER" : "0x1"
-				}
-			},
-			"current_market.marginal_quantity_load" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"current_market.marginal_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"current_market.marginal_quantity_bid" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"current_market.marginal_quantity_frac" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"current_market.seller_total_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"current_market.buyer_total_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"current_market.seller_min_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"current_market.buyer_total_unrep" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"current_market.cap_ref_unrep" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"next_market.start_time" : {
-				"type" : "timestamp",
-				"access" : "PUBLIC"
-			},
-			"next_market.end_time" : {
-				"type" : "timestamp",
-				"access" : "PUBLIC"
-			},
-			"next_market.clearing_price" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "$"
-			},
-			"next_market.clearing_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"next_market.clearing_type" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"NULL" : "0x0",
-					"FAILURE" : "0x5",
-					"EXACT" : "0x4",
-					"MARGINAL_PRICE" : "0x3",
-					"MARGINAL_BUYER" : "0x2",
-					"MARGINAL_SELLER" : "0x1"
-				}
-			},
-			"next_market.marginal_quantity_load" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"next_market.marginal_quantity_bid" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"next_market.marginal_quantity_frac" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"next_market.seller_total_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"next_market.buyer_total_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"next_market.seller_min_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"next_market.cap_ref_unrep" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"past_market.start_time" : {
-				"type" : "timestamp",
-				"access" : "PUBLIC"
-			},
-			"past_market.end_time" : {
-				"type" : "timestamp",
-				"access" : "PUBLIC"
-			},
-			"past_market.clearing_price" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "$"
-			},
-			"past_market.clearing_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"past_market.clearing_type" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"NULL" : "0x0",
-					"FAILURE" : "0x5",
-					"EXACT" : "0x4",
-					"MARGINAL_PRICE" : "0x3",
-					"MARGINAL_BUYER" : "0x2",
-					"MARGINAL_SELLER" : "0x1"
-				}
-			},
-			"past_market.marginal_quantity_load" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"past_market.marginal_quantity_bid" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"past_market.marginal_quantity_frac" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"past_market.seller_total_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"past_market.buyer_total_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"past_market.seller_min_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"past_market.cap_ref_unrep" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"margin_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"PROB" : "0x2",
-					"DENY" : "0x1",
-					"NORMAL" : "0x0"
-				}
-			},
-			"warmup" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"ignore_failed_market" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"TRUE" : "0x1",
-					"FALSE" : "0x0"
-				}
-			},
-			"ignore_pricecap" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"TRUE" : "0x1",
-					"FALSE" : "0x0"
-				}
-			},
-			"transaction_log_file" : {
-				"type" : "char256",
-				"access" : "PUBLIC"
-			},
-			"transaction_log_limit" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"curve_log_file" : {
-				"type" : "char256",
-				"access" : "PUBLIC"
-			},
-			"curve_log_limit" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"curve_log_info" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"EXTRA" : "0x1",
-					"NORMAL" : "0x0"
-				}
-			}
-		},
-		"controller" : {
-			"object_size" : "2304",
-			"trl" : "8",
-			"module" : "market",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"simple_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"DOUBLE_RAMP" : "0x6",
-					"WATERHEATER" : "0x5",
-					"HOUSE_PRECOOL" : "0x4",
-					"HOUSE_PREHEAT" : "0x3",
-					"HOUSE_COOL" : "0x2",
-					"HOUSE_HEAT" : "0x1",
-					"NONE" : "0x0"
-				}
-			},
-			"bid_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"PROXY" : "0x2",
-					"OFF" : "0x0",
-					"ON" : "0x1"
-				}
-			},
-			"use_override" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"ON" : "0x1",
-					"OFF" : "0x0"
-				}
-			},
-			"ramp_low" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "degF",
-				"description" : "the comfort response below the setpoint"
-			},
-			"ramp_high" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "degF",
-				"description" : "the comfort response above the setpoint"
-			},
-			"range_low" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "the setpoint limit on the low side"
-			},
-			"range_high" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "the setpoint limit on the high side"
-			},
-			"target" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the observed property (e.g., air temperature)"
-			},
-			"setpoint" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the controlled property (e.g., heating setpoint)"
-			},
-			"demand" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the controlled load when on"
-			},
-			"load" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the current controlled load"
-			},
-			"total" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the uncontrolled load (if any)"
-			},
-			"market" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the market to bid into"
-			},
-			"state" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the state property of the controlled load"
-			},
-			"avg_target" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"std_target" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"bid_price" : {
-				"type" : "double",
-				"access" : "REFERENCE",
-				"description" : "the bid price"
-			},
-			"bid_quantity" : {
-				"type" : "double",
-				"access" : "REFERENCE",
-				"description" : "the bid quantity"
-			},
-			"set_temp" : {
-				"type" : "double",
-				"access" : "REFERENCE",
-				"unit" : "degF",
-				"description" : "the reset value"
-			},
-			"base_setpoint" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "degF"
-			},
-			"market_price" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "the current market clearing price seen by the controller."
-			},
-			"period" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "interval of time between market clearings"
-			},
-			"control_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"DEV_LEVEL" : "0x2",
-					"DOUBLE_RAMP" : "0x1",
-					"RAMP" : "0x0"
-				}
-			},
-			"resolve_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"SLIDING" : "0x1",
-					"DEADBAND" : "0x0"
-				}
-			},
-			"slider_setting" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"slider_setting_heat" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"slider_setting_cool" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"override" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"heating_range_high" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "degF"
-			},
-			"heating_range_low" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "degF"
-			},
-			"heating_ramp_high" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"heating_ramp_low" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"cooling_range_high" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "degF"
-			},
-			"cooling_range_low" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "degF"
-			},
-			"cooling_ramp_high" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"cooling_ramp_low" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"heating_base_setpoint" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "degF"
-			},
-			"cooling_base_setpoint" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "degF"
-			},
-			"deadband" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"heating_setpoint" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"heating_demand" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"cooling_setpoint" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"cooling_demand" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"sliding_time_delay" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "time interval desired for the sliding resolve mode to change from cooling or heating to off"
-			},
-			"use_predictive_bidding" : {
-				"type" : "bool",
-				"access" : "PUBLIC"
-			},
-			"device_actively_engaged" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"cleared_market" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"locked" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"p_ON" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"p_OFF" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"p_ONLOCK" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"p_OFFLOCK" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"delta_u" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"regulation_market_on" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the willing to change state from ON->OFF market to bid into for regulation case"
-			},
-			"regulation_market_off" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the willing to change state from OFF->ON market to bid into for regulation case"
-			},
-			"fast_regulation_signal" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "the regulation signal that the controller compares against (i.e., how often is there a control action"
-			},
-			"market_price_on" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "the current market clearing price seen by the controller in ON->OFF regulation market"
-			},
-			"market_price_off" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "the current market clearing price seen by the controller  in OFF->ON regulation market"
-			},
-			"period_on" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "interval of time between market clearings in ON->OFF regulation market"
-			},
-			"period_off" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "interval of time between market clearings in  OFF->ON regulation market"
-			},
-			"regulation_period" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "fast regulation signal period"
-			},
-			"r1" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "temporary diagnostic variable"
-			},
-			"mu0" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "temporary diagnostic variable"
-			},
-			"mu1" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "temporary diagnostic variable"
-			},
-			"average_target" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"standard_deviation_target" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"bid_id" : {
-				"type" : "int64",
-				"access" : "PUBLIC"
-			},
-			"bid_delay" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"thermostat_state" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "The name of the thermostat state property within the object being controlled"
-			},
-			"proxy_average" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"proxy_standard_deviation" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"proxy_market_id" : {
-				"type" : "int64",
-				"access" : "PUBLIC"
-			},
-			"proxy_market2_id" : {
-				"type" : "int64",
-				"access" : "PUBLIC"
-			},
-			"proxy_clear_price" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "$"
-			},
-			"proxy_clear_price2" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "$"
-			},
-			"proxy_price_cap" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"proxy_price_cap2" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"proxy_market_unit" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"proxy_initial_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"proxy_marginal_fraction" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"proxy_marginal_fraction2" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"proxy_clearing_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"proxy_clearing_quantity2" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"proxy_seller_total_quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"proxy_seller_total_quantity2" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"proxy_margin_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"PROB" : "0x2",
-					"DENY" : "0x1",
-					"NORMAL" : "0x0"
-				}
-			},
-			"proxy_clearing_type" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"NULL" : "0x0",
-					"FAILURE" : "0x5",
-					"EXACT" : "0x4",
-					"MARGINAL_PRICE" : "0x3",
-					"MARGINAL_BUYER" : "0x2",
-					"MARGINAL_SELLER" : "0x1"
-				}
-			},
-			"proxy_clearing_type2" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"NULL" : "0x0",
-					"FAILURE" : "0x5",
-					"EXACT" : "0x4",
-					"MARGINAL_PRICE" : "0x3",
-					"MARGINAL_BUYER" : "0x2",
-					"MARGINAL_SELLER" : "0x1"
-				}
-			}
-		},
-		"stubauction" : {
-			"object_size" : "1520",
-			"trl" : "8",
-			"module" : "market",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"unit" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "unit of quantity"
-			},
-			"period" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "interval of time between market clearings"
-			},
-			"last.P" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "last cleared price"
-			},
-			"current_market.clearing_price" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "next cleared price"
-			},
-			"past_market.clearing_price" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "last cleared price"
-			},
-			"next.P" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "next cleared price"
-			},
-			"avg24" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "daily average of price"
-			},
-			"std24" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "daily stdev of price"
-			},
-			"avg72" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "three day price average"
-			},
-			"std72" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "three day price stdev"
-			},
-			"avg168" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "weekly average of price"
-			},
-			"std168" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "weekly stdev of price"
-			},
-			"market_id" : {
-				"type" : "int64",
-				"access" : "REFERENCE",
-				"description" : "unique identifier of market clearing"
-			},
-			"verbose" : {
-				"type" : "bool",
-				"access" : "PUBLIC",
-				"description" : "enable verbose stubauction operations"
-			},
-			"control_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"DISABLED" : "0x1",
-					"NORMAL" : "0x0"
-				},
-				"description" : "the control mode to use for determining average and deviation calculations"
-			}
-		},
-		"passive_controller" : {
-			"object_size" : "1296",
-			"trl" : "8",
-			"module" : "market",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"input_state" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"input_setpoint" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"input_chained" : {
-				"type" : "bool",
-				"access" : "PUBLIC"
-			},
-			"observation" : {
-				"type" : "double",
-				"access" : "REFERENCE",
-				"description" : "the observed value"
-			},
-			"mean_observation" : {
-				"type" : "double",
-				"access" : "REFERENCE",
-				"description" : "the observed mean value"
-			},
-			"stdev_observation" : {
-				"type" : "double",
-				"access" : "REFERENCE",
-				"description" : "the observed standard deviation value"
-			},
-			"expectation" : {
-				"type" : "double",
-				"access" : "REFERENCE",
-				"description" : "the observed expected value"
-			},
-			"period" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "the cycle period for the controller logic"
-			},
-			"expectation_property" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the name of the property to observe for the expected value"
-			},
-			"expectation_object" : {
-				"type" : "object",
-				"access" : "PUBLIC",
-				"description" : "the object to watch for the expectation property"
-			},
-			"setpoint" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the name of the setpoint property in the parent object"
-			},
-			"state_property" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the name of the actuator property in the parent object"
-			},
-			"observation_object" : {
-				"type" : "object",
-				"access" : "PUBLIC",
-				"description" : "the object to observe"
-			},
-			"observation_property" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the name of the observation property"
-			},
-			"stdev_observation_property" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the name of the standard deviation observation property"
-			},
-			"base_setpoint" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "the base setpoint to base control off of"
-			},
-			"critical_day" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "used to switch between TOU and CPP days, 1 is CPP, 0 is TOU"
-			},
-			"two_tier_cpp" : {
-				"type" : "bool",
-				"access" : "PUBLIC"
-			},
-			"daily_elasticity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"sub_elasticity_first_second" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"sub_elasticity_first_third" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"second_tier_hours" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"third_tier_hours" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"first_tier_hours" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"first_tier_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"second_tier_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"third_tier_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"old_first_tier_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"old_second_tier_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"old_third_tier_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"Percent_change_in_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"Percent_change_in_peakoffpeak_ratio" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"Percent_change_in_Criticalpeakoffpeak_ratio" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"linearize_elasticity" : {
-				"type" : "bool",
-				"access" : "PUBLIC"
-			},
-			"price_offset" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"pool_pump_model" : {
-				"type" : "bool",
-				"access" : "PUBLIC",
-				"description" : "Boolean flag for turning on the pool pump version of the DUTYCYCLE control"
-			},
-			"base_duty_cycle" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "This is the duty cycle before modification due to the price signal"
-			},
-			"trigger_time_under_frequency" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "Time to stay in triggered off state in seconds"
-			},
-			"trigger_time_over_frequency" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "Time to stay in triggered on state in seconds"
-			},
-			"release_time_under_frequency" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "Time to stay in released on state in seconds"
-			},
-			"release_time_over_frequency" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "Time to stay in released off state in seconds"
-			},
-			"release_point_under_frequency" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "Frequency value for releasing GFA in under frequency mode"
-			},
-			"release_point_over_frequency" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "Frequency value for releasing GFA in over frequency mode"
-			},
-			"trigger_point_under_frequency" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "Frequency value for triggereing GFA in under frequency mode"
-			},
-			"trigger_point_over_frequency" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "Frequency value for triggereing GFA in over frequency mode"
-			},
-			"frequency" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "Frequency value"
-			},
-			"PFC_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"OVER_UNDER_FREQUENCY" : "0x2",
-					"UNDER_FREQUENCY" : "0x1",
-					"OVER_FREQUENCY" : "0x0"
-				},
-				"description" : "operation mode of the primary frequency controller"
-			},
-			"PFC_state" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"RELEASED_ON" : "0x6",
-					"RELEASED_OFF" : "0x5",
-					"FORCED_ON" : "0x4",
-					"FORCED_OFF" : "0x3",
-					"TRIGGERED_ON" : "0x2",
-					"TRIGGERED_OFF" : "0x1",
-					"FREE" : "0x0"
-				},
-				"description" : "State of the primary frequency controller"
-			},
-			"state_observed" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the name of the observed state property in the parent object"
-			},
-			"power_observed" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the name of the observed state property in the parent object"
-			},
-			"output_observed" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"bid_delay" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "time the controller will bid in advance before clearing"
-			},
-			"voltage_lockout" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "%",
-				"description" : "lockout primary frequency control if voltage is deviating % from nominal"
-			},
-			"voltage_lockout_time" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "voltage lockout period"
-			},
-			"voltage_lockout_state" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "value to determine if water heater is in voltage lockout"
-			},
-			"distribution_type" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"UNIFORM" : "0x2",
-					"EXPONENTIAL" : "0x1",
-					"NORMAL" : "0x0"
-				}
-			},
-			"comfort_level" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"range_high" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"range_low" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"ramp_high" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"ramp_low" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"prob_off" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"output_state" : {
-				"type" : "int32",
-				"access" : "REFERENCE",
-				"description" : "the target setpoint given the input observations"
-			},
-			"output_setpoint" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"control_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"PRIMARY_FREQUENCY_CONTROL" : "0x8",
-					"DIRECT_LOAD_CONTROL" : "0x7",
-					"ELASTICITY_MODEL" : "0x6",
-					"PROBABILITY_OFF" : "0x5",
-					"DUTYCYCLE" : "0x4",
-					"RAMP" : "0x1",
-					"NONE" : "0x0"
-				},
-				"description" : "the control mode to use for determining controller action"
-			},
-			"dlc_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"CYCLING" : "0x1",
-					"OFF" : "0x0"
-				},
-				"description" : "this mode is roughly designed to force cycle an AC unit"
-			},
-			"cycle_length_off" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s"
-			},
-			"cycle_length_on" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s"
-			}
-		},
-		"double_controller" : {
-			"object_size" : "928",
-			"trl" : "8",
-			"module" : "market",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"thermostat_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"COOL" : "0x3",
-					"HEAT" : "0x2",
-					"OFF" : "0x1",
-					"INVALID" : "0x0"
-				}
-			},
-			"last_mode" : {
-				"type" : "enumeration",
-				"access" : "REFERENCE",
-				"keywords" : {
-					"COOL" : "0x3",
-					"HEAT" : "0x2",
-					"OFF" : "0x1",
-					"INVALID" : "0x0"
-				}
-			},
-			"resolve_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"STICKY" : "0x2",
-					"DEADBAND" : "0x1",
-					"NONE" : "0x0"
-				}
-			},
-			"setup_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"HOUSE" : "0x1",
-					"NONE" : "0x0"
-				}
-			},
-			"bid_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"OFF" : "0x0",
-					"ON" : "0x1"
-				}
-			},
-			"last_mode_timer" : {
-				"type" : "int64",
-				"access" : "PUBLIC"
-			},
-			"cool_ramp_low" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"cool_ramp_high" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"cool_range_low" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"cool_range_high" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"cool_set_base" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"cool_setpoint" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"heat_ramp_low" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"heat_ramp_high" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"heat_range_low" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"heat_range_high" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"heat_set_base" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"heat_setpoint" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"temperature_name" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"cool_setpoint_name" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"cool_demand_name" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"heat_setpoint_name" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"heat_demand_name" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"load_name" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"total_load_name" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"deadband_name" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"state_name" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"market" : {
-				"type" : "object",
-				"access" : "PUBLIC",
-				"description" : "the market to bid into"
-			},
-			"market_period" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"bid_price" : {
-				"type" : "double",
-				"access" : "REFERENCE",
-				"description" : "the bid price"
-			},
-			"bid_quant" : {
-				"type" : "double",
-				"access" : "REFERENCE",
-				"description" : "the bid quantity"
-			},
-			"load" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the current controlled load"
-			},
-			"total" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the uncontrolled load (if any)"
-			},
-			"last_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"temperature" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"cool_bid" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"heat_bid" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"cool_demand" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"heat_demand" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"avg_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"stdev_price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			}
-		},
-		"stub_bidder" : {
-			"object_size" : "152",
-			"trl" : "0",
-			"module" : "market",
-			"profiler.numobjs" : "1",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"bid_period" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s"
-			},
-			"count" : {
-				"type" : "int16",
-				"access" : "PUBLIC"
-			},
-			"market" : {
-				"type" : "object",
-				"access" : "PUBLIC"
-			},
-			"role" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"SELLER" : "0x1",
-					"BUYER" : "0x0"
-				}
-			},
-			"price" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"quantity" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"bid_id" : {
-				"type" : "int64",
-				"access" : "PUBLIC"
-			}
-		},
-		"generator_controller" : {
-			"object_size" : "3632",
-			"trl" : "0",
-			"module" : "market",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"generator_state" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"STARTING" : "0x2",
-					"RUNNING" : "0x1",
-					"OFF" : "0x0"
-				},
-				"description" : "Current generator state"
-			},
-			"amortization_type" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"LINEAR_BID" : "0x2",
-					"LINEAR_COST" : "0x1",
-					"EXPONENTIAL" : "0x0"
-				},
-				"description" : "Amortization compounding method"
-			},
-			"generator_state_number" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "Current generator state as numeric value"
-			},
-			"market" : {
-				"type" : "object",
-				"access" : "PUBLIC",
-				"description" : "Market the object will watch and bid into"
-			},
-			"bid_curve" : {
-				"type" : "char1024",
-				"access" : "PUBLIC",
-				"description" : "Bidding curve text format"
-			},
-			"bid_curve_file" : {
-				"type" : "char1024",
-				"access" : "PUBLIC",
-				"description" : "Bidding curve file name"
-			},
-			"bid_generator_rating" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "VA",
-				"description" : "Size of generator in VA for the bid curve"
-			},
-			"update_curve" : {
-				"type" : "bool",
-				"access" : "PUBLIC",
-				"description" : "Flag to force updating of bidding curve parse"
-			},
-			"is_marginal_gen" : {
-				"type" : "bool",
-				"access" : "PUBLIC",
-				"description" : "Flag to indicate if the generator is a marginal generator"
-			},
-			"generator_rating" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "VA",
-				"description" : "Size of generator in VA for the active bid"
-			},
-			"generator_output" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "Current real power output of generator"
-			},
-			"input_unit_base" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "MW",
-				"description" : "Base multiplier for generator bid units"
-			},
-			"startup_cost" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "$",
-				"description" : "Cost to start the generator from OFF status"
-			},
-			"shutdown_cost" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "$",
-				"description" : "Cost to shut down the generator prematurely"
-			},
-			"minimum_runtime" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "Minimum time the generator should run to avoid shutdown cost"
-			},
-			"minimum_downtime" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "Minimum down time for the generator before it can bid again"
-			},
-			"capacity_factor" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "Calculation of generator's current capacity factor based on the market period"
-			},
-			"amortization_factor" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "1/s",
-				"description" : "Exponential decay factor in 1/s for shutdown cost repayment"
-			},
-			"bid_delay" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "Time before a market closes to bid"
-			},
-			"generator_attachment" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"BUILDING" : "0x1",
-					"STANDALONE" : "0x0"
-				},
-				"description" : "Generator attachment type - determines interactions"
-			},
-			"building_load_curr" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "Present building load value (if BUILDING attachment)"
-			},
-			"building_load_bid" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "Expected building load value for currently bidding market period (if BUILDING attachment)"
-			},
-			"year_runtime_limit" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "h",
-				"description" : "Total number of hours the generator can run in a year"
-			},
-			"current_year_runtime" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "h",
-				"description" : "Total number of hours generator has run this year"
-			},
-			"runtime_year_end" : {
-				"type" : "char1024",
-				"access" : "PUBLIC",
-				"description" : "Date and time the generator runtime year resets"
-			},
-			"scaling_factor" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "unit",
-				"description" : "scaling factor applied to license premium calculation"
-			},
-			"license_premium" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "current value of the generator license premium calculated"
-			},
-			"hours_in_year" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "h",
-				"description" : "Number of hours assumed for the total year"
-			},
-			"op_and_maint_cost" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "$",
-				"description" : "Operation and maintenance cost per runtime year"
-			},
-			"bid_id" : {
-				"type" : "int64",
-				"access" : "PUBLIC"
-			}
-		},
-		"supervisory_control" : {
-			"object_size" : "136",
-			"trl" : "8",
-			"module" : "market",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"unit" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "unit of quantity"
-			},
-			"period" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "interval of time between market clearings"
-			},
-			"market_id" : {
-				"type" : "int32",
-				"access" : "REFERENCE",
-				"description" : "unique identifier of market clearing"
-			},
-			"nominal_frequency" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "Hz",
-				"description" : "nominal frequency"
-			},
-			"droop" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "%",
-				"description" : "droop value for the supervisor"
-			},
-			"frequency_deadband" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "Hz",
-				"description" : "frequency deadband for assigning trigger frequencies"
-			},
-			"PFC_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"OVER_UNDER_FREQUENCY" : "0x2",
-					"UNDER_FREQUENCY" : "0x1",
-					"OVER_FREQUENCY" : "0x0"
-				},
-				"description" : "operation mode of the primary frequency controller"
-			},
-			"bid_sort_mode" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"VOLTAGE_EXTREMES" : "0x4",
-					"VOLTAGE_DEVIAION_FROM_NOMINAL" : "0x3",
-					"POWER_DECREASING" : "0x2",
-					"POWER_INCREASING" : "0x1",
-					"NONE" : "0x0"
-				},
-				"description" : "Determines how the bids into the market is sorted to contruct the PF curve"
-			}
-		},
-		"player" : {
-			"object_size" : "13672",
-			"trl" : "9",
-			"module" : "tape",
-			"profiler.numobjs" : "1",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"property" : {
-				"type" : "char256",
-				"access" : "PUBLIC",
-				"flags" : "REQUIRED",
-				"description" : "property to play values into"
-			},
-			"file" : {
-				"type" : "char1024",
-				"access" : "PUBLIC",
-				"flags" : "REQUIRED",
-				"description" : "file from which to read values"
-			},
-			"filetype" : {
-				"type" : "char8",
-				"access" : "PUBLIC"
-			},
-			"mode" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"loop" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"default" : "0",
-				"description" : "number of time to loop the player"
-			}
-		},
-		"shaper" : {
-			"object_size" : "66200",
-			"trl" : "8",
-			"module" : "tape",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"file" : {
-				"type" : "char1024",
-				"access" : "PUBLIC"
-			},
-			"filetype" : {
-				"type" : "char8",
-				"access" : "PUBLIC"
-			},
-			"mode" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"group" : {
-				"type" : "char256",
-				"access" : "PUBLIC"
-			},
-			"property" : {
-				"type" : "char256",
-				"access" : "PUBLIC"
-			},
-			"magnitude" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			},
-			"events" : {
-				"type" : "double",
-				"access" : "PUBLIC"
-			}
-		},
-		"recorder" : {
-			"object_size" : "15816",
-			"trl" : "9",
-			"module" : "tape",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"trigger" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"default" : "",
-				"description" : "condition to trigger recorder"
-			},
-			"file" : {
-				"type" : "char1024",
-				"access" : "PUBLIC",
-				"flags" : "REQUIRED",
-				"description" : "file in which to record data"
-			},
-			"filetype" : {
-				"type" : "char8",
-				"access" : "PUBLIC",
-				"description" : "file type to use when storing data"
-			},
-			"mode" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"default" : "file",
-				"description" : "recorder operating mode"
-			},
-			"multifile" : {
-				"type" : "char1024",
-				"access" : "PUBLIC"
-			},
-			"limit" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"default" : "0",
-				"description" : "limit on number of rows to record (0=none)"
-			},
-			"plotcommands" : {
-				"type" : "char1024",
-				"access" : "PUBLIC"
-			},
-			"xdata" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"columns" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"flush" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"default" : "-1",
-				"description" : "row flush mode (-1=when full, 0=every row, >0=interval in seconds)"
-			},
-			"format" : {
-				"type" : "bool",
-				"access" : "PUBLIC",
-				"default" : "0"
-			},
-			"interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"default" : "-1 s",
-				"description" : "sampling interval"
-			},
-			"strftime_format" : {
-				"type" : "char256",
-				"access" : "PUBLIC",
-				"description" : "date/time format"
-			},
-			"property" : {
-				"type" : "method",
-				"access" : "PUBLIC",
-				"flags" : "REQUIRED",
-				"description" : "list of properties to sample"
-			},
-			"output" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"SVG" : "0x6",
-					"PNG" : "0x5",
-					"PDF" : "0x4",
-					"JPG" : "0x3",
-					"GIF" : "0x2",
-					"EPS" : "0x1",
-					"SCREEN" : "0x0"
-				}
-			},
-			"header_units" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"NONE" : "0x2",
-					"ALL" : "0x1",
-					"DEFAULT" : "0x0"
-				},
-				"default" : "DEFAULT",
-				"description" : "header option for output of units"
-			},
-			"line_units" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"NONE" : "0x2",
-					"ALL" : "0x1",
-					"DEFAULT" : "0x0"
-				},
-				"default" : "DEFAULT",
-				"description" : "inline option for output of units"
-			}
-		},
-		"multi_recorder" : {
-			"object_size" : "15816",
-			"trl" : "8",
-			"module" : "tape",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"default" : "-1 s",
-				"description" : "sampling interval"
-			},
-			"property" : {
-				"type" : "method",
-				"access" : "PUBLIC",
-				"flags" : "REQUIRED",
-				"description" : "list of properties to sample"
-			},
-			"trigger" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"default" : "",
-				"description" : "condition to trigger recorder"
-			},
-			"file" : {
-				"type" : "char1024",
-				"access" : "PUBLIC",
-				"flags" : "REQUIRED",
-				"description" : "file in which to record data"
-			},
-			"filetype" : {
-				"type" : "char8",
-				"access" : "PUBLIC",
-				"description" : "file type to use when storing data"
-			},
-			"mode" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"default" : "file",
-				"description" : "recorder operating mode"
-			},
-			"multifile" : {
-				"type" : "char1024",
-				"access" : "PUBLIC"
-			},
-			"limit" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"default" : "0",
-				"description" : "limit on number of rows to record (0=none)"
-			},
-			"plotcommands" : {
-				"type" : "char1024",
-				"access" : "PUBLIC"
-			},
-			"xdata" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"columns" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"format" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"default" : "0"
-			},
-			"output" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"SVG" : "0x6",
-					"PNG" : "0x5",
-					"PDF" : "0x4",
-					"JPG" : "0x3",
-					"GIF" : "0x2",
-					"EPS" : "0x1",
-					"SCREEN" : "0x0"
-				}
-			},
-			"header_units" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"NONE" : "0x2",
-					"ALL" : "0x1",
-					"DEFAULT" : "0x0"
-				}
-			},
-			"line_units" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"NONE" : "0x2",
-					"ALL" : "0x1",
-					"DEFAULT" : "0x0"
-				}
-			}
-		},
-		"collector" : {
-			"object_size" : "7568",
-			"trl" : "9",
-			"module" : "tape",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"trigger" : {
-				"type" : "char32",
-				"access" : "PUBLIC"
-			},
-			"file" : {
-				"type" : "char1024",
-				"access" : "PUBLIC"
-			},
-			"limit" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"group" : {
-				"type" : "char256",
-				"access" : "PUBLIC"
-			},
-			"flush" : {
-				"type" : "int32",
-				"access" : "PUBLIC"
-			},
-			"interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s"
-			},
-			"property" : {
-				"type" : "method",
-				"access" : "PUBLIC"
-			}
-		},
-		"histogram" : {
-			"object_size" : "4568",
-			"trl" : "7",
-			"module" : "tape",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"filename" : {
-				"type" : "char1024",
-				"access" : "PUBLIC",
-				"description" : "the name of the file to write"
-			},
-			"filetype" : {
-				"type" : "char8",
-				"access" : "PUBLIC",
-				"description" : "the format to output a histogram in"
-			},
-			"mode" : {
-				"type" : "char32",
-				"access" : "PUBLIC",
-				"description" : "the mode of file output"
-			},
-			"group" : {
-				"type" : "char1024",
-				"access" : "PUBLIC",
-				"description" : "the GridLAB-D group expression to use for this histogram"
-			},
-			"bins" : {
-				"type" : "char1024",
-				"access" : "PUBLIC",
-				"description" : "the specific bin values to use"
-			},
-			"property" : {
-				"type" : "char256",
-				"access" : "PUBLIC",
-				"description" : "the property to sample"
-			},
-			"min" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "the minimum value of the auto-sized bins to use"
-			},
-			"max" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "the maximum value of the auto-sized bins to use"
-			},
-			"samplerate" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "the rate at which samples are read"
-			},
-			"countrate" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "the reate at which bins are counted and written"
-			},
-			"bin_count" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "the number of auto-sized bins to use"
-			},
-			"limit" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "the number of samples to write"
-			}
-		},
-		"group_recorder" : {
-			"object_size" : "1696",
-			"trl" : "0",
-			"module" : "tape",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"file" : {
-				"type" : "char256",
-				"access" : "PUBLIC",
-				"description" : "output file name"
-			},
-			"group" : {
-				"type" : "char1024",
-				"access" : "PUBLIC",
-				"description" : "group definition string"
-			},
-			"interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "recordering interval (0 'every iteration', -1 'on change')"
-			},
-			"flush_interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "file flush interval (0 never, negative on samples)"
-			},
-			"strict" : {
-				"type" : "bool",
-				"access" : "PUBLIC",
-				"description" : "causes the group_recorder to stop the simulation should there be a problem opening or writing with the group_recorder"
-			},
-			"print_units" : {
-				"type" : "bool",
-				"access" : "PUBLIC",
-				"description" : "flag to append units to each written value, if applicable"
-			},
-			"property" : {
-				"type" : "char256",
-				"access" : "PUBLIC",
-				"description" : "property to record"
-			},
-			"limit" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "the maximum number of lines to write to the file"
-			},
-			"format" : {
-				"type" : "bool",
-				"access" : "PUBLIC",
-				"description" : "determines whether output timestamp is formatted to be formatted as human-readable (default) or epoch"
-			},
-			"complex_part" : {
-				"type" : "enumeration",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"ANG_RAD" : "0x5",
-					"ANG_DEG" : "0x4",
-					"MAG" : "0x3",
-					"IMAG" : "0x2",
-					"REAL" : "0x1",
-					"NONE" : "0x0"
-				},
-				"description" : "the complex part to record if complex properties are gathered"
-			}
-		},
-		"violation_recorder" : {
-			"object_size" : "1576",
-			"trl" : "0",
-			"module" : "tape",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"file" : {
-				"type" : "char256",
-				"access" : "PUBLIC",
-				"description" : "output file name"
-			},
-			"summary" : {
-				"type" : "char256",
-				"access" : "PUBLIC",
-				"description" : "summary output file name"
-			},
-			"virtual_substation" : {
-				"type" : "char256",
-				"access" : "PUBLIC",
-				"description" : "name of the substation node to monitor for reverse flow violation"
-			},
-			"interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "recording interval (0 'every iteration', -1 'on change')"
-			},
-			"flush_interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "file flush interval (0 never, negative on samples)"
-			},
-			"strict" : {
-				"type" : "bool",
-				"access" : "PUBLIC",
-				"description" : "causes the violation_recorder to stop the simulation should there be a problem opening or writing with the violation_recorder"
-			},
-			"echo" : {
-				"type" : "bool",
-				"access" : "PUBLIC",
-				"description" : "causes the violation_recorder to echo messages to the screen"
-			},
-			"limit" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "the maximum number of lines to write to the file"
-			},
-			"violation_delay" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "the number of seconds to skip before recording violations"
-			},
-			"xfrmr_thermal_limit_upper" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "xfrmr_thermal_limit_upper"
-			},
-			"xfrmr_thermal_limit_lower" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "xfrmr_thermal_limit_lower"
-			},
-			"line_thermal_limit_upper" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "line_thermal_limit_upper"
-			},
-			"line_thermal_limit_lower" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "line_thermal_limit_lower"
-			},
-			"node_instantaneous_voltage_limit_upper" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "node_instantaneous_voltage_limit_upper"
-			},
-			"node_instantaneous_voltage_limit_lower" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "node_instantaneous_voltage_limit_lower"
-			},
-			"node_continuous_voltage_limit_upper" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "node_continuous_voltage_limit_upper"
-			},
-			"node_continuous_voltage_limit_lower" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "node_continuous_voltage_limit_lower"
-			},
-			"node_continuous_voltage_interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "node_continuous_voltage_interval"
-			},
-			"secondary_dist_voltage_rise_upper_limit" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "secondary_dist_voltage_rise_upper_limit"
-			},
-			"secondary_dist_voltage_rise_lower_limit" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "secondary_dist_voltage_rise_lower_limit"
-			},
-			"substation_breaker_A_limit" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "breaker_phase_A_limit"
-			},
-			"substation_breaker_B_limit" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "breaker_phase_B_limit"
-			},
-			"substation_breaker_C_limit" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "breaker_phase_C_limit"
-			},
-			"substation_pf_lower_limit" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "substation_pf_lower_limit"
-			},
-			"inverter_v_chng_per_interval_upper_bound" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "inverter_v_chng_per_interval_upper_bound"
-			},
-			"inverter_v_chng_per_interval_lower_bound" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "inverter_v_chng_per_interval_lower_bound"
-			},
-			"inverter_v_chng_interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"description" : "inverter_v_chng_interval"
-			},
-			"violation_flag" : {
-				"type" : "set",
-				"access" : "PUBLIC",
-				"keywords" : {
-					"ALLVIOLATIONS" : "0xff",
-					"VIOLATION8" : "0x80",
-					"VIOLATION7" : "0x40",
-					"VIOLATION6" : "0x20",
-					"VIOLATION5" : "0x10",
-					"VIOLATION4" : "0x8",
-					"VIOLATION3" : "0x4",
-					"VIOLATION2" : "0x2",
-					"VIOLATION1" : "0x1",
-					"VIOLATION0" : "0x0"
-				},
-				"description" : "bit set for determining which violations to check"
-			}
-		},
-		"metrics_collector" : {
-			"object_size" : "720",
-			"trl" : "0",
-			"module" : "tape",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "Interval at which the metrics_collector output is stored in JSON format"
-			}
-		},
-		"metrics_collector_writer" : {
-			"object_size" : "6960",
-			"trl" : "0",
-			"module" : "tape",
-			"profiler.numobjs" : "0",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"filename" : {
-				"type" : "char256",
-				"access" : "PUBLIC",
-				"description" : "the JSON formatted output file name"
-			},
-			"interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "Interval at which the metrics_collector_writer output is stored in JSON format"
 			}
 		},
 		"powerflow_object" : {
@@ -5663,7 +3276,7 @@
 			"object_size" : "296",
 			"trl" : "9",
 			"module" : "powerflow",
-			"profiler.numobjs" : "1",
+			"profiler.numobjs" : "0",
 			"profiler.clocks" : "0",
 			"profiler.count" : "0",
 			"connect_type" : {
@@ -5953,7 +3566,7 @@
 			"parent" : "link",
 			"trl" : "9",
 			"module" : "powerflow",
-			"profiler.numobjs" : "1",
+			"profiler.numobjs" : "0",
 			"profiler.clocks" : "0",
 			"profiler.count" : "0",
 			"configuration" : {
@@ -7113,7 +4726,7 @@
 			"parent" : "powerflow_object",
 			"trl" : "9",
 			"module" : "powerflow",
-			"profiler.numobjs" : "1",
+			"profiler.numobjs" : "0",
 			"profiler.clocks" : "0",
 			"profiler.count" : "0",
 			"bustype" : {
@@ -7544,7 +5157,7 @@
 			"parent" : "triplex_node",
 			"trl" : "9",
 			"module" : "powerflow",
-			"profiler.numobjs" : "1",
+			"profiler.numobjs" : "0",
 			"profiler.clocks" : "0",
 			"profiler.count" : "0",
 			"measured_real_energy" : {
@@ -11100,6 +8713,2393 @@
 				"description" : "local wind direction"
 			}
 		},
+		"auction" : {
+			"object_size" : "82336",
+			"trl" : "8",
+			"module" : "market",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"unit" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "unit of quantity"
+			},
+			"period" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "interval of time between market clearings"
+			},
+			"latency" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "latency between market clearing and delivery"
+			},
+			"market_id" : {
+				"type" : "int64",
+				"access" : "REFERENCE",
+				"description" : "unique identifier of market clearing"
+			},
+			"network" : {
+				"type" : "object",
+				"access" : "PUBLIC",
+				"description" : "the comm network used by object to talk to the market (if any)"
+			},
+			"verbose" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "enable verbose auction operations"
+			},
+			"price_cap" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "the maximum price (magnitude) allowed"
+			},
+			"special_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"BUYERS_ONLY" : "0x2",
+					"SELLERS_ONLY" : "0x1",
+					"NONE" : "0x0"
+				}
+			},
+			"statistic_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"OFF" : "0x1",
+					"ON" : "0x0"
+				}
+			},
+			"fixed_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"fixed_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"capacity_reference_object" : {
+				"type" : "object",
+				"access" : "PUBLIC"
+			},
+			"capacity_reference_property" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"capacity_reference_bid_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"max_capacity_reference_bid_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"capacity_reference_bid_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"init_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"init_stdev" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"future_mean_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"use_future_mean_price" : {
+				"type" : "bool",
+				"access" : "PUBLIC"
+			},
+			"current_market.start_time" : {
+				"type" : "timestamp",
+				"access" : "PUBLIC"
+			},
+			"current_market.end_time" : {
+				"type" : "timestamp",
+				"access" : "PUBLIC"
+			},
+			"current_market.clearing_price" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "$"
+			},
+			"current_market.clearing_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"current_market.clearing_type" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"NULL" : "0x0",
+					"FAILURE" : "0x5",
+					"EXACT" : "0x4",
+					"MARGINAL_PRICE" : "0x3",
+					"MARGINAL_BUYER" : "0x2",
+					"MARGINAL_SELLER" : "0x1"
+				}
+			},
+			"current_market.marginal_quantity_load" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"current_market.marginal_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"current_market.marginal_quantity_bid" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"current_market.marginal_quantity_frac" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"current_market.seller_total_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"current_market.buyer_total_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"current_market.seller_min_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"current_market.buyer_total_unrep" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"current_market.cap_ref_unrep" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"next_market.start_time" : {
+				"type" : "timestamp",
+				"access" : "PUBLIC"
+			},
+			"next_market.end_time" : {
+				"type" : "timestamp",
+				"access" : "PUBLIC"
+			},
+			"next_market.clearing_price" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "$"
+			},
+			"next_market.clearing_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"next_market.clearing_type" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"NULL" : "0x0",
+					"FAILURE" : "0x5",
+					"EXACT" : "0x4",
+					"MARGINAL_PRICE" : "0x3",
+					"MARGINAL_BUYER" : "0x2",
+					"MARGINAL_SELLER" : "0x1"
+				}
+			},
+			"next_market.marginal_quantity_load" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"next_market.marginal_quantity_bid" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"next_market.marginal_quantity_frac" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"next_market.seller_total_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"next_market.buyer_total_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"next_market.seller_min_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"next_market.cap_ref_unrep" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"past_market.start_time" : {
+				"type" : "timestamp",
+				"access" : "PUBLIC"
+			},
+			"past_market.end_time" : {
+				"type" : "timestamp",
+				"access" : "PUBLIC"
+			},
+			"past_market.clearing_price" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "$"
+			},
+			"past_market.clearing_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"past_market.clearing_type" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"NULL" : "0x0",
+					"FAILURE" : "0x5",
+					"EXACT" : "0x4",
+					"MARGINAL_PRICE" : "0x3",
+					"MARGINAL_BUYER" : "0x2",
+					"MARGINAL_SELLER" : "0x1"
+				}
+			},
+			"past_market.marginal_quantity_load" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"past_market.marginal_quantity_bid" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"past_market.marginal_quantity_frac" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"past_market.seller_total_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"past_market.buyer_total_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"past_market.seller_min_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"past_market.cap_ref_unrep" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"margin_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"PROB" : "0x2",
+					"DENY" : "0x1",
+					"NORMAL" : "0x0"
+				}
+			},
+			"warmup" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"ignore_failed_market" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"TRUE" : "0x1",
+					"FALSE" : "0x0"
+				}
+			},
+			"ignore_pricecap" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"TRUE" : "0x1",
+					"FALSE" : "0x0"
+				}
+			},
+			"transaction_log_file" : {
+				"type" : "char256",
+				"access" : "PUBLIC"
+			},
+			"transaction_log_limit" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"curve_log_file" : {
+				"type" : "char256",
+				"access" : "PUBLIC"
+			},
+			"curve_log_limit" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"curve_log_info" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"EXTRA" : "0x1",
+					"NORMAL" : "0x0"
+				}
+			}
+		},
+		"controller" : {
+			"object_size" : "2304",
+			"trl" : "8",
+			"module" : "market",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"simple_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"DOUBLE_RAMP" : "0x6",
+					"WATERHEATER" : "0x5",
+					"HOUSE_PRECOOL" : "0x4",
+					"HOUSE_PREHEAT" : "0x3",
+					"HOUSE_COOL" : "0x2",
+					"HOUSE_HEAT" : "0x1",
+					"NONE" : "0x0"
+				}
+			},
+			"bid_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"PROXY" : "0x2",
+					"OFF" : "0x0",
+					"ON" : "0x1"
+				}
+			},
+			"use_override" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"ON" : "0x1",
+					"OFF" : "0x0"
+				}
+			},
+			"ramp_low" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "degF",
+				"description" : "the comfort response below the setpoint"
+			},
+			"ramp_high" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "degF",
+				"description" : "the comfort response above the setpoint"
+			},
+			"range_low" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "the setpoint limit on the low side"
+			},
+			"range_high" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "the setpoint limit on the high side"
+			},
+			"target" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the observed property (e.g., air temperature)"
+			},
+			"setpoint" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the controlled property (e.g., heating setpoint)"
+			},
+			"demand" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the controlled load when on"
+			},
+			"load" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the current controlled load"
+			},
+			"total" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the uncontrolled load (if any)"
+			},
+			"market" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the market to bid into"
+			},
+			"state" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the state property of the controlled load"
+			},
+			"avg_target" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"std_target" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"bid_price" : {
+				"type" : "double",
+				"access" : "REFERENCE",
+				"description" : "the bid price"
+			},
+			"bid_quantity" : {
+				"type" : "double",
+				"access" : "REFERENCE",
+				"description" : "the bid quantity"
+			},
+			"set_temp" : {
+				"type" : "double",
+				"access" : "REFERENCE",
+				"unit" : "degF",
+				"description" : "the reset value"
+			},
+			"base_setpoint" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "degF"
+			},
+			"market_price" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "the current market clearing price seen by the controller."
+			},
+			"period" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "interval of time between market clearings"
+			},
+			"control_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"DEV_LEVEL" : "0x2",
+					"DOUBLE_RAMP" : "0x1",
+					"RAMP" : "0x0"
+				}
+			},
+			"resolve_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"SLIDING" : "0x1",
+					"DEADBAND" : "0x0"
+				}
+			},
+			"slider_setting" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"slider_setting_heat" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"slider_setting_cool" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"override" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"heating_range_high" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "degF"
+			},
+			"heating_range_low" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "degF"
+			},
+			"heating_ramp_high" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"heating_ramp_low" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"cooling_range_high" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "degF"
+			},
+			"cooling_range_low" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "degF"
+			},
+			"cooling_ramp_high" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"cooling_ramp_low" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"heating_base_setpoint" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "degF"
+			},
+			"cooling_base_setpoint" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "degF"
+			},
+			"deadband" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"heating_setpoint" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"heating_demand" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"cooling_setpoint" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"cooling_demand" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"sliding_time_delay" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "time interval desired for the sliding resolve mode to change from cooling or heating to off"
+			},
+			"use_predictive_bidding" : {
+				"type" : "bool",
+				"access" : "PUBLIC"
+			},
+			"device_actively_engaged" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"cleared_market" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"locked" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"p_ON" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"p_OFF" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"p_ONLOCK" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"p_OFFLOCK" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"delta_u" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"regulation_market_on" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the willing to change state from ON->OFF market to bid into for regulation case"
+			},
+			"regulation_market_off" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the willing to change state from OFF->ON market to bid into for regulation case"
+			},
+			"fast_regulation_signal" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "the regulation signal that the controller compares against (i.e., how often is there a control action"
+			},
+			"market_price_on" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "the current market clearing price seen by the controller in ON->OFF regulation market"
+			},
+			"market_price_off" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "the current market clearing price seen by the controller  in OFF->ON regulation market"
+			},
+			"period_on" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "interval of time between market clearings in ON->OFF regulation market"
+			},
+			"period_off" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "interval of time between market clearings in  OFF->ON regulation market"
+			},
+			"regulation_period" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "fast regulation signal period"
+			},
+			"r1" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "temporary diagnostic variable"
+			},
+			"mu0" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "temporary diagnostic variable"
+			},
+			"mu1" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "temporary diagnostic variable"
+			},
+			"average_target" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"standard_deviation_target" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"bid_id" : {
+				"type" : "int64",
+				"access" : "PUBLIC"
+			},
+			"bid_delay" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"thermostat_state" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "The name of the thermostat state property within the object being controlled"
+			},
+			"proxy_average" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"proxy_standard_deviation" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"proxy_market_id" : {
+				"type" : "int64",
+				"access" : "PUBLIC"
+			},
+			"proxy_market2_id" : {
+				"type" : "int64",
+				"access" : "PUBLIC"
+			},
+			"proxy_clear_price" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "$"
+			},
+			"proxy_clear_price2" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "$"
+			},
+			"proxy_price_cap" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"proxy_price_cap2" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"proxy_market_unit" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"proxy_initial_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"proxy_marginal_fraction" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"proxy_marginal_fraction2" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"proxy_clearing_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"proxy_clearing_quantity2" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"proxy_seller_total_quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"proxy_seller_total_quantity2" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"proxy_margin_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"PROB" : "0x2",
+					"DENY" : "0x1",
+					"NORMAL" : "0x0"
+				}
+			},
+			"proxy_clearing_type" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"NULL" : "0x0",
+					"FAILURE" : "0x5",
+					"EXACT" : "0x4",
+					"MARGINAL_PRICE" : "0x3",
+					"MARGINAL_BUYER" : "0x2",
+					"MARGINAL_SELLER" : "0x1"
+				}
+			},
+			"proxy_clearing_type2" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"NULL" : "0x0",
+					"FAILURE" : "0x5",
+					"EXACT" : "0x4",
+					"MARGINAL_PRICE" : "0x3",
+					"MARGINAL_BUYER" : "0x2",
+					"MARGINAL_SELLER" : "0x1"
+				}
+			}
+		},
+		"stubauction" : {
+			"object_size" : "1520",
+			"trl" : "8",
+			"module" : "market",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"unit" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "unit of quantity"
+			},
+			"period" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "interval of time between market clearings"
+			},
+			"last.P" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "last cleared price"
+			},
+			"current_market.clearing_price" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "next cleared price"
+			},
+			"past_market.clearing_price" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "last cleared price"
+			},
+			"next.P" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "next cleared price"
+			},
+			"avg24" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "daily average of price"
+			},
+			"std24" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "daily stdev of price"
+			},
+			"avg72" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "three day price average"
+			},
+			"std72" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "three day price stdev"
+			},
+			"avg168" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "weekly average of price"
+			},
+			"std168" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "weekly stdev of price"
+			},
+			"market_id" : {
+				"type" : "int64",
+				"access" : "REFERENCE",
+				"description" : "unique identifier of market clearing"
+			},
+			"verbose" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "enable verbose stubauction operations"
+			},
+			"control_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"DISABLED" : "0x1",
+					"NORMAL" : "0x0"
+				},
+				"description" : "the control mode to use for determining average and deviation calculations"
+			}
+		},
+		"passive_controller" : {
+			"object_size" : "1296",
+			"trl" : "8",
+			"module" : "market",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"input_state" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"input_setpoint" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"input_chained" : {
+				"type" : "bool",
+				"access" : "PUBLIC"
+			},
+			"observation" : {
+				"type" : "double",
+				"access" : "REFERENCE",
+				"description" : "the observed value"
+			},
+			"mean_observation" : {
+				"type" : "double",
+				"access" : "REFERENCE",
+				"description" : "the observed mean value"
+			},
+			"stdev_observation" : {
+				"type" : "double",
+				"access" : "REFERENCE",
+				"description" : "the observed standard deviation value"
+			},
+			"expectation" : {
+				"type" : "double",
+				"access" : "REFERENCE",
+				"description" : "the observed expected value"
+			},
+			"period" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "the cycle period for the controller logic"
+			},
+			"expectation_property" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the name of the property to observe for the expected value"
+			},
+			"expectation_object" : {
+				"type" : "object",
+				"access" : "PUBLIC",
+				"description" : "the object to watch for the expectation property"
+			},
+			"setpoint" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the name of the setpoint property in the parent object"
+			},
+			"state_property" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the name of the actuator property in the parent object"
+			},
+			"observation_object" : {
+				"type" : "object",
+				"access" : "PUBLIC",
+				"description" : "the object to observe"
+			},
+			"observation_property" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the name of the observation property"
+			},
+			"stdev_observation_property" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the name of the standard deviation observation property"
+			},
+			"base_setpoint" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "the base setpoint to base control off of"
+			},
+			"critical_day" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "used to switch between TOU and CPP days, 1 is CPP, 0 is TOU"
+			},
+			"two_tier_cpp" : {
+				"type" : "bool",
+				"access" : "PUBLIC"
+			},
+			"daily_elasticity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"sub_elasticity_first_second" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"sub_elasticity_first_third" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"second_tier_hours" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"third_tier_hours" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"first_tier_hours" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"first_tier_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"second_tier_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"third_tier_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"old_first_tier_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"old_second_tier_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"old_third_tier_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"Percent_change_in_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"Percent_change_in_peakoffpeak_ratio" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"Percent_change_in_Criticalpeakoffpeak_ratio" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"linearize_elasticity" : {
+				"type" : "bool",
+				"access" : "PUBLIC"
+			},
+			"price_offset" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"pool_pump_model" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "Boolean flag for turning on the pool pump version of the DUTYCYCLE control"
+			},
+			"base_duty_cycle" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "This is the duty cycle before modification due to the price signal"
+			},
+			"trigger_time_under_frequency" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "Time to stay in triggered off state in seconds"
+			},
+			"trigger_time_over_frequency" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "Time to stay in triggered on state in seconds"
+			},
+			"release_time_under_frequency" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "Time to stay in released on state in seconds"
+			},
+			"release_time_over_frequency" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "Time to stay in released off state in seconds"
+			},
+			"release_point_under_frequency" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "Frequency value for releasing GFA in under frequency mode"
+			},
+			"release_point_over_frequency" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "Frequency value for releasing GFA in over frequency mode"
+			},
+			"trigger_point_under_frequency" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "Frequency value for triggereing GFA in under frequency mode"
+			},
+			"trigger_point_over_frequency" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "Frequency value for triggereing GFA in over frequency mode"
+			},
+			"frequency" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "Frequency value"
+			},
+			"PFC_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"OVER_UNDER_FREQUENCY" : "0x2",
+					"UNDER_FREQUENCY" : "0x1",
+					"OVER_FREQUENCY" : "0x0"
+				},
+				"description" : "operation mode of the primary frequency controller"
+			},
+			"PFC_state" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"RELEASED_ON" : "0x6",
+					"RELEASED_OFF" : "0x5",
+					"FORCED_ON" : "0x4",
+					"FORCED_OFF" : "0x3",
+					"TRIGGERED_ON" : "0x2",
+					"TRIGGERED_OFF" : "0x1",
+					"FREE" : "0x0"
+				},
+				"description" : "State of the primary frequency controller"
+			},
+			"state_observed" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the name of the observed state property in the parent object"
+			},
+			"power_observed" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the name of the observed state property in the parent object"
+			},
+			"output_observed" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"bid_delay" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "time the controller will bid in advance before clearing"
+			},
+			"voltage_lockout" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "%",
+				"description" : "lockout primary frequency control if voltage is deviating % from nominal"
+			},
+			"voltage_lockout_time" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "voltage lockout period"
+			},
+			"voltage_lockout_state" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "value to determine if water heater is in voltage lockout"
+			},
+			"distribution_type" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"UNIFORM" : "0x2",
+					"EXPONENTIAL" : "0x1",
+					"NORMAL" : "0x0"
+				}
+			},
+			"comfort_level" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"range_high" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"range_low" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"ramp_high" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"ramp_low" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"prob_off" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"output_state" : {
+				"type" : "int32",
+				"access" : "REFERENCE",
+				"description" : "the target setpoint given the input observations"
+			},
+			"output_setpoint" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"control_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"PRIMARY_FREQUENCY_CONTROL" : "0x8",
+					"DIRECT_LOAD_CONTROL" : "0x7",
+					"ELASTICITY_MODEL" : "0x6",
+					"PROBABILITY_OFF" : "0x5",
+					"DUTYCYCLE" : "0x4",
+					"RAMP" : "0x1",
+					"NONE" : "0x0"
+				},
+				"description" : "the control mode to use for determining controller action"
+			},
+			"dlc_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"CYCLING" : "0x1",
+					"OFF" : "0x0"
+				},
+				"description" : "this mode is roughly designed to force cycle an AC unit"
+			},
+			"cycle_length_off" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s"
+			},
+			"cycle_length_on" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s"
+			}
+		},
+		"double_controller" : {
+			"object_size" : "928",
+			"trl" : "8",
+			"module" : "market",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"thermostat_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"COOL" : "0x3",
+					"HEAT" : "0x2",
+					"OFF" : "0x1",
+					"INVALID" : "0x0"
+				}
+			},
+			"last_mode" : {
+				"type" : "enumeration",
+				"access" : "REFERENCE",
+				"keywords" : {
+					"COOL" : "0x3",
+					"HEAT" : "0x2",
+					"OFF" : "0x1",
+					"INVALID" : "0x0"
+				}
+			},
+			"resolve_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"STICKY" : "0x2",
+					"DEADBAND" : "0x1",
+					"NONE" : "0x0"
+				}
+			},
+			"setup_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"HOUSE" : "0x1",
+					"NONE" : "0x0"
+				}
+			},
+			"bid_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"OFF" : "0x0",
+					"ON" : "0x1"
+				}
+			},
+			"last_mode_timer" : {
+				"type" : "int64",
+				"access" : "PUBLIC"
+			},
+			"cool_ramp_low" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"cool_ramp_high" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"cool_range_low" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"cool_range_high" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"cool_set_base" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"cool_setpoint" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"heat_ramp_low" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"heat_ramp_high" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"heat_range_low" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"heat_range_high" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"heat_set_base" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"heat_setpoint" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"temperature_name" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"cool_setpoint_name" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"cool_demand_name" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"heat_setpoint_name" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"heat_demand_name" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"load_name" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"total_load_name" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"deadband_name" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"state_name" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"market" : {
+				"type" : "object",
+				"access" : "PUBLIC",
+				"description" : "the market to bid into"
+			},
+			"market_period" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"bid_price" : {
+				"type" : "double",
+				"access" : "REFERENCE",
+				"description" : "the bid price"
+			},
+			"bid_quant" : {
+				"type" : "double",
+				"access" : "REFERENCE",
+				"description" : "the bid quantity"
+			},
+			"load" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the current controlled load"
+			},
+			"total" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the uncontrolled load (if any)"
+			},
+			"last_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"temperature" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"cool_bid" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"heat_bid" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"cool_demand" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"heat_demand" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"avg_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"stdev_price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			}
+		},
+		"stub_bidder" : {
+			"object_size" : "152",
+			"trl" : "0",
+			"module" : "market",
+			"profiler.numobjs" : "1",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"bid_period" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s"
+			},
+			"count" : {
+				"type" : "int16",
+				"access" : "PUBLIC"
+			},
+			"market" : {
+				"type" : "object",
+				"access" : "PUBLIC"
+			},
+			"role" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"SELLER" : "0x1",
+					"BUYER" : "0x0"
+				}
+			},
+			"price" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"quantity" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"bid_id" : {
+				"type" : "int64",
+				"access" : "PUBLIC"
+			}
+		},
+		"generator_controller" : {
+			"object_size" : "3632",
+			"trl" : "0",
+			"module" : "market",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"generator_state" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"STARTING" : "0x2",
+					"RUNNING" : "0x1",
+					"OFF" : "0x0"
+				},
+				"description" : "Current generator state"
+			},
+			"amortization_type" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"LINEAR_BID" : "0x2",
+					"LINEAR_COST" : "0x1",
+					"EXPONENTIAL" : "0x0"
+				},
+				"description" : "Amortization compounding method"
+			},
+			"generator_state_number" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "Current generator state as numeric value"
+			},
+			"market" : {
+				"type" : "object",
+				"access" : "PUBLIC",
+				"description" : "Market the object will watch and bid into"
+			},
+			"bid_curve" : {
+				"type" : "char1024",
+				"access" : "PUBLIC",
+				"description" : "Bidding curve text format"
+			},
+			"bid_curve_file" : {
+				"type" : "char1024",
+				"access" : "PUBLIC",
+				"description" : "Bidding curve file name"
+			},
+			"bid_generator_rating" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "VA",
+				"description" : "Size of generator in VA for the bid curve"
+			},
+			"update_curve" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "Flag to force updating of bidding curve parse"
+			},
+			"is_marginal_gen" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "Flag to indicate if the generator is a marginal generator"
+			},
+			"generator_rating" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "VA",
+				"description" : "Size of generator in VA for the active bid"
+			},
+			"generator_output" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "Current real power output of generator"
+			},
+			"input_unit_base" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "MW",
+				"description" : "Base multiplier for generator bid units"
+			},
+			"startup_cost" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "$",
+				"description" : "Cost to start the generator from OFF status"
+			},
+			"shutdown_cost" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "$",
+				"description" : "Cost to shut down the generator prematurely"
+			},
+			"minimum_runtime" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "Minimum time the generator should run to avoid shutdown cost"
+			},
+			"minimum_downtime" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "Minimum down time for the generator before it can bid again"
+			},
+			"capacity_factor" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "Calculation of generator's current capacity factor based on the market period"
+			},
+			"amortization_factor" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "1/s",
+				"description" : "Exponential decay factor in 1/s for shutdown cost repayment"
+			},
+			"bid_delay" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "Time before a market closes to bid"
+			},
+			"generator_attachment" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"BUILDING" : "0x1",
+					"STANDALONE" : "0x0"
+				},
+				"description" : "Generator attachment type - determines interactions"
+			},
+			"building_load_curr" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "Present building load value (if BUILDING attachment)"
+			},
+			"building_load_bid" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "Expected building load value for currently bidding market period (if BUILDING attachment)"
+			},
+			"year_runtime_limit" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "h",
+				"description" : "Total number of hours the generator can run in a year"
+			},
+			"current_year_runtime" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "h",
+				"description" : "Total number of hours generator has run this year"
+			},
+			"runtime_year_end" : {
+				"type" : "char1024",
+				"access" : "PUBLIC",
+				"description" : "Date and time the generator runtime year resets"
+			},
+			"scaling_factor" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "unit",
+				"description" : "scaling factor applied to license premium calculation"
+			},
+			"license_premium" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "current value of the generator license premium calculated"
+			},
+			"hours_in_year" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "h",
+				"description" : "Number of hours assumed for the total year"
+			},
+			"op_and_maint_cost" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "$",
+				"description" : "Operation and maintenance cost per runtime year"
+			},
+			"bid_id" : {
+				"type" : "int64",
+				"access" : "PUBLIC"
+			}
+		},
+		"supervisory_control" : {
+			"object_size" : "136",
+			"trl" : "8",
+			"module" : "market",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"unit" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "unit of quantity"
+			},
+			"period" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "interval of time between market clearings"
+			},
+			"market_id" : {
+				"type" : "int32",
+				"access" : "REFERENCE",
+				"description" : "unique identifier of market clearing"
+			},
+			"nominal_frequency" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "Hz",
+				"description" : "nominal frequency"
+			},
+			"droop" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "%",
+				"description" : "droop value for the supervisor"
+			},
+			"frequency_deadband" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "Hz",
+				"description" : "frequency deadband for assigning trigger frequencies"
+			},
+			"PFC_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"OVER_UNDER_FREQUENCY" : "0x2",
+					"UNDER_FREQUENCY" : "0x1",
+					"OVER_FREQUENCY" : "0x0"
+				},
+				"description" : "operation mode of the primary frequency controller"
+			},
+			"bid_sort_mode" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"VOLTAGE_EXTREMES" : "0x4",
+					"VOLTAGE_DEVIAION_FROM_NOMINAL" : "0x3",
+					"POWER_DECREASING" : "0x2",
+					"POWER_INCREASING" : "0x1",
+					"NONE" : "0x0"
+				},
+				"description" : "Determines how the bids into the market is sorted to contruct the PF curve"
+			}
+		},
+		"player" : {
+			"object_size" : "13672",
+			"trl" : "9",
+			"module" : "tape",
+			"profiler.numobjs" : "1",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"property" : {
+				"type" : "char256",
+				"access" : "PUBLIC",
+				"flags" : "REQUIRED",
+				"description" : "property to play values into"
+			},
+			"file" : {
+				"type" : "char1024",
+				"access" : "PUBLIC",
+				"flags" : "REQUIRED",
+				"description" : "file from which to read values"
+			},
+			"filetype" : {
+				"type" : "char8",
+				"access" : "PUBLIC"
+			},
+			"mode" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"loop" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"default" : "0",
+				"description" : "number of time to loop the player"
+			}
+		},
+		"shaper" : {
+			"object_size" : "66200",
+			"trl" : "8",
+			"module" : "tape",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"file" : {
+				"type" : "char1024",
+				"access" : "PUBLIC"
+			},
+			"filetype" : {
+				"type" : "char8",
+				"access" : "PUBLIC"
+			},
+			"mode" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"group" : {
+				"type" : "char256",
+				"access" : "PUBLIC"
+			},
+			"property" : {
+				"type" : "char256",
+				"access" : "PUBLIC"
+			},
+			"magnitude" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			},
+			"events" : {
+				"type" : "double",
+				"access" : "PUBLIC"
+			}
+		},
+		"recorder" : {
+			"object_size" : "15816",
+			"trl" : "9",
+			"module" : "tape",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"trigger" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"default" : "",
+				"description" : "condition to trigger recorder"
+			},
+			"file" : {
+				"type" : "char1024",
+				"access" : "PUBLIC",
+				"flags" : "REQUIRED",
+				"description" : "file in which to record data"
+			},
+			"filetype" : {
+				"type" : "char8",
+				"access" : "PUBLIC",
+				"description" : "file type to use when storing data"
+			},
+			"mode" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"default" : "file",
+				"description" : "recorder operating mode"
+			},
+			"multifile" : {
+				"type" : "char1024",
+				"access" : "PUBLIC"
+			},
+			"limit" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"default" : "0",
+				"description" : "limit on number of rows to record (0=none)"
+			},
+			"plotcommands" : {
+				"type" : "char1024",
+				"access" : "PUBLIC"
+			},
+			"xdata" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"columns" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"flush" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"default" : "-1",
+				"description" : "row flush mode (-1=when full, 0=every row, >0=interval in seconds)"
+			},
+			"format" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"default" : "0"
+			},
+			"interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"default" : "-1 s",
+				"description" : "sampling interval"
+			},
+			"strftime_format" : {
+				"type" : "char256",
+				"access" : "PUBLIC",
+				"description" : "date/time format"
+			},
+			"property" : {
+				"type" : "method",
+				"access" : "PUBLIC",
+				"flags" : "REQUIRED",
+				"description" : "list of properties to sample"
+			},
+			"output" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"SVG" : "0x6",
+					"PNG" : "0x5",
+					"PDF" : "0x4",
+					"JPG" : "0x3",
+					"GIF" : "0x2",
+					"EPS" : "0x1",
+					"SCREEN" : "0x0"
+				}
+			},
+			"header_units" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"NONE" : "0x2",
+					"ALL" : "0x1",
+					"DEFAULT" : "0x0"
+				},
+				"default" : "DEFAULT",
+				"description" : "header option for output of units"
+			},
+			"line_units" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"NONE" : "0x2",
+					"ALL" : "0x1",
+					"DEFAULT" : "0x0"
+				},
+				"default" : "DEFAULT",
+				"description" : "inline option for output of units"
+			}
+		},
+		"multi_recorder" : {
+			"object_size" : "15816",
+			"trl" : "8",
+			"module" : "tape",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"default" : "-1 s",
+				"description" : "sampling interval"
+			},
+			"property" : {
+				"type" : "method",
+				"access" : "PUBLIC",
+				"flags" : "REQUIRED",
+				"description" : "list of properties to sample"
+			},
+			"trigger" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"default" : "",
+				"description" : "condition to trigger recorder"
+			},
+			"file" : {
+				"type" : "char1024",
+				"access" : "PUBLIC",
+				"flags" : "REQUIRED",
+				"description" : "file in which to record data"
+			},
+			"filetype" : {
+				"type" : "char8",
+				"access" : "PUBLIC",
+				"description" : "file type to use when storing data"
+			},
+			"mode" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"default" : "file",
+				"description" : "recorder operating mode"
+			},
+			"multifile" : {
+				"type" : "char1024",
+				"access" : "PUBLIC"
+			},
+			"limit" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"default" : "0",
+				"description" : "limit on number of rows to record (0=none)"
+			},
+			"plotcommands" : {
+				"type" : "char1024",
+				"access" : "PUBLIC"
+			},
+			"xdata" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"columns" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"format" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"default" : "0"
+			},
+			"output" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"SVG" : "0x6",
+					"PNG" : "0x5",
+					"PDF" : "0x4",
+					"JPG" : "0x3",
+					"GIF" : "0x2",
+					"EPS" : "0x1",
+					"SCREEN" : "0x0"
+				}
+			},
+			"header_units" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"NONE" : "0x2",
+					"ALL" : "0x1",
+					"DEFAULT" : "0x0"
+				}
+			},
+			"line_units" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"NONE" : "0x2",
+					"ALL" : "0x1",
+					"DEFAULT" : "0x0"
+				}
+			}
+		},
+		"collector" : {
+			"object_size" : "7568",
+			"trl" : "9",
+			"module" : "tape",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"trigger" : {
+				"type" : "char32",
+				"access" : "PUBLIC"
+			},
+			"file" : {
+				"type" : "char1024",
+				"access" : "PUBLIC"
+			},
+			"limit" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"group" : {
+				"type" : "char256",
+				"access" : "PUBLIC"
+			},
+			"flush" : {
+				"type" : "int32",
+				"access" : "PUBLIC"
+			},
+			"interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s"
+			},
+			"property" : {
+				"type" : "method",
+				"access" : "PUBLIC"
+			}
+		},
+		"histogram" : {
+			"object_size" : "4568",
+			"trl" : "7",
+			"module" : "tape",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"filename" : {
+				"type" : "char1024",
+				"access" : "PUBLIC",
+				"description" : "the name of the file to write"
+			},
+			"filetype" : {
+				"type" : "char8",
+				"access" : "PUBLIC",
+				"description" : "the format to output a histogram in"
+			},
+			"mode" : {
+				"type" : "char32",
+				"access" : "PUBLIC",
+				"description" : "the mode of file output"
+			},
+			"group" : {
+				"type" : "char1024",
+				"access" : "PUBLIC",
+				"description" : "the GridLAB-D group expression to use for this histogram"
+			},
+			"bins" : {
+				"type" : "char1024",
+				"access" : "PUBLIC",
+				"description" : "the specific bin values to use"
+			},
+			"property" : {
+				"type" : "char256",
+				"access" : "PUBLIC",
+				"description" : "the property to sample"
+			},
+			"min" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "the minimum value of the auto-sized bins to use"
+			},
+			"max" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "the maximum value of the auto-sized bins to use"
+			},
+			"samplerate" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "the rate at which samples are read"
+			},
+			"countrate" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "the reate at which bins are counted and written"
+			},
+			"bin_count" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "the number of auto-sized bins to use"
+			},
+			"limit" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "the number of samples to write"
+			}
+		},
+		"group_recorder" : {
+			"object_size" : "1696",
+			"trl" : "0",
+			"module" : "tape",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"file" : {
+				"type" : "char256",
+				"access" : "PUBLIC",
+				"description" : "output file name"
+			},
+			"group" : {
+				"type" : "char1024",
+				"access" : "PUBLIC",
+				"description" : "group definition string"
+			},
+			"interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "recordering interval (0 'every iteration', -1 'on change')"
+			},
+			"flush_interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "file flush interval (0 never, negative on samples)"
+			},
+			"strict" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "causes the group_recorder to stop the simulation should there be a problem opening or writing with the group_recorder"
+			},
+			"print_units" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "flag to append units to each written value, if applicable"
+			},
+			"property" : {
+				"type" : "char256",
+				"access" : "PUBLIC",
+				"description" : "property to record"
+			},
+			"limit" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "the maximum number of lines to write to the file"
+			},
+			"format" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "determines whether output timestamp is formatted to be formatted as human-readable (default) or epoch"
+			},
+			"complex_part" : {
+				"type" : "enumeration",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"ANG_RAD" : "0x5",
+					"ANG_DEG" : "0x4",
+					"MAG" : "0x3",
+					"IMAG" : "0x2",
+					"REAL" : "0x1",
+					"NONE" : "0x0"
+				},
+				"description" : "the complex part to record if complex properties are gathered"
+			}
+		},
+		"violation_recorder" : {
+			"object_size" : "1576",
+			"trl" : "0",
+			"module" : "tape",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"file" : {
+				"type" : "char256",
+				"access" : "PUBLIC",
+				"description" : "output file name"
+			},
+			"summary" : {
+				"type" : "char256",
+				"access" : "PUBLIC",
+				"description" : "summary output file name"
+			},
+			"virtual_substation" : {
+				"type" : "char256",
+				"access" : "PUBLIC",
+				"description" : "name of the substation node to monitor for reverse flow violation"
+			},
+			"interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "recording interval (0 'every iteration', -1 'on change')"
+			},
+			"flush_interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "file flush interval (0 never, negative on samples)"
+			},
+			"strict" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "causes the violation_recorder to stop the simulation should there be a problem opening or writing with the violation_recorder"
+			},
+			"echo" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "causes the violation_recorder to echo messages to the screen"
+			},
+			"limit" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "the maximum number of lines to write to the file"
+			},
+			"violation_delay" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "the number of seconds to skip before recording violations"
+			},
+			"xfrmr_thermal_limit_upper" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "xfrmr_thermal_limit_upper"
+			},
+			"xfrmr_thermal_limit_lower" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "xfrmr_thermal_limit_lower"
+			},
+			"line_thermal_limit_upper" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "line_thermal_limit_upper"
+			},
+			"line_thermal_limit_lower" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "line_thermal_limit_lower"
+			},
+			"node_instantaneous_voltage_limit_upper" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "node_instantaneous_voltage_limit_upper"
+			},
+			"node_instantaneous_voltage_limit_lower" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "node_instantaneous_voltage_limit_lower"
+			},
+			"node_continuous_voltage_limit_upper" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "node_continuous_voltage_limit_upper"
+			},
+			"node_continuous_voltage_limit_lower" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "node_continuous_voltage_limit_lower"
+			},
+			"node_continuous_voltage_interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "node_continuous_voltage_interval"
+			},
+			"secondary_dist_voltage_rise_upper_limit" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "secondary_dist_voltage_rise_upper_limit"
+			},
+			"secondary_dist_voltage_rise_lower_limit" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "secondary_dist_voltage_rise_lower_limit"
+			},
+			"substation_breaker_A_limit" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "breaker_phase_A_limit"
+			},
+			"substation_breaker_B_limit" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "breaker_phase_B_limit"
+			},
+			"substation_breaker_C_limit" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "breaker_phase_C_limit"
+			},
+			"substation_pf_lower_limit" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "substation_pf_lower_limit"
+			},
+			"inverter_v_chng_per_interval_upper_bound" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "inverter_v_chng_per_interval_upper_bound"
+			},
+			"inverter_v_chng_per_interval_lower_bound" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "inverter_v_chng_per_interval_lower_bound"
+			},
+			"inverter_v_chng_interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"description" : "inverter_v_chng_interval"
+			},
+			"violation_flag" : {
+				"type" : "set",
+				"access" : "PUBLIC",
+				"keywords" : {
+					"ALLVIOLATIONS" : "0xff",
+					"VIOLATION8" : "0x80",
+					"VIOLATION7" : "0x40",
+					"VIOLATION6" : "0x20",
+					"VIOLATION5" : "0x10",
+					"VIOLATION4" : "0x8",
+					"VIOLATION3" : "0x4",
+					"VIOLATION2" : "0x2",
+					"VIOLATION1" : "0x1",
+					"VIOLATION0" : "0x0"
+				},
+				"description" : "bit set for determining which violations to check"
+			}
+		},
+		"metrics_collector" : {
+			"object_size" : "720",
+			"trl" : "0",
+			"module" : "tape",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "Interval at which the metrics_collector output is stored in JSON format"
+			}
+		},
+		"metrics_collector_writer" : {
+			"object_size" : "6960",
+			"trl" : "0",
+			"module" : "tape",
+			"profiler.numobjs" : "0",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"filename" : {
+				"type" : "char256",
+				"access" : "PUBLIC",
+				"description" : "the JSON formatted output file name"
+			},
+			"interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "Interval at which the metrics_collector_writer output is stored in JSON format"
+			}
+		},
 		"residential_enduse" : {
 			"object_size" : "952",
 			"trl" : "0",
@@ -11273,7 +11273,7 @@
 			"parent" : "residential_enduse",
 			"trl" : "9",
 			"module" : "residential",
-			"profiler.numobjs" : "1",
+			"profiler.numobjs" : "0",
 			"profiler.clocks" : "0",
 			"profiler.count" : "0",
 			"weather" : {
@@ -20236,7 +20236,7 @@
 		"FEEDER" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "100"
+			"value" : "250"
 		},
 		"climate::message_flags" : {
 			"type" : "set",
@@ -20253,57 +20253,6 @@
 			"type" : "char1024",
 			"access" : "PUBLIC",
 			"value" : "/usr/local/opt/gridlabd/4.3.1-220609-develop/share/gridlabd/weather/US"
-		},
-		"market::message_flags" : {
-			"type" : "set",
-			"keywords" : {
-				"QUIET" : "0x10000",
-				"WARNING" : "0x20000",
-				"DEBUG" : "0x40000",
-				"VERBOSE" : "0x80000"
-			},
-			"access" : "PUBLIC",
-			"value" : ""
-		},
-		"market::bid_offset" : {
-			"type" : "double",
-			"access" : "PUBLIC",
-			"value" : "+0.0001 $"
-		},
-		"tape::gnuplot_path" : {
-			"type" : "char1024",
-			"access" : "PUBLIC",
-			"value" : "/usr/bin/gnuplot"
-		},
-		"tape::flush_interval" : {
-			"type" : "int32",
-			"access" : "PUBLIC",
-			"value" : "0"
-		},
-		"tape::csv_data_only" : {
-			"type" : "int32",
-			"access" : "PUBLIC",
-			"value" : "2"
-		},
-		"tape::csv_header_type" : {
-			"type" : "enumeration",
-			"keywords" : {
-				"NAME" : "0x2",
-				"NONE" : "0x1",
-				"FULL" : "0x0"
-			},
-			"access" : "PUBLIC",
-			"value" : "NAME"
-		},
-		"tape::csv_keep_clean" : {
-			"type" : "int32",
-			"access" : "PUBLIC",
-			"value" : "0"
-		},
-		"tape::delta_mode_needed" : {
-			"type" : "timestamp",
-			"access" : "PUBLIC",
-			"value" : "NEVER"
 		},
 		"powerflow::message_flags" : {
 			"type" : "set",
@@ -20679,10 +20628,61 @@
 			"access" : "PUBLIC",
 			"value" : "NONE"
 		},
+		"market::message_flags" : {
+			"type" : "set",
+			"keywords" : {
+				"QUIET" : "0x10000",
+				"WARNING" : "0x20000",
+				"DEBUG" : "0x40000",
+				"VERBOSE" : "0x80000"
+			},
+			"access" : "PUBLIC",
+			"value" : ""
+		},
+		"market::bid_offset" : {
+			"type" : "double",
+			"access" : "PUBLIC",
+			"value" : "+0.0001 $"
+		},
+		"tape::gnuplot_path" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "/usr/bin/gnuplot"
+		},
+		"tape::flush_interval" : {
+			"type" : "int32",
+			"access" : "PUBLIC",
+			"value" : "0"
+		},
+		"tape::csv_data_only" : {
+			"type" : "int32",
+			"access" : "PUBLIC",
+			"value" : "2"
+		},
+		"tape::csv_header_type" : {
+			"type" : "enumeration",
+			"keywords" : {
+				"NAME" : "0x2",
+				"NONE" : "0x1",
+				"FULL" : "0x0"
+			},
+			"access" : "PUBLIC",
+			"value" : "NAME"
+		},
+		"tape::csv_keep_clean" : {
+			"type" : "int32",
+			"access" : "PUBLIC",
+			"value" : "0"
+		},
+		"tape::delta_mode_needed" : {
+			"type" : "timestamp",
+			"access" : "PUBLIC",
+			"value" : "NEVER"
+		},
 		"BASE_ENDUSES" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "DRYER|CLOTHESWASHER|RANGE|REFRIGERATOR|FREEZER|MICROWAVE|DISHWASHER|PLUGS|LIGHTS|EVCHARGER"
+			"value" : "DRYER|CLOTHESWASHER|RANGE|REFRIGERATOR|FREEZER|MICROWAVE|DISHWASHER|PLUGS|LIGHTS"
 		},
 		"residential::message_flags" : {
 			"type" : "set",
@@ -20766,7 +20766,7 @@
 				"ALL" : "0x71f0307"
 			},
 			"access" : "PUBLIC",
-			"value" : "DRYER|CLOTHESWASHER|EVCHARGER|RANGE|REFRIGERATOR|FREEZER|MICROWAVE|DISHWASHER|PLUGS|LIGHTS"
+			"value" : "DRYER|CLOTHESWASHER|RANGE|REFRIGERATOR|FREEZER|MICROWAVE|DISHWASHER|PLUGS|LIGHTS"
 		},
 		"residential::implicit_enduse_source" : {
 			"type" : "enumeration",
@@ -20989,11 +20989,16 @@
 		"SEQ_ID" : {
 			"type" : "int32",
 			"access" : "PUBLIC",
-			"value" : "1"
+			"value" : "0"
+		},
+		"PHASE" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "A"
 		}
 	},
 	"schedules" : {
-		"residential-evcharter-default" : "\n\t* * * * * 0;\n"
+		"residential-evcharter-default" : "\n\t* 18-22 * * * 6.7;\n\t* 23-17 * * * 0;\n"
 	},
 	"objects" : {
 		"weather" : {
@@ -21004,7 +21009,7 @@
 			"rank" : "0",
 			"clock" : "2020-01-01 00:00:00 MST",
 			"rng_state" : "16807",
-			"guid" : "4E38C90101136733247707D33BE1E7DC",
+			"guid" : "45A102471760EEC8667F91327F5DAAD",
 			"flags" : "0x100",
 			"solar_elevation": "-0.0335635 rad",
 			"solar_azimuth": "2.14204 rad",
@@ -21062,14 +21067,14 @@
 			"rank" : "1",
 			"clock" : "2020-01-01 00:00:00 MST",
 			"rng_state" : "282475249",
-			"guid" : "4998F7B758533FBB7CD2A6EC7B4EA7E",
+			"guid" : "EE46C779383CC426F26AACCFAC0499A",
 			"flags" : "0x0",
 			"bid_period": "300 s",
 			"count": "0",
 			"market": "",
 			"role": "SELLER",
 			"price": "0",
-			"quantity": "80",
+			"quantity": "200",
 			"bid_id": "-1"
 		},
 		"player:2" : {
@@ -21079,7 +21084,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "1622650073",
-			"guid" : "7F255389FB2C7F585E30D5EF068AC904",
+			"guid" : "329D73E3597E15E1E9615BFAFD85096",
 			"flags" : "0x0",
 			"property": "price",
 			"file": "caiso.csv",
@@ -21093,7 +21098,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "984943658",
-			"guid" : "40AE20E82ED6DD046D3020737811D25F",
+			"guid" : "1F684B6B07036E93391BE6AAF97CC071",
 			"flags" : "0x0",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -21214,465 +21219,6 @@
 			"phases": "ABC",
 			"nominal_voltage": "2401 V",
 			"violation_detected": "NONE"
-		},
-		"feeder" : {
-			"id" : "4",
-			"class" : "transformer",
-			"rank" : "0",
-			"clock" : "INIT",
-			"rng_state" : "1144108930",
-			"guid" : "3E4AF55E9A9C4C8F3905E77AAEE0D761",
-			"flags" : "0x0",
-			"configuration": "",
-			"climate": "",
-			"ambient_temperature": "0 degC",
-			"top_oil_hot_spot_temperature": "0 degC",
-			"winding_hot_spot_temperature": "0 degC",
-			"percent_loss_of_life": "0",
-			"aging_constant": "0",
-			"use_thermal_model": "FALSE",
-			"transformer_replacement_count": "0",
-			"aging_granularity": "0 s",
-			"phase_A_primary_flux_value": "0 Wb",
-			"phase_B_primary_flux_value": "0 Wb",
-			"phase_C_primary_flux_value": "0 Wb",
-			"phase_A_secondary_flux_value": "0 Wb",
-			"phase_B_secondary_flux_value": "0 Wb",
-			"phase_C_secondary_flux_value": "0 Wb",
-			"degradation_factor": "0 pu",
-			"status": "CLOSED",
-			"from": "",
-			"to": "",
-			"power_in": "0+0j VA",
-			"power_out": "0+0j VA",
-			"power_out_real": "0 W",
-			"power_losses": "0+0j VA",
-			"power_in_A": "0+0j VA",
-			"power_in_B": "0+0j VA",
-			"power_in_C": "0+0j VA",
-			"power_out_A": "0+0j VA",
-			"power_out_B": "0+0j VA",
-			"power_out_C": "0+0j VA",
-			"power_losses_A": "0+0j VA",
-			"power_losses_B": "0+0j VA",
-			"power_losses_C": "0+0j VA",
-			"current_out_A": "0+0j A",
-			"current_out_B": "0+0j A",
-			"current_out_C": "0+0j A",
-			"current_in_A": "0+0j A",
-			"current_in_B": "0+0j A",
-			"current_in_C": "0+0j A",
-			"fault_current_in_A": "0+0j A",
-			"fault_current_in_B": "0+0j A",
-			"fault_current_in_C": "0+0j A",
-			"fault_current_out_A": "0+0j A",
-			"fault_current_out_B": "0+0j A",
-			"fault_current_out_C": "0+0j A",
-			"fault_voltage_A": "0+0j A",
-			"fault_voltage_B": "0+0j A",
-			"fault_voltage_C": "0+0j A",
-			"flow_direction": "UNKNOWN",
-			"mean_repair_time": "0 s",
-			"continuous_rating": "1000 A",
-			"emergency_rating": "2000 A",
-			"inrush_convergence_value": "0.0001 V",
-			"violation_rating": "0 A",
-			"phases": "AS",
-			"nominal_voltage": "0 V",
-			"violation_detected": "NONE"
-		},
-		"transformer_A" : {
-			"id" : "5",
-			"class" : "transformer_configuration",
-			"rank" : "0",
-			"clock" : "INIT",
-			"rng_state" : "470211272",
-			"guid" : "1BFD5BCB9ED0915C15DA05EDD516C1C1",
-			"flags" : "0x0",
-			"connect_type": "SINGLE_PHASE_CENTER_TAPPED",
-			"install_type": "PADMOUNT",
-			"coolant_type": "UNKNOWN",
-			"cooling_type": "UNKNOWN",
-			"primary_voltage": "2401 V",
-			"secondary_voltage": "120 V",
-			"power_rating": "0 kVA",
-			"powerA_rating": "100 kVA",
-			"powerB_rating": "0 kVA",
-			"powerC_rating": "0 kVA",
-			"powerN_rating": "0 kVA",
-			"resistance": "0.006 pu*Ohm",
-			"reactance": "0.0136 pu*Ohm",
-			"impedance": "0.006+0.0136j pu*Ohm",
-			"resistance1": "0 pu*Ohm",
-			"reactance1": "0 pu*Ohm",
-			"impedance1": "0+0j pu*Ohm",
-			"resistance2": "0 pu*Ohm",
-			"reactance2": "0 pu*Ohm",
-			"impedance2": "0+0j pu*Ohm",
-			"shunt_resistance": "1e+09 pu*Ohm",
-			"shunt_reactance": "1e+09 pu*Ohm",
-			"shunt_impedance": "1e+09+1e+09j pu*Ohm",
-			"core_coil_weight": "0 lb",
-			"tank_fittings_weight": "0 lb",
-			"oil_volume": "0 gal",
-			"rated_winding_time_constant": "0 h",
-			"rated_winding_hot_spot_rise": "0 degC",
-			"rated_top_oil_rise": "0 degC",
-			"no_load_loss": "0 pu",
-			"full_load_loss": "0 pu",
-			"reactance_resistance_ratio": "4.5",
-			"installed_insulation_life": "0 h",
-			"magnetization_location": "NONE",
-			"inrush_saturation_enabled": "FALSE",
-			"L_A": "0.2 pu",
-			"phi_K": "1.17 pu",
-			"phi_M": "1 pu",
-			"I_M": "0.01 pu",
-			"T_D": "0.5"
-		},
-		"main_A" : {
-			"id" : "6",
-			"class" : "triplex_node",
-			"rank" : "0",
-			"clock" : "INIT",
-			"rng_state" : "101027544",
-			"guid" : "78161995FB2EAF12F517DA4DB7CA359",
-			"flags" : "0x0",
-			"bustype": "PQ",
-			"busflags": "",
-			"reference_bus": "",
-			"maximum_voltage_error": "0 V",
-			"voltage_1": "0+0j V",
-			"voltage_2": "0+0j V",
-			"voltage_N": "0+0j V",
-			"voltage_12": "0+0j V",
-			"voltage_1N": "0+0j V",
-			"voltage_2N": "0+0j V",
-			"house_present": "FALSE",
-			"reset_disabled_island_state": "FALSE",
-			"GFA_enable": "FALSE",
-			"GFA_freq_low_trip": "59.5 Hz",
-			"GFA_freq_high_trip": "60.5 Hz",
-			"GFA_volt_low_trip": "0.8 pu",
-			"GFA_volt_high_trip": "1.2 pu",
-			"GFA_reconnect_time": "300 s",
-			"GFA_freq_disconnect_time": "0.2 s",
-			"GFA_volt_disconnect_time": "0.2 s",
-			"GFA_status": "TRUE",
-			"service_status": "IN_SERVICE",
-			"service_status_double": "-1",
-			"previous_uptime": "-1 min",
-			"current_uptime": "-1 min",
-			"topological_parent": "",
-			"frequency_measure_type": "NONE",
-			"sfm_Tf": "0.01 s",
-			"pll_Kp": "10 pu",
-			"pll_Ki": "100 pu",
-			"measured_angle_1": "0 rad",
-			"measured_frequency_1": "60 Hz",
-			"measured_angle_2": "0 rad",
-			"measured_frequency_2": "60 Hz",
-			"measured_angle_12": "0 rad",
-			"measured_frequency_12": "60 Hz",
-			"measured_frequency": "60 Hz",
-			"phases": "AS",
-			"nominal_voltage": "120 V",
-			"violation_detected": "NONE"
-		},
-		"meter_1" : {
-			"id" : "7",
-			"class" : "triplex_meter",
-			"rank" : "1",
-			"clock" : "INIT",
-			"rng_state" : "1457850878",
-			"guid" : "789488962201C8C27E12E73A767184B8",
-			"flags" : "0x0",
-			"measured_real_energy": "0 Wh",
-			"measured_real_energy_delta": "0 Wh",
-			"measured_reactive_energy": "0 VAh",
-			"measured_reactive_energy_delta": "0 VAh",
-			"measured_energy_delta_timestep": "-1 s",
-			"measured_power": "0+0j VA",
-			"indiv_measured_power_1": "0+0j VA",
-			"indiv_measured_power_2": "0+0j VA",
-			"indiv_measured_power_N": "0+0j VA",
-			"measured_demand": "0 W",
-			"measured_real_power": "0 W",
-			"measured_reactive_power": "0 VAr",
-			"meter_power_consumption": "0+0j VA",
-			"measured_voltage_1": "0+0j V",
-			"measured_voltage_2": "0+0j V",
-			"measured_voltage_12": "0+0j V",
-			"measured_voltage_N": "0+0j V",
-			"measured_real_max_voltage_1_in_interval": "0",
-			"measured_real_max_voltage_2_in_interval": "0",
-			"measured_real_max_voltage_12_in_interval": "0",
-			"measured_imag_max_voltage_1_in_interval": "0",
-			"measured_imag_max_voltage_2_in_interval": "0",
-			"measured_imag_max_voltage_12_in_interval": "0",
-			"measured_real_min_voltage_1_in_interval": "0",
-			"measured_real_min_voltage_2_in_interval": "0",
-			"measured_real_min_voltage_12_in_interval": "0",
-			"measured_imag_min_voltage_1_in_interval": "0",
-			"measured_imag_min_voltage_2_in_interval": "0",
-			"measured_imag_min_voltage_12_in_interval": "0",
-			"measured_avg_voltage_mag_1_in_interval": "0",
-			"measured_avg_voltage_mag_2_in_interval": "0",
-			"measured_avg_voltage_mag_12_in_interval": "0",
-			"measured_current_1": "0+0j A",
-			"measured_current_2": "0+0j A",
-			"measured_current_N": "0+0j A",
-			"customer_interrupted": "FALSE",
-			"customer_interrupted_secondary": "FALSE",
-			"monthly_bill": "0 $",
-			"previous_monthly_bill": "0 $",
-			"previous_monthly_energy": "0 kWh",
-			"monthly_fee": "0 $",
-			"monthly_energy": "0 kWh",
-			"bill_mode": "NONE",
-			"power_market": "",
-			"bill_day": "15",
-			"price": "0 $/kWh",
-			"price_base": "0 $/kWh",
-			"first_tier_price": "0 $/kWh",
-			"first_tier_energy": "0 kWh",
-			"second_tier_price": "0 $/kWh",
-			"second_tier_energy": "0 kWh",
-			"third_tier_price": "0 $/kWh",
-			"third_tier_energy": "0 kWh",
-			"service_level": "NORMAL",
-			"bustype": "PQ",
-			"busflags": "",
-			"reference_bus": "",
-			"maximum_voltage_error": "0 V",
-			"voltage_1": "0+0j V",
-			"voltage_2": "0+0j V",
-			"voltage_N": "0+0j V",
-			"voltage_12": "0+0j V",
-			"voltage_1N": "0+0j V",
-			"voltage_2N": "0+0j V",
-			"house_present": "FALSE",
-			"reset_disabled_island_state": "FALSE",
-			"GFA_enable": "FALSE",
-			"GFA_freq_low_trip": "59.5 Hz",
-			"GFA_freq_high_trip": "60.5 Hz",
-			"GFA_volt_low_trip": "0.8 pu",
-			"GFA_volt_high_trip": "1.2 pu",
-			"GFA_reconnect_time": "300 s",
-			"GFA_freq_disconnect_time": "0.2 s",
-			"GFA_volt_disconnect_time": "0.2 s",
-			"GFA_status": "TRUE",
-			"service_status": "IN_SERVICE",
-			"service_status_double": "-1",
-			"previous_uptime": "-1 min",
-			"current_uptime": "-1 min",
-			"topological_parent": "",
-			"frequency_measure_type": "NONE",
-			"sfm_Tf": "0.01 s",
-			"pll_Kp": "10 pu",
-			"pll_Ki": "100 pu",
-			"measured_angle_1": "0 rad",
-			"measured_frequency_1": "60 Hz",
-			"measured_angle_2": "0 rad",
-			"measured_frequency_2": "60 Hz",
-			"measured_angle_12": "0 rad",
-			"measured_frequency_12": "60 Hz",
-			"measured_frequency": "60 Hz",
-			"phases": "AS",
-			"nominal_voltage": "120 V",
-			"violation_detected": "NONE"
-		},
-		"house:8" : {
-			"id" : "8",
-			"class" : "house",
-			"parent" : "meter_1",
-			"rank" : "0",
-			"clock" : "INIT",
-			"rng_state" : "1458777923",
-			"guid" : "27264332FA9414ED68558CEB7FF28104",
-			"flags" : "0x0",
-			"weather": "",
-			"floor_area": "0 sf",
-			"gross_wall_area": "0 sf",
-			"ceiling_height": "0 ft",
-			"aspect_ratio": "0",
-			"envelope_UA": "0 Btu/degF/h",
-			"window_wall_ratio": "0",
-			"number_of_doors": "0",
-			"exterior_wall_fraction": "0",
-			"interior_exterior_wall_ratio": "0",
-			"exterior_ceiling_fraction": "0",
-			"exterior_floor_fraction": "0",
-			"window_shading": "0",
-			"window_exterior_transmission_coefficient": "0",
-			"airchange_per_hour": "-1 unit/h",
-			"airchange_UA": "0 Btu/degF/h",
-			"UA": "-1 Btu/degF/h",
-			"internal_gain": "0 Btu/h",
-			"solar_gain": "0 Btu/h",
-			"incident_solar_radiation": "0 Btu/h/sf",
-			"heat_cool_gain": "0 Btu/h",
-			"include_solar_quadrant": "ALLWALLS",
-			"horizontal_diffuse_solar_radiation": "0 Btu/h/sf",
-			"north_incident_solar_radiation": "0 Btu/h/sf",
-			"northwest_incident_solar_radiation": "0 Btu/h/sf",
-			"west_incident_solar_radiation": "0 Btu/h/sf",
-			"southwest_incident_solar_radiation": "0 Btu/h/sf",
-			"south_incident_solar_radiation": "0 Btu/h/sf",
-			"southeast_incident_solar_radiation": "0 Btu/h/sf",
-			"east_incident_solar_radiation": "0 Btu/h/sf",
-			"northeast_incident_solar_radiation": "0 Btu/h/sf",
-			"heating_cop_curve": "DEFAULT",
-			"heating_cap_curve": "DEFAULT",
-			"cooling_cop_curve": "DEFAULT",
-			"cooling_cap_curve": "DEFAULT",
-			"use_latent_heat": "TRUE",
-			"include_fan_heatgain": "TRUE",
-			"thermostat_deadband": "0 degF",
-			"dlc_offset": "0 degF",
-			"thermostat_cycle_time": "0",
-			"thermostat_off_cycle_time": "-1",
-			"thermostat_on_cycle_time": "-1",
-			"thermostat_last_cycle_time": "INIT",
-			"heating_setpoint": "0 degF",
-			"cooling_setpoint": "0 degF",
-			"design_heating_setpoint": "0 degF",
-			"design_cooling_setpoint": "0 degF",
-			"over_sizing_factor": "0",
-			"simulate_window_openings": "FALSE",
-			"is_window_open": "0",
-			"window_low_temperature_cutoff": "60 degF",
-			"window_high_temperature_cutoff": "80 degF",
-			"window_quadratic_coefficient": "0",
-			"window_linear_coefficient": "0",
-			"window_constant_coefficient": "1",
-			"window_temperature_delta": "5",
-			"design_heating_capacity": "0 Btu/h",
-			"design_cooling_capacity": "0 Btu/h",
-			"cooling_design_temperature": "0 degF",
-			"heating_design_temperature": "0 degF",
-			"design_peak_solar": "0 Btu/h/sf",
-			"design_internal_gains": "0 Btu/h",
-			"air_heat_fraction": "0 pu",
-			"mass_solar_gain_fraction": "0 pu",
-			"mass_internal_gain_fraction": "0 pu",
-			"auxiliary_heat_capacity": "0 Btu/h",
-			"aux_heat_deadband": "0 degF",
-			"aux_heat_temperature_lockout": "0 degF",
-			"aux_heat_time_delay": "0 s",
-			"cooling_supply_air_temp": "50 degF",
-			"heating_supply_air_temp": "150 degF",
-			"duct_pressure_drop": "0 inH2O",
-			"fan_design_power": "-1 W",
-			"fan_low_power_fraction": "0 pu",
-			"fan_design_airflow": "0 cfm",
-			"fan_impedance_fraction": "0.2534 pu",
-			"fan_power_fraction": "0.0135 pu",
-			"fan_current_fraction": "0.7332 pu",
-			"fan_power_factor": "0.96 pu",
-			"heating_COP": "0 pu",
-			"cooling_COP": "0 pu",
-			"air_temperature": "0 degF",
-			"outdoor_temperature": "0 degF",
-			"outdoor_rh": "0 %",
-			"mass_heat_capacity": "0 Btu/degF",
-			"mass_heat_coeff": "0 Btu/degF/h",
-			"mass_temperature": "0 degF",
-			"air_volume": "0 cf",
-			"air_mass": "0 lb",
-			"air_heat_capacity": "0 Btu/degF",
-			"latent_load_fraction": "0 pu",
-			"total_thermal_mass_per_floor_area": "0 Btu/degF/sf",
-			"interior_surface_heat_transfer_coeff": "0 Btu/h/degF/sf",
-			"number_of_stories": "0",
-			"is_AUX_on": "0",
-			"is_HEAT_on": "0",
-			"is_COOL_on": "0",
-			"thermal_storage_present": "0",
-			"thermal_storage_in_use": "0",
-			"thermostat_mode": "AUTO",
-			"system_type": "NONE",
-			"auxiliary_strategy": "NONE",
-			"system_mode": "UNKNOWN",
-			"last_system_mode": "UNKNOWN",
-			"heating_system_type": "HEAT_PUMP",
-			"cooling_system_type": "UNKNOWN",
-			"auxiliary_system_type": "UNKNOWN",
-			"fan_type": "UNKNOWN",
-			"thermal_integrity_level": "UNKNOWN",
-			"glass_type": "LOW_E_GLASS",
-			"window_frame": "THERMAL_BREAK",
-			"glazing_treatment": "CLEAR",
-			"glazing_layers": "TWO",
-			"motor_model": "NONE",
-			"motor_efficiency": "AVERAGE",
-			"last_mode_timer": "0",
-			"hvac_motor_efficiency": "1 unit",
-			"hvac_motor_loss_power_factor": "0.125 unit",
-			"Rroof": "0 degF*sf*h/Btu",
-			"Rwall": "0 degF*sf*h/Btu",
-			"Rfloor": "0 degF*sf*h/Btu",
-			"Rwindows": "0 degF*sf*h/Btu",
-			"Rdoors": "0 degF*sf*h/Btu",
-			"hvac_breaker_rating": "0 A",
-			"hvac_power_factor": "0 unit",
-			"hvac_load": "0 kW",
-			"last_heating_load": "0 kW",
-			"last_cooling_load": "0 kW",
-			"hvac_power": "0+0j kVA",
-			"total_load": "0 kW",
-			"panel.energy": "0+0j kVAh",
-			"panel.power": "0+0j kVA",
-			"panel.peak_demand": "0+0j kVA",
-			"panel.heatgain": "0 Btu/h",
-			"panel.cumulative_heatgain": "0 Btu",
-			"panel.heatgain_fraction": "0 pu",
-			"panel.current_fraction": "0 pu",
-			"panel.impedance_fraction": "0 pu",
-			"panel.power_fraction": "0 pu",
-			"panel.power_factor": "0",
-			"panel.constant_power": "0+0j kVA",
-			"panel.constant_current": "0+0j kVA",
-			"panel.constant_admittance": "0+0j kVA",
-			"panel.voltage_factor": "0 pu",
-			"panel.breaker_amps": "0 A",
-			"panel.configuration": "IS110",
-			"design_internal_gain_density": "0.6 W/sf",
-			"compressor_on": "FALSE",
-			"compressor_count": "0",
-			"hvac_last_on": "INIT",
-			"hvac_last_off": "INIT",
-			"hvac_period_length": "0 s",
-			"hvac_duty_cycle": "0",
-			"sump_state": "0 pu",
-			"sump_power": "800 W",
-			"sump_rate": "2 pu/min",
-			"sump_status": "NONE",
-			"curtailment": "NONE",
-			"thermostat_control": "FULL",
-			"gas_enduses": "",
-			"load_power_fraction": "0.8",
-			"load_impedance_fraction": "0.2",
-			"load_current_fraction": "0",
-			"shape": "+0",
-			"energy": "0+0j kVAh",
-			"power": "0+0j kVA",
-			"peak_demand": "0+0j kVA",
-			"heatgain": "0 Btu/h",
-			"cumulative_heatgain": "0 Btu",
-			"heatgain_fraction": "0 pu",
-			"current_fraction": "0 pu",
-			"impedance_fraction": "0.2 pu",
-			"power_fraction": "0.8 pu",
-			"power_factor": "0",
-			"constant_power": "0+0j kVA",
-			"constant_current": "0+0j kVA",
-			"constant_admittance": "0+0j kVA",
-			"voltage_factor": "0 pu",
-			"breaker_amps": "0 A",
-			"configuration": "IS110",
-			"override": "NORMAL",
-			"power_state": "OFF"
 		}
 	}
 }

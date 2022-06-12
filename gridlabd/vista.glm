@@ -14,7 +14,7 @@
 //
 // Options:
 //
-//   - NHOMES: number of homes on feeder (default 4)
+//   - NHOMES: number of homes on each service transformer (default 4)
 //   - FEEDER: feeder capacity (default 100 kW)
 //   - USETMY: use TMY data instead of actual weather (default yes)
 //   - WITHDR: include DR in TESS (default yes)
@@ -51,7 +51,7 @@
 
 #ifndef FEEDER
 
-	#define FEEDER=100 // kW
+	#define FEEDER=250 // kW
 
 #endif
 
@@ -110,6 +110,7 @@ clock
 // FEEDER //
 ////////////
 
+module powerflow;
 module market;
 module tape
 {
@@ -136,10 +137,9 @@ object stub_bidder
 
 schedule residential-evcharter-default
 {
-	* * * * * 0;
+	* 18-22 * * * 6.7;
+	* 23-17 * * * 0;
 }
-
-module powerflow;
 module residential
 {
 #define BASE_ENDUSES=DRYER|CLOTHESWASHER|RANGE|REFRIGERATOR|FREEZER|MICROWAVE|DISHWASHER|PLUGS|LIGHTS
@@ -152,7 +152,6 @@ module residential
 	implicit_enduses ${BASE_ENDUSES};
 	implicit_enduse_source EIA2015;
 }
-
 module generators;
 
 object meter 
@@ -163,20 +162,24 @@ object meter
 	phases ABC;	
 }
 
+global int32 SEQ_ID 0;
+
+#for PHASE in A B C
+
 object transformer
 {
-	phases AS;
-	name "feeder";
+	phases ${PHASE}S;
+	name "transformer_${PHASE}";
 	from "main";
-	to "main_A";
-	configuration "transformer_A";
+	to "main_${PHASE}";
+	configuration "padmount_service_transformer_${PHASE}";
 }
 
 object transformer_configuration {
-	name "transformer_A";
+	name "padmount_service_transformer_${PHASE}";
 	connect_type SINGLE_PHASE_CENTER_TAPPED;
 	install_type PADMOUNT;
-	powerA_rating ${FEEDER};
+	power${PHASE}_rating ${FEEDER};
 	primary_voltage 2401;
 	secondary_voltage 120.000 V;
 	impedance 0.006+0.0136j;
@@ -184,17 +187,16 @@ object transformer_configuration {
 
 object triplex_node
 {
-	name "main_A";
+	name "main_${PHASE}";
 	nominal_voltage 120 V;
-	phases AS;
+	phases ${PHASE}S;
 }
 
-global int32 SEQ_ID 0;
 object triplex_meter:..${NHOMES}
 {
 	name `meter_{SEQ_ID:INC}`;
-	parent "main_A";
-	phases AS;
+	parent "main_${PHASE}";
+	phases ${PHASE}S;
 	nominal_voltage 120 V;
 	object house
 	{
@@ -260,10 +262,10 @@ object triplex_meter:..${NHOMES}
 	{
 		name `pvmeter_{SEQ_ID}`;
 		nominal_voltage 120 V;
-		phases AS;
+		phases ${PHASE}S;
 		object inverter
 		{
-			phases AS;
+			phases ${PHASE}S;
 			rated_power 25 kW;
 			generator_mode CONSTANT_PF;
 			generator_status ONLINE;
@@ -279,14 +281,18 @@ object triplex_meter:..${NHOMES}
 		};
 	};
 }
+#done
 
 ///////////
 // TREND //
 ///////////
 
+//
+// Add trend values to be collected
+//
 class auction 
 {
- 	 double current_price_mean_24h;
+ 	double current_price_mean_24h;
      double current_price_stdev_24h;
 }
 
@@ -294,6 +300,9 @@ class auction
 // MARKET //
 ////////////
 
+//
+// Double auction implementation
+//
 object auction
 {
 	name "auction_1";
