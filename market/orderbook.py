@@ -33,18 +33,6 @@ class DeviceType:
 	ES = "ES"
 	EV = "EV"
 
-class OrderFlexibility:
-	"""Order flexibility options"""
-	NONE = ""
-	QUANTITY = "Q"
-	TIME = "T"
-	QUANTITY_TIME = "QT"
-
-class OrderStatus:
-	"""Order status"""
-	OPEN = "OPEN"
-	CLOSED = "CLOSED"
-
 class OrderType:
 	"""Order type"""
 	SUPPLY = "SELL"
@@ -161,7 +149,7 @@ class Order(Data):
 		self.validate()
 
 	def validate(self):
-		assertIn(self.status,[OrderStatus.OPEN,OrderStatus.CLOSED])
+		return True
 
 class Dispatch(Data):
 	"""Dispatch table data"""
@@ -276,7 +264,7 @@ class Orderbook:
 			device_id = 'integer',
 			quantity = 'real',
 			duration = 'real',
-			flexibility = 'text',
+			flexible = 'text',
 			price = 'real',
 			status = 'text',
 			received_at = 'real')
@@ -573,38 +561,35 @@ class Orderbook:
 	#
 	# Orders
 	#
-	def add_order(self,device_id,quantity,duration,flexibility,price=None):
+	def add_order(self,device_id,quantity,duration,flexible,price=None):
 		"""Add a new order
 		- device_id (int): device GUID 
 		- quantity (float): the quantity in quantity units 
 		- duration (float): the duration in seconds
-		- flexibility (OrderFlexibility): the order flexibility dimensions (TIME and/or QUANTITY)
+		- flexible (text): the order quantity is flexible
 		- price (float): the reservation price 
 		Returns: order GUID (int)
 		"""
 		order_id = guid()
 		self.sql_put(f"""insert into orders
-			(order_id,device_id,quantity,duration,flexibility,price,received_at)
+			(order_id,device_id,quantity,duration,flexible,price,received_at)
 			values
-			({order_id},{device_id},{quantity},{duration},'{flexibility}',{price if price != None else "NULL"},{datetime.datetime.now().timestamp()})
+			({order_id},{device_id},{quantity},{duration},'{flexible}',{price if price != None else "NULL"},{datetime.datetime.now().timestamp()})
 			""")
 		self.sql.commit()
 		return order_id
 
-	def get_orders(self,status=None,side=None):
+	def get_orders(self,side=None,**kwargs):
 		"""Get a list of orders
-		- status (OrderStatus): order status (None for all orders)
 		- side (OrderType): orderbook side (None for all orders)
 		Returns: list (list) of order GUIDs (int) 
 		"""
 		if side == OrderType.SUPPLY:
-			return self.sql_get(f"select order_id from orders where quantity < 0 and status == '{OrderStatus.OPEN}'")
+			return self.sql_get(f"select order_id from orders where quantity < 0")
 		elif side == OrderType.DEMAND:
-			return self.sql_get(f"select order_id from orders where quantity > 0 and status == '{OrderStatus.OPEN}'")
-		elif status == None:
-			return self.sql_get("select order_id from orders")
+			return self.sql_get(f"select order_id from orders where quantity > 0")
 		else:
-			return self.sql_get(f"select order_id from orders where status=='{status}'")
+			return self.sql_get("select order_id from orders")
 
 	def get_order(self,order_id):
 		"""Get an order
@@ -633,6 +618,7 @@ class Orderbook:
 			values
 			({dispatch_id},{device_id},{quantity},{duration},{price},"{DispatchStatus.SENT}",{datetime.datetime.now().timestamp()})
 			""")
+		self.sql.commit()
 		return dispatch_id
 
 	def get_dispatch(self,dispatch_id):
@@ -644,40 +630,48 @@ class Orderbook:
 	#
 	# Operations
 	#
-	def submit(self,device_id,quantity,duration,flexibility,price=None):
+	def submit(self,device_id,quantity,duration,flexible,price=None):
 		"""Submit an order:
 		- device_id (int): device making the request
 		- quantity (float): quantity requested, negative supply, positive demand
 		- duration (float): duration requested in seconds
-		- flexibility (OrderFlexibility): quantity and/or time flexibility
+		- flexible (bool): quantity is flexible
 		- price (float): price of limit order, None for market orders
 		Returns: Dispatch (Dispatch), or order (Order), or None if no match
 		"""
-		match = self.match(quantity,duration,price)
-		if match: # found a matching order --> dispatch
-			# TODO: calculate correct dispatch
-			logging.warning("dispatch calculations incomplete")
-			self.add_dispatch(match.device_id,match.quantity,match.duration,match.price)
+		assert(quantity!=0.0)
+		residual = quantity
+		sign = (-1 if quantity < 0 else +1)
+		matches = []
+		while abs(residual) > 0:
+			match = self.match(residual,duration,price,not flexible)
+			if not match: # found a matching order --> dispatch
+				break;
+			residual -= sign * min(abs(residual),abs(match.quantity))
+			matches.append(match)
+		if matches:
+			logging.info(f"matches are {matches}")
+			for match in matches:
+				self.add_dispatch(match.device_id,match.quantity,match.duration,match.price)
 			dispatch_id = self.add_dispatch(device_id,quantity,duration,match.price)
 			dispatch = self.get_dispatch(dispatch_id)
 			return Dispatch(**dispatch.dict())
 		elif price: # no match, price --> limit order
-			order_id = self.add_order(device_id,quantity,duration,flexibility,price)
-			self.set_order(order_id,status=OrderStatus.OPEN)
+			order_id = self.add_order(device_id,quantity,duration,flexible,price)
 			order = self.get_order(order_id).dict()
-			logging.info(f"\"limit order for device {device_id} for {'flexible ' if OrderFlexibility.QUANTITY in flexibility else ''}quantity {quantity} at {price} over {'flexible ' if OrderFlexibility.TIME in flexibility else ''}{duration} sec accepted\"")
+			logging.info(f"\"limit order for device {device_id} for {'flexible ' if flexible else ''}quantity {quantity} at {price} over {'flexible ' if flexible else ''}{duration} sec accepted\"")
 			return Order(**order)
 		else:
-			logging.info(f"\"market order for device {device_id} for {'flexible ' if OrderFlexibility.QUANTITY in flexibility else ''}quantity {quantity} at {price} over {'flexible ' if OrderFlexibility.TIME in flexibility else ''}{duration} sec rejected\"")
+			logging.info(f"\"market order for device {device_id} for {'flexible ' if flexible else ''}quantity {quantity} at {price} over {'flexible ' if flexible else ''}{duration} sec rejected\"")
 			return None # market order with no match
 
-	def match(self,quantity,duration,price):
+	def match(self,quantity,duration,flexible,price):
 		"""Find a match to an order
 		"""
 		if quantity < 0:
-			orders = self.get_orders(side=OrderType.SUPPLY)
+			orders = self.get_orders(side=OrderType.SUPPLY,flexible=flexible)
 		elif quantity > 0:
-			orders = self.get_orders(side=OrderType.DEMAND)
+			orders = self.get_orders(side=OrderType.DEMAND,flexible=flexible)
 		else:
 			return None
 		if orders:
@@ -732,22 +726,21 @@ if __name__ == "__main__":
 		quantity =-10.0,
 		duration = 1.0,
 		price = 5.0,
-		flexibility = OrderFlexibility.QUANTITY_TIME
+		flexible = True
 		)
 	assertTrue(result.isa(Order))
 	assertEqual(result.device_id,pv_id)
 	assertEqual(result.quantity,-10.0)
 	assertEqual(result.duration,1.0)
 	assertEqual(result.price,5.0)
-	assertEqual(result.flexibility,OrderFlexibility.QUANTITY_TIME)
-	assertEqual(result.status,OrderStatus.OPEN)
+	assertTrue(result.flexible)
 
 	result = book.submit(
 		device_id = pv_id,
 		quantity = -10.0,
 		duration = 1.0,
 		price = 5.0,
-		flexibility = OrderFlexibility.QUANTITY_TIME
+		flexible = True
 		)
 	assertIsa(result,Dispatch)
 	assertEqual(result.quantity,-10.0)
@@ -759,7 +752,7 @@ if __name__ == "__main__":
 		device_id=hvac_id,
 		quantity = 5.0,
 		duration = 0.1,
-		flexibility = OrderFlexibility.QUANTITY
+		flexible = True
 		)
 	assertEqual(result,None)
 	
