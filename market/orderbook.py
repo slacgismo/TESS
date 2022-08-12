@@ -668,7 +668,7 @@ class Orderbook:
 			logging.info(f"\"limit order for device {device_id} for {'flexible ' if OrderFlexibility.QUANTITY in flexibility else ''}quantity {quantity} at {price} over {'flexible ' if OrderFlexibility.TIME in flexibility else ''}{duration} sec accepted\"")
 			return Order(**order)
 		else:
-			logging.info(f"market order for device {order_id} rejected")
+			logging.info(f"\"market order for device {device_id} for {'flexible ' if OrderFlexibility.QUANTITY in flexibility else ''}quantity {quantity} at {price} over {'flexible ' if OrderFlexibility.TIME in flexibility else ''}{duration} sec rejected\"")
 			return None # market order with no match
 
 	def match(self,quantity,duration,price):
@@ -763,8 +763,6 @@ if __name__ == "__main__":
 		)
 	assertEqual(result,None)
 	
-	exit(0)
-
 	# test back and restore
 	book.backup('unittest.db')
 	book.restore('unittest.db')
