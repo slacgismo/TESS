@@ -280,7 +280,8 @@ class Orderbook:
 			duration = 'real',
 			flexible = 'integer',
 			price = 'real',
-			received_at = 'real')
+			received_at = 'real',
+			status = 'integer')
 		self.create_index(table="orders",fields=['price','received_at'])
 
 		self.create_table("dispatch",
@@ -362,7 +363,7 @@ class Orderbook:
 		result = {}
 		for table in self.tables:
 			fields = self.tables[table]
-			values = self.sql_get(f"select {', '.join(fields)} from {table}")
+			values = self.sql_get(f"select {', '.join(fields)} from {table} order by rowid")
 			result[table] = {}
 			primary_key = self.primary_keys[table]
 			for row in values:
@@ -681,7 +682,7 @@ class Orderbook:
 		TODO
 		"""
 		fields = list(self.tables["dispatch"].keys())
-		values = self.sql_get(f"select {','.join(fields)} from dispatch where dispatch_id = {dispatch_id}")
+		values = self.sql_get(f"select {','.join(fields)} from dispatch where dispatch_id = {dispatch_id} order by sent_at")
 		result = dict(zip(fields,values[0])) if values else {}
 		return Dispatch(**result) if result else None
 
