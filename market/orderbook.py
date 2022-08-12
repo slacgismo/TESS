@@ -35,14 +35,16 @@ class DeviceType:
 
 class OrderType:
 	"""Order type"""
-	SUPPLY = "SELL"
-	DEMAND = "BUY"
+	SUPPLY = -1
+	DEMAND = +1
 
 class DispatchStatus:
 	"""Dispatch status"""
-	SENT = "SENT"
-	DONE = "DONE"
-	FAIL = "FAIL"
+	REQ = "REQ" # dispatch request sent
+	ACK = "ACK" # dispatch request acknowledged
+	ERR = "ERR" # dispatch request failed
+	DONE = "DONE" # dispatch request completed ok
+
 
 #
 # Exceptions
@@ -586,6 +588,7 @@ class Orderbook:
 		- price (float): the reservation price 
 		Returns: order GUID (int)
 		"""
+		logging.debug(f"\"{self.__class__.__name__}.add_order(device_id,quantity,duration,flexible,price)\",enter")
 		assert(type(device_id) is int)
 		assert(type(quantity) is float and quantity != 0.0)
 		assert(type(duration) is float and duration > 0)
@@ -598,6 +601,7 @@ class Orderbook:
 			({order_id},{device_id},{quantity},{duration},{int(flexible)},{price if price != None else "NULL"},{datetime.datetime.now().timestamp()})
 			""")
 		self.sql.commit()
+		logging.debug(f"\"{self.__class__.__name__}.add_order(device_id,quantity,duration,flexible,price)\",\"return {order_id}\"")
 		return order_id
 
 	def get_orders(self,side=None,**kwargs):
@@ -605,37 +609,50 @@ class Orderbook:
 		- side (OrderType): orderbook side (None for all orders)
 		Returns: list (list) of order GUIDs (int) 
 		"""
-		assert(side in [OrderType.SUPPLY,OrderType.DEMAND,None])
-		if side == OrderType.SUPPLY:
-			result = self.sql_get(f"select order_id from orders where quantity < 0")
-		elif side == OrderType.DEMAND:
-			result = self.sql_get(f"select order_id from orders where quantity > 0")
-		else:
-			result = self.sql_get("select order_id from orders")
-		return [x[0] for x in result]
+		logging.debug(f"\"{self.__class__.__name__}.get_orders(side={side},**kwargs={kwargs})\",enter")
+		if side == None:
+			result = self.sql_get("select order_id from orders order by price asc, received_at")
+		assert(side in [OrderType.SUPPLY,OrderType.DEMAND])
+		orders = self.sql_get(f"select order_id from orders where {side}*quantity > 0 order by price asc, received_at")
+		result = [x[0] for x in orders]
+		logging.debug(f"\"{self.__class__.__name__}.get_orders(side={side},**kwargs={kwargs})\",\"returns {result}\"")
+		return result
 
 	def get_order(self,order_id):
 		"""Get an order
 		- order_id (int) order GUID
 		Returns: order object (Order) on success, None on failure
 		"""
+		logging.debug(f"\"{self.__class__.__name__}.get_order(order_id={order_id})\",enter")
 		assert(type(order_id) is int)
 		fields = list(self.tables["orders"].keys())
 		values = self.sql_get(f"select {','.join(fields)} from orders where order_id={order_id}")
-		result = dict(zip(fields,values[0])) if values else {}
-		return Order(**result) if result else None
+		order = dict(zip(fields,values[0])) if values else {}
+		result = Order(**order) if order else None
+		logging.debug(f"\"{self.__class__.__name__}.get_order(order_id={order_id})\",\"returns {result.dict()}\"")
+		return result
 
 	def set_order(self,order_id,**kwargs):
+		logging.debug(f"\"{self.__class__.__name__}.set_order(order_id={order_id},**kwargs={kwargs})\",enter")
 		assert(type(order_id) is int)
-		assert('quantity' in kwargs.keys() and type(kwargs['quantity']) is float and kwargs['quantity'] != 0.0)
-		assert('duration' in kwargs.keys() and type(kwargs['duration']) is float and kwargs['duration'] > 0.0)
-		assert('price' in kwargs.keys() and ( type(kwargs['price']) is float or kwargs['price'] == None ))
-		assert('flexible' in kwargs.keys() and type(kwargs['flexible']) is int and flexible in [0,1])
+		assert(not 'quantity' in kwargs.keys() or type(kwargs['quantity']) is float and kwargs['quantity'] != 0.0)
+		assert(not 'duration' in kwargs.keys() or type(kwargs['duration']) is float and kwargs['duration'] > 0.0)
+		assert(not 'price' in kwargs.keys() or ( type(kwargs['price']) is float or kwargs['price'] == None ))
+		assert(not 'flexible' in kwargs.keys() or type(kwargs['flexible']) is int and flexible in [0,1])
 		updates = []
 		for field,value in kwargs.items():
 			updates.append(f"{field}={to_sql(value)}")
 		result = self.sql_put(f"update orders set {','.join(updates)} where order_id = {order_id}")
 		self.sql.commit()
+		logging.debug(f"\"{self.__class__.__name__}.set_order(order_id={order_id},**kwargs={kwargs})\",\"returns {result}\"")
+		return result
+
+	def del_order(self,order_id):
+		logging.debug(f"\"{self.__class__.__name__}.del_order(order_id={order_id})\",enter")
+		result = self.sql_put(f"delete from orders where order_id = {order_id}")
+		self.sql.commit()
+		logging.debug(f"\"{self.__class__.__name__}.del_order(order_id={order_id})\",\"returns {result}\"")
+		return result
 
 	#
 	# Dispatch
@@ -644,6 +661,7 @@ class Orderbook:
 		"""
 		TODO
 		"""
+		logging.debug(f"\"{self.__class__.__name__}.add_dispatch(device_id={device_id},quantity={quantity},duration={duration},price={price})\",enter")
 		assert(type(device_id) is int)
 		assert(type(quantity) is float and quantity != 0.0)
 		assert(type(duration) is float and duration > 0)
@@ -652,9 +670,10 @@ class Orderbook:
 		self.sql_put(f"""insert into dispatch
 			(dispatch_id,device_id,quantity,duration,price,status,sent_at)
 			values
-			({dispatch_id},{device_id},{quantity},{duration},{price},"{DispatchStatus.SENT}",{datetime.datetime.now().timestamp()})
+			({dispatch_id},{device_id},{quantity},{duration},{price},'{DispatchStatus.REQ}',{datetime.datetime.now().timestamp()})
 			""")
 		self.sql.commit()
+		logging.debug(f"\"{self.__class__.__name__}.add_dispatch(device_id={device_id},quantity={quantity},duration={duration},price={price})\",\"returns {dispatch_id}\"")
 		return dispatch_id
 
 	def get_dispatch(self,dispatch_id):
@@ -678,42 +697,59 @@ class Orderbook:
 		- price (float): price of limit order, None for market orders
 		Returns: Dispatch (Dispatch), or order (Order), or None if no match
 		"""
+		logging.debug(f"\"{self.__class__.__name__}.submit(device_id={device_id},quantity={quantity},duration={duration},flexible={flexible},price={price})\",enter")
 		assert(device_id in self.get_devices())
 		assert(quantity!=0.0 and type(quantity) == float)
 		assert(price == None or type(price) == float)
 		assert(type(duration) == float and duration > 0)
 		assert(type(flexible) == bool)
 		residual = quantity
-		is_buy = (quantity < 0)
-		is_sell = (quantity > 0)
+		is_sell = (quantity < 0)
+		is_buy = (quantity > 0)
 		assert(is_buy != is_sell)
 		is_limit = (type(price) == float)
 		is_market = (price == None)
 		assertEqual(is_market,not is_limit)
 		sign = (-1 if quantity < 0 else +1)
-		matches = []
-		while abs(residual) > 0:
-			match = self.match(-residual,duration,flexible,price)
-			if not match: # found a matching order --> dispatch
-				break;
-			residual -= sign * min(abs(residual),abs(match.quantity))
-			matches.append(match)
-			print(is_buy,is_market,sign,matches)
-		if matches:
+		orders = self.get_orders(OrderType.SUPPLY if is_buy else OrderType.DEMAND)
+		matches = {}
+		cost = 0.0
+		taken = 0.0
+		n = 0
+		while abs(residual) > 0 and n < len(orders):
+			order_id = orders[n]
+			n += 1
+			match = self.get_order(order_id)
+			if not match.flexible and not flexible: # can match this order
+				continue
+			taken = -sign * min(abs(residual),abs(match.quantity))
+			residual += taken
+			cost += match.price * taken
+			matches[match.order_id] = taken
+		if matches and abs(residual) == 0.0:
 			logging.info(f"matches are {matches}")
-			for match in matches:
-				self.add_dispatch(match.device_id,match.quantity,match.duration,match.price)
-			dispatch_id = self.add_dispatch(device_id,quantity,duration,match.price)
+			for order_id, taken in matches.items():
+				order = self.get_order(order_id)
+				self.add_dispatch(order.device_id,taken,order.duration,order.price)
+				if taken == order.quantity:
+					self.del_order(order_id)
+				else:
+					self.set_order(order_id,quantity=order.quantity-taken)
+			dispatch_id = self.add_dispatch(device_id,quantity,duration,-sign*cost/quantity)
 			dispatch = self.get_dispatch(dispatch_id)
-			return Dispatch(**dispatch.dict())
+			result_dict = dispatch.dict()
+			result = Dispatch(**result_dict)
 		elif not is_market: # no match, price --> limit order
 			order_id = self.add_order(device_id,quantity,duration,flexible,price)
-			order = self.get_order(order_id).dict()
+			result_dict = self.get_order(order_id).dict()
 			logging.info(f"\"limit order for device {device_id} for {'flexible ' if flexible else ''}quantity {quantity} at {price} over {duration} sec accepted\"")
-			return Order(**order)
+			result = Order(**result_dict)
 		else:
-			logging.info(f"\"market order for device {device_id} for {'flexible ' if flexible else ''}quantity {quantity} at {price} over {duration} sec rejected\"")
-			return None # market order with no match
+			logging.warning(f"\"market order for device {device_id} for {'flexible ' if flexible else ''}quantity {quantity} at {price} over {duration} sec rejected\"")
+			result_dict = {}
+			result = None # market order with no match
+		logging.debug(f"\"{self.__class__.__name__}.submit(device_id={device_id},quantity={quantity},duration={duration},flexible={flexible},price={price})\",\"returns {result_dict}\"")
+		return result
 
 	def match(self,quantity,duration,flexible,price):
 		"""Find a match to an order
@@ -723,9 +759,9 @@ class Orderbook:
 		assert(type(flexible) is bool)
 		assert(price == None or type(price) is float)
 		if quantity < 0:
-			orders = self.get_orders(side=OrderType.SUPPLY,flexible=flexible)
-		elif quantity > 0:
 			orders = self.get_orders(side=OrderType.DEMAND,flexible=flexible)
+		elif quantity > 0:
+			orders = self.get_orders(side=OrderType.SUPPLY,flexible=flexible)
 		else:
 			raise OrderbookValueError(f"quantity '{quantity}' is not valid")
 		if orders:
@@ -746,7 +782,7 @@ class Orderbook:
 
 	def supply_book(self,):
 		"""Return supply side of orderbook"""
-		return []
+		return sql_get("select device from")
 
 	def demand_book(self,):
 		"""Return demand side of orderbook"""
@@ -758,7 +794,7 @@ if __name__ == "__main__":
 	if os.path.exists(logfile):
 		os.remove(logfile)
 
-	book = Orderbook(logfile=logfile)
+	book = Orderbook(logfile=logfile,loglevel=logging.DEBUG)
 
 	# test add agents
 	book.add_agent()
@@ -779,49 +815,53 @@ if __name__ == "__main__":
 	device = book.get_device(pv_id)
 	assertEqual(device.device_id,pv_id)
 
-	# test submit sell order
+	# test submit sell limit order
 	result = book.submit(
 		device_id = pv_id,
-		quantity =-10.0,
+		quantity =-8.0,
 		duration = 1.0,
 		price = 5.0,
 		flexible = True
 		)
 	assertTrue(result.isa(Order))
 	assertEqual(result.device_id,pv_id)
-	assertEqual(result.quantity,-10.0)
+	assertEqual(result.quantity,-8.0)
 	assertEqual(result.duration,1.0)
 	assertEqual(result.price,5.0)
 	assertTrue(result.flexible)
 	
+	# test a second sell limit order
+	pv_id = book.add_device(agent_id,DeviceType.PV)
 	result = book.submit(
 		device_id = pv_id,
-		quantity = -10.0,
+		quantity = -7.0,
 		duration = 1.0,
-		price = 5.0,
+		price = 6.0,
 		flexible = True
 		)
-	print(result.dict())
-	assertIsa(result,Dispatch)
-	assertEqual(result.quantity,-10.0)
+	assertIsa(result,Order)
+	assertEqual(result.quantity,-7.0)
 	assertEqual(result.duration,1.0)
-	assertEqual(result.price,5.0)
+	assertEqual(result.price,6.0)
 
-	# test add buy order
+	# test add buy market order
 	result = book.submit(
 		device_id=hvac_id,
-		quantity = 5.0,
+		quantity = 10.0,
 		duration = 0.1,
 		flexible = True
 		)
-	assertEqual(result,None)
+	assertIsa(result,Dispatch)
+	assertEqual(result.quantity,10)
+	assertEqual(result.price,5.2)
+
 	
 	# test back and restore
 	book.backup('unittest.db')
 	book.restore('unittest.db')
 	assertEqual(len(agents),2)
 	assertEqual(book.get_agent(agent_id).agent_id,agent_id)
-	assertEqual(len(book.get_devices()),2)
+	assertEqual(len(book.get_devices()),3)
 	assertEqual(book.get_device(pv_id).device_id,pv_id)
 
 	book.dump_json('unittest.json',indent=4)
