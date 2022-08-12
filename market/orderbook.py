@@ -33,7 +33,7 @@ class DeviceType:
 	ES = "ES"
 	EV = "EV"
 
-class OrderFlexbility:
+class OrderFlexibility:
 	"""Order flexibility options"""
 	NONE = ""
 	QUANTITY = "Q"
@@ -616,8 +616,11 @@ class Orderbook:
 		result = dict(zip(fields,values[0])) if values else {}
 		return Order(**result) if result else None
 
-	def set_order(self,order_id,field,value):
-		result = self.sql_put(f"update orders set {field}={to_sql(value)} where order_id = {order_id}")
+	def set_order(self,order_id,**kwargs):
+		updates = []
+		for field,value in kwargs.items():
+			updates.append(f"{field}={to_sql(value)}")
+		result = self.sql_put(f"update orders set {','.join(updates)} where order_id = {order_id}")
 		self.sql.commit()
 
 	#
@@ -642,18 +645,31 @@ class Orderbook:
 	# Operations
 	#
 	def submit(self,device_id,quantity,duration,flexibility,price=None):
-		"""Submit an order"""
+		"""Submit an order:
+		- device_id (int): device making the request
+		- quantity (float): quantity requested, negative supply, positive demand
+		- duration (float): duration requested in seconds
+		- flexibility (OrderFlexibility): quantity and/or time flexibility
+		- price (float): price of limit order, None for market orders
+		Returns: Dispatch (Dispatch), or order (Order), or None if no match
+		"""
 		match = self.match(quantity,duration,price)
-		if not match:
-			if price:
-				order_id = self.add_order(device_id,quantity,duration,flexibility,price)
-				self.set_order(order_id,'status',OrderStatus.OPEN)
-				return self.get_order(order_id)
-			else:
-				return None
+		if match: # found a matching order --> dispatch
+			# TODO: calculate correct dispatch
+			logging.warning("dispatch calculations incomplete")
+			self.add_dispatch(match.device_id,match.quantity,match.duration,match.price)
+			dispatch_id = self.add_dispatch(device_id,quantity,duration,match.price)
+			dispatch = self.get_dispatch(dispatch_id)
+			return Dispatch(**dispatch.dict())
+		elif price: # no match, price --> limit order
+			order_id = self.add_order(device_id,quantity,duration,flexibility,price)
+			self.set_order(order_id,status=OrderStatus.OPEN)
+			order = self.get_order(order_id).dict()
+			logging.info(f"\"limit order for device {device_id} for {'flexible ' if OrderFlexibility.QUANTITY in flexibility else ''}quantity {quantity} at {price} over {'flexible ' if OrderFlexibility.TIME in flexibility else ''}{duration} sec accepted\"")
+			return Order(**order)
 		else:
-			logging.info("order filled")
-			return match
+			logging.info(f"market order for device {order_id} rejected")
+			return None # market order with no match
 
 	def match(self,quantity,duration,price):
 		"""Find a match to an order
@@ -665,10 +681,7 @@ class Orderbook:
 		else:
 			return None
 		if orders:
-			match_id = orders[0][0]
-			order = self.get_order(match_id) 
-			logging.warning("dispatch quantity not implemented")
-			return self.dispatch(order.device_id,quantity,duration,price)
+			return self.get_order(orders[0][0])
 		return None
 
 	def dispatch(self,device_id,quantity,duration,price):
@@ -719,14 +732,14 @@ if __name__ == "__main__":
 		quantity =-10.0,
 		duration = 1.0,
 		price = 5.0,
-		flexibility = OrderFlexbility.QUANTITY_TIME
+		flexibility = OrderFlexibility.QUANTITY_TIME
 		)
 	assertTrue(result.isa(Order))
 	assertEqual(result.device_id,pv_id)
 	assertEqual(result.quantity,-10.0)
 	assertEqual(result.duration,1.0)
 	assertEqual(result.price,5.0)
-	assertEqual(result.flexibility,OrderFlexbility.QUANTITY_TIME)
+	assertEqual(result.flexibility,OrderFlexibility.QUANTITY_TIME)
 	assertEqual(result.status,OrderStatus.OPEN)
 
 	result = book.submit(
@@ -734,7 +747,7 @@ if __name__ == "__main__":
 		quantity = -10.0,
 		duration = 1.0,
 		price = 5.0,
-		flexibility = OrderFlexbility.QUANTITY_TIME
+		flexibility = OrderFlexibility.QUANTITY_TIME
 		)
 	assertIsa(result,Dispatch)
 	assertEqual(result.quantity,-10.0)
@@ -746,7 +759,7 @@ if __name__ == "__main__":
 		device_id=hvac_id,
 		quantity = 5.0,
 		duration = 0.1,
-		flexibility = OrderFlexbility.QUANTITY
+		flexibility = OrderFlexibility.QUANTITY
 		)
 	assertEqual(result,None)
 	
