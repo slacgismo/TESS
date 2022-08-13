@@ -13,6 +13,23 @@ Order Submit
 
 Dispatch Requests
 
+TODO:
+
+1. Allow only these changes to existing orders
+   - Quantity
+   - Flexibility
+   - Duration
+   - Status = CLOSED
+
+2. Submit flexibility does not consider quantity (see TODO item in submit)
+
+3. Add error correction contract (ECC) device to compensate for unfilled contracts (dispatch fails)
+
+4. Submit order when market is not at equilibrium due to unclear inflexible units, e.g.,
+		BUY 10 @ 5 inflexible
+		SELL 5 @ 2 inflexible
+		SELL 5 @ 3 inflexible
+
 """
 
 import os, sys, logging
@@ -37,6 +54,11 @@ class OrderType:
 	"""Order type"""
 	SUPPLY = -1
 	DEMAND = +1
+
+class OrderStatus:
+	"""Order status"""
+	CLOSED = 0
+	OPEN = 1
 
 class DispatchStatus:
 	"""Dispatch status"""
@@ -282,7 +304,7 @@ class Orderbook:
 			price = 'real',
 			received_at = 'real',
 			status = 'integer')
-		self.create_index(table="orders",fields=['price','received_at'])
+		self.create_index(table="orders",fields=['status','price','received_at'])
 
 		self.create_table("dispatch",
 			dispatch_id = 'integer',
@@ -597,9 +619,9 @@ class Orderbook:
 		assert(price == None or type(price) is float)
 		order_id = guid()
 		self.sql_put(f"""insert into orders
-			(order_id,device_id,quantity,duration,flexible,price,received_at)
+			(order_id,device_id,quantity,duration,flexible,price,received_at,status)
 			values
-			({order_id},{device_id},{quantity},{duration},{int(flexible)},{price if price != None else "NULL"},{datetime.datetime.now().timestamp()})
+			({order_id},{device_id},{quantity},{duration},{int(flexible)},{price if price != None else "NULL"},{datetime.datetime.now().timestamp()},{OrderStatus.OPEN})
 			""")
 		self.sql.commit()
 		logging.debug(f"\"{self.__class__.__name__}.add_order(device_id,quantity,duration,flexible,price)\",\"return {order_id}\"")
@@ -619,12 +641,13 @@ class Orderbook:
 		logging.debug(f"\"{self.__class__.__name__}.get_orders(side={side},**kwargs={kwargs})\",\"returns {result}\"")
 		return result
 
-	def get_order(self,order_id):
+	def get_order(self,order_id,status=1):
 		"""Get an order
 		- order_id (int) order GUID
 		Returns: order object (Order) on success, None on failure
 		"""
 		logging.debug(f"\"{self.__class__.__name__}.get_order(order_id={order_id})\",enter")
+		assert(type(status) is int and status in [0,1])
 		assert(type(order_id) is int)
 		fields = list(self.tables["orders"].keys())
 		values = self.sql_get(f"select {','.join(fields)} from orders where order_id={order_id}")
@@ -639,7 +662,8 @@ class Orderbook:
 		assert(not 'quantity' in kwargs.keys() or type(kwargs['quantity']) is float and kwargs['quantity'] != 0.0)
 		assert(not 'duration' in kwargs.keys() or type(kwargs['duration']) is float and kwargs['duration'] > 0.0)
 		assert(not 'price' in kwargs.keys() or ( type(kwargs['price']) is float or kwargs['price'] == None ))
-		assert(not 'flexible' in kwargs.keys() or type(kwargs['flexible']) is int and flexible in [0,1])
+		assert(not 'flexible' in kwargs.keys() or type(kwargs['flexible']) is int and kwargs['flexible'] in [0,1])
+		assert(not 'status' in kwargs.keys() or type(kwargs['status']) is int and kwargs['status'] in [0,1])
 		updates = []
 		for field,value in kwargs.items():
 			updates.append(f"{field}={to_sql(value)}")
@@ -721,7 +745,8 @@ class Orderbook:
 			order_id = orders[n]
 			n += 1
 			match = self.get_order(order_id)
-			if not match.flexible and not flexible: # can match this order
+			# TODO check quantities is marginal also 
+			if not match.flexible and not flexible: # can't match this order
 				continue
 			taken = -sign * min(abs(residual),abs(match.quantity))
 			residual += taken
@@ -733,7 +758,7 @@ class Orderbook:
 				order = self.get_order(order_id)
 				self.add_dispatch(order.device_id,taken,order.duration,order.price)
 				if taken == order.quantity:
-					self.del_order(order_id)
+					self.set_order(order_id,status=0)
 				else:
 					self.set_order(order_id,quantity=order.quantity-taken)
 			dispatch_id = self.add_dispatch(device_id,quantity,duration,-sign*cost/quantity)
