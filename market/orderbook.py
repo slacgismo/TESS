@@ -1,17 +1,64 @@
 """TESS Orderbook Implementation
 
-Quantities
+DEFINITIONS
 
-	The sign convention of quantities corresponds to power flowing to the
-	device, i.e., demand is positive and supply is negative. Note that
-	this is the opposite to the power system sign convention, but
-	consistent with the transactive double auction sign convention.
+	Agent - the entity responsible for submitted Bids and receiving Dispatch responses
+	Bid - the order submitted by an agent on behalf of a device
+	Book - the combined list of Open Sell and Buy Orders
+	Buy Book - the list of Open Buy Orders
+	Buy Order - a bid where the quantity is positive
+	Clearing - the result of a bid order processed by the Order Book
+	Device - the physical equipment associated with a Bid
+	Dispatch - the result of a filled Limit Order or a successful Market Order
+	Duration - the length of time for which a unit is bid or dispatched
+	Inflexible Unit - a unit that cannot divide its Quantity
+	Limit Order - a bid which includes a price
+	Marginal Dispatch - a Dispatch to a unit with a Quantity less than the Bid Quantity
+	Market Order - a bid which omits a price
+	Open Order - an Order listed in the Order Book
+	Order - the result of an unfilled Limit Order
+	Order Book - the mechanism which clears orders and dispatches units
+	Price - the cost per unit of quantity per hour at which a unit is bid or dispatched
+	Price Cap - the highest price accepted by the Order Book
+	Price Floor - the lowest price accepted by the Order Book
+	Quantity - the non-zero amount of a unit bid or dispatched
+	Rejection - the result of an unsuccessful Market Order
+	Sell Book - the list of Open Sell Orders
+	Sell Order - a bid where the quantity is negative
+	Unit - the amount of power or energy bid or dispatch
 
-Prices
+BID RULES
 
-Order Submit
+1. An Order Quantity must be non-zero
+	1(a). An Order which has a negative Quantity shall be processed as a Sell Order
+	1(b). An Order which has a position Quantity shall be processed as a Buy Order
+	1(c). An Order which has a zero or missing Quantity shall be rejected.
+2. An Order may include a bid price
+	2(a). An Order which includes a Price shall be processed as a Limit Order
+		2(a)(i). A Price less than the Price Floor or greater than the Price Cap shall be rejected.
+	2(b). An Order which does not include a Price shall be processed as a Marker Order
+3. An Open Order may withdrawn at any time
 
-Dispatch Requests
+MARKET RULES
+
+1. An Order shall be processed in the sequence in which it is received
+2. An Order shall result in an Order, a Dispatch, or a Rejection
+3. An Inflexible unit shall not be send a Marginal Dispatch
+4. A partially matched order shall update the residual order such that the entire quantity 
+   and duration remains in the book.
+
+DISPATCH RULES
+
+1. An Agent shall implement a Dispatch within 1 second
+2. If an Agent cannot respond within 1 second, it shall respond with a failure message
+   2(a). A failed limit order dispatch shall be filled using a market order.
+   2(c). A failed market order dispatch shall be cancel the original market order.
+
+
+SETTLEMENT RULES
+
+1. Agents shall pay as dispatched.
+2. An agent that fails to fill a limit order shall pay the market price for the replacement order.
 
 TODO:
 
@@ -413,9 +460,9 @@ class Orderbook:
 				fields = self.tables[table]
 				primary_key = self.primary_keys[table]
 				if with_create:
-					print(self._create_table(table,**fields,primary_key=primary_key),file=fh,end=";\n")
+					print(self.create_table_str(table,**fields,primary_key=primary_key),file=fh,end=";\n")
 				if with_index:
-					print(self._create_index(table,fields),file=fh,end=";\n")
+					print(self.create_index_str(table,fields),file=fh,end=";\n")
 				for key,data in values.items():
 					if primary_key:
 						data[primary_key] = str(key)
@@ -478,7 +525,7 @@ class Orderbook:
 		logging.info(f"done,{n}")
 		return n
 
-	def _create_table(self,name,**kwargs):
+	def create_table_str(self,name,**kwargs):
 		"""Generate the SQL create table string
 		- name (str): table name
 		- kwargs (dict): table field names and SQL types
@@ -505,10 +552,10 @@ class Orderbook:
 		- kwargs (dict): table field names and SQL types
 		Returns: 0 on success, None on failure
 		"""
-		return self.sql_put(self._create_table(name,**kwargs))
+		return self.sql_put(self.create_table_str(name,**kwargs))
 
 
-	def _create_index(self,table,fields,unique=False,exist_ok=False):
+	def create_index_str(self,table,fields,unique=False,exist_ok=False):
 		"""Generate a create index string
 		- table (str): name of table to create index on
 		- fields (list): list of field names (str) to index on
@@ -527,7 +574,7 @@ class Orderbook:
 		- exist_ok (bool): flag to indicate that an existing index should not cause an error (default False)
 		Returns: 0 on success, None on failure
 		"""
-		return self.sql_put(self._create_index(table,fields,unique=False,exist_ok=False))
+		return self.sql_put(self.create_index_str(table,fields,unique=False,exist_ok=False))
 
 	#
 	# Agents
