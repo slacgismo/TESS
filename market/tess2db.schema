@@ -1,0 +1,62 @@
+{
+	"users" : {
+		"fields" : {
+			"user_id" : "text not null",
+			"valid_at" : "real not null",
+			"lastname" : "text not null",
+			"firstname" : "text not null",
+			"email" : "text not null",
+			"phone" : "text not null"
+		},
+		"index" : [
+			["lastname","valid_at"]
+		],
+		"unique" : [
+			["user_id","email","valid_at"],
+			["user_id","phone","valid_at"]
+		],
+		"operations" : [
+			"add_user",
+			"get_user",
+			"get_user_email",
+			"get_user_phone",
+			"set_user",
+			"get_users",
+			"get_users_lastname"
+		]
+	},
+	"agents" : {
+		"fields" : {
+			"agent_id" : "text primary key",
+			"valid_at" : "real not null",
+			"user_id" : "text not null"
+		},
+		"index" : [
+			["agent_id","user_id"],
+			["user_id"]
+		],
+		"unique" : [
+			["agent_id","valid_at"],
+			["agent_id","user_id","valid_at"]
+		],
+		"operations" : [
+			"add_agent",
+			"get_agent",
+			"set_agent",
+			"get_agents",
+			"get_agents_userid"
+		]
+	},
+	"devices" : {
+		"fields" : {
+			"device_id" : "text primary key",
+			"agent_id" : "text not null",
+			"valid_at" : "real not null",
+			"device_type" : "text not null"
+		},
+		"index" : [],
+		"unique" : [],
+		"constraints" : [],
+		"operations" : []
+	}
+}

@@ -1,0 +1,365 @@
+// Model of Vista Basalt system at HCE
+// Author: DP Chassin
+// Update: 2022-06-10
+//
+// TODO:
+//
+//   - Add batteries and agents
+//   - Add EV chargers and agents
+//   - Fix historical weather data input
+//
+// Run command:
+//
+//   $ gridlabd [-D NHOMES=n] [-D FEEDER=kw] [-D USETMY={yes,no}] [-D WITH{DR,ES,EV,PV}={yes,no}] [config.csv] vista.glm
+//
+// Options:
+//
+//   - NHOMES: number of homes on each service transformer (default 4)
+//   - FEEDER: feeder capacity (default 100 kW)
+//   - USETMY: use TMY data instead of actual weather (default yes)
+//   - WITHDR: include DR in TESS (default yes)
+//   - WITHEV: include EV in TESS (default no)
+//
+//   The file `config.csv` is automatically loaded if found.
+//
+// Model components:
+//
+//   [CLOCK]   Clock is set to 1 month (Jan 2020)
+//   [WEATHER] Weather data is for Aspen CO (typical meteorological year)
+//   [CAISO]   CAISO wholesale price data (2020)
+//   [FEEDER]  Feeder bidder receives CAISO price data from caiso.csv
+//   [HOMES]   Homes (thermostat, PV, batteries, EV, waterheater)
+//   [TREND]   Trend (24h mean and stdev of clearing prices)
+//   [MARKET]  Auction (local power price)
+//   [SAVE]    Save results to JSON file
+//   [PLOT]    Plot results as PNG file
+
+#version check -ge 4.3.1 // required for TESS models
+
+#set suppress_repeat_messages=FALSE
+#set keep_progress=TRUE
+
+#ifexist "config.csv"
+#include "config.csv"
+#endif
+
+//
+// Default options
+//
+#ifndef NHOMES
+	#define NHOMES=4
+#endif
+
+#ifndef FEEDER
+	#define FEEDER=250 // kW
+#endif
+
+#ifndef WITHDR
+	#define WITHDR=yes
+#endif
+
+#ifndef WITHPV
+	#define WITHPV=yes
+#endif
+
+#ifndef WITHEV
+	#define WITHEV=no
+#endif
+
+#ifndef WITHES
+	#define WITHES=no
+#endif
+
+#ifndef USETMY
+	#define USETMY=yes
+#endif
+
+///////////
+// CLOCK //
+///////////
+
+clock
+{
+	timezone "MST+7MDT";
+	starttime "2020-01-01 00:00:00 MST";
+	stoptime "2020-02-01 00:00:00 MST";
+}
+
+/////////////
+// WEATHER //
+/////////////
+
+#if ${USETMY:-yes}==yes
+
+	module climate;
+	#weather get "CO-Aspen_Pitkin_Co_Sar.tmy3"
+	object climate
+	{
+		name "weather";
+		tmyfile "CO-Aspen_Pitkin_Co_Sar.tmy3";
+	}
+
+#else
+
+	#if ${USETMY:-no}!=no
+
+		#error USETMY=${USETMY} is invalid
+
+	#endif
+
+	#ifmissing weather.glm
+	#python -m nsrdb_weather -p=39.3558,-107.0391 -y=2020 -g=weather.glm -c=weather.csv
+	#endif
+	#include "weather.glm"
+
+#endif
+
+///////////
+// CAISO //
+///////////
+
+// download CAISO market data for feeder (this can take a while)
+#ifmissing caiso.glm
+
+	#python -m market_data -m=CAISO -d=0096WD_7_N001 -s=20200101 -e=20210101 -g=caiso.glm -c=caiso.csv
+
+#endif
+
+////////////
+// FEEDER //
+////////////
+
+module powerflow;
+module market;
+module tape
+{
+	csv_header_type NAME;
+}
+
+object meter 
+{
+	name "main";
+	bustype SWING;
+	nominal_voltage 2401 V;
+	phases ABC;	
+}
+
+///////////
+// HOMES //
+///////////
+
+//
+// EV charging loadshape
+//
+schedule residential-evcharter-default
+{
+	* 18-22 * * * 6.7;
+	* 23-17 * * * 0;
+}
+
+//
+// Enable implicit enduses
+//
+module residential
+{
+#define BASE_ENDUSES=DRYER|CLOTHESWASHER|RANGE|REFRIGERATOR|FREEZER|MICROWAVE|DISHWASHER|PLUGS|LIGHTS
+#if ${WITHDR}==no
+#set BASE_ENDUSES=${BASE_ENDUSES}|WATERHEATER
+#endif
+#if ${WITHEV}==no
+#set BASE_ENDUSES=${BASE_ENDUSES} // TODO: add |EVCHARGER
+#endif
+	implicit_enduses ${BASE_ENDUSES};
+	implicit_enduse_source EIA2015;
+}
+
+//
+// Distribution generation support
+//
+module generators;
+
+//
+// House ID numbering
+//
+global int32 SEQ_ID 0;
+
+#for PHASE in A B C
+
+object transformer
+{
+	phases ${PHASE}S;
+	name "transformer_${PHASE}";
+	from "main";
+	to "main_${PHASE}";
+	configuration "padmount_service_transformer_${PHASE}";
+}
+
+object transformer_configuration {
+	name "padmount_service_transformer_${PHASE}";
+	connect_type SINGLE_PHASE_CENTER_TAPPED;
+	install_type PADMOUNT;
+	power${PHASE}_rating ${FEEDER};
+	primary_voltage 2401;
+	secondary_voltage 120.000 V;
+	impedance 0.006+0.0136j;
+}
+
+object triplex_node
+{
+	name "main_${PHASE}";
+	nominal_voltage 120 V;
+	phases ${PHASE}S;
+}
+
+object triplex_meter:..${NHOMES}
+{
+	name `meter_{SEQ_ID:INC}`;
+	parent "main_${PHASE}";
+	phases ${PHASE}S;
+	nominal_voltage 120 V;
+	object house
+	{
+		name `house_{SEQ_ID}`;
+#ifdef WEATHER
+		weather ${WEATHER};
+#endif
+#if ${WITHDR}==yes
+		object controller {
+			name `hvac_{SEQ_ID}`;
+			market "auction_1";
+			use_override ON;
+			override "override";
+			control_mode DOUBLE_RAMP;
+			bid_mode ON;
+			heating_base_setpoint 60;
+			cooling_base_setpoint 80;
+			target air_temperature;
+			deadband "thermostat_deadband";
+			use_predictive_bidding TRUE;
+			average_target "current_price_mean_24h";
+			standard_deviation_target "current_price_stdev_24h";
+			period 300;
+			cooling_setpoint "cooling_setpoint";
+			heating_setpoint "heating_setpoint";
+			heating_demand "heating_demand";
+			cooling_demand "cooling_demand";
+			bid_delay 1;
+			heating_range_high 3.000;
+			cooling_range_high 2.000;
+			heating_range_low -2.000;
+			cooling_range_low -3.000;
+			heating_ramp_high -2.400;
+			cooling_ramp_high 2.400;
+			heating_ramp_low -2.400;
+			cooling_ramp_low 2.400;
+			total "total_load";
+			load "hvac_load";
+			state "power_state";
+		};
+		object waterheater
+		{
+			tank_volume 80 gal;
+			tank_diameter 36 in;
+			object controller
+			{
+				name `waterheater_{SEQ_ID}`;
+				market "auction_1";
+				average_target "current_price_mean_24h";
+				standard_deviation_target "current_price_stdev_24h";
+				period 300;
+				bid_mode ON;
+				simple_mode WATERHEATER;
+				control_mode RAMP;
+				base_setpoint 120;
+				setpoint "tank_setpoint";
+				target "temperature";
+				load "actual_load";
+			};
+		};
+#endif
+	};
+#if ${WITHPV}==yes
+	object triplex_meter
+	{
+		name `pvmeter_{SEQ_ID}`;
+		nominal_voltage 120 V;
+		phases ${PHASE}S;
+		object inverter
+		{
+			phases ${PHASE}S;
+			rated_power 25 kW;
+			generator_mode CONSTANT_PF;
+			generator_status ONLINE;
+			inverter_efficiency 0.9;
+			inverter_type PWM;
+			object solar
+			{
+				area 350 sf;
+				generator_status ONLINE;
+				generator_mode SUPPLY_DRIVEN;
+				panel_type SINGLE_CRYSTAL_SILICON;
+			};
+		};
+	};
+#endif
+}
+#done
+
+///////////
+// TREND //
+///////////
+
+//
+// Add trend values to be collected
+//
+class auction 
+{
+ 	double current_price_mean_24h;
+     double current_price_stdev_24h;
+}
+
+////////////
+// MARKET //
+////////////
+
+//
+// Double auction implementation
+//
+object auction
+{
+	name "auction_1";
+	unit "kW";
+	verbose TRUE;
+	init_price 20;
+	init_stdev 0.1;
+	period 300;
+	verbose 0;
+	warmup 0;
+	price_cap 1000;
+	capacity_reference_object "main";
+	capacity_reference_property "measured_real_power";
+	max_capacity_reference_bid_quantity (${FEEDER}*0.8);
+	object player
+	{
+		property "capacity_reference_bid_price";
+		file "caiso.csv";
+	};
+	transaction_log_file "transactions.csv";
+	object recorder
+	{
+		property "current_market.clearing_price,current_market.clearing_quantity";
+		file "auction.csv";
+	};
+}
+
+//////////
+// SAVE //
+//////////
+
+#set dumpfile=gridlabd.json
+
+//////////
+// PLOT //
+//////////
+
+#on_exit 0 gridlabd plot -i=auction.csv --plot:grid
